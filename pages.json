@@ -380,6 +380,7 @@
 		"navigationBarBackgroundColor": "@navBgColor"
 	},
 	"tabBar": {
+		"custom": true,
 		"color": "@tabColor",
 		"selectedColor": "@tabSelectedColor",
 		"backgroundColor": "@tabBgColor",

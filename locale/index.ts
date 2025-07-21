@@ -13,7 +13,7 @@ const messages = {
 };
 
 // 当前语言，默认中文
-export const locale = ref<string>(config.locale);
+export const locale = ref<string>("");
 
 // 设置当前语言
 export const setLocale = (value: string) => {
