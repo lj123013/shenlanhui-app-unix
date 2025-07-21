@@ -1,0 +1,469 @@
+<template>
+	<cl-select-trigger
+		v-if="showTrigger"
+		:pt="{
+			className: pt.trigger?.className,
+			icon: pt.trigger?.icon
+		}"
+		:placeholder="placeholder"
+		:disabled="disabled"
+		:focus="popupRef?.isOpen"
+		:text="text"
+		arrow-icon="calendar-line"
+		@tap="open()"
+		@clear="clear"
+	></cl-select-trigger>
+
+	<cl-popup
+		ref="popupRef"
+		v-model="visible"
+		:title="title"
+		:pt="{
+			className: pt.popup?.className,
+			header: pt.popup?.header,
+			container: pt.popup?.container,
+			mask: pt.popup?.mask,
+			draw: pt.popup?.draw
+		}"
+	>
+		<view class="cl-select-popup" @touchmove.stop>
+			<view class="cl-select-popup__picker">
+				<cl-picker-view
+					:headers="headers"
+					:value="indexes"
+					:columns="columns"
+					@change="onChange"
+				></cl-picker-view>
+			</view>
+
+			<view class="cl-select-popup__op">
+				<cl-button
+					v-if="showCancel"
+					size="large"
+					text
+					border
+					type="light"
+					:pt="{
+						className: 'flex-1 !rounded-xl h-[80rpx]'
+					}"
+					@tap="close"
+					>{{ cancelText }}</cl-button
+				>
+				<cl-button
+					v-if="showConfirm"
+					size="large"
+					:pt="{
+						className: 'flex-1 !rounded-xl h-[80rpx]'
+					}"
+					@tap="confirm"
+					>{{ confirmText }}</cl-button
+				>
+			</view>
+		</view>
+	</cl-popup>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, type PropType, watch, nextTick } from "vue";
+import type { ClSelectOption } from "../../types";
+import { dayUts, isEmpty, isNull, parsePt } from "@/cool";
+import type { ClSelectTriggerPassThrough } from "../cl-select-trigger/props";
+import type { ClPopupPassThrough } from "../cl-popup/props";
+import { t } from "@/locale";
+
+defineOptions({
+	name: "cl-select-date"
+});
+
+// 组件属性定义
+const props = defineProps({
+	// 透传样式配置，支持外部自定义样式
+	pt: {
+		type: Object,
+		default: () => ({})
+	},
+	// 选择器的值，外部v-model绑定
+	modelValue: {
+		type: String,
+		default: ""
+	},
+	// 表头
+	headers: {
+		type: Array as PropType<string[]>,
+		default: () => [t("年"), t("月"), t("日"), t("时"), t("分"), t("秒")]
+	},
+	// 选择器标题
+	title: {
+		type: String,
+		default: t("请选择")
+	},
+	// 选择器占位符
+	placeholder: {
+		type: String,
+		default: t("请选择")
+	},
+	// 是否显示选择器触发器
+	showTrigger: {
+		type: Boolean,
+		default: true
+	},
+	// 是否禁用选择器
+	disabled: {
+		type: Boolean,
+		default: false
+	},
+	// 确认按钮文本
+	confirmText: {
+		type: String,
+		default: t("确定")
+	},
+	// 是否显示确认按钮
+	showConfirm: {
+		type: Boolean,
+		default: true
+	},
+	// 取消按钮文本
+	cancelText: {
+		type: String,
+		default: t("取消")
+	},
+	// 是否显示取消按钮
+	showCancel: {
+		type: Boolean,
+		default: true
+	},
+	// 标签格式化
+	labelFormat: {
+		type: String as PropType<string>,
+		default: ""
+	},
+	// 值格式化
+	valueFormat: {
+		type: String as PropType<string>,
+		default: ""
+	},
+	// 开始日期
+	start: {
+		type: String,
+		default: "1950-01-01 00:00:00"
+	},
+	// 结束日期
+	end: {
+		type: String,
+		default: "2050-12-31 23:59:59"
+	},
+	// 类型，控制选择的粒度
+	type: {
+		type: String as PropType<"year" | "month" | "date" | "hour" | "minute" | "second">,
+		default: "second"
+	}
+});
+
+// 定义事件，支持v-model和change事件
+const emit = defineEmits(["update:modelValue", "change"]);
+
+// 弹出层引用，用于控制popup的显示与隐藏
+const popupRef = ref<ClPopupComponentPublicInstance | null>(null);
+
+// 透传样式类型定义，支持trigger和popup的样式透传
+type PassThrough = {
+	trigger?: ClSelectTriggerPassThrough;
+	popup?: ClPopupPassThrough;
+};
+
+// 解析透传样式配置，返回合并后的样式对象
+const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+// 格式化类型
+const formatType = computed(() => {
+	switch (props.type) {
+		case "year":
+			return "YYYY";
+		case "month":
+			return "YYYY-MM";
+		case "date":
+			return "YYYY-MM-DD";
+		case "hour":
+		case "minute":
+		case "second":
+			return "YYYY-MM-DD HH:mm:ss";
+		default:
+			return "YYYY-MM-DD HH:mm:ss";
+	}
+});
+
+// 标签格式化
+const labelFormat = computed(() => {
+	if (isNull(props.labelFormat) || isEmpty(props.labelFormat)) {
+		return formatType.value;
+	}
+
+	return props.labelFormat;
+});
+
+// 值格式化
+const valueFormat = computed(() => {
+	if (isNull(props.valueFormat) || isEmpty(props.valueFormat)) {
+		return formatType.value;
+	}
+
+	return props.valueFormat;
+});
+
+// 当前选中的值，存储为数组，依次为年月日时分秒
+const value = ref<number[]>([]);
+
+// 时间选择器列表，动态生成每一列的选项
+const list = computed(() => {
+	// 解析开始日期为年月日时分秒数组
+	const [startYear, startMonth, startDate, startHour, startMinute, startSecond] = dayUts(
+		props.start
+	).toArray();
+	// 解析结束日期为年月日时分秒数组
+	const [endYear, endMonth, endDate, endHour, endMinute, endSecond] = dayUts(props.end).toArray();
+	// 获取当前选中的年月日时分秒值
+	const [year, month, date, hour, minute] = value.value;
+	// 初始化年月日时分秒六个选项数组
+	const arr = [[], [], [], [], [], []] as ClSelectOption[][];
+	// 判断是否为闰年
+	const isLeapYear = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+	// 根据月份和是否闰年获取当月天数
+	const days = [31, isLeapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+	// 计算年份范围，确保至少有60年可选
+	const yearRange = Math.max(60, endYear - startYear + 1);
+	// 遍历生成年月日时分秒的选项
+	for (let i = 0; i < yearRange; i++) {
+		// 计算当前遍历的年份
+		const yearNum = startYear + i;
+		// 如果年份在结束年份范围内，添加到年份选项
+		if (yearNum <= endYear) {
+			arr[0].push({
+				label: yearNum.toString(),
+				value: yearNum
+			});
+		}
+		// 处理月份选项
+		let monthNum = startYear == year ? startMonth + i : i + 1;
+		let endMonthNum = endYear == year ? endMonth : 12;
+		// 添加有效的月份选项
+		if (monthNum <= endMonthNum) {
+			arr[1].push({
+				label: monthNum.toString().padStart(2, "0"),
+				value: monthNum
+			});
+		}
+		// 处理日期选项
+		let dateNum = startYear == year && startMonth == month ? startDate + i : i + 1;
+		let endDateNum = endYear == year && endMonth == month ? endDate : days;
+		// 添加有效的日期选项
+		if (dateNum <= endDateNum) {
+			arr[2].push({
+				label: dateNum.toString().padStart(2, "0"),
+				value: dateNum
+			});
+		}
+		// 处理小时选项
+		let hourNum =
+			startYear == year && startMonth == month && startDate == date ? startHour + i : i;
+		let endHourNum = endYear == year && endMonth == month && endDate == date ? endHour : 24;
+		// 添加有效的小时选项
+		if (hourNum < endHourNum) {
+			arr[3].push({
+				label: hourNum.toString().padStart(2, "0"),
+				value: hourNum
+			});
+		}
+		// 处理分钟选项
+		let minuteNum =
+			startYear == year && startMonth == month && startDate == date && startHour == hour
+				? startMinute + i
+				: i;
+		let endMinuteNum =
+			endYear == year && endMonth == month && endDate == date && endHour == hour
+				? endMinute
+				: 60;
+		// 添加有效的分钟选项
+		if (minuteNum < endMinuteNum) {
+			arr[4].push({
+				label: minuteNum.toString().padStart(2, "0"),
+				value: minuteNum
+			});
+		}
+		// 处理秒钟选项
+		let secondNum =
+			startYear == year &&
+			startMonth == month &&
+			startDate == date &&
+			startHour == hour &&
+			startMinute == minute
+				? startSecond + i
+				: i;
+		let endSecondNum =
+			endYear == year &&
+			endMonth == month &&
+			endDate == date &&
+			endHour == hour &&
+			endMinute == minute
+				? endSecond
+				: 60;
+		// 添加有效的秒钟选项
+		if (secondNum < endSecondNum) {
+			arr[5].push({
+				label: secondNum.toString().padStart(2, "0"),
+				value: secondNum
+			});
+		}
+	}
+	// 返回包含所有时间选项的数组
+	return arr;
+});
+
+// 列数，决定显示多少列（年、月、日、时、分、秒）
+const columnNum = computed(() => {
+	return (
+		["year", "month", "date", "hour", "minute", "second"].findIndex((e) => e == props.type) + 1
+	);
+});
+
+// 列数据，取出需要显示的列
+const columns = computed(() => {
+	return list.value.slice(0, columnNum.value);
+});
+
+// 当前选中项的索引，返回每一列当前选中的下标
+const indexes = computed(() => {
+	// 如果当前值为空，返回空数组
+	if (isEmpty(value.value)) {
+		return [];
+	}
+	// 遍历每一列，查找当前值在选项中的下标
+	return value.value.map((e, i) => {
+		const index = list.value[i].findIndex((a) => a.value == e);
+		// 如果未找到，返回0
+		if (index == -1) {
+			return 0;
+		}
+
+		return index;
+	});
+});
+
+// 将当前选中的年月日时分秒拼接为字符串
+function toDate() {
+	// 使用数组存储日期时间各部分,避免重复字符串拼接
+	const parts: string[] = [];
+	// 月日时分秒需要补0对齐
+	const units = ["", "-", "-", " ", ":", ":"];
+	// 默认值
+	const defaultValue = [2000, 1, 1, 0, 0, 0];
+	// 遍历处理各个时间单位
+	units.forEach((key, i) => {
+		let val = value.value[i];
+		// 超出当前列数时，使用默认值
+		if (i >= columnNum.value) {
+			val = defaultValue[i];
+		}
+		// 拼接字符串并补0
+		parts.push(key + val.toString().padStart(2, "0"));
+	});
+	// 拼接所有部分返回
+	return parts.join("");
+}
+
+// 显示文本，展示当前选中的日期字符串
+const text = ref("");
+
+// 获取显示文本，格式化为labelFormat格式
+function getText() {
+	text.value = dayUts(toDate()).format(labelFormat.value);
+}
+
+// 选择器值改变事件，更新value
+async function onChange(arr: number[]) {
+	for (let i = 0; i < arr.length; i++) {
+		value.value[i] = list.value[i][arr[i]].value as number;
+	}
+}
+
+// 选择器显示状态，控制popup显示
+const visible = ref(false);
+
+// 选择回调函数
+let callback: ((value: string) => void) | null = null;
+
+// 打开选择器
+function open(cb: ((value: string) => void) | null = null) {
+	if (props.disabled) {
+		return;
+	}
+
+	visible.value = true;
+	callback = cb;
+}
+
+// 关闭选择器，设置visible为false
+function close() {
+	visible.value = false;
+}
+
+// 清空选择器，重置显示文本并触发事件
+function clear() {
+	text.value = "";
+	emit("update:modelValue", "");
+	emit("change", "");
+}
+
+// 确认选择，触发事件并关闭选择器
+function confirm() {
+	const val = dayUts(toDate()).format(valueFormat.value);
+
+	// 触发更新事件
+	emit("update:modelValue", val);
+	emit("change", val);
+
+	// 触发回调
+	if (callback != null) {
+		callback!(val);
+	}
+
+	// 更新显示文本
+	getText();
+
+	// 关闭选择器
+	close();
+}
+
+// 监听modelValue变化，初始化或更新value
+watch(
+	computed(() => props.modelValue),
+	(val: string) => {
+		// 如果值为空，使用当前时间
+		if (isNull(val) || isEmpty(val)) {
+			value.value = dayUts().toArray();
+		} else {
+			// 否则解析为数组
+			value.value = dayUts(val).toArray();
+			getText();
+		}
+	},
+	{
+		immediate: true
+	}
+);
+
+defineExpose({
+	open,
+	close
+});
+</script>
+
+<style lang="scss" scoped>
+.cl-select {
+	&-popup {
+		&__op {
+			@apply flex flex-row items-center justify-center;
+			padding: 24rpx;
+		}
+	}
+}
+</style>

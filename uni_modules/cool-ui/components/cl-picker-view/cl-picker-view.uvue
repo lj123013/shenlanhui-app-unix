@@ -1,0 +1,223 @@
+<template>
+	<view class="cl-picker-view">
+		<view class="cl-picker-view__header" v-if="headers.length > 0">
+			<text
+				class="cl-picker-view__header-item dark:text-white"
+				v-for="(label, index) in headers"
+				:key="index"
+				>{{ label }}</text
+			>
+		</view>
+
+		<view
+			class="px-[10rpx]"
+			:style="{
+				height: parseRpx(height)
+			}"
+		>
+			<picker-view
+				class="h-full"
+				:value="value"
+				:mask-style="maskStyle"
+				:mask-top-style="maskStyle"
+				:mask-bottom-style="maskStyle"
+				:indicator-style="indicatorStyle"
+				@change="onChange"
+			>
+				<picker-view-column
+					class="cl-select-popup__column"
+					v-for="(column, columnIndex) in columns"
+					:key="columnIndex"
+				>
+					<view
+						class="cl-picker-view__item"
+						:style="{
+							height: `${itemHeight}px`
+						}"
+						v-for="(item, index) in column"
+						:key="index"
+					>
+						<text
+							class="cl-picker-view__item-text"
+							:class="[
+								{
+									'is-active': index == value[columnIndex],
+									'is-dark': isDark
+								}
+							]"
+							>{{ item.label }}</text
+						>
+					</view>
+				</picker-view-column>
+			</picker-view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="ts">
+import { forInObject, isDark, rpx2px } from "@/cool";
+import type { ClSelectOption } from "../../types";
+import { parseRpx } from "@/cool";
+import { computed } from "vue";
+import type { PropType } from "vue";
+
+defineOptions({
+	name: "cl-select-picker-view"
+});
+
+const props = defineProps({
+	// 选择器表头
+	headers: {
+		type: Array as PropType<string[]>,
+		default: () => []
+	},
+	// 选择器值
+	value: {
+		type: Array as PropType<number[]>,
+		default: () => []
+	},
+	// 选择器选项
+	columns: {
+		type: Array as PropType<ClSelectOption[][]>,
+		default: () => []
+	},
+	// 选择器选项高度
+	itemHeight: {
+		type: Number,
+		default: 42
+	},
+	// 选择器高度
+	height: {
+		type: Number,
+		default: 600
+	},
+	// 选择后子集是否回到0
+	resetOnChange: {
+		type: Boolean,
+		default: true
+	}
+});
+
+const emit = defineEmits(["change"]);
+
+// 获取窗口宽度,用于计算选择器列宽
+const { windowWidth } = uni.getWindowInfo();
+
+// 顶部显示表头
+const headers = computed(() => {
+	return props.headers.slice(0, props.columns.length);
+});
+
+// 遮罩层样式
+const maskStyle = computed(() => {
+	if (isDark.value) {
+		return `background-image: linear-gradient(
+			180deg,
+			rgba(0, 0, 0, 0),
+			rgba(0, 0, 0, 0)
+		)`;
+	}
+
+	return "";
+});
+
+// 计算选择器列样式
+const indicatorStyle = computed(() => {
+	// 根据窗口宽度和列数计算每列宽度
+	const width = ((windowWidth - rpx2px(20)) / props.columns.length - rpx2px(2) - 8).toFixed(0);
+
+	let str = "";
+
+	// 选择器列样式配置
+	const style = {
+		height: `${props.itemHeight}px`,
+		width: `${width}px`,
+		left: "4px",
+		backgroundColor: "rgba(10, 10, 10, 0.04)",
+		borderRadius: "10px",
+		border: "1rpx solid rgba(10, 10, 10, 0.2)"
+	};
+
+	// 深色模式
+	if (isDark.value) {
+		style.backgroundColor = "rgba(200, 200, 200, 0.04)";
+		style.border = "1rpx solid rgba(255, 255, 255, 0.5)";
+	}
+
+	// 构建样式字符串
+	forInObject(style, (value, key) => {
+		str += `${key}: ${value};`;
+	});
+
+	return str;
+});
+
+// 选择器值改变事件
+function onChange(e: UniPickerViewChangeEvent) {
+	// 获取选择器当前选中值数组
+	const arr = e.detail.value;
+
+	// 如果选择后子集是否回到0
+	if (props.resetOnChange) {
+		// 记录第一个发生变化的列的索引,初始为-1表示未发生变化
+		let start = -1;
+
+		// 遍历原选中值数组
+		props.value.forEach((e, i) => {
+			if (start >= 0) {
+				// 如果之前的列发生过变化,后续列都重置为0
+				arr[i] = 0;
+			} else {
+				// 比较当前列的值是否发生变化
+				if (e != arr[i]) {
+					// 记录第一个变化的列的索引
+					start = i;
+				}
+			}
+		});
+	}
+
+	// 触发change事件,传递新的选中值数组
+	emit("change", arr);
+}
+</script>
+
+<style lang="scss" scoped>
+.cl-picker-view {
+	@apply w-full h-full;
+
+	&__header {
+		@apply flex flex-row items-center py-4;
+
+		&-item {
+			@apply text-center text-sm text-surface-700;
+			flex: 1;
+		}
+	}
+
+	&__item {
+		@apply flex flex-row items-center justify-center;
+
+		&-text {
+			@apply text-md text-center text-surface-700;
+
+			&.is-dark {
+				@apply text-surface-500;
+
+				&.is-active {
+					@apply text-white;
+				}
+			}
+		}
+	}
+
+	.uni-picker-view-indicator {
+		// #ifdef H5
+		&::after,
+		&::before {
+			display: none;
+		}
+		// #endif
+	}
+}
+</style>

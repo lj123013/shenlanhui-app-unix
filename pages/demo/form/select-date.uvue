@@ -1,0 +1,208 @@
+<template>
+	<cl-page>
+		<view class="p-3">
+			<demo-item :label="t('基础用法')">
+				<cl-select-date v-model="form.date1" type="year"></cl-select-date>
+			</demo-item>
+
+			<demo-item :label="t('精确到秒')">
+				<cl-select-date v-model="form.date2" type="second"></cl-select-date>
+			</demo-item>
+
+			<demo-item :label="t('固定开始、结束时间')">
+				<cl-select-date
+					v-model="form.date3"
+					start="2025-06-01 10:00:00"
+					end="2026-06-01 10:00:00"
+				></cl-select-date>
+			</demo-item>
+
+			<demo-item :label="t('自定义触发器')">
+				<view class="flex flex-row">
+					<cl-button @tap="openSelect4">{{ t("打开选择器") }}</cl-button>
+				</view>
+
+				<cl-select-date
+					ref="selectRef4"
+					v-model="form.date4"
+					type="date"
+					:show-trigger="false"
+				></cl-select-date>
+			</demo-item>
+
+			<demo-item :label="t('自定义')">
+				<cl-select-date
+					v-model="form.date5"
+					:type="type"
+					:label-format="labelFormat"
+					:disabled="isDisabled"
+				></cl-select-date>
+
+				<cl-list
+					border
+					:pt="{
+						className: 'mt-3'
+					}"
+				>
+					<cl-list-item :label="t('年')">
+						<cl-switch v-model="isYear"></cl-switch>
+					</cl-list-item>
+
+					<cl-list-item :label="t('年-月')">
+						<cl-switch v-model="isMonth"></cl-switch>
+					</cl-list-item>
+
+					<cl-list-item :label="t('年-月-日')">
+						<cl-switch v-model="isDate"></cl-switch>
+					</cl-list-item>
+
+					<cl-list-item :label="t('年-月-日 时')">
+						<cl-switch v-model="isHour"></cl-switch>
+					</cl-list-item>
+
+					<cl-list-item :label="t('年-月-日 时:分')">
+						<cl-switch v-model="isMinute"></cl-switch>
+					</cl-list-item>
+
+					<cl-list-item :label="t('年-月-日 时:分:秒')">
+						<cl-switch v-model="isSecond"></cl-switch>
+					</cl-list-item>
+
+					<cl-list-item :label="t('标签格式化')">
+						<cl-switch v-model="isFormat"></cl-switch>
+					</cl-list-item>
+
+					<cl-list-item :label="t('禁用')">
+						<cl-switch v-model="isDisabled"></cl-switch>
+					</cl-list-item>
+				</cl-list>
+			</demo-item>
+		</view>
+	</cl-page>
+</template>
+
+<script lang="ts" setup>
+import { computed, reactive, ref } from "vue";
+import DemoItem from "../components/item.uvue";
+import { t } from "@/locale";
+import { useUi } from "@/uni_modules/cool-ui";
+
+const ui = useUi();
+
+type Form = {
+	date1: string;
+	date2: string;
+	date3: string;
+	date4: string;
+	date5: string;
+};
+
+const form = reactive<Form>({
+	date1: "",
+	date2: "",
+	date3: "",
+	date4: "",
+	date5: ""
+});
+
+const isDisabled = ref(false);
+const isYear = ref(false);
+const isMonth = ref(false);
+const isDate = ref(true);
+const isHour = ref(false);
+const isMinute = ref(false);
+const isSecond = ref(false);
+const isFormat = ref(false);
+
+const type = computed(() => {
+	if (isSecond.value) {
+		return "second";
+	}
+
+	if (isMinute.value) {
+		return "minute";
+	}
+
+	if (isHour.value) {
+		return "hour";
+	}
+
+	if (isDate.value) {
+		return "date";
+	}
+
+	if (isMonth.value) {
+		return "month";
+	}
+
+	if (isYear.value) {
+		return "year";
+	}
+
+	return "second";
+});
+
+const labelFormat = computed(() => {
+	if (isFormat.value) {
+		if (isSecond.value) {
+			return "YYYY年MM月DD日 HH时mm分ss秒";
+		}
+
+		if (isMinute.value) {
+			return "YYYY年MM月DD日 HH时mm分";
+		}
+
+		if (isHour.value) {
+			return "YYYY年MM月DD日 HH时";
+		}
+
+		if (isDate.value) {
+			return "YYYY年MM月DD日";
+		}
+
+		if (isMonth.value) {
+			return "YYYY年MM月";
+		}
+
+		if (isYear.value) {
+			return "YYYY年";
+		}
+	} else {
+		if (isSecond.value) {
+			return "YYYY-MM-DD HH:mm:ss";
+		}
+
+		if (isMinute.value) {
+			return "YYYY-MM-DD HH:mm";
+		}
+
+		if (isHour.value) {
+			return "YYYY-MM-DD HH";
+		}
+
+		if (isDate.value) {
+			return "YYYY-MM-DD";
+		}
+
+		if (isMonth.value) {
+			return "YYYY-MM";
+		}
+
+		if (isYear.value) {
+			return "YYYY";
+		}
+	}
+
+	return "YYYY-MM-DD HH:mm:ss";
+});
+
+const selectRef4 = ref<ClSelectDateComponentPublicInstance | null>(null);
+
+function openSelect4() {
+	selectRef4.value!.open((value) => {
+		ui.showToast({
+			message: `你选择了：${value}`
+		});
+	});
+}
+</script>

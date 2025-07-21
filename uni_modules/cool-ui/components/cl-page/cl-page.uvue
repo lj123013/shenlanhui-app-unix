@@ -1,0 +1,95 @@
+<template>
+	<!-- #ifdef APP -->
+	<scroll-view
+		:style="{ flex: 1 }"
+		:scroll-top="scrollViewTop"
+		:scroll-with-animation="true"
+		@scroll="onScroll"
+	>
+		<back-top v-if="backTop" @tap="scrollToTop"></back-top>
+		<theme></theme>
+		<ui></ui>
+		<slot></slot>
+	</scroll-view>
+	<!-- #endif -->
+
+	<!-- #ifndef APP -->
+	<back-top v-if="backTop" @tap="scrollToTop"></back-top>
+	<theme></theme>
+	<ui></ui>
+	<slot></slot>
+	<!-- #endif -->
+</template>
+
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from "vue";
+import { router, usePage } from "@/cool";
+import BackTop from "./back-top.uvue";
+import Theme from "./theme.uvue";
+import Ui from "./ui.uvue";
+import { locale, t } from "@/locale";
+import { config } from "@/config";
+
+defineOptions({
+	name: "cl-page"
+});
+
+const props = defineProps({
+	// 是否显示回到顶部按钮
+	backTop: {
+		type: Boolean,
+		default: config.backTop
+	}
+});
+
+const page = usePage();
+
+// scroll-view 滚动位置
+const scrollViewTop = ref(0);
+
+// view 滚动事件
+function onScroll(e: UniScrollEvent) {
+	page.triggerScroll(e.detail.scrollTop);
+}
+
+// 回到顶部
+function scrollToTop() {
+	// #ifdef H5
+	window.scrollTo({ top: 0, behavior: "smooth" });
+	// #endif
+
+	// #ifdef MP
+	uni.pageScrollTo({
+		scrollTop: 0,
+		duration: 300
+	});
+	// #endif
+
+	// #ifdef APP
+	scrollViewTop.value = 0 + Math.random() / 1000;
+	// #endif
+}
+
+onMounted(() => {
+	// 标题多语言
+	// #ifdef H5 || APP
+	watch(
+		computed(() => locale.value),
+		() => {
+			const style = router.route()?.style;
+
+			if (style != null) {
+				if (style.navigationBarTitleText != null) {
+					uni.setNavigationBarTitle({
+						title: t((style.navigationBarTitleText as string).replaceAll("%", ""))
+					});
+				}
+			}
+		},
+		{
+			immediate: true
+		}
+	);
+	// #endif
+});
+</script>

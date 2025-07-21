@@ -1,0 +1,137 @@
+<template>
+	<text
+		class="cl-icon"
+		:class="[
+			isDark ? 'text-white' : 'text-surface-700',
+			{
+				'!text-primary-500': color == 'primary',
+				'!text-green-500': color == 'success',
+				'!text-yellow-500': color == 'warn',
+				'!text-red-500': color == 'error',
+				'!text-surface-500': color == 'info',
+				'!text-surface-700': color == 'dark',
+				'!text-surface-50': color == 'light',
+				'!text-surface-300': color == 'disabled'
+			},
+			pt.className
+		]"
+		:style="iconStyle"
+		:key="cache.key"
+	>
+		{{ icon.text }}
+	</text>
+</template>
+
+<script setup lang="ts">
+import { computed, type PropType } from "vue";
+import { forInObject, get, has, parseRpx, parsePt, useCache, isDark } from "@/cool";
+import { icons } from "@/icons";
+
+defineOptions({
+	name: "cl-icon"
+});
+
+// 定义组件属性
+const props = defineProps({
+	// 透传样式
+	pt: {
+		type: Object,
+		default: () => ({})
+	},
+	// 图标名称
+	name: {
+		type: String,
+		default: ""
+	},
+	// 图标大小
+	size: {
+		type: [String, Number] as PropType<string | number>,
+		default: 32
+	},
+	// 图标高度
+	height: {
+		type: [String, Number] as PropType<string | number>,
+		default: null
+	},
+	// 图标宽度
+	width: {
+		type: [String, Number] as PropType<string | number>,
+		default: null
+	},
+	// 图标颜色
+	color: {
+		type: String,
+		default: ""
+	}
+});
+
+// 缓存
+const { cache } = useCache(() => [props.color]);
+
+// 透传样式类型定义
+type PassThrough = {
+	className?: string;
+};
+
+// 解析透传样式
+const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+// 图标类型定义
+type Icon = {
+	font: string; // 字体名称
+	text: string; // 图标文本
+};
+
+// 图标信息
+const icon = computed<Icon>(() => {
+	let font = "";
+	let text = "";
+
+	try {
+		let code = "";
+
+		// 遍历字体库查找对应图标
+		forInObject(icons, (value, key) => {
+			if (has(value, props.name)) {
+				font = key;
+				code = get(value, props.name) as string;
+			}
+		});
+
+		// Android平台特殊处理
+		// #ifdef APP-ANDROID
+		// @ts-ignore
+		text = new String(Character.toChars(parseInt(code, 16).toInt()));
+		// #endif
+
+		// 其他平台处理
+		// #ifndef APP-ANDROID
+		text = String.fromCharCode(parseInt(code, 16));
+		// #endif
+	} catch (e) {
+		console.error(`图标 ${props.name} 不存在`, e);
+	}
+
+	return {
+		font,
+		text
+	};
+});
+
+// 图标样式
+const iconStyle = computed(() => {
+	const style = new Map<string, string>();
+
+	if (props.color != "") {
+		style.set("color", props.color);
+	}
+
+	style.set("fontFamily", icon.value.font);
+	style.set("fontSize", parseRpx(props.size!));
+	style.set("height", parseRpx(props.height ?? props.size!));
+	style.set("width", parseRpx(props.width ?? props.size!));
+	style.set("lineHeight", parseRpx(props.size!));
+
+	return style;
+});
+</script>

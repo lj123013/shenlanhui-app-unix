@@ -1,0 +1,135 @@
+<template>
+	<view
+		class="cl-loading"
+		:class="[
+			{
+				'is-dark': isDark,
+				'cl-loading--spin': loading,
+				'!border-primary-500': color == 'primary',
+				'!border-green-500': color == 'success',
+				'!border-yellow-500': color == 'warn',
+				'!border-red-500': color == 'error',
+				'!border-surface-500': color == 'info',
+				'!border-surface-700': color == 'dark',
+				'!border-white': color == 'light',
+				'!border-surface-300': color == 'disabled',
+				'!border-r-transparent': true
+			},
+			pt.className
+		]"
+		:style="{
+			// #ifdef APP
+			transform: `rotate(${rotate}deg)`,
+			// #endif
+			height: parseRpx(size!),
+			width: parseRpx(size!),
+			borderColor: color
+		}"
+		v-if="loading"
+	>
+	</view>
+</template>
+
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from "vue";
+import { isDark, parsePt, parseRpx } from "@/cool";
+import type { ClIconProps } from "../cl-icon/props";
+
+defineOptions({
+	name: "cl-loading"
+});
+
+// 定义组件属性
+const props = defineProps({
+	// 透传样式
+	pt: {
+		type: Object,
+		default: () => ({})
+	},
+	// 是否加载中
+	loading: {
+		type: Boolean,
+		default: true
+	},
+	// 图标大小
+	size: {
+		type: [Number, String],
+		default: 24
+	},
+	// 图标颜色
+	color: {
+		type: String,
+		default: ""
+	}
+});
+
+// 透传样式类型定义
+type PassThrough = {
+	className?: string;
+	icon?: ClIconProps;
+};
+
+// 解析透传样式
+const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+// 旋转角度
+const rotate = ref(0);
+
+// 开始旋转动画
+function start() {
+	requestAnimationFrame(() => {
+		// 增加旋转角度
+		rotate.value += 1;
+
+		// 如果仍在加载中则继续旋转
+		if (props.loading) {
+			start();
+		}
+	});
+}
+
+// 组件挂载后监听loading状态
+onMounted(() => {
+	// #ifdef APP-UVUE
+	watch(
+		computed(() => props.loading),
+		(val: boolean) => {
+			// 当loading为true时开始旋转
+			if (val) {
+				start();
+			}
+		},
+		{
+			immediate: true
+		}
+	);
+	// #endif
+});
+</script>
+
+<style lang="scss" scoped>
+.cl-loading {
+	@apply flex flex-row items-center justify-center rounded-full;
+	@apply border-surface-700 border-solid;
+	border-width: 2rpx;
+
+	&.is-dark {
+		@apply border-white;
+	}
+
+	// #ifdef H5 || MP
+	&--spin {
+		animation: spin 2.5s linear infinite;
+	}
+
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	// #endif
+}
+</style>

@@ -1,0 +1,114 @@
+<template>
+	<cl-page>
+		<cl-topbar safe-area-top background-color="transparent"></cl-topbar>
+
+		<view class="px-10">
+			<view class="flex flex-col items-center justify-center py-20">
+				<view class="p-3 bg-primary-500 rounded-2xl">
+					<cl-image
+						src="/static/logo.png"
+						mode="widthFix"
+						:width="80"
+						:height="80"
+					></cl-image>
+				</view>
+
+				<cl-text :pt="{ className: '!text-2xl font-bold mt-2' }">{{ config.name }}</cl-text>
+			</view>
+
+			<login-phone :form="form" @success="toLogin"></login-phone>
+			<login-wx :ref="refs.set('loginWx')" @success="toLogin"></login-wx>
+
+			<view class="mt-6 flex flex-row flex-wrap items-center justify-center">
+				<cl-checkbox
+					v-model="agree"
+					:pt="{ icon: { size: 32 } }"
+					active-icon="checkbox-circle-line"
+					inactive-icon="checkbox-blank-circle-line"
+				>
+				</cl-checkbox>
+				<cl-text :pt="{ className: '!text-sm' }" color="info">
+					{{ t("已阅读并同意") }}
+				</cl-text>
+				<cl-text
+					:pt="{ className: '!text-sm mx-1' }"
+					@tap.stop="toDoc(t('用户协议'), 'userAgreement')"
+				>
+					{{ t("用户协议") }}
+				</cl-text>
+				<cl-text :pt="{ className: '!text-sm' }" color="info">
+					{{ t("和") }}
+				</cl-text>
+				<cl-text
+					:pt="{ className: '!text-sm mx-1' }"
+					@tap.stop="toDoc(t('隐私政策'), 'privacyPolicy')"
+				>
+					{{ t("隐私政策") }}
+				</cl-text>
+			</view>
+
+			<view class="flex flex-row justify-center mt-10 px-10">
+				<view
+					class="mx-5flex items-center justify-center h-10 w-10 rounded-full bg-white dark:bg-surface-700 border border-solid border-surface-100 dark:border-surface-600"
+					@tap="refs.callMethod('loginWx', 'login')"
+				>
+					<cl-icon name="wechat-fill" :size="38" color="#00b223"></cl-icon>
+				</view>
+
+				<view
+					class="mx-5 flex items-center justify-center h-10 w-10 rounded-full bg-white dark:bg-surface-700 border border-solid border-surface-100 dark:border-surface-600"
+				>
+					<cl-icon name="apple-fill" :size="38"></cl-icon>
+				</view>
+			</view>
+		</view>
+	</cl-page>
+</template>
+
+<script setup lang="ts">
+import { config } from "@/config";
+import { parse, router, useRefs, useStore, type Token } from "@/cool";
+import { t } from "@/locale";
+import { provide, reactive, ref } from "vue";
+import type { LoginForm } from "./types";
+import { useUi } from "@/uni_modules/cool-ui";
+import LoginPhone from "./components/login/phone.uvue";
+import LoginWx from "./components/login/wx.uvue";
+
+const { user } = useStore();
+const ui = useUi();
+const refs = useRefs();
+
+// 表单
+const form = reactive<LoginForm>({
+	phone: "18000000000",
+	smsCode: "6666"
+});
+
+// 是否同意
+const agree = ref(false);
+
+// 登录成功
+function toLogin(res: any) {
+	user.setToken(parse<Token>(res)!);
+	router.home();
+}
+
+// 跳转文档
+function toDoc(name: string, path: string) {}
+
+// 是否同意
+function isAgree() {
+	if (!agree.value) {
+		ui.showToast({
+			message: t("请先阅读并同意用户协议和隐私政策")
+		});
+
+		return false;
+	}
+
+	return true;
+}
+
+provide("isAgree", isAgree);
+</script>

@@ -1,0 +1,95 @@
+<template>
+	<view
+		class="cl-badge"
+		:class="[
+			{
+				'bg-primary-500': type == 'primary',
+				'bg-green-500': type == 'success',
+				'bg-yellow-500': type == 'warn',
+				'bg-red-500': type == 'error',
+				'bg-surface-500': type == 'info',
+				'cl-badge--dot': dot,
+				'cl-badge--position': position
+			},
+			pt.className
+		]"
+	>
+		<text class="cl-badge__text" v-if="!dot">
+			{{ value }}
+		</text>
+
+		<slot></slot>
+	</view>
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+import type { PropType } from "vue";
+import type { Type } from "../../types";
+import { parsePt } from "@/cool";
+
+defineOptions({
+	name: "cl-badge"
+});
+
+const props = defineProps({
+	pt: {
+		type: Object,
+		default: () => ({})
+	},
+	type: {
+		type: String as PropType<Type>,
+		default: "error"
+	},
+	dot: {
+		type: Boolean,
+		default: false
+	},
+	value: {
+		type: [Number, String],
+		default: 0
+	},
+	position: {
+		type: Boolean,
+		default: false
+	}
+});
+
+type PassThrough = {
+	className?: string;
+};
+
+const pt = computed(() => parsePt<PassThrough>(props.pt));
+</script>
+
+<style lang="scss" scoped>
+.cl-badge {
+	@apply flex flex-row items-center justify-center;
+	@apply rounded-full;
+
+	height: 30rpx;
+	min-width: 30rpx;
+	padding: 0 6rpx;
+
+	&__text {
+		@apply text-white;
+		font-size: 18rpx;
+	}
+
+	&--dot {
+		height: 10rpx;
+		width: 10rpx;
+		min-width: 10rpx;
+		padding: 0;
+	}
+
+	&--position {
+		@apply absolute z-10 right-0 top-0;
+		transform: translate(50%, -50%);
+
+		&.cl-badge--dot {
+			transform: translate(-5rpx, 5rpx);
+		}
+	}
+}
+</style>

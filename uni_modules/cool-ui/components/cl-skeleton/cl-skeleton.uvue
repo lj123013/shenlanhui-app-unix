@@ -1,0 +1,186 @@
+<template>
+	<view
+		class="cl-skeleton"
+		:class="[
+			{
+				'is-loading': loading,
+				'is-dark': isDark
+			},
+			pt.className,
+			`cl-skeleton--${props.type}`,
+			`${loading ? `${pt.loading?.className}` : ''}`
+		]"
+		:style="{
+			opacity: loading ? opacity : 1
+		}"
+	>
+		<template v-if="loading">
+			<cl-icon
+				name="image-line"
+				:pt="{
+					className: '!text-surface-400'
+				}"
+				:size="40"
+				v-if="type == 'image'"
+			></cl-icon>
+		</template>
+
+		<template v-else>
+			<slot></slot>
+		</template>
+	</view>
+</template>
+
+<script setup lang="ts">
+import { computed, onMounted, ref, watch, type PropType } from "vue";
+import type { PassThroughProps } from "../../types";
+import { isDark, parsePt } from "@/cool";
+
+defineOptions({
+	name: "cl-skeleton"
+});
+
+const props = defineProps({
+	pt: {
+		type: Object,
+		default: () => ({})
+	},
+	loading: {
+		type: Boolean,
+		default: true
+	},
+	type: {
+		type: String as PropType<"text" | "image" | "circle" | "button">,
+		default: "text"
+	}
+});
+
+type PassThrough = {
+	className?: string;
+	loading?: PassThroughProps;
+};
+
+const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+const opacity = ref(0.3);
+
+let animationId: number = 0;
+let startTime: number;
+
+function start() {
+	if (!props.loading) return;
+
+	startTime = 0;
+
+	function animate(currentTime: number) {
+		if (startTime == 0) {
+			startTime = currentTime;
+		}
+
+		// 计算动画进度 (0-1)
+		const elapsed = currentTime - startTime;
+		const progress = (elapsed % 2000) / 2000;
+
+		// 使用正弦波形创建平滑的闪动效果
+		// 从0.3到1.0之间变化
+		const minOpacity = 0.3;
+		const maxOpacity = 1.0;
+		opacity.value =
+			minOpacity + (maxOpacity - minOpacity) * (Math.sin(progress * Math.PI * 2) * 0.5 + 0.5);
+
+		// 继续动画
+		if (props.loading) {
+			animationId = requestAnimationFrame((time) => {
+				animate(time);
+			});
+		}
+	}
+
+	animationId = requestAnimationFrame((time) => {
+		animate(time);
+	});
+}
+
+/**
+ * 停止闪动动画
+ */
+function stop() {
+	if (animationId != 0) {
+		cancelAnimationFrame(animationId);
+		animationId = 0;
+		startTime = 0;
+	}
+}
+
+onMounted(() => {
+	// #ifdef APP
+	watch(
+		computed(() => props.loading),
+		(val: boolean) => {
+			if (val) {
+				start();
+			} else {
+				stop();
+			}
+		},
+		{
+			immediate: true
+		}
+	);
+	// #endif
+});
+</script>
+
+<style lang="scss" scoped>
+.cl-skeleton {
+	&.is-loading {
+		@apply bg-surface-100 rounded-md;
+
+		&.is-dark {
+			@apply bg-surface-600;
+		}
+
+		// #ifdef MP | H5
+		animation: shimmer-opacity 2s infinite;
+		// #endif
+
+		&.cl-skeleton--text {
+			height: 40rpx;
+			width: 300rpx;
+		}
+
+		&.cl-skeleton--image {
+			@apply flex flex-row items-center justify-center;
+			width: 120rpx;
+			height: 120rpx;
+			border-radius: 16rpx;
+		}
+
+		&.cl-skeleton--circle {
+			@apply rounded-full;
+			width: 120rpx;
+			height: 120rpx;
+		}
+
+		&.cl-skeleton--button {
+			@apply rounded-lg;
+			height: 66rpx;
+			width: 150rpx;
+		}
+	}
+
+	// #ifdef MP | H5
+	@keyframes shimmer-opacity {
+		0% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.3;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	// #endif
+}
+</style>

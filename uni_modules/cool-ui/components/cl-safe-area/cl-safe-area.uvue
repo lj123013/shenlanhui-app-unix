@@ -1,0 +1,52 @@
+<template>
+	<view
+		class="cl-safe-area"
+		:class="[{ 'is-dark': isDark }, pt.className]"
+		:style="{
+			height: height + 'px'
+		}"
+	>
+		<slot></slot>
+	</view>
+</template>
+
+<script setup lang="ts">
+import { isDark, page, parsePt } from "@/cool";
+import { computed, type PropType } from "vue";
+
+defineOptions({
+	name: "cl-safe-area"
+});
+
+const props = defineProps({
+	pt: {
+		type: Object,
+		default: () => ({})
+	},
+	type: {
+		type: String as PropType<"top" | "bottom">,
+		default: "top"
+	}
+});
+
+type PassThrough = {
+	className?: string;
+};
+
+const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+// 高度
+const height = computed(() => {
+	return page.getSafeAreaHeight(props.type) + "px";
+});
+</script>
+
+<style lang="scss" scoped>
+.cl-safe-area {
+	@apply bg-white;
+
+	&.is-dark {
+		@apply bg-surface-900;
+	}
+}
+</style>

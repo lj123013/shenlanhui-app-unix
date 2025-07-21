@@ -1,0 +1,330 @@
+<template>
+	<view
+		class="cl-slider"
+		:class="[
+			{
+				'cl-slider--disabled': disabled
+			},
+			pt.className
+		]"
+	>
+		<view
+			class="cl-slider__inner"
+			:style="{
+				height: blockSize + 'px'
+			}"
+		>
+			<view class="cl-slider__track" :class="[pt.track?.className]">
+				<view
+					class="cl-slider__progress"
+					:style="{
+						width: percentage + '%'
+					}"
+				></view>
+
+				<view class="cl-slider__thumb" :class="[pt.thumb?.className]" :style="thumbStyle">
+				</view>
+			</view>
+
+			<view
+				class="cl-slider__picker"
+				:style="{
+					height: blockSize * 1.5 + 'px'
+				}"
+				@touchstart="onTouchStart"
+				@touchmove="onTouchMove"
+				@touchend="onTouchEnd"
+				@touchcancel="onTouchEnd"
+			></view>
+		</view>
+
+		<cl-text
+			v-if="showValue"
+			:pt="{
+				className: parseClass(['text-center w-[100rpx]', pt.value?.className])
+			}"
+		>
+			{{ value }}
+		</cl-text>
+	</view>
+</template>
+
+<script setup lang="ts">
+import { computed, getCurrentInstance, nextTick, onMounted, ref, watch } from "vue";
+import { parseClass, parsePt } from "@/cool";
+import type { PassThroughProps } from "../../types";
+
+defineOptions({
+	name: "cl-slider"
+});
+
+// 组件属性定义
+const props = defineProps({
+	// 样式穿透对象
+	pt: {
+		type: Object,
+		default: () => ({})
+	},
+	// v-model 绑定的值
+	modelValue: {
+		type: Number,
+		default: 0
+	},
+	// 最小值
+	min: {
+		type: Number,
+		default: 0
+	},
+	// 最大值
+	max: {
+		type: Number,
+		default: 100
+	},
+	// 步长
+	step: {
+		type: Number,
+		default: 1
+	},
+	// 是否禁用
+	disabled: {
+		type: Boolean,
+		default: false
+	},
+	// 滑块的大小（px）
+	blockSize: {
+		type: Number,
+		default: 20
+	},
+	// 是否显示当前值
+	showValue: {
+		type: Boolean,
+		default: false
+	}
+});
+
+const emit = defineEmits(["update:modelValue", "change", "changing"]);
+
+const { proxy } = getCurrentInstance()!;
+
+// 样式穿透类型定义
+type PassThrough = {
+	className?: string;
+	track?: PassThroughProps;
+	progress?: PassThroughProps;
+	thumb?: PassThroughProps;
+	value?: PassThroughProps;
+};
+
+// 计算样式穿透对象
+const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+// 当前滑块的值，受控于v-model
+const value = ref<number>(props.modelValue);
+
+// 轨道宽度（像素）
+const trackWidth = ref<number>(0);
+
+// 轨道左侧距离屏幕的距离（像素）
+const trackLeft = ref<number>(0);
+
+// 计算当前值在[min, max]区间内的百分比
+const percentage = computed(() => {
+	// 公式：(当前值 - 最小值) / (最大值 - 最小值) * 100
+	// 结果为0~100之间的百分比
+	return ((value.value - props.min) / (props.max - props.min)) * 100;
+});
+
+// 计算滑块thumb的样式
+const thumbStyle = computed(() => {
+	const style = new Map<string, string>();
+
+	// 如果轨道宽度还没获取到，先用百分比定位
+	if (trackWidth.value == 0) {
+		style.set("left", `${percentage.value}%`);
+		style.set("width", `${props.blockSize}px`);
+		style.set("height", `${props.blockSize}px`);
+		style.set("transform", `translateX(-50%)`);
+	}
+
+	// 使用像素定位，确保滑块始终在轨道范围内
+	// 可滑动的有效区域 = 轨道宽度 - 滑块宽度
+	const effectiveTrackWidth = trackWidth.value - props.blockSize;
+	// 滑块左边距 = 百分比 * 有效轨道宽度
+	const leftPosition = (percentage.value / 100) * effectiveTrackWidth;
+
+	// 限制在有效范围内
+	const finalLeft = Math.max(0, Math.min(effectiveTrackWidth, leftPosition));
+
+	// 返回样式对象，使用像素定位
+	style.set("left", `${finalLeft}px`);
+	style.set("width", `${props.blockSize}px`);
+	style.set("height", `${props.blockSize}px`);
+
+	return style;
+});
+
+// 获取滑块轨道的宽度和左边距，用于后续触摸计算
+function getTrackInfo() {
+	uni.createSelectorQuery()
+		.in(proxy)
+		.select(".cl-slider__track")
+		.boundingClientRect((node) => {
+			trackWidth.value = (node as NodeInfo).width ?? 0;
+			trackLeft.value = (node as NodeInfo).left ?? 0;
+		})
+		.exec();
+}
+
+// 根据触摸点的clientX计算对应的滑块值
+function calculateValue(clientX: number): number {
+	// 如果轨道宽度为0，直接返回当前值
+	if (trackWidth.value == 0) return value.value;
+
+	// 计算触摸点距离轨道左侧的偏移
+	const offset = clientX - trackLeft.value;
+	// 计算百分比，限制在0~1之间
+	const percentage = Math.max(0, Math.min(1, offset / trackWidth.value));
+	// 计算值区间
+	const range = props.max - props.min;
+	// 计算实际值
+	let val = props.min + percentage * range;
+
+	// 按步长取整
+	if (props.step > 0) {
+		val = Math.round((val - props.min) / props.step) * props.step + props.min;
+	}
+
+	// 限制在[min, max]区间
+	return Math.max(props.min, Math.min(props.max, val));
+}
+
+// 更新滑块的值，并触发v-model和changing事件
+function updateValue(val: number) {
+	if (val !== value.value) {
+		value.value = val;
+		emit("update:modelValue", val);
+		emit("changing", val);
+	}
+}
+
+// 触摸开始事件，获取轨道信息并初步设置值
+function onTouchStart(e: UniTouchEvent) {
+	if (props.disabled) return;
+
+	getTrackInfo();
+
+	// 延迟10ms，确保轨道信息已获取
+	setTimeout(() => {
+		const clientX = e.touches[0].clientX;
+		const value = calculateValue(clientX);
+		updateValue(value);
+	}, 10);
+}
+
+// 触摸移动事件，实时更新滑块值
+function onTouchMove(e: UniTouchEvent) {
+	if (props.disabled) return;
+
+	e.preventDefault();
+	const clientX = e.touches[0].clientX;
+	const value = calculateValue(clientX);
+	updateValue(value);
+}
+
+// 触摸结束事件，触发change事件
+function onTouchEnd() {
+	if (props.disabled) return;
+	emit("change", value.value);
+}
+
+// 监听外部v-model的变化，保持内部value同步
+watch(
+	computed(() => props.modelValue),
+	(val: number) => {
+		if (val !== value.value) {
+			// 限制同步值在[min, max]区间
+			value.value = Math.max(props.min, Math.min(props.max, val));
+		}
+	},
+	{ immediate: true }
+);
+
+// 监听max的变化，确保value不会超过max
+watch(
+	computed(() => props.max),
+	(val: number) => {
+		if (value.value > val) {
+			updateValue(val);
+		}
+	},
+	{
+		immediate: true
+	}
+);
+
+// 监听min的变化，确保value不会小于min
+watch(
+	computed(() => props.min),
+	(val: number) => {
+		if (value.value < val) {
+			updateValue(val);
+		}
+	},
+	{
+		immediate: true
+	}
+);
+
+watch(
+	computed(() => props.showValue),
+	() => {
+		nextTick(() => {
+			getTrackInfo();
+		});
+	}
+);
+
+onMounted(() => {
+	getTrackInfo();
+});
+</script>
+
+<style lang="scss" scoped>
+.cl-slider {
+	@apply flex flex-row items-center w-full;
+	overflow: visible;
+
+	&--disabled {
+		opacity: 0.6;
+		pointer-events: none;
+	}
+
+	&__inner {
+		@apply flex-1 relative h-full flex flex-row items-center;
+		overflow: visible;
+	}
+
+	&__picker {
+		@apply absolute left-0 w-full;
+	}
+
+	&__track {
+		@apply relative w-full rounded-full;
+		@apply bg-surface-200;
+		height: 8rpx;
+		overflow: visible;
+	}
+
+	&__progress {
+		@apply absolute top-0 left-0 h-full rounded-full;
+		@apply bg-primary-400;
+	}
+
+	&__thumb {
+		@apply absolute top-1/2 rounded-full border border-solid border-white;
+		@apply bg-primary-500;
+		transform: translateY(-50%);
+		pointer-events: none;
+	}
+}
+</style>

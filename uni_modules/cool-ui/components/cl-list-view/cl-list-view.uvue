@@ -1,0 +1,541 @@
+<template>
+	<view class="cl-list-view">
+		<cl-index-bar
+			v-if="hasIndex"
+			v-model="activeIndex"
+			:list="indexList"
+			:pt="{
+				className: parseClass([pt.indexBar?.className])
+			}"
+			@change="onIndexChange"
+		>
+		</cl-index-bar>
+
+		<scroll-view
+			class="cl-list-view__scroller"
+			:scroll-top="targetScrollTop"
+			:show-scrollbar="false"
+			direction="vertical"
+			@scroll="onScroll"
+		>
+			<view class="cl-list-view__virtual-list" :style="{ height: listHeight + 'px' }">
+				<view class="cl-list-view__spacer-top" :style="{ height: spacerTopHeight + 'px' }">
+					<slot name="top"></slot>
+				</view>
+
+				<view
+					v-for="item in visibleItems"
+					:key="item.key"
+					class="cl-list-view__virtual-item"
+				>
+					<view
+						class="cl-list-view__header"
+						:class="[
+							{
+								'is-dark': isDark
+							}
+						]"
+						:style="{
+							height: headerHeight + 'px'
+						}"
+						v-if="item.type == 'header'"
+					>
+						<slot name="header" :index="item.data.index!">
+							<cl-text> {{ item.data.label }} </cl-text>
+						</slot>
+					</view>
+
+					<view
+						v-else
+						class="cl-list-view__item"
+						:class="[
+							{
+								'is-dark': isDark
+							},
+							pt.item?.className
+						]"
+						:hover-class="parseClass([[isDark, '!bg-surface-800', '!bg-surface-50']])"
+						:hover-stay-time="50"
+						:style="{
+							height: itemHeight + 'px'
+						}"
+						@tap="onItemTap(item)"
+					>
+						<slot name="item" :data="item.data" :item="item">
+							<view class="cl-list-view__item-inner">
+								<cl-text> {{ item.data.label }} </cl-text>
+							</view>
+						</slot>
+					</view>
+				</view>
+
+				<view
+					class="cl-list-view__spacer-bottom"
+					:style="{ height: spacerBottomHeight + 'px' }"
+				>
+					<slot name="bottom"></slot>
+				</view>
+			</view>
+
+			<cl-empty v-if="noData" :fixed="false"></cl-empty>
+		</scroll-view>
+
+		<view
+			class="cl-list-view__index"
+			:class="[
+				{
+					'is-dark': isDark
+				}
+			]"
+			:style="{ height: headerHeight + 'px' }"
+			v-if="hasIndex"
+		>
+			<slot name="index" :index="indexList[activeIndex]">
+				<cl-text> {{ indexList[activeIndex] }} </cl-text>
+			</slot>
+		</view>
+	</view>
+</template>
+
+<script setup lang="ts">
+import { computed, getCurrentInstance, onMounted, ref, watch, type PropType } from "vue";
+import type { ClListViewItem, PassThroughProps } from "../../types";
+import { isApp, isDark, isEmpty, parseClass, parsePt } from "@/cool";
+
+// 定义虚拟列表项
+type VirtualItem = {
+	// 每一项的唯一标识符,用于v-for的key
+	key: string;
+	// 项目类型:header表示分组头部,item表示列表项
+	type: "header" | "item";
+	// 在整个列表中的索引号
+	index: number;
+	// 该项距离列表顶部的像素距离
+	top: number;
+	// 该项的高度,header和item可以不同
+	height: number;
+	// 该项的具体数据
+	data: ClListViewItem;
+};
+
+type Group = {
+	index: string;
+	children: ClListViewItem[];
+};
+
+defineOptions({
+	name: "cl-list-view"
+});
+
+defineSlots<{
+	// 顶部插槽
+	top(): any;
+	// 分组头部插槽
+	header(props: { index: string }): any;
+	// 列表项插槽
+	item(props: { data: ClListViewItem; item: VirtualItem }): any;
+	// 底部插槽
+	bottom(): any;
+	// 索引插槽
+	index(props: { index: string }): any;
+}>();
+
+const props = defineProps({
+	// 透传样式配置
+	pt: {
+		type: Object,
+		default: () => ({})
+	},
+	// 列表数据源
+	data: {
+		type: Array as PropType<ClListViewItem[]>,
+		default: () => []
+	},
+	// 列表项高度
+	itemHeight: {
+		type: Number,
+		default: 50
+	},
+	// 分组头部高度
+	headerHeight: {
+		type: Number,
+		default: 32
+	},
+	// 列表顶部预留空间高度
+	topHeight: {
+		type: Number,
+		default: 0
+	},
+	// 列表底部预留空间高度
+	bottomHeight: {
+		type: Number,
+		default: 0
+	},
+	// 缓冲区大小,即可视区域外预渲染的项目数量
+	bufferSize: {
+		type: Number,
+		default: isApp() ? 5 : 15
+	},
+	// 是否启用虚拟列表渲染,当数据量大时建议开启以提升性能
+	virtual: {
+		type: Boolean,
+		default: true
+	}
+});
+
+const emit = defineEmits(["item-tap"]);
+
+// 获取当前组件实例,用于后续DOM操作
+const { proxy } = getCurrentInstance()!;
+
+type PassThrough = {
+	className?: string;
+	item?: PassThroughProps;
+	indexBar?: PassThroughProps;
+};
+
+// 解析透传样式配置
+const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+// 当前激活的索引位置,用于控制索引栏的高亮状态
+const activeIndex = ref(0);
+
+// 是否没有数据
+const noData = computed(() => {
+	return isEmpty(props.data);
+});
+
+// 是否包含索引
+const hasIndex = computed(() => {
+	return props.data.every((e) => e.index != null) && !noData.value;
+});
+
+// 计算属性:将原始数据按索引分组
+const data = computed<Group[]>(() => {
+	// 初始化分组数组
+	const group: Group[] = [];
+
+	// 遍历原始数据,按index字段进行分组
+	props.data.forEach((item) => {
+		// 查找是否已存在相同index的分组
+		const index = group.findIndex((group) => group.index == item.index);
+
+		if (index != -1) {
+			// 如果分组已存在,将当前项添加到该分组的列表中
+			group[index].children.push(item);
+		} else {
+			// 如果分组不存在,创建新的分组
+			group.push({
+				index: item.index ?? "",
+				children: [item]
+			} as Group);
+		}
+	});
+
+	return group;
+});
+
+// 计算属性:提取所有分组的索引列表,用于索引栏显示
+const indexList = computed<string[]>(() => {
+	return data.value.map((item) => item.index);
+});
+
+// 计算属性:将分组数据扁平化为虚拟列表项数组
+const virtualItems = computed<VirtualItem[]>(() => {
+	// 初始化虚拟列表数组
+	const items: VirtualItem[] = [];
+
+	// 初始化顶部位置,考虑预留空间
+	let top = props.topHeight;
+	// 初始化索引计数器
+	let index = 0;
+
+	// 遍历每个分组,生成虚拟列表项
+	data.value.forEach((group, groupIndex) => {
+		if (group.index != "") {
+			// 添加分组头部项
+			items.push({
+				key: `header-${groupIndex}`,
+				type: "header",
+				index: index++,
+				top,
+				height: props.headerHeight,
+				data: {
+					label: group.index!,
+					index: group.index
+				}
+			});
+			// 更新top位置
+			top += props.headerHeight;
+		}
+
+		// 添加分组内的所有列表项
+		group.children.forEach((item, itemIndex) => {
+			items.push({
+				key: `item-${groupIndex}-${itemIndex}`,
+				type: "item",
+				index: index++,
+				top,
+				height: props.itemHeight,
+				data: item
+			});
+			// 更新top位置
+			top += props.itemHeight;
+		});
+	});
+
+	return items;
+});
+
+// 计算属性:计算整个列表的总高度
+const listHeight = computed<number>(() => {
+	return (
+		// 所有项目高度之和
+		virtualItems.value.reduce((total, item) => total + item.height, 0) +
+		// 加上顶部预留空间高度
+		props.topHeight +
+		// 加上底部预留空间高度
+		props.bottomHeight
+	);
+});
+
+// 当前滚动位置
+const scrollTop = ref(0);
+
+// 目标滚动位置,用于控制滚动到指定位置
+const targetScrollTop = ref(0);
+
+// 滚动容器的高度
+const scrollerHeight = ref(0);
+
+// 计算属性:获取当前可见区域的列表项
+const visibleItems = computed<VirtualItem[]>(() => {
+	// 如果虚拟列表为空,返回空数组
+	if (isEmpty(virtualItems.value)) {
+		return [];
+	}
+
+	// 如果未启用虚拟列表,直接返回所有项目
+	if (!props.virtual) {
+		return virtualItems.value;
+	}
+
+	// 计算缓冲区高度
+	const bufferHeight = props.bufferSize * props.itemHeight;
+	// 计算可视区域的顶部位置(包含缓冲区)
+	const viewportTop = scrollTop.value - bufferHeight;
+	// 计算可视区域的底部位置(包含缓冲区)
+	const viewportBottom = scrollTop.value + scrollerHeight.value + bufferHeight;
+
+	// 初始化可见项目数组
+	const visible: VirtualItem[] = [];
+
+	// 使用二分查找优化查找起始位置
+	let startIndex = 0;
+	let endIndex = virtualItems.value.length - 1;
+
+	// 二分查找第一个可见项目的索引
+	while (startIndex < endIndex) {
+		const mid = Math.floor((startIndex + endIndex) / 2);
+		const item = virtualItems.value[mid];
+
+		if (item.top + item.height <= viewportTop) {
+			startIndex = mid + 1;
+		} else {
+			endIndex = mid;
+		}
+	}
+
+	// 从找到的起始位置开始,收集所有可见项目
+	for (let i = startIndex; i < virtualItems.value.length; i++) {
+		const item = virtualItems.value[i];
+
+		// 如果项目完全超出视口下方,停止收集
+		if (item.top >= viewportBottom) {
+			break;
+		}
+
+		// 如果项目与视口有交集,添加到可见列表
+		if (item.top + item.height > viewportTop) {
+			visible.push(item);
+		}
+	}
+
+	return visible;
+});
+
+// 计算属性:计算上方占位容器的高度
+const spacerTopHeight = computed<number>(() => {
+	// 如果没有可见项目,返回0
+	if (isEmpty(visibleItems.value)) {
+		return 0;
+	}
+	// 如果未启用虚拟列表,返回0
+	if (!props.virtual) {
+		return 0;
+	}
+	// 返回第一个可见项目的顶部位置
+	return visibleItems.value[0].top;
+});
+
+// 计算属性:计算下方占位容器的高度
+const spacerBottomHeight = computed<number>(() => {
+	// 如果没有可见项目,返回0
+	if (isEmpty(visibleItems.value)) {
+		return 0;
+	}
+	// 如果未启用虚拟列表,返回0
+	if (!props.virtual) {
+		return 0;
+	}
+	// 获取最后一个可见项目
+	const lastItem = visibleItems.value[visibleItems.value.length - 1];
+	// 计算下方占位高度
+	return listHeight.value - (lastItem.top + lastItem.height);
+});
+
+// 存储每个分组头部距离顶部的位置数组
+const tops = ref<number[]>([]);
+
+// 计算并更新所有分组头部的位置
+function getTops() {
+	// 初始化一个空数组
+	const arr = [] as number[];
+
+	// 初始化顶部位置
+	let top = 0;
+
+	// 计算每个分组的顶部位置
+	data.value.forEach((group) => {
+		// 将当前分组头部的位置添加到数组中
+		arr.push(top);
+
+		// 累加当前分组的总高度(头部高度+所有项目高度)
+		top += props.headerHeight + group.children.length * props.itemHeight;
+	});
+
+	tops.value = arr;
+}
+
+// 滚动锁定标志,用于防止滚动时触发不必要的计算
+let scrollLock = false;
+
+// 滚动事件处理函数
+function onScroll(e: UniScrollEvent) {
+	// 更新当前滚动位置
+	scrollTop.value = Math.floor(e.detail.scrollTop);
+
+	// 如果滚动被锁定,直接返回
+	if (scrollLock) return;
+
+	// 根据滚动位置自动更新激活的索引
+	tops.value.forEach((top, index) => {
+		if (scrollTop.value >= top) {
+			activeIndex.value = index;
+		}
+	});
+}
+
+// 行点击事件处理函数
+function onItemTap(item: VirtualItem) {
+	emit("item-tap", item.data);
+}
+
+// 索引栏点击事件处理函数
+function onIndexChange(index: number) {
+	// 锁定滚动,防止触发不必要的计算
+	scrollLock = true;
+
+	// 设置目标滚动位置为对应分组头部的位置
+	targetScrollTop.value = tops.value[index];
+
+	// 300ms后解除滚动锁定
+	setTimeout(() => {
+		scrollLock = false;
+	}, 300);
+}
+
+// 获取滚动容器的高度
+function getScrollerHeight() {
+	setTimeout(() => {
+		uni.createSelectorQuery()
+			.in(proxy)
+			.select(".cl-list-view__scroller")
+			.boundingClientRect()
+			.exec((res) => {
+				if (isEmpty(res)) {
+					return;
+				}
+
+				// 设置容器高度
+				scrollerHeight.value = (res[0] as NodeInfo).height ?? 0;
+			});
+	}, 100);
+}
+
+// 组件挂载后的初始化逻辑
+onMounted(() => {
+	// 获取容器高度
+	getScrollerHeight();
+
+	// 监听数据变化,重新计算位置信息
+	watch(
+		computed(() => props.data),
+		() => {
+			getTops();
+		},
+		{
+			// 立即执行一次
+			immediate: true
+		}
+	);
+});
+</script>
+
+<style lang="scss" scoped>
+.cl-list-view {
+	@apply h-full w-full relative;
+
+	&__scroller {
+		@apply h-full w-full;
+	}
+
+	&__virtual-list {
+		@apply relative w-full;
+	}
+
+	&__spacer-top,
+	&__spacer-bottom {
+		@apply w-full;
+	}
+
+	&__index {
+		@apply flex flex-row items-center bg-white;
+		@apply absolute top-0 left-0 w-full;
+		top: 0px;
+		padding: 0 20rpx;
+		z-index: 11;
+
+		&.is-dark {
+			@apply bg-surface-600 border-none;
+		}
+	}
+
+	&__virtual-item {
+		@apply w-full;
+	}
+
+	&__header {
+		@apply flex flex-row items-center;
+		padding: 0 20rpx;
+		position: relative;
+		z-index: 10;
+	}
+
+	&__item {
+		&-inner {
+			@apply flex flex-row items-center px-[20rpx] h-full;
+		}
+	}
+}
+</style>

@@ -1,0 +1,392 @@
+<template>
+	<cl-page>
+		<cl-topbar fixed :show-back="false" safe-area-top :height="isMp() ? null : 100">
+			<view
+				class="flex flex-row items-center p-3 flex-1 w-full"
+				:class="{
+					'pt-0': isMp()
+				}"
+			>
+				<view class="bg-primary-500 rounded-lg p-[12rpx]">
+					<cl-image
+						src="/static/logo.png"
+						:width="32"
+						:height="32"
+						:show-loading="false"
+					></cl-image>
+				</view>
+
+				<text class="text-2xl text-primary-500 dark:!text-white mr-auto ml-2 flex-1"
+					>cool-unix</text
+				>
+
+				<view
+					class="bg-primary-500 h-8 w-8 rounded-full flex flex-row items-center justify-center"
+					:class="{
+						'mr-24': isMp()
+					}"
+					@tap="setLocale"
+				>
+					<cl-icon name="translate" color="white"></cl-icon>
+				</view>
+			</view>
+		</cl-topbar>
+
+		<view class="p-3">
+			<view class="group" v-for="item in data" :key="item.label">
+				<text class="title dark:!text-surface-50">{{ item.label }}</text>
+
+				<view class="list">
+					<cl-row :gutter="10">
+						<cl-col :span="6" v-for="child in item.children" :key="child.label">
+							<view
+								class="item dark:!bg-surface-800"
+								hover-class="opacity-80"
+								:hover-stay-time="50"
+								@tap="toPath(child.path!)"
+							>
+								<cl-icon :name="child.icon" :size="36"></cl-icon>
+								<cl-text
+									:pt="{
+										className: 'mt-1 !text-xs text-center'
+									}"
+									>{{ child.label }}</cl-text
+								>
+							</view>
+						</cl-col>
+					</cl-row>
+				</view>
+			</view>
+		</view>
+
+		<tabbar></tabbar>
+		<locale-set :ref="refs.set('localeSet')"></locale-set>
+	</cl-page>
+</template>
+
+<script lang="ts" setup>
+import { isMp, router, useRefs } from "@/cool";
+import LocaleSet from "@/components/locale-set.uvue";
+import { t } from "@/locale";
+import { computed } from "vue";
+import Tabbar from "@/components/tabbar.uvue";
+import { useUi } from "@/uni_modules/cool-ui";
+
+const ui = useUi();
+const refs = useRefs();
+
+type Item = {
+	label: string;
+	icon?: string;
+	path?: string;
+	children?: Item[];
+};
+
+const data = computed<Item[]>(() => {
+	return [
+		{
+			label: t("基础组件"),
+			children: [
+				{
+					label: t("文本"),
+					icon: "text",
+					path: "/pages/demo/basic/text"
+				},
+				{
+					label: t("按钮"),
+					icon: "mouse-line",
+					path: "/pages/demo/basic/button"
+				},
+				{
+					label: t("图片"),
+					icon: "image-line",
+					path: "/pages/demo/basic/image"
+				},
+				{
+					label: t("图标"),
+					icon: "puzzle-2-line",
+					path: "/pages/demo/basic/icon"
+				},
+				{
+					label: t("标签"),
+					icon: "price-tag-3-line",
+					path: "/pages/demo/basic/tag"
+				}
+			]
+		},
+		{
+			label: t("表单组件"),
+			children: [
+				{
+					label: t("输入框"),
+					icon: "input-field",
+					path: "/pages/demo/form/input"
+				},
+				{
+					label: t("文本域"),
+					icon: "text-block",
+					path: "/pages/demo/form/textarea"
+				},
+				{
+					label: t("计数器"),
+					icon: "increase-decrease-line",
+					path: "/pages/demo/form/input-number"
+				},
+				{
+					label: t("口令输入"),
+					icon: "t-box-line",
+					path: "/pages/demo/form/input-otp"
+				},
+				{
+					label: t("键盘"),
+					icon: "keyboard-box-line",
+					path: "/pages/demo/form/keyboard"
+				},
+				{
+					label: t("单选框"),
+					icon: "radio-button-line",
+					path: "/pages/demo/form/radio"
+				},
+				{
+					label: t("多选框"),
+					icon: "checkbox-line",
+					path: "/pages/demo/form/checkbox"
+				},
+				{
+					label: t("开关"),
+					icon: "toggle-line",
+					path: "/pages/demo/form/switch"
+				},
+				{
+					label: t("评分"),
+					icon: "star-line",
+					path: "/pages/demo/form/rate"
+				},
+				{
+					label: t("滑块"),
+					icon: "equalizer-2-line",
+					path: "/pages/demo/form/slider"
+				},
+				{
+					label: t("选择器"),
+					icon: "dropdown-list",
+					path: "/pages/demo/form/select"
+				},
+				{
+					label: t("日期选择器"),
+					icon: "calendar-line",
+					path: "/pages/demo/form/select-date"
+				},
+				{
+					label: t("时间选择器"),
+					icon: "time-line",
+					path: "/pages/demo/form/select-time"
+				},
+				{
+					label: t("级联选择器"),
+					icon: "stacked-view",
+					path: "/pages/demo/form/cascader"
+				},
+				{
+					label: t("文件上传"),
+					icon: "file-upload-line",
+					path: "/pages/demo/form/upload"
+				}
+			]
+		},
+		{
+			label: t("布局组件"),
+			children: [
+				{
+					label: t("弹性布局"),
+					icon: "layout-2-line",
+					path: "/pages/demo/layout/flex"
+				},
+				{
+					label: t("标签页"),
+					icon: "function-add-line",
+					path: "/pages/demo/layout/tabs"
+				},
+				{
+					label: t("折叠面板"),
+					icon: "collapse-vertical-line",
+					path: "/pages/demo/layout/collapse"
+				},
+				{
+					label: t("吸顶"),
+					icon: "align-top",
+					path: "/pages/demo/layout/sticky"
+				},
+				{
+					label: t("导航栏"),
+					icon: "layout-top-line",
+					path: "/pages/demo/layout/topbar"
+				},
+				{
+					label: t("底部视图"),
+					icon: "layout-bottom-line",
+					path: "/pages/demo/layout/footer"
+				},
+				{
+					label: t("悬浮视图"),
+					icon: "picture-in-picture-line",
+					path: "/pages/demo/layout/float-view"
+				}
+			]
+		},
+		{
+			label: t("数据展示"),
+			children: [
+				{
+					label: t("头像"),
+					icon: "account-circle-line",
+					path: "/pages/demo/data/avatar"
+				},
+				{
+					label: t("列表"),
+					icon: "list-check",
+					path: "/pages/demo/data/list"
+				},
+				{
+					label: t("列表视图"),
+					icon: "list-view",
+					path: "/pages/demo/data/list-view"
+				},
+				{
+					label: t("瀑布流"),
+					icon: "layout-column-line",
+					path: "/pages/demo/data/waterfall"
+				},
+				{
+					label: t("轮播图"),
+					icon: "carousel-view",
+					path: "/pages/demo/data/banner"
+				},
+				{
+					label: t("分页"),
+					icon: "page-separator",
+					path: "/pages/demo/data/pagination"
+				},
+				{
+					label: t("时间轴"),
+					icon: "timeline-view",
+					path: "/pages/demo/data/timeline"
+				}
+			]
+		},
+		{
+			label: t("状态组件"),
+			children: [
+				{
+					label: t("角标"),
+					icon: "notification-badge-line",
+					path: "/pages/demo/status/badge"
+				},
+				{
+					label: t("通知栏"),
+					icon: "error-warning-line",
+					path: "/pages/demo/status/noticebar"
+				},
+				{
+					label: t("倒计时"),
+					icon: "timer-line",
+					path: "/pages/demo/status/countdown"
+				},
+				{
+					label: t("进度条"),
+					icon: "percent-line",
+					path: "/pages/demo/status/progress"
+				},
+				{
+					label: t("骨架图"),
+					icon: "shadow-line",
+					path: "/pages/demo/status/skeleton"
+				},
+				{
+					label: t("加载更多"),
+					icon: "loader-4-line",
+					path: "/pages/demo/status/loadmore"
+				},
+				{
+					label: t("数字滚动"),
+					icon: "arrow-up-box-line",
+					path: "/pages/demo/status/rolling-number"
+				}
+			]
+		},
+		{
+			label: t("反馈组件"),
+			children: [
+				{
+					label: t("操作菜单"),
+					icon: "menu-line",
+					path: "/pages/demo/feedback/action-sheet"
+				},
+				{
+					label: t("弹窗"),
+					icon: "chat-4-line",
+					path: "/pages/demo/feedback/popup"
+				},
+				{
+					label: t("确认框"),
+					icon: "chat-check-line",
+					path: "/pages/demo/feedback/confirm"
+				},
+				{
+					label: t("提示框"),
+					icon: "message-2-line",
+					path: "/pages/demo/feedback/toast"
+				}
+			]
+		},
+		{
+			label: "其他",
+			children: [
+				{
+					label: "QRCode",
+					icon: "qr-code-line",
+					path: "/pages/demo/other/qrcode"
+				},
+				{
+					label: "DayUts",
+					icon: "timer-2-line",
+					path: "/pages/demo/other/day-uts"
+				},
+				{
+					label: "Vibrate",
+					icon: "volume-vibrate-line",
+					path: "/pages/demo/other/vibrate"
+				}
+			]
+		}
+	];
+});
+
+function toPath(path: string) {
+	router.to(path);
+}
+
+function setLocale() {
+	refs.open("localeSet");
+}
+</script>
+
+<style lang="scss" scoped>
+.group {
+	@apply mb-10;
+
+	.title {
+		@apply text-sm mb-2 ml-1 text-surface-500;
+	}
+
+	.list {
+		.item {
+			@apply flex flex-col items-center;
+			@apply rounded-xl bg-white p-2;
+			height: 140rpx;
+			margin-bottom: 10rpx;
+			padding-top: 36rpx;
+		}
+	}
+}
+</style>

@@ -1,0 +1,126 @@
+<template>
+	<cl-popup
+		v-model="visible"
+		direction="center"
+		:title="t('切换语言')"
+		:pt="{
+			className: '!rounded-3xl'
+		}"
+	>
+		<view class="locale-set w-[500rpx] p-4 pt-0">
+			<view
+				v-for="item in list"
+				:key="item.value"
+				class="p-2 px-3 my-1 rounded-xl flex flex-row items-center border border-solid border-surface-200"
+				:class="{
+					'!border-surface-600': isDark,
+					'!bg-primary-500 !border-primary-500': active == item.value
+				}"
+				@tap="change(item.value)"
+			>
+				<cl-text
+					:pt="{
+						className: parseClass([
+							'flex-1',
+							[isDark || active == item.value, '!text-white', '!text-surface-700']
+						])
+					}"
+					>{{ item.label }}</cl-text
+				>
+
+				<cl-icon
+					name="checkbox-circle-line"
+					color="white"
+					v-if="active == item.value"
+				></cl-icon>
+			</view>
+
+			<view class="flex flex-row mt-4">
+				<cl-button
+					size="large"
+					text
+					border
+					type="light"
+					:pt="{
+						className: 'flex-1 !rounded-full h-[80rpx]'
+					}"
+					@tap="close"
+					>{{ t("取消") }}</cl-button
+				>
+				<cl-button
+					size="large"
+					:pt="{
+						className: 'flex-1 !rounded-full h-[80rpx]'
+					}"
+					@tap="confirm"
+					>{{ t("确定") }}</cl-button
+				>
+			</view>
+		</view>
+	</cl-popup>
+</template>
+
+<script setup lang="ts">
+import { isDark, parseClass } from "@/cool";
+import { locale, t, setLocale } from "@/locale";
+import { ref } from "vue";
+
+type Item = {
+	label: string;
+	value: string;
+};
+
+// 语言列表
+const list = [
+	{
+		label: "简体中文",
+		value: "zh-cn"
+	},
+	{
+		label: "English",
+		value: "en"
+	},
+	{
+		label: "Español",
+		value: "es"
+	}
+] as Item[];
+
+// 当前语言
+const active = ref(locale.value);
+
+// 是否可见
+const visible = ref(false);
+
+// 打开
+function open() {
+	visible.value = true;
+	active.value = locale.value;
+
+	if (["zh-Hans", "zh"].some((e) => e == locale.value)) {
+		active.value = "zh-cn";
+	}
+}
+
+// 关闭
+function close() {
+	visible.value = false;
+}
+
+// 切换语言
+function change(value: string) {
+	active.value = value;
+}
+
+// 确定
+function confirm() {
+	setLocale(active.value);
+	close();
+}
+
+defineExpose({
+	visible,
+	open,
+	close
+});
+</script>

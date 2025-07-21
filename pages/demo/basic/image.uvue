@@ -1,0 +1,64 @@
+<template>
+	<cl-page>
+		<view class="p-3">
+			<demo-item :label="t('基础用法')">
+				<cl-image :src="url"></cl-image>
+			</demo-item>
+
+			<demo-item :label="t('不同裁剪')">
+				<view class="flex flex-row justify-between">
+					<view class="flex flex-col items-center justify-center">
+						<cl-image :src="url" mode="aspectFill"></cl-image>
+						<cl-text class="!text-sm mt-1">aspectFill</cl-text>
+					</view>
+
+					<view class="flex flex-col items-center justify-center">
+						<cl-image :src="url" mode="aspectFit"></cl-image>
+						<cl-text class="!text-sm mt-1">aspectFit</cl-text>
+					</view>
+
+					<view class="flex flex-col items-center justify-center">
+						<cl-image :src="url" mode="heightFix"></cl-image>
+						<cl-text class="!text-sm mt-1">heightFix</cl-text>
+					</view>
+
+					<view class="flex flex-col items-center justify-center">
+						<cl-image :src="url" mode="scaleToFill"></cl-image>
+						<cl-text class="!text-sm mt-1">scaleToFill</cl-text>
+					</view>
+				</view>
+			</demo-item>
+
+			<demo-item :label="t('点击可预览')">
+				<cl-image :src="url" preview></cl-image>
+			</demo-item>
+
+			<demo-item :label="t('失败时显示')">
+				<cl-image src="url"></cl-image>
+			</demo-item>
+
+			<demo-item :label="t('加载中')">
+				<cl-image src=""></cl-image>
+			</demo-item>
+
+			<demo-item :label="t('自定义')">
+				<cl-image
+					:src="url"
+					:height="200"
+					:width="300"
+					:pt="{
+						className: '!rounded-none border border-solid border-surface-200 p-3'
+					}"
+				></cl-image>
+			</demo-item>
+		</view>
+	</cl-page>
+</template>
+
+<script lang="ts" setup>
+import { ref } from "vue";
+import DemoItem from "../components/item.uvue";
+import { t } from "@/locale";
+
+const url = ref("https://uni-docs.cool-js.com/demo/pages/demo/static/bg1.png");
+</script>

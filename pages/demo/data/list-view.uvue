@@ -1,0 +1,58 @@
+<template>
+	<cl-page>
+		<view class="page">
+			<view class="p-3 pb-0">
+				<demo-item>
+					<cl-text
+						>采用虚拟列表技术实现高性能渲染，支持海量数据无限滚动，当前演示数据规模：{{
+							data.length
+						}}条</cl-text
+					>
+				</demo-item>
+			</view>
+
+			<view class="list">
+				<cl-list-view
+					:data="data"
+					:pt="{
+						indexBar: {
+							className: '!fixed'
+						}
+					}"
+				>
+				</cl-list-view>
+			</view>
+		</view>
+	</cl-page>
+</template>
+
+<script lang="ts" setup>
+import { request } from "@/cool";
+import DemoItem from "../components/item.uvue";
+import { useListView, type ClListViewItem } from "@/uni_modules/cool-ui";
+import { ref } from "vue";
+
+const data = ref<ClListViewItem[]>([]);
+
+onReady(() => {
+	request<UTSJSONObject[]>({
+		url: "https://cool-service.oss-cn-shanghai.aliyuncs.com/app%2Fbase%2Fb1957e07f1254de99f44b5a711f277d2_pca_flat.json"
+	})
+		.then((res) => {
+			data.value = useListView(res);
+		})
+		.catch((err) => {
+			console.error(err);
+		});
+});
+</script>
+
+<style lang="scss" scoped>
+.page {
+	height: 100%;
+
+	.list {
+		flex: 1;
+	}
+}
+</style>

@@ -1,0 +1,50 @@
+<script lang="ts">
+import { useStore } from "@/cool";
+
+// #ifdef H5
+import TouchEmulator from "hammer-touchemulator";
+TouchEmulator();
+// #endif
+
+export default {
+	onLaunch: function () {
+		console.log("App Launch");
+	},
+	onShow: function () {
+		console.log("App Show");
+
+		const { dict, user } = useStore();
+
+		// 获取用户信息，未登录不执行
+		user.get();
+
+		// 刷新字典数据
+		dict.refresh(null);
+	},
+	onHide: function () {
+		console.log("App Hide");
+	},
+	onExit: function () {
+		console.log("App Exit");
+	}
+};
+</script>
+
+<style lang="scss">
+@import url("static/index.scss");
+@import url("uni_modules/cool-ui/index.scss");
+
+.safe-area-top {
+	margin-top: env(safe-area-inset-top);
+}
+
+.uni-tabbar {
+	// #ifdef H5
+	display: none;
+	// #endif
+
+	.uni-tabbar__icon {
+		margin-top: 0;
+	}
+}
+</style>
