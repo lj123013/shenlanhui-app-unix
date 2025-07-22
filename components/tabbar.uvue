@@ -14,7 +14,7 @@
 				@tap="router.to(item.pagePath)"
 			>
 				<cl-image
-					:src="router.path() == item.pagePath ? item.icon2 : item.icon"
+					:src="path == item.pagePath ? item.icon2 : item.icon"
 					:height="56"
 					:width="56"
 				></cl-image>
@@ -24,11 +24,7 @@
 					:pt="{
 						className: parseClass([
 							'!text-xs mt-1',
-							[
-								router.path() == item.pagePath,
-								'!text-primary-500',
-								'!text-surface-400'
-							]
+							[path == item.pagePath, '!text-primary-500', '!text-surface-400']
 						])
 					}"
 					>{{ t(item.text!) }}</cl-text
@@ -49,6 +45,8 @@ type Item = {
 	pagePath: string;
 	text: string | null;
 };
+
+const path = computed(() => router.path());
 
 // tabbar 列表
 const list = computed<Item[]>(() => {

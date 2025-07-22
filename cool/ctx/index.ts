@@ -19,6 +19,7 @@ export type TabBarItem = {
 };
 
 export type TabBar = {
+	custom?: boolean;
 	color?: string;
 	selectedColor?: string;
 	backgroundColor?: string;
