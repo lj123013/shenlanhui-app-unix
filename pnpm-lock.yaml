@@ -25,8 +25,8 @@ importers:
         specifier: ^1.1.4
         version: 1.1.4
       '@cool-vue/vite-plugin':
-        specifier: ^8.2.2
-        version: 8.2.2
+        specifier: ^8.2.3
+        version: 8.2.3
       '@dcloudio/types':
         specifier: ^3.4.16
         version: 3.4.16
@@ -85,8 +85,8 @@ packages:
     resolution: {integrity: sha512-1OKM1PnxMYzpzSTC7RjqnEcpwWKhAAns5/YJ5yi3RJY5vRRV6ZA0MbeMYvgNLLkSg5qEsUrC0lanKyX26B0R6g==}
     hasBin: true
 
-  '@cool-vue/vite-plugin@8.2.2':
-    resolution: {integrity: sha512-Fk3lKXXZJdP72Fnd9ndv95uN6kTQurvEHikU9AjD4Y6fLAgY4z+ljfGd3yRmMZWdN+bqD6OHVIiOm4ZOsAMAyQ==}
+  '@cool-vue/vite-plugin@8.2.3':
+    resolution: {integrity: sha512-jPI24xSXXWltHkxTRQzAn09qpnhfSBCOqWZtPNRCQ8fZX4BnEgw4FMXSQanMdVmfTMQ1Gbljb2nJCTqbDyxRWg==}
 
   '@dcloudio/types@3.4.16':
     resolution: {integrity: sha512-gJIr1OWtePTDDdjtp8Kh72S/ZGLunoSfHiUvRtXhBmAFNkDWuAKFO90hv62k3GYN/st04xUBQNtBfvhu/YHjww==}
@@ -1370,7 +1370,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@cool-vue/vite-plugin@8.2.2':
+  '@cool-vue/vite-plugin@8.2.3':
     dependencies:
       '@vue/compiler-sfc': 3.5.17
       axios: 1.10.0
