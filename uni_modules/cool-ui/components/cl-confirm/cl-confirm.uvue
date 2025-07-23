@@ -13,9 +13,19 @@
 		@closed="onClosed"
 	>
 		<view class="cl-confirm">
-			<text class="cl-confirm__title">{{ config.title }}</text>
+			<cl-text
+				:pt="{
+					className: parseClass(['cl-confirm__title text-lg text-center font-bold mb-2'])
+				}"
+				>{{ config.title }}</cl-text
+			>
 
-			<text class="cl-confirm__message">{{ config.message }}</text>
+			<cl-text
+				:pt="{
+					className: parseClass(['cl-confirm__message text-md text-center mb-8'])
+				}"
+				>{{ config.message }}</cl-text
+			>
 
 			<view class="cl-confirm__actions">
 				<cl-button
@@ -51,6 +61,7 @@
 import { ref, reactive } from "vue";
 import type { ClConfirmAction, ClConfirmOptions } from "../../types";
 import { t } from "@/locale";
+import { parseClass } from "@/cool";
 
 // 控制弹窗显示/隐藏
 const visible = ref(false);
@@ -175,14 +186,6 @@ defineExpose({
 <style lang="scss" scoped>
 .cl-confirm {
 	@apply p-4;
-
-	&__title {
-		@apply text-lg text-center text-surface-700 font-bold mb-2;
-	}
-
-	&__message {
-		@apply text-md text-center text-surface-700 mb-8;
-	}
 
 	&__actions {
 		@apply flex flex-row items-center justify-center;
