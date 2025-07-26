@@ -612,6 +612,12 @@ function onTouchCancel() {
 		&.cl-button--hover {
 			@apply bg-surface-100;
 		}
+
+		&.is-dark {
+			&.cl-button--hover {
+				@apply bg-surface-700;
+			}
+		}
 	}
 
 	&--dark {

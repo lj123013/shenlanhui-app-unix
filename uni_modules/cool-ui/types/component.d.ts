@@ -138,3 +138,7 @@ declare type ClWaterfallComponentPublicInstance = {
 declare type ClQrcodeComponentPublicInstance = {
 	toPng: () => Promise<string>;
 };
+
+declare type ClProgressCircleComponentPublicInstance = {
+	animate: (value: number) => void;
+};

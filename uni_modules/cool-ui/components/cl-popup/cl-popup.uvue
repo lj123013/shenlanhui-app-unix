@@ -80,6 +80,7 @@
 								'absolute right-[24rpx] !text-surface-400 dark:!text-surface-50'
 						}"
 						@tap="close"
+						@touchmove.stop
 						v-if="isOpen && showClose"
 					></cl-icon>
 				</view>

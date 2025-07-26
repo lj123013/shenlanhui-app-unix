@@ -325,7 +325,7 @@ export type UserLogin = {
 	mp(data?: any): Promise<any>;
 };
 
-export type DictKey = "brand" | "occupation" | "refund" | "ccc";
+export type DictKey = "brand" | "occupation";
 
 export type UserInterface = {
 	address: UserAddress;

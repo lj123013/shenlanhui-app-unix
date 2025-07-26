@@ -310,6 +310,12 @@
 					}
 				},
 				{
+					"path": "status/progress-circle",
+					"style": {
+						"navigationBarTitleText": "ProgressCircle 圆形进度条"
+					}
+				},
+				{
 					"path": "status/skeleton",
 					"style": {
 						"navigationBarTitleText": "Skeleton 骨架图"

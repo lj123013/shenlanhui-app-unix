@@ -13,8 +13,8 @@
 				<cl-progress :value="30" :stroke-width="20"></cl-progress>
 			</demo-item>
 
-			<demo-item :label="t('显示文本')">
-				<cl-progress :value="75" show-text></cl-progress>
+			<demo-item :label="t('不显示文本')">
+				<cl-progress :value="75" :show-text="false"></cl-progress>
 			</demo-item>
 		</view>
 	</cl-page>

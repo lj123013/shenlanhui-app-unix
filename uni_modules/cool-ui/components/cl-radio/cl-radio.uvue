@@ -54,13 +54,13 @@ defineOptions({
 
 // 定义组件属性
 const props = defineProps({
-	modelValue: {
-		type: null
-	},
 	// 透传样式配置
 	pt: {
 		type: Object,
 		default: () => ({})
+	},
+	modelValue: {
+		type: null
 	},
 	// 选中时的图标
 	activeIcon: {

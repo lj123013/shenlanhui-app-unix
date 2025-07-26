@@ -693,5 +693,7 @@ export const remixicon = {
 	"user-2-fill": "f253",
 	"user-2-line": "f254",
 	"shield-user-line": "f10c",
-	"shield-user-fill": "f10b"
+	"shield-user-fill": "f10b",
+	"circle-line": "f3c2",
+	"circle-fill": "f3c1"
 };

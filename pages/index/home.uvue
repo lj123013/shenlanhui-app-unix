@@ -293,9 +293,19 @@ const data = computed<Item[]>(() => {
 					path: "/pages/demo/status/countdown"
 				},
 				{
+					label: t("数字滚动"),
+					icon: "arrow-up-box-line",
+					path: "/pages/demo/status/rolling-number"
+				},
+				{
 					label: t("进度条"),
-					icon: "percent-line",
+					icon: "subtract-line",
 					path: "/pages/demo/status/progress"
+				},
+				{
+					label: t("圆形进度条"),
+					icon: "circle-line",
+					path: "/pages/demo/status/progress-circle"
 				},
 				{
 					label: t("骨架图"),
@@ -306,11 +316,6 @@ const data = computed<Item[]>(() => {
 					label: t("加载更多"),
 					icon: "loader-4-line",
 					path: "/pages/demo/status/loadmore"
-				},
-				{
-					label: t("数字滚动"),
-					icon: "arrow-up-box-line",
-					path: "/pages/demo/status/rolling-number"
 				}
 			]
 		},

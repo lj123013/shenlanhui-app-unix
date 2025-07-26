@@ -36,7 +36,8 @@ import type { ClPageUiProps } from "./components/cl-page-ui/props";
 import type { ClPaginationProps, ClPaginationPassThrough } from "./components/cl-pagination/props";
 import type { ClSelectPickerViewProps } from "./components/cl-select-picker-view/props";
 import type { ClPopupProps, ClPopupPassThrough, ClPopupHeaderPassThrough } from "./components/cl-popup/props";
-import type { ClProgressProps } from "./components/cl-progress/props";
+import type { ClProgressProps, ClProgressPassThrough } from "./components/cl-progress/props";
+import type { ClProgressCircleProps, ClProgressCirclePassThrough } from "./components/cl-progress-circle/props";
 import type { ClQrcodeProps } from "./components/cl-qrcode/props";
 import type { ClRadioProps, ClRadioPassThrough } from "./components/cl-radio/props";
 import type { ClRateProps, ClRatePassThrough } from "./components/cl-rate/props";
@@ -101,6 +102,7 @@ declare module "vue" {
 		"cl-select-picker-view": (typeof import('./components/cl-select-picker-view/cl-select-picker-view.uvue')['default']) & import('vue').DefineComponent<ClSelectPickerViewProps>;
 		"cl-popup": (typeof import('./components/cl-popup/cl-popup.uvue')['default']) & import('vue').DefineComponent<ClPopupProps>;
 		"cl-progress": (typeof import('./components/cl-progress/cl-progress.uvue')['default']) & import('vue').DefineComponent<ClProgressProps>;
+		"cl-progress-circle": (typeof import('./components/cl-progress-circle/cl-progress-circle.uvue')['default']) & import('vue').DefineComponent<ClProgressCircleProps>;
 		"cl-qrcode": (typeof import('./components/cl-qrcode/cl-qrcode.uvue')['default']) & import('vue').DefineComponent<ClQrcodeProps>;
 		"cl-radio": (typeof import('./components/cl-radio/cl-radio.uvue')['default']) & import('vue').DefineComponent<ClRadioProps>;
 		"cl-rate": (typeof import('./components/cl-rate/cl-rate.uvue')['default']) & import('vue').DefineComponent<ClRateProps>;

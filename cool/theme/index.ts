@@ -1,7 +1,7 @@
 import { computed, ref } from "vue";
 import uniTheme from "@/theme.json";
 import { router } from "../router";
-import { config } from "@/config";
+import { ctx } from "../ctx";
 
 // 主题类型定义，仅支持 light 和 dark
 type Theme = "light" | "dark";
@@ -39,6 +39,19 @@ export function getStyle(key: string): string | null {
 
 	return null;
 }
+
+/**
+ * 获取颜色
+ * @param name 颜色名称
+ * @returns 颜色值
+ */
+export const getColor = (name: string) => {
+	if (ctx.color == null) {
+		return "";
+	}
+
+	return ctx.color[name] as string;
+};
 
 /**
  * 获取 uniapp 主题配置

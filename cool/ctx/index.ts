@@ -45,6 +45,7 @@ export type Ctx = {
 	tabBar: TabBar;
 	subPackages: SubPackage[];
 	SAFE_CHAR_MAP_LOCALE: string[][];
+	color: UTSJSONObject;
 };
 
 // 初始化 ctx 对象，不可修改！！

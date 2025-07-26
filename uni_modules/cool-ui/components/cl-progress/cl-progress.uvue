@@ -1,14 +1,27 @@
 <template>
-	<view class="cl-progress">
-		<view class="cl-progress__outer" :style="outerStyle">
-			<view class="cl-progress__inner" :style="innerStyle"></view>
+	<view class="cl-progress" :class="[pt.className]">
+		<view
+			class="cl-progress__outer"
+			:class="[
+				{
+					'!bg-surface-700': isDark && props.unColor == null
+				},
+				pt.outer?.className
+			]"
+			:style="outerStyle"
+		>
+			<view
+				class="cl-progress__inner"
+				:class="[pt.inner?.className]"
+				:style="innerStyle"
+			></view>
 		</view>
 
 		<slot name="text">
 			<cl-rolling-number
 				:model-value="value"
 				:pt="{
-					className: 'w-[100rpx] text-center'
+					className: parseClass(['w-[100rpx] text-center', pt.text?.className])
 				}"
 				unit="%"
 				v-if="showText"
@@ -20,13 +33,19 @@
 
 <script lang="ts" setup>
 import { computed, getCurrentInstance, onMounted, ref, watch } from "vue";
-import { parseRpx } from "@/cool";
+import { isDark, parseClass, parsePt, parseRpx } from "@/cool";
+import type { PassThroughProps } from "../../types";
 
 defineOptions({
 	name: "cl-progress"
 });
 
 const props = defineProps({
+	// 透传样式配置
+	pt: {
+		type: Object,
+		default: () => ({})
+	},
 	// 数值
 	value: {
 		type: Number,
@@ -55,6 +74,17 @@ const props = defineProps({
 });
 
 const { proxy } = getCurrentInstance()!;
+
+// 透传样式类型定义
+type PassThrough = {
+	className?: string;
+	outer?: PassThroughProps;
+	inner?: PassThroughProps;
+	text?: PassThroughProps;
+};
+
+// 解析透传样式配置
+const pt = computed(() => parsePt<PassThrough>(props.pt));
 
 // 当前值
 const value = ref(0);
