@@ -2,6 +2,7 @@ import { computed, ref } from "vue";
 import uniTheme from "@/theme.json";
 import { router } from "../router";
 import { ctx } from "../ctx";
+import { isNull } from "../utils";
 
 // 主题类型定义，仅支持 light 和 dark
 type Theme = "light" | "dark";
@@ -46,7 +47,7 @@ export function getStyle(key: string): string | null {
  * @returns 颜色值
  */
 export const getColor = (name: string) => {
-	if (ctx.color == null) {
+	if (isNull(ctx.color)) {
 		return "";
 	}
 

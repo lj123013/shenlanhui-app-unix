@@ -271,6 +271,11 @@ const data = computed<Item[]>(() => {
 					label: t("时间轴"),
 					icon: "timeline-view",
 					path: "/pages/demo/data/timeline"
+				},
+				{
+					label: t("拖拽"),
+					icon: "drag-move-line",
+					path: "/pages/demo/data/draggable"
 				}
 			]
 		},

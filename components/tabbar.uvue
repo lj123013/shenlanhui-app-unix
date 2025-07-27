@@ -61,7 +61,9 @@ const list = computed<Item[]>(() => {
 });
 
 // 隐藏原生 tabBar
+// #ifndef MP
 uni.hideTabBar();
+// #endif
 </script>
 
 <style lang="scss" scoped>

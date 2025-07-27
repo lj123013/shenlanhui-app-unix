@@ -286,6 +286,12 @@
 					}
 				},
 				{
+					"path": "data/draggable",
+					"style": {
+						"navigationBarTitleText": "Draggable 拖拽"
+					}
+				},
+				{
 					"path": "status/badge",
 					"style": {
 						"navigationBarTitleText": "Badge 角标"

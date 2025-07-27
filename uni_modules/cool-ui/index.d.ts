@@ -12,6 +12,7 @@ import type { ClCheckboxProps, ClCheckboxPassThrough } from "./components/cl-che
 import type { ClColProps, ClColPassThrough } from "./components/cl-col/props";
 import type { ClCollapseProps, ClCollapsePassThrough } from "./components/cl-collapse/props";
 import type { ClCountdownProps, ClCountdownPassThrough } from "./components/cl-countdown/props";
+import type { ClDraggableProps, ClDraggablePassThrough } from "./components/cl-draggable/props";
 import type { ClFloatViewProps } from "./components/cl-float-view/props";
 import type { ClFooterProps, ClFooterPassThrough } from "./components/cl-footer/props";
 import type { ClIconProps, ClIconPassThrough } from "./components/cl-icon/props";
@@ -77,6 +78,7 @@ declare module "vue" {
 		"cl-col": (typeof import('./components/cl-col/cl-col.uvue')['default']) & import('vue').DefineComponent<ClColProps>;
 		"cl-collapse": (typeof import('./components/cl-collapse/cl-collapse.uvue')['default']) & import('vue').DefineComponent<ClCollapseProps>;
 		"cl-countdown": (typeof import('./components/cl-countdown/cl-countdown.uvue')['default']) & import('vue').DefineComponent<ClCountdownProps>;
+		"cl-draggable": (typeof import('./components/cl-draggable/cl-draggable.uvue')['default']) & import('vue').DefineComponent<ClDraggableProps>;
 		"cl-float-view": (typeof import('./components/cl-float-view/cl-float-view.uvue')['default']) & import('vue').DefineComponent<ClFloatViewProps>;
 		"cl-footer": (typeof import('./components/cl-footer/cl-footer.uvue')['default']) & import('vue').DefineComponent<ClFooterProps>;
 		"cl-icon": (typeof import('./components/cl-icon/cl-icon.uvue')['default']) & import('vue').DefineComponent<ClIconProps>;

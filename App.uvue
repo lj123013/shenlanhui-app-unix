@@ -3,6 +3,7 @@ import { useStore } from "@/cool";
 
 // #ifdef H5
 import TouchEmulator from "hammer-touchemulator";
+// 模拟移动端调试的触摸事件
 TouchEmulator();
 // #endif
 
