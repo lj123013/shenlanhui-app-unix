@@ -1,13 +1,13 @@
 <template>
 	<cl-page>
 		<view class="p-3 overflow-visible">
-			<demo-item label="单列排序">
+			<demo-item :label="t('单列排序')">
 				<cl-draggable v-model="list">
 					<template #item="{ item, index }">
 						<view
-							class="flex flex-row items-center p-3 bg-surface-100 rounded-lg mb-2"
+							class="flex flex-row items-center p-3 bg-surface-100 rounded-lg mb-2 dark:!bg-surface-700"
 							:class="{
-								'!bg-surface-300': item['disabled']
+								'opacity-50': item['disabled']
 							}"
 						>
 							<cl-text>{{ (item as UTSJSONObject).label }}</cl-text>
@@ -16,7 +16,7 @@
 				</cl-draggable>
 			</demo-item>
 
-			<demo-item label="结合列表使用">
+			<demo-item :label="t('结合列表使用')">
 				<cl-list border>
 					<cl-draggable v-model="list2">
 						<template #item="{ item, index, dragging, dragIndex }">
@@ -36,13 +36,13 @@
 				</cl-list>
 			</demo-item>
 
-			<demo-item label="多列排序">
+			<demo-item :label="t('多列排序')">
 				<cl-draggable v-model="list3" :columns="4">
 					<template #item="{ item, index }">
 						<view
-							class="flex flex-row items-center justify-center p-3 bg-surface-100 rounded-lg m-1"
+							class="flex flex-row items-center justify-center p-3 bg-surface-100 rounded-lg m-1 dark:!bg-surface-700"
 							:class="{
-								'!bg-surface-300': (item as UTSJSONObject).disabled
+								'opacity-50': item['disabled']
 							}"
 						>
 							<cl-text>{{ (item as UTSJSONObject).label }}</cl-text>
@@ -51,7 +51,7 @@
 				</cl-draggable>
 			</demo-item>
 
-			<demo-item label="结合图片使用">
+			<demo-item :label="t('结合图片使用')">
 				<cl-draggable v-model="list4" :columns="4">
 					<template #item="{ item, index }">
 						<view class="p-[2px]">
@@ -72,6 +72,7 @@
 </template>
 
 <script lang="ts" setup>
+import { t } from "@/locale";
 import DemoItem from "../components/item.uvue";
 import { ref } from "vue";
 

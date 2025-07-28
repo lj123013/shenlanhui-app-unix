@@ -108,7 +108,7 @@ const props = defineProps({
 	// 上传按钮显示的文本
 	text: {
 		type: String,
-		default: t("上传/拍摄")
+		default: () => t("上传/拍摄")
 	},
 	// 图片压缩方式：original原图，compressed压缩图
 	sizeType: {

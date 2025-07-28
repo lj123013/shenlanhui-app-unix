@@ -30,9 +30,14 @@
 				></cl-select-date>
 			</demo-item>
 
+			<demo-item :label="t('范围选择')">
+				<cl-text :pt="{ className: 'mb-3' }">{{ form.date5 }}</cl-text>
+				<cl-select-date v-model:values="form.date5" type="date" rangeable></cl-select-date>
+			</demo-item>
+
 			<demo-item :label="t('自定义')">
 				<cl-select-date
-					v-model="form.date5"
+					v-model="form.date6"
 					:type="type"
 					:label-format="labelFormat"
 					:disabled="isDisabled"
@@ -44,27 +49,55 @@
 						className: 'mt-3'
 					}"
 				>
-					<cl-list-item :label="t('年')">
+					<cl-list-item label="YYYY">
 						<cl-switch v-model="isYear"></cl-switch>
 					</cl-list-item>
 
-					<cl-list-item :label="t('年-月')">
+					<cl-list-item label="YYYY-MM">
 						<cl-switch v-model="isMonth"></cl-switch>
 					</cl-list-item>
 
-					<cl-list-item :label="t('年-月-日')">
+					<cl-list-item
+						label="YYYY-MM-DD"
+						:pt="{
+							label: {
+								className: 'flex-[2]'
+							}
+						}"
+					>
 						<cl-switch v-model="isDate"></cl-switch>
 					</cl-list-item>
 
-					<cl-list-item :label="t('年-月-日 时')">
+					<cl-list-item
+						label="YYYY-MM-DD HH"
+						:pt="{
+							label: {
+								className: 'flex-[2]'
+							}
+						}"
+					>
 						<cl-switch v-model="isHour"></cl-switch>
 					</cl-list-item>
 
-					<cl-list-item :label="t('年-月-日 时:分')">
+					<cl-list-item
+						label="YYYY-MM-DD HH:mm"
+						:pt="{
+							label: {
+								className: 'flex-[2]'
+							}
+						}"
+					>
 						<cl-switch v-model="isMinute"></cl-switch>
 					</cl-list-item>
 
-					<cl-list-item :label="t('年-月-日 时:分:秒')">
+					<cl-list-item
+						label="YYYY-MM-DD HH:mm:ss"
+						:pt="{
+							label: {
+								className: 'flex-[2]'
+							}
+						}"
+					>
 						<cl-switch v-model="isSecond"></cl-switch>
 					</cl-list-item>
 
@@ -94,7 +127,8 @@ type Form = {
 	date2: string;
 	date3: string;
 	date4: string;
-	date5: string;
+	date5: string[];
+	date6: string;
 };
 
 const form = reactive<Form>({
@@ -102,7 +136,8 @@ const form = reactive<Form>({
 	date2: "",
 	date3: "",
 	date4: "",
-	date5: ""
+	date5: [],
+	date6: ""
 });
 
 const isDisabled = ref(false);

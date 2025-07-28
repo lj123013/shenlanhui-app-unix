@@ -8,11 +8,11 @@ export class DayUts {
 	private _date: Date;
 
 	constructor(date?: Date | string | number | null) {
-		if (date === null) {
+		if (date == null || date == "") {
 			this._date = new Date();
-		} else if (typeof date === "string") {
+		} else if (typeof date == "string") {
 			this._date = new Date(date);
-		} else if (typeof date === "number") {
+		} else if (typeof date == "number") {
 			this._date = new Date(date);
 		} else if (date instanceof Date) {
 			this._date = new Date(date.getTime());
@@ -74,7 +74,7 @@ export class DayUts {
 	/**
 	 * 获取某个单位的开始时间
 	 */
-	startOf(unit: "month" | "day" | "year"): DayUts {
+	startOf(unit: "month" | "day" | "year" | "week"): DayUts {
 		const newDate = new Date(this._date.getTime());
 
 		switch (unit) {
@@ -88,6 +88,13 @@ export class DayUts {
 				break;
 			case "month":
 				newDate.setDate(1);
+				newDate.setHours(0);
+				newDate.setMinutes(0);
+				newDate.setSeconds(0);
+				newDate.setMilliseconds(0);
+				break;
+			case "week":
+				newDate.setDate(newDate.getDate() - newDate.getDay());
 				newDate.setHours(0);
 				newDate.setMinutes(0);
 				newDate.setSeconds(0);
@@ -107,7 +114,7 @@ export class DayUts {
 	/**
 	 * 获取某个单位的结束时间
 	 */
-	endOf(unit: "month" | "day" | "year"): DayUts {
+	endOf(unit: "month" | "day" | "year" | "week"): DayUts {
 		const newDate = new Date(this._date.getTime());
 
 		switch (unit) {
@@ -120,9 +127,15 @@ export class DayUts {
 				newDate.setMilliseconds(999);
 				break;
 			case "month":
-				// 设置到下个月的第一天，然后减一天
 				newDate.setMonth(newDate.getMonth() + 1);
 				newDate.setDate(0);
+				newDate.setHours(23);
+				newDate.setMinutes(59);
+				newDate.setSeconds(59);
+				newDate.setMilliseconds(999);
+				break;
+			case "week":
+				newDate.setDate(newDate.getDate() + 7);
 				newDate.setHours(23);
 				newDate.setMinutes(59);
 				newDate.setSeconds(59);
@@ -160,7 +173,7 @@ export class DayUts {
 	 */
 	isSame(date: DayUts | Date | string | number): boolean {
 		const compareDate = this._parseDate(date);
-		return this._date.getTime() === compareDate.getTime();
+		return this._date.getTime() == compareDate.getTime();
 	}
 
 	/**
@@ -269,9 +282,9 @@ export class DayUts {
 			return date.toDate();
 		} else if (date instanceof Date) {
 			return date;
-		} else if (typeof date === "string") {
+		} else if (typeof date == "string") {
 			return new Date(date);
-		} else if (typeof date === "number") {
+		} else if (typeof date == "number") {
 			return new Date(date);
 		} else {
 			// 如果都不匹配，返回当前时间

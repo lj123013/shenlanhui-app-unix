@@ -96,12 +96,12 @@ const props = defineProps({
 	// 选择器标题
 	title: {
 		type: String,
-		default: t("请选择")
+		default: () => t("请选择")
 	},
 	// 选择器占位符
 	placeholder: {
 		type: String,
-		default: t("请选择")
+		default: () => t("请选择")
 	},
 	// 是否显示选择器触发器
 	showTrigger: {
@@ -116,7 +116,7 @@ const props = defineProps({
 	// 确认按钮文本
 	confirmText: {
 		type: String,
-		default: t("确定")
+		default: () => t("确定")
 	},
 	// 是否显示确认按钮
 	showConfirm: {
@@ -126,7 +126,7 @@ const props = defineProps({
 	// 取消按钮文本
 	cancelText: {
 		type: String,
-		default: t("取消")
+		default: () => t("取消")
 	},
 	// 是否显示取消按钮
 	showCancel: {

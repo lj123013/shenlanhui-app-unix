@@ -26,6 +26,13 @@ declare type ClSelectComponentPublicInstance = {
 declare type ClSelectDateComponentPublicInstance = {
 	open: (cb: ((value: string) => void) | null) => void;
 	close: () => void;
+	setValue: (value: string) => void;
+	setValues: (values: string[]) => void;
+	clear: () => void;
+	setRange: (index: number) => void;
+	setRangeValue: (value: string[], index: number) => void;
+	toDate: () => string;
+	confirm: () => void;
 };
 
 declare type ClSelectTimeComponentPublicInstance = {

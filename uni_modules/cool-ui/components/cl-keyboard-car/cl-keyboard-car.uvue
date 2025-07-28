@@ -113,12 +113,12 @@ const props = defineProps({
 	// 弹窗标题
 	title: {
 		type: String,
-		default: t("车牌键盘")
+		default: () => t("车牌键盘")
 	},
 	// 输入框占位符
 	placeholder: {
 		type: String,
-		default: t("安全键盘，请放心输入")
+		default: () => t("安全键盘，请放心输入")
 	},
 	// 最大输入长度
 	maxlength: {

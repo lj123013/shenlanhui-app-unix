@@ -73,7 +73,7 @@ const props = defineProps({
 	// 占位符文本
 	placeholder: {
 		type: String,
-		default: t("请选择")
+		default: () => t("请选择")
 	},
 	// 箭头图标名称
 	arrowIcon: {

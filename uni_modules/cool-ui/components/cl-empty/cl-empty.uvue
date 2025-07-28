@@ -37,7 +37,7 @@ const props = defineProps({
 	// 空状态文本
 	text: {
 		type: String,
-		default: t("暂无数据")
+		default: () => t("暂无数据")
 	},
 	// 空状态图标名称
 	icon: {

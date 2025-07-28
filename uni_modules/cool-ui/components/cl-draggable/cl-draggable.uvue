@@ -380,7 +380,6 @@ function getItemStyle(index: number) {
 	if (props.animation > 0 && !isCurrent) {
 		style["transition-property"] = "transform";
 		style["transition-duration"] = `${props.animation}ms`;
-		style["transition-timing-function"] = "ease";
 	}
 
 	// 拖拽状态下的样式处理

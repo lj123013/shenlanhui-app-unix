@@ -2,7 +2,7 @@
 	<view class="cl-picker-view">
 		<view class="cl-picker-view__header" v-if="headers.length > 0">
 			<text
-				class="cl-picker-view__header-item dark:text-white"
+				class="cl-picker-view__header-item dark:!text-white"
 				v-for="(label, index) in headers"
 				:key="index"
 				>{{ label }}</text
@@ -140,8 +140,8 @@ const indicatorStyle = computed(() => {
 
 	// 深色模式
 	if (isDark.value) {
-		style.backgroundColor = "rgba(200, 200, 200, 0.04)";
-		style.border = "1rpx solid rgba(255, 255, 255, 0.5)";
+		style.backgroundColor = "rgba(0, 0, 0, 0.1)";
+		style.border = "1rpx solid rgba(255, 255, 255, 0.3)";
 	}
 
 	// 构建样式字符串

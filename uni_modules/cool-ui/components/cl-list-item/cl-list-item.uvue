@@ -26,7 +26,7 @@
 			}"
 			@tap="onTap"
 		>
-			<view class="cl-list-item__inner w-" :class="[pt.inner?.className]">
+			<view class="cl-list-item__inner" :class="[pt.inner?.className]">
 				<cl-icon
 					:name="icon"
 					:size="pt.icon?.size ?? 36"

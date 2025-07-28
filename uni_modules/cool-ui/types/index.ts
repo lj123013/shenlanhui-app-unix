@@ -123,3 +123,8 @@ export type ClUploadItem = {
 	url: string;
 	progress: number;
 };
+
+export type ClSelectDateShortcut = {
+	label: string;
+	value: string[];
+};

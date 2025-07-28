@@ -42,7 +42,7 @@ const props = defineProps({
 	// 加载中显示内容
 	loadingText: {
 		type: String,
-		default: t("加载中")
+		default: () => t("加载中")
 	},
 	// 是否加载完成
 	finish: {
@@ -52,7 +52,7 @@ const props = defineProps({
 	// 加载完成显示内容
 	finishText: {
 		type: String,
-		default: t("没有更多了")
+		default: () => t("没有更多了")
 	}
 });
 
