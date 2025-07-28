@@ -747,12 +747,11 @@ watch(
 defineExpose({
 	open,
 	close,
+	clear,
+	confirm,
 	setValue,
 	setValues,
-	clear,
-	setRange,
-	setRangeValue,
-	confirm
+	setRange
 });
 </script>
 
