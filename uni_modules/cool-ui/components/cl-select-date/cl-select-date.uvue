@@ -319,7 +319,7 @@ const valueFormat = computed(() => {
 });
 
 // 快捷选项索引
-const shortcutsIndex = ref<number>(0);
+const shortcutsIndex = ref<number>(-1);
 
 // 快捷选项列表
 const shortcuts = computed<ClSelectDateShortcut[]>(() => {

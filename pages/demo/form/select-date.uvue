@@ -35,6 +35,15 @@
 				<cl-select-date v-model:values="form.date5" type="date" rangeable></cl-select-date>
 			</demo-item>
 
+			<demo-item :label="t('自定义快捷选项')">
+				<cl-select-date
+					v-model:values="form.date5"
+					type="date"
+					rangeable
+					:shortcuts="shortcuts"
+				></cl-select-date>
+			</demo-item>
+
 			<demo-item :label="t('自定义')">
 				<cl-select-date
 					v-model="form.date6"
@@ -118,7 +127,8 @@
 import { computed, reactive, ref } from "vue";
 import DemoItem from "../components/item.uvue";
 import { t } from "@/locale";
-import { useUi } from "@/uni_modules/cool-ui";
+import { useUi, type ClSelectDateShortcut } from "@/uni_modules/cool-ui";
+import { dayUts } from "@/cool";
 
 const ui = useUi();
 
@@ -240,4 +250,25 @@ function openSelect4() {
 		});
 	});
 }
+
+const shortcuts = ref<ClSelectDateShortcut[]>([
+	{
+		label: "昨日",
+		value: [dayUts().subtract(1, "day").format("YYYY-MM-DD"), dayUts().format("YYYY-MM-DD")]
+	},
+	{
+		label: "本周",
+		value: [
+			dayUts().startOf("week").format("YYYY-MM-DD"),
+			dayUts().endOf("week").format("YYYY-MM-DD")
+		]
+	},
+	{
+		label: "本月",
+		value: [
+			dayUts().startOf("month").format("YYYY-MM-DD"),
+			dayUts().endOf("month").format("YYYY-MM-DD")
+		]
+	}
+]);
 </script>
