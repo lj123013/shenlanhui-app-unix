@@ -1,13 +1,13 @@
 <template>
 	<cl-page>
 		<view class="p-3 overflow-visible">
-			<demo-item label="纵向排列">
+			<demo-item label="单列排序">
 				<cl-draggable v-model="list">
 					<template #item="{ item, index }">
 						<view
 							class="flex flex-row items-center p-3 bg-surface-100 rounded-lg mb-2"
 							:class="{
-								'!bg-surface-300': (item as UTSJSONObject).disabled
+								'!bg-surface-300': item['disabled']
 							}"
 						>
 							<cl-text>{{ (item as UTSJSONObject).label }}</cl-text>
@@ -36,7 +36,7 @@
 				</cl-list>
 			</demo-item>
 
-			<demo-item label="横向排列">
+			<demo-item label="多列排序">
 				<cl-draggable v-model="list3" :columns="4">
 					<template #item="{ item, index }">
 						<view
