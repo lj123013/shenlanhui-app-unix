@@ -251,7 +251,7 @@ const props = defineProps({
 	// 范围分隔符
 	rangeSeparator: {
 		type: String,
-		default: () => t("至")
+		default: () => t("")
 	},
 	// 是否显示快捷选项
 	showShortcuts: {
@@ -752,7 +752,6 @@ defineExpose({
 	clear,
 	setRange,
 	setRangeValue,
-	toDate,
 	confirm
 });
 </script>

@@ -31,7 +31,6 @@ declare type ClSelectDateComponentPublicInstance = {
 	clear: () => void;
 	setRange: (index: number) => void;
 	setRangeValue: (value: string[], index: number) => void;
-	toDate: () => string;
 	confirm: () => void;
 };
 
