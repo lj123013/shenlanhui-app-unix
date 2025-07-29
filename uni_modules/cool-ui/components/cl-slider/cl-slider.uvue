@@ -21,15 +21,29 @@
 					height: trackHeight + 'rpx'
 				}"
 			>
+				<view class="cl-slider__progress" :style="progressStyle"></view>
+
+				<!-- 单滑块模式 -->
 				<view
-					class="cl-slider__progress"
-					:style="{
-						width: percentage + '%'
-					}"
+					v-if="!range"
+					class="cl-slider__thumb"
+					:class="[pt.thumb?.className]"
+					:style="singleThumbStyle"
 				></view>
 
-				<view class="cl-slider__thumb" :class="[pt.thumb?.className]" :style="thumbStyle">
-				</view>
+				<!-- 双滑块模式 -->
+				<template v-if="range">
+					<view
+						class="cl-slider__thumb cl-slider__thumb--min"
+						:class="[pt.thumb?.className]"
+						:style="minThumbStyle"
+					></view>
+					<view
+						class="cl-slider__thumb cl-slider__thumb--max"
+						:class="[pt.thumb?.className]"
+						:style="maxThumbStyle"
+					></view>
+				</template>
 			</view>
 
 			<view
@@ -37,8 +51,8 @@
 				:style="{
 					height: blockSize * 1.5 + 'rpx'
 				}"
-				@touchstart="onTouchStart"
-				@touchmove="onTouchMove"
+				@touchstart.prevent="onTouchStart"
+				@touchmove.prevent="onTouchMove"
 				@touchend="onTouchEnd"
 				@touchcancel="onTouchEnd"
 			></view>
@@ -50,14 +64,14 @@
 				className: parseClass(['text-center w-[100rpx]', pt.value?.className])
 			}"
 		>
-			{{ value }}
+			{{ displayValue }}
 		</cl-text>
 	</view>
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, nextTick, onMounted, ref, watch } from "vue";
-import { parseClass, parsePt, px2rpx, rpx2px } from "@/cool";
+import { computed, getCurrentInstance, nextTick, onMounted, ref, watch, type PropType } from "vue";
+import { parseClass, parsePt, rpx2px } from "@/cool";
 import type { PassThroughProps } from "../../types";
 
 defineOptions({
@@ -71,10 +85,15 @@ const props = defineProps({
 		type: Object,
 		default: () => ({})
 	},
-	// v-model 绑定的值
+	// v-model 绑定的值，单值模式使用
 	modelValue: {
 		type: Number,
 		default: 0
+	},
+	// v-model:values 绑定的值，范围模式使用
+	values: {
+		type: Array as PropType<number[]>,
+		default: () => [0, 0]
 	},
 	// 最小值
 	min: {
@@ -110,10 +129,15 @@ const props = defineProps({
 	showValue: {
 		type: Boolean,
 		default: false
+	},
+	// 是否启用范围选择
+	range: {
+		type: Boolean,
+		default: false
 	}
 });
 
-const emit = defineEmits(["update:modelValue", "change", "changing"]);
+const emit = defineEmits(["update:modelValue", "update:values", "change", "changing"]);
 
 const { proxy } = getCurrentInstance()!;
 
@@ -129,8 +153,11 @@ type PassThrough = {
 // 计算样式穿透对象
 const pt = computed(() => parsePt<PassThrough>(props.pt));
 
-// 当前滑块的值，受控于v-model
+// 当前滑块的值，单值模式
 const value = ref<number>(props.modelValue);
+
+// 当前范围值，范围模式
+const rangeValue = ref<number[]>([...props.values]);
 
 // 轨道宽度（像素）
 const trackWidth = ref<number>(0);
@@ -138,38 +165,82 @@ const trackWidth = ref<number>(0);
 // 轨道左侧距离屏幕的距离（像素）
 const trackLeft = ref<number>(0);
 
-// 计算当前值在[min, max]区间内的百分比
+// 当前活动的滑块索引（0: min, 1: max），仅在范围模式下使用
+const activeThumbIndex = ref<number>(0);
+
+// 计算当前值的百分比（单值模式）
 const percentage = computed(() => {
-	// 公式：(当前值 - 最小值) / (最大值 - 最小值) * 100
-	// 结果为0~100之间的百分比
+	if (props.range) return 0;
 	return ((value.value - props.min) / (props.max - props.min)) * 100;
 });
 
-// 计算滑块thumb的样式
-const thumbStyle = computed(() => {
+// 计算范围值的百分比（范围模式）
+type RangePercentage = {
+	min: number;
+	max: number;
+};
+const rangePercentage = computed<RangePercentage>(() => {
+	if (!props.range) return { min: 0, max: 0 };
+	const val = rangeValue.value;
+	const minPercent = ((val[0] - props.min) / (props.max - props.min)) * 100;
+	const maxPercent = ((val[1] - props.min) / (props.max - props.min)) * 100;
+	return { min: minPercent, max: maxPercent };
+});
+
+// 进度条样式
+const progressStyle = computed(() => {
 	const style = new Map<string, string>();
 
-	// 如果轨道宽度还没获取到，先用百分比定位
-	if (trackWidth.value == 0) {
-		style.set("left", `${percentage.value}%`);
-		style.set("transform", `translateX(-50%)`);
+	if (props.range) {
+		const { min, max } = rangePercentage.value;
+		style.set("left", `${min}%`);
+		style.set("width", `${max - min}%`);
+	} else {
+		style.set("width", `${percentage.value}%`);
 	}
 
-	// 使用像素定位，确保滑块始终在轨道范围内
-	// 可滑动的有效区域 = 轨道宽度 - 滑块宽度
-	const effectiveTrackWidth = trackWidth.value - rpx2px(props.blockSize);
-	// 滑块左边距 = 百分比 * 有效轨道宽度
-	const leftPosition = (percentage.value / 100) * effectiveTrackWidth;
+	return style;
+});
 
-	// 限制在有效范围内
+// 创建滑块样式的通用函数
+function createThumbStyle(percent: number) {
+	const style = new Map<string, string>();
+
+	// 使用像素定位，确保滑块始终在轨道范围内
+	const effectiveTrackWidth = trackWidth.value - rpx2px(props.blockSize) + 1;
+	const leftPosition = (percent / 100) * effectiveTrackWidth;
 	const finalLeft = Math.max(0, Math.min(effectiveTrackWidth, leftPosition));
 
-	// 返回样式对象，使用像素定位
 	style.set("left", `${finalLeft}px`);
-	style.set("width", `${props.blockSize}rpx`);
-	style.set("height", `${props.blockSize}rpx`);
+	style.set("width", `${rpx2px(props.blockSize)}px`);
+	style.set("height", `${rpx2px(props.blockSize)}px`);
 
 	return style;
+}
+
+// 单滑块样式
+const singleThumbStyle = computed(() => {
+	return createThumbStyle(percentage.value);
+});
+
+// 最小值滑块样式
+const minThumbStyle = computed(() => {
+	return createThumbStyle(rangePercentage.value.min);
+});
+
+// 最大值滑块样式
+const maxThumbStyle = computed(() => {
+	return createThumbStyle(rangePercentage.value.max);
+});
+
+// 显示的值
+const displayValue = computed<string>(() => {
+	if (props.range) {
+		const val = rangeValue.value;
+		return `${val[0]} - ${val[1]}`;
+	}
+
+	return `${value.value}`;
 });
 
 // 获取滑块轨道的宽度和左边距，用于后续触摸计算
@@ -186,8 +257,8 @@ function getTrackInfo() {
 
 // 根据触摸点的clientX计算对应的滑块值
 function calculateValue(clientX: number): number {
-	// 如果轨道宽度为0，直接返回当前值
-	if (trackWidth.value == 0) return value.value;
+	// 如果轨道宽度为0，直接返回最小值
+	if (trackWidth.value == 0) return props.min;
 
 	// 计算触摸点距离轨道左侧的偏移
 	const offset = clientX - trackLeft.value;
@@ -207,17 +278,55 @@ function calculateValue(clientX: number): number {
 	return Math.max(props.min, Math.min(props.max, val));
 }
 
-// 更新滑块的值，并触发v-model和changing事件
-function updateValue(val: number) {
-	if (val !== value.value) {
-		value.value = val;
-		emit("update:modelValue", val);
-		emit("changing", val);
+// 在范围模式下，确定应该移动哪个滑块
+function determineActiveThumb(clientX: number) {
+	if (!props.range) return 0;
+
+	const val = rangeValue.value;
+	const clickValue = calculateValue(clientX);
+
+	// 计算点击位置到两个滑块的距离
+	const distToMin = Math.abs(clickValue - val[0]);
+	const distToMax = Math.abs(clickValue - val[1]);
+
+	// 选择距离更近的滑块
+	return distToMin <= distToMax ? 0 : 1;
+}
+
+// 更新滑块的值，并触发相应的事件
+function updateValue(val: number | number[]) {
+	if (props.range) {
+		const newVal = val as number[];
+		const oldVal = rangeValue.value;
+
+		// 如果最小值超过了最大值，交换activeThumbIndex
+		if (newVal[0] > newVal[1]) {
+			activeThumbIndex.value = activeThumbIndex.value == 0 ? 1 : 0;
+		}
+
+		// 确保最小值不大于最大值，但允许通过拖动交换角色
+		const sortedVal = [Math.min(newVal[0], newVal[1]), Math.max(newVal[0], newVal[1])];
+
+		// 检查值是否真的改变了
+		if (JSON.stringify(oldVal) !== JSON.stringify(sortedVal)) {
+			rangeValue.value = sortedVal;
+			emit("update:values", sortedVal);
+			emit("changing", sortedVal);
+		}
+	} else {
+		const newVal = val as number;
+		const oldVal = value.value;
+
+		if (oldVal !== newVal) {
+			value.value = newVal;
+			emit("update:modelValue", newVal);
+			emit("changing", newVal);
+		}
 	}
 }
 
 // 触摸开始事件，获取轨道信息并初步设置值
-function onTouchStart(e: UniTouchEvent) {
+function onTouchStart(e: TouchEvent) {
 	if (props.disabled) return;
 
 	getTrackInfo();
@@ -225,35 +334,63 @@ function onTouchStart(e: UniTouchEvent) {
 	// 延迟10ms，确保轨道信息已获取
 	setTimeout(() => {
 		const clientX = e.touches[0].clientX;
-		const value = calculateValue(clientX);
-		updateValue(value);
+		const newValue = calculateValue(clientX);
+
+		if (props.range) {
+			activeThumbIndex.value = determineActiveThumb(clientX);
+			const val = [...rangeValue.value];
+			val[activeThumbIndex.value] = newValue;
+			updateValue(val);
+		} else {
+			updateValue(newValue);
+		}
 	}, 10);
 }
 
 // 触摸移动事件，实时更新滑块值
-function onTouchMove(e: UniTouchEvent) {
+function onTouchMove(e: TouchEvent) {
 	if (props.disabled) return;
 
-	e.preventDefault();
 	const clientX = e.touches[0].clientX;
-	const value = calculateValue(clientX);
-	updateValue(value);
+	const newValue = calculateValue(clientX);
+
+	if (props.range) {
+		const val = [...rangeValue.value];
+		val[activeThumbIndex.value] = newValue;
+		updateValue(val);
+	} else {
+		updateValue(newValue);
+	}
 }
 
 // 触摸结束事件，触发change事件
 function onTouchEnd() {
 	if (props.disabled) return;
-	emit("change", value.value);
+	if (props.range) {
+		emit("change", rangeValue.value);
+	} else {
+		emit("change", value.value);
+	}
 }
 
-// 监听外部v-model的变化，保持内部value同步
+// 监听外部v-model的变化，保持内部value同步（单值模式）
 watch(
 	computed(() => props.modelValue),
 	(val: number) => {
 		if (val !== value.value) {
-			// 限制同步值在[min, max]区间
 			value.value = Math.max(props.min, Math.min(props.max, val));
 		}
+	},
+	{ immediate: true }
+);
+
+// 监听外部v-model:values的变化，保持内部rangeValue同步（范围模式）
+watch(
+	computed(() => props.values),
+	(val: number[]) => {
+		rangeValue.value = val.map((e) => {
+			return Math.max(props.min, Math.min(props.max, e));
+		});
 	},
 	{ immediate: true }
 );
@@ -262,38 +399,50 @@ watch(
 watch(
 	computed(() => props.max),
 	(val: number) => {
-		if (value.value > val) {
-			updateValue(val);
+		if (props.range) {
+			const rangeVal = rangeValue.value;
+			if (rangeVal[0] > val || rangeVal[1] > val) {
+				updateValue([Math.min(rangeVal[0], val), Math.min(rangeVal[1], val)]);
+			}
+		} else {
+			const singleVal = value.value;
+			if (singleVal > val) {
+				updateValue(val);
+			}
 		}
 	},
-	{
-		immediate: true
-	}
+	{ immediate: true }
 );
 
 // 监听min的变化，确保value不会小于min
 watch(
 	computed(() => props.min),
 	(val: number) => {
-		if (value.value < val) {
-			updateValue(val);
+		if (props.range) {
+			const rangeVal = rangeValue.value;
+			if (rangeVal[0] < val || rangeVal[1] < val) {
+				updateValue([Math.max(rangeVal[0], val), Math.max(rangeVal[1], val)]);
+			}
+		} else {
+			const singleVal = value.value;
+			if (singleVal < val) {
+				updateValue(val);
+			}
 		}
 	},
-	{
-		immediate: true
-	}
-);
-
-watch(
-	computed(() => [props.showValue]),
-	() => {
-		nextTick(() => {
-			getTrackInfo();
-		});
-	}
+	{ immediate: true }
 );
 
 onMounted(() => {
+	watch(
+		computed(() => [props.showValue]),
+		() => {
+			nextTick(() => {
+				getTrackInfo();
+			});
+		}
+	);
+
 	getTrackInfo();
 });
 </script>
@@ -321,7 +470,7 @@ onMounted(() => {
 	}
 
 	&__progress {
-		@apply absolute top-0 left-0 h-full rounded-full;
+		@apply absolute top-0 h-full rounded-full;
 		@apply bg-primary-400;
 	}
 
@@ -330,6 +479,15 @@ onMounted(() => {
 		@apply bg-primary-500;
 		transform: translateY(-50%);
 		pointer-events: none;
+		z-index: 1;
+
+		&--min {
+			z-index: 2;
+		}
+
+		&--max {
+			z-index: 2;
+		}
 	}
 }
 </style>

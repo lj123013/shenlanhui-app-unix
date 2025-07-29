@@ -12,6 +12,7 @@ export type ClSliderProps = {
 	className?: string;
 	pt?: ClSliderPassThrough;
 	modelValue?: number;
+	values?: number[];
 	min?: number;
 	max?: number;
 	step?: number;
@@ -19,4 +20,5 @@ export type ClSliderProps = {
 	blockSize?: number;
 	trackHeight?: number;
 	showValue?: boolean;
+	range?: boolean;
 };

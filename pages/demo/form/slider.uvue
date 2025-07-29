@@ -5,9 +5,19 @@
 				<cl-slider v-model="num"></cl-slider>
 			</demo-item>
 
+			<demo-item :label="t('范围选择')">
+				<cl-text
+					:pt="{
+						className: 'mb-3'
+					}"
+					>{{ num2[0] }} ～ {{ num2[1] }}</cl-text
+				>
+				<cl-slider v-model:values="num2" range></cl-slider>
+			</demo-item>
+
 			<demo-item :label="t('自定义')">
 				<cl-slider
-					v-model="num2"
+					v-model="num3"
 					:disabled="isDisabled"
 					:show-value="isShowValue"
 					:block-size="isSize ? 50 : 40"
@@ -53,7 +63,8 @@ import DemoItem from "../components/item.uvue";
 import { t } from "@/locale";
 
 const num = ref(60);
-const num2 = ref(35);
+const num2 = ref<number[]>([10, 20]);
+const num3 = ref(35);
 const isDisabled = ref(false);
 const isShowValue = ref(true);
 const isStep = ref(false);

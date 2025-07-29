@@ -1,4 +1,4 @@
-import { base64ToBlob } from "./comm";
+import { base64ToBlob, uuid } from "./comm";
 
 export type CanvasToPngOptions = {
 	canvasId: string;
