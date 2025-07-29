@@ -10,7 +10,8 @@
 					v-model="num2"
 					:disabled="isDisabled"
 					:show-value="isShowValue"
-					:block-size="isSize ? 26 : 20"
+					:block-size="isSize ? 50 : 40"
+					:track-height="isSize ? 12 : 8"
 					:step="isStep ? 10 : 1"
 					:max="isMax ? 50 : 100"
 				></cl-slider>

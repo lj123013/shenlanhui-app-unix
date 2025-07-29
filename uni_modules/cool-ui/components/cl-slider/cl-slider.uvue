@@ -11,10 +11,16 @@
 		<view
 			class="cl-slider__inner"
 			:style="{
-				height: blockSize + 'px'
+				height: blockSize + 'rpx'
 			}"
 		>
-			<view class="cl-slider__track" :class="[pt.track?.className]">
+			<view
+				class="cl-slider__track"
+				:class="[pt.track?.className]"
+				:style="{
+					height: trackHeight + 'rpx'
+				}"
+			>
 				<view
 					class="cl-slider__progress"
 					:style="{
@@ -29,7 +35,7 @@
 			<view
 				class="cl-slider__picker"
 				:style="{
-					height: blockSize * 1.5 + 'px'
+					height: blockSize * 1.5 + 'rpx'
 				}"
 				@touchstart="onTouchStart"
 				@touchmove="onTouchMove"
@@ -51,7 +57,7 @@
 
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, onMounted, ref, watch } from "vue";
-import { parseClass, parsePt } from "@/cool";
+import { parseClass, parsePt, px2rpx, rpx2px } from "@/cool";
 import type { PassThroughProps } from "../../types";
 
 defineOptions({
@@ -90,10 +96,15 @@ const props = defineProps({
 		type: Boolean,
 		default: false
 	},
-	// 滑块的大小（px）
+	// 滑块的大小
 	blockSize: {
 		type: Number,
-		default: 20
+		default: 40
+	},
+	// 线的高度
+	trackHeight: {
+		type: Number,
+		default: 8
 	},
 	// 是否显示当前值
 	showValue: {
@@ -141,14 +152,12 @@ const thumbStyle = computed(() => {
 	// 如果轨道宽度还没获取到，先用百分比定位
 	if (trackWidth.value == 0) {
 		style.set("left", `${percentage.value}%`);
-		style.set("width", `${props.blockSize}px`);
-		style.set("height", `${props.blockSize}px`);
 		style.set("transform", `translateX(-50%)`);
 	}
 
 	// 使用像素定位，确保滑块始终在轨道范围内
 	// 可滑动的有效区域 = 轨道宽度 - 滑块宽度
-	const effectiveTrackWidth = trackWidth.value - props.blockSize;
+	const effectiveTrackWidth = trackWidth.value - rpx2px(props.blockSize);
 	// 滑块左边距 = 百分比 * 有效轨道宽度
 	const leftPosition = (percentage.value / 100) * effectiveTrackWidth;
 
@@ -157,8 +166,8 @@ const thumbStyle = computed(() => {
 
 	// 返回样式对象，使用像素定位
 	style.set("left", `${finalLeft}px`);
-	style.set("width", `${props.blockSize}px`);
-	style.set("height", `${props.blockSize}px`);
+	style.set("width", `${props.blockSize}rpx`);
+	style.set("height", `${props.blockSize}rpx`);
 
 	return style;
 });
@@ -276,7 +285,7 @@ watch(
 );
 
 watch(
-	computed(() => props.showValue),
+	computed(() => [props.showValue]),
 	() => {
 		nextTick(() => {
 			getTrackInfo();
@@ -291,8 +300,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .cl-slider {
-	@apply flex flex-row items-center w-full;
-	overflow: visible;
+	@apply flex flex-row items-center w-full overflow-visible;
 
 	&--disabled {
 		opacity: 0.6;
@@ -300,8 +308,7 @@ onMounted(() => {
 	}
 
 	&__inner {
-		@apply flex-1 relative h-full flex flex-row items-center;
-		overflow: visible;
+		@apply flex-1 relative h-full flex flex-row items-center overflow-visible;
 	}
 
 	&__picker {
@@ -309,10 +316,8 @@ onMounted(() => {
 	}
 
 	&__track {
-		@apply relative w-full rounded-full;
+		@apply relative w-full rounded-full overflow-visible;
 		@apply bg-surface-200;
-		height: 8rpx;
-		overflow: visible;
 	}
 
 	&__progress {
