@@ -24,6 +24,14 @@
 					:track-height="isSize ? 12 : 8"
 					:step="isStep ? 10 : 1"
 					:max="isMax ? 50 : 100"
+					:pt="{
+						thumb: {
+							className: isColor ? '!bg-red-500' : ''
+						},
+						progress: {
+							className: isColor ? '!bg-red-200' : ''
+						}
+					}"
 				></cl-slider>
 
 				<cl-list
@@ -42,6 +50,10 @@
 
 					<cl-list-item :label="t('滑块大点')">
 						<cl-switch v-model="isSize"></cl-switch>
+					</cl-list-item>
+
+					<cl-list-item :label="t('换个颜色')">
+						<cl-switch v-model="isColor"></cl-switch>
 					</cl-list-item>
 
 					<cl-list-item :label="t('最大50')">
@@ -70,4 +82,5 @@ const isShowValue = ref(true);
 const isStep = ref(false);
 const isSize = ref(false);
 const isMax = ref(false);
+const isColor = ref(false);
 </script>
