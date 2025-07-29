@@ -18,7 +18,7 @@
 				<text class="text-surface-400 text-md">{{ config.description }}</text>
 			</view>
 
-			<view class="cl-action-sheet__list">
+			<view class="cl-action-sheet__list" :class="[pt.list?.className]">
 				<view
 					class="cl-action-sheet__item"
 					:class="[`${isDark ? '!bg-surface-800' : 'bg-white'}`, pt.item?.className]"
@@ -76,6 +76,7 @@ const props = defineProps({
 type PassThrough = {
 	className?: string; // 根元素类名
 	item?: PassThroughProps; // 列表项样式
+	list?: PassThroughProps; // 列表样式
 };
 
 // 解析透传样式配置

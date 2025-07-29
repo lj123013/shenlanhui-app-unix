@@ -17,5 +17,6 @@ export type ClSliderProps = {
 	step?: number;
 	disabled?: boolean;
 	blockSize?: number;
+	trackHeight?: number;
 	showValue?: boolean;
 };

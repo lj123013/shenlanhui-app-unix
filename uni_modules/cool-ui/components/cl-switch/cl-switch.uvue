@@ -37,7 +37,7 @@
 			>
 				<cl-loading
 					v-if="loading"
-					size="12px"
+					:size="24"
 					color="primary"
 					:pt="{
 						className: parseClass([pt.loading?.className])
@@ -83,12 +83,12 @@ const props = defineProps({
 	// 高度
 	height: {
 		type: Number,
-		default: 24
+		default: 48
 	},
 	// 宽度
 	width: {
 		type: Number,
-		default: 40
+		default: 80
 	}
 });
 
@@ -126,19 +126,19 @@ const rect = computed<Rect>(() => {
 	const height = props.height;
 	// 获取开关轨道宽度
 	const width = props.width;
-	// 计算圆形按钮尺寸,比轨道高度小4px
-	const size = height - 4;
-	// 设置圆形按钮初始位置,距离左侧2px
-	const left = 2;
+	// 计算圆形按钮尺寸,比轨道高度小8rpx
+	const size = height - 8;
+	// 设置圆形按钮初始位置,距离左侧px
+	const left = 4;
 	// 计算圆形按钮移动距离,为轨道宽度减去轨道高度
 	const translateX = width - height;
 
 	return {
-		height: height + "px",
-		width: width + "px",
-		size: size + "px",
-		left: left + "px",
-		translateX: translateX + "px"
+		height: height + "rpx",
+		width: width + "rpx",
+		size: size + "rpx",
+		left: left + "rpx",
+		translateX: translateX + "rpx"
 	};
 });
 

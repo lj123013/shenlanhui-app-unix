@@ -31,7 +31,17 @@
 		<cl-action-sheet ref="actionSheetRef3"> </cl-action-sheet>
 		<cl-action-sheet ref="actionSheetRef4"> </cl-action-sheet>
 		<cl-action-sheet ref="actionSheetRef5"> </cl-action-sheet>
-		<cl-action-sheet ref="actionSheetRef6">
+		<cl-action-sheet
+			ref="actionSheetRef6"
+			:pt="{
+				list: {
+					className: 'flex-row mx-[-10rpx]'
+				},
+				item: {
+					className: 'flex-1 mx-[10rpx]'
+				}
+			}"
+		>
 			<template #prepend>
 				<view class="px-3 mb-3">
 					<cl-text>开通会员享受更多特权和服务，包括无广告体验、专属客服等</cl-text>
@@ -39,9 +49,16 @@
 			</template>
 			<template #append>
 				<view class="pb-5 pt-2 px-3">
-					<cl-checkbox v-model="agree">
-						请阅读并同意《会员服务协议》和《隐私政策》
-					</cl-checkbox>
+					<cl-checkbox v-model="agree"
+						>请阅读并同意《会员服务协议》和《隐私政策》</cl-checkbox
+					>
+				</view>
+			</template>
+
+			<template #item="{ item }">
+				<view class="flex flex-col justify-center items-center">
+					<cl-icon :name="item.icon" :size="46"></cl-icon>
+					<cl-text :pt="{ className: '!text-sm mt-1' }">{{ item.label }}</cl-text>
 				</view>
 			</template>
 		</cl-action-sheet>
@@ -75,7 +92,7 @@ function openActionSheet2() {
 		list: [
 			{
 				label: t("反馈"),
-				icon: "feedback-line"
+				icon: "error-warning-line"
 			}
 		]
 	} as ClActionSheetOptions);

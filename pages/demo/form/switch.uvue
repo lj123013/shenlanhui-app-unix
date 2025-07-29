@@ -39,8 +39,8 @@
 					v-model="checked"
 					:loading="isLoading"
 					:disabled="isDisabled"
-					:height="isSize ? 30 : 24"
-					:width="isSize ? 50 : 40"
+					:height="isSize ? 60 : 48"
+					:width="isSize ? 100 : 80"
 					:pt="{
 						track: {
 							className: parseClass([[isCustom, '!rounded-md']])

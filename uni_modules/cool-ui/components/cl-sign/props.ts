@@ -15,7 +15,4 @@ export type ClSignProps = {
 	maxStrokeWidth?: number;
 	velocitySensitivity?: number;
 	autoRotate?: boolean;
-	landscapeWidthRatio?: number;
-	landscapeHeightRatio?: number;
-	fullscreen?: boolean;
 };

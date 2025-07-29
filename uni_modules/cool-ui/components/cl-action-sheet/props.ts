@@ -3,6 +3,7 @@ import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps } from "
 export type ClActionSheetPassThrough = {
 	className?: string;
 	item?: PassThroughProps;
+	list?: PassThroughProps;
 };
 
 export type ClActionSheetProps = {
