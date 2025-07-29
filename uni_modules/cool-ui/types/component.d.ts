@@ -147,3 +147,8 @@ declare type ClQrcodeComponentPublicInstance = {
 declare type ClProgressCircleComponentPublicInstance = {
 	animate: (value: number) => void;
 };
+
+declare type ClSignComponentPublicInstance = {
+	clear: () => void;
+	toPng: () => Promise<string>;
+};

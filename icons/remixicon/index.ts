@@ -263,7 +263,6 @@ export const remixicon = {
 	"list-check": "eeba",
 	"list-ordered": "eebb",
 	"list-radio": "f39b",
-	"translate-2": "f226",
 	"sort-asc": "f15f",
 	"sort-desc": "f160",
 	"send-backward": "f0d6",
@@ -695,5 +694,6 @@ export const remixicon = {
 	"shield-user-line": "f10c",
 	"shield-user-fill": "f10b",
 	"circle-line": "f3c2",
-	"circle-fill": "f3c1"
+	"circle-fill": "f3c1",
+	"sketching": "f35f"
 };

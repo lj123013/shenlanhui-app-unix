@@ -1,4 +1,4 @@
-import type { ClSelectOption } from "../../types";
+import type { ClSelectDateShortcut, ClSelectOption } from "../../types";
 import type { ClSelectTriggerPassThrough } from "../cl-select-trigger/props";
 import type { ClPopupPassThrough } from "../cl-popup/props";
 
@@ -11,6 +11,7 @@ export type ClSelectDateProps = {
 	className?: string;
 	pt?: ClSelectDatePassThrough;
 	modelValue?: string;
+	values?: string[];
 	headers?: string[];
 	title?: string;
 	placeholder?: string;
@@ -25,4 +26,10 @@ export type ClSelectDateProps = {
 	start?: string;
 	end?: string;
 	type?: "year" | "month" | "date" | "hour" | "minute" | "second";
+	rangeable?: boolean;
+	startPlaceholder?: string;
+	endPlaceholder?: string;
+	rangeSeparator?: string;
+	showShortcuts?: boolean;
+	shortcuts?: ClSelectDateShortcut[];
 };

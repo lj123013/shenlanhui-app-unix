@@ -358,6 +358,11 @@ const data = computed<Item[]>(() => {
 					path: "/pages/demo/other/qrcode"
 				},
 				{
+					label: "签名",
+					icon: "sketching",
+					path: "/pages/demo/other/sign"
+				},
+				{
 					label: "DayUts",
 					icon: "timer-2-line",
 					path: "/pages/demo/other/day-uts"

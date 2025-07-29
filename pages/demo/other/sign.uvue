@@ -1,0 +1,48 @@
+<template>
+	<cl-page>
+		<cl-sign
+			ref="signRef"
+			:width="windowWidth"
+			:fullscreen="isFullscreen"
+			:enable-brush="isBrush"
+		></cl-sign>
+
+		<view class="p-3">
+			<cl-list>
+				<cl-list-item label="操作">
+					<cl-button type="info" @click="clear">清空</cl-button>
+					<cl-button @click="preview">预览</cl-button>
+				</cl-list-item>
+
+				<cl-list-item label="全屏">
+					<cl-switch v-model="isFullscreen"></cl-switch>
+				</cl-list-item>
+
+				<cl-list-item label="毛笔效果">
+					<cl-switch v-model="isBrush"></cl-switch>
+				</cl-list-item>
+			</cl-list>
+		</view>
+	</cl-page>
+</template>
+
+<script setup lang="ts">
+import { ref } from "vue";
+import DemoItem from "../components/item.uvue";
+
+const { windowWidth } = uni.getWindowInfo();
+
+const isFullscreen = ref(false);
+const isBrush = ref(true);
+const signRef = ref<ClSignComponentPublicInstance | null>(null);
+
+function clear() {
+	signRef.value?.clear();
+}
+
+function preview() {
+	signRef.value?.toPng().then((res) => {
+		console.log(res);
+	});
+}
+</script>

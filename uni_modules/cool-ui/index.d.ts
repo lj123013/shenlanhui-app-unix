@@ -1,4 +1,4 @@
-import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps, Type, ClButtonType, Size, ClListViewItem, ClInputType, ClListItem, Justify, ClConfirmAction, ClConfirmOptions, ClToastOptions, ClSelectOption, ClPopupDirection, ClQrcodeMode, ClTabsItem, ClTextType, ClUploadItem } from "./types";
+import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps, Type, ClButtonType, Size, ClListViewItem, ClInputType, ClListItem, Justify, ClConfirmAction, ClConfirmOptions, ClToastOptions, ClSelectOption, ClPopupDirection, ClQrcodeMode, ClSelectDateShortcut, ClTabsItem, ClTextType, ClUploadItem } from "./types";
 import { type UiInstance } from "./hooks";
 import { type QrcodeOptions } from "./draw";
 
@@ -48,6 +48,7 @@ import type { ClSelectProps, ClSelectPassThrough } from "./components/cl-select/
 import type { ClSelectDateProps, ClSelectDatePassThrough } from "./components/cl-select-date/props";
 import type { ClSelectTimeProps, ClSelectTimePassThrough } from "./components/cl-select-time/props";
 import type { ClSelectTriggerProps, ClSelectTriggerPassThrough } from "./components/cl-select-trigger/props";
+import type { ClSignProps, ClSignPassThrough } from "./components/cl-sign/props";
 import type { ClSkeletonProps, ClSkeletonPassThrough } from "./components/cl-skeleton/props";
 import type { ClSliderProps, ClSliderPassThrough } from "./components/cl-slider/props";
 import type { ClStickyProps } from "./components/cl-sticky/props";
@@ -114,6 +115,7 @@ declare module "vue" {
 		"cl-select-date": (typeof import('./components/cl-select-date/cl-select-date.uvue')['default']) & import('vue').DefineComponent<ClSelectDateProps>;
 		"cl-select-time": (typeof import('./components/cl-select-time/cl-select-time.uvue')['default']) & import('vue').DefineComponent<ClSelectTimeProps>;
 		"cl-select-trigger": (typeof import('./components/cl-select-trigger/cl-select-trigger.uvue')['default']) & import('vue').DefineComponent<ClSelectTriggerProps>;
+		"cl-sign": (typeof import('./components/cl-sign/cl-sign.uvue')['default']) & import('vue').DefineComponent<ClSignProps>;
 		"cl-skeleton": (typeof import('./components/cl-skeleton/cl-skeleton.uvue')['default']) & import('vue').DefineComponent<ClSkeletonProps>;
 		"cl-slider": (typeof import('./components/cl-slider/cl-slider.uvue')['default']) & import('vue').DefineComponent<ClSliderProps>;
 		"cl-sticky": (typeof import('./components/cl-sticky/cl-sticky.uvue')['default']) & import('vue').DefineComponent<ClStickyProps>;

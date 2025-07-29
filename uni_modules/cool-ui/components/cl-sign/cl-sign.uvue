@@ -1,0 +1,367 @@
+<template>
+	<view class="cl-sign" :class="[pt.className]">
+		<canvas
+			class="cl-sign__canvas"
+			:id="canvasId"
+			:style="{
+				height: `${size.height}px`,
+				width: `${size.width}px`
+			}"
+			@touchstart="onTouchStart"
+			@touchmove="onTouchMove"
+			@touchend="onTouchEnd"
+		></canvas>
+	</view>
+</template>
+
+<script lang="ts" setup>
+import { parsePt, uuid } from "@/cool";
+import { computed, getCurrentInstance, onMounted, onUnmounted, ref, watch } from "vue";
+
+defineOptions({
+	name: "cl-sign"
+});
+
+const props = defineProps({
+	pt: {
+		type: Object,
+		default: () => ({})
+	},
+	// 画布宽度
+	width: {
+		type: Number,
+		default: 300
+	},
+	// 画布高度
+	height: {
+		type: Number,
+		default: 200
+	},
+	// 线条颜色
+	strokeColor: {
+		type: String,
+		default: "#000000"
+	},
+	// 线条宽度
+	strokeWidth: {
+		type: Number,
+		default: 3
+	},
+	// 背景颜色
+	backgroundColor: {
+		type: String,
+		default: "#ffffff"
+	},
+	// 是否启用毛笔效果
+	enableBrush: {
+		type: Boolean,
+		default: true
+	},
+	// 最小线条宽度
+	minStrokeWidth: {
+		type: Number,
+		default: 1
+	},
+	// 最大线条宽度
+	maxStrokeWidth: {
+		type: Number,
+		default: 6
+	},
+	// 速度敏感度
+	velocitySensitivity: {
+		type: Number,
+		default: 0.7
+	},
+	// 是否支持横屏自适应
+	autoRotate: {
+		type: Boolean,
+		default: true
+	},
+	// 是否全屏
+	fullscreen: {
+		type: Boolean,
+		default: false
+	}
+});
+
+const emit = defineEmits(["change"]);
+
+const { proxy } = getCurrentInstance()!;
+const { windowWidth, windowHeight } = uni.getWindowInfo();
+
+// 触摸点类型
+type Point = { x: number; y: number; time: number };
+
+// 透传样式类型定义
+type PassThrough = {
+	className?: string;
+};
+
+// 解析透传样式配置
+const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+// canvas组件上下文
+let canvasCtx: CanvasContext | null = null;
+
+// 绘图上下文
+let drawCtx: CanvasRenderingContext2D | null = null;
+
+// 生成唯一的canvas ID
+const canvasId = `cl-sign__${uuid()}`;
+
+// 触摸状态
+const isDrawing = ref(false);
+
+// 上一个触摸点
+let lastPoint: Point | null = null;
+
+// 当前线条宽度
+let currentStrokeWidth = ref(3);
+
+// 速度缓冲数组（用于平滑速度变化）
+const velocityBuffer: number[] = [];
+
+// 当前是否为横屏
+const isLandscape = ref(false);
+
+// 动态计算的画布尺寸
+const size = computed(() => {
+	if (props.fullscreen) {
+		const { windowWidth, windowHeight } = uni.getWindowInfo();
+
+		return {
+			width: windowWidth,
+			height: windowHeight
+		};
+	}
+
+	if (isLandscape.value) {
+		const { windowWidth } = uni.getWindowInfo();
+
+		return {
+			width: windowWidth,
+			height: props.height
+		};
+	}
+
+	return {
+		width: props.width,
+		height: props.height
+	};
+});
+
+// 获取触摸点在canvas中的坐标
+function getTouchPos(e: TouchEvent): Point {
+	const touch = e.touches[0];
+	const rect = (e.target as any).getBoundingClientRect();
+	return {
+		x: touch.clientX - rect.left,
+		y: touch.clientY - rect.top,
+		time: Date.now()
+	};
+}
+
+// 计算速度并返回动态线条宽度
+function calculateStrokeWidth(currentPoint: Point): number {
+	if (!lastPoint || !props.enableBrush) {
+		return props.strokeWidth;
+	}
+
+	// 计算距离和时间差
+	const distance = Math.sqrt(
+		Math.pow(currentPoint.x - lastPoint.x, 2) + Math.pow(currentPoint.y - lastPoint.y, 2)
+	);
+	const timeDelta = currentPoint.time - lastPoint.time;
+
+	if (timeDelta <= 0) return currentStrokeWidth.value;
+
+	// 计算速度 (像素/毫秒)
+	const velocity = distance / timeDelta;
+
+	// 添加到速度缓冲区（用于平滑）
+	velocityBuffer.push(velocity);
+	if (velocityBuffer.length > 5) {
+		velocityBuffer.shift();
+	}
+
+	// 计算平均速度
+	const avgVelocity = velocityBuffer.reduce((sum, v) => sum + v, 0) / velocityBuffer.length;
+
+	// 根据速度计算线条宽度（速度越快越细）
+	const normalizedVelocity = Math.min(avgVelocity * props.velocitySensitivity, 1);
+	const widthRange = props.maxStrokeWidth - props.minStrokeWidth;
+	const targetWidth = props.maxStrokeWidth - normalizedVelocity * widthRange;
+
+	// 平滑过渡到目标宽度
+	const smoothFactor = 0.3;
+	return currentStrokeWidth.value + (targetWidth - currentStrokeWidth.value) * smoothFactor;
+}
+
+// 触摸开始
+function onTouchStart(e: TouchEvent) {
+	e.preventDefault();
+	isDrawing.value = true;
+	lastPoint = getTouchPos(e);
+
+	// 初始化线条宽度和清空速度缓冲
+	currentStrokeWidth.value = props.enableBrush ? props.maxStrokeWidth : props.strokeWidth;
+	velocityBuffer.length = 0;
+}
+
+// 触摸移动
+function onTouchMove(e: TouchEvent) {
+	e.preventDefault();
+	if (!isDrawing.value || !lastPoint || !drawCtx) return;
+
+	const currentPoint = getTouchPos(e);
+
+	// 计算动态线条宽度
+	const strokeWidth = calculateStrokeWidth(currentPoint);
+	currentStrokeWidth.value = strokeWidth;
+
+	// 绘制线条
+	drawCtx!.beginPath();
+	drawCtx!.moveTo(lastPoint.x, lastPoint.y);
+	drawCtx!.lineTo(currentPoint.x, currentPoint.y);
+	drawCtx!.strokeStyle = props.strokeColor;
+	drawCtx!.lineWidth = strokeWidth;
+	drawCtx!.lineCap = "round";
+	drawCtx!.lineJoin = "round";
+	drawCtx!.stroke();
+
+	lastPoint = currentPoint;
+	emit("change");
+}
+
+// 触摸结束
+function onTouchEnd(e: TouchEvent) {
+	e.preventDefault();
+	isDrawing.value = false;
+	lastPoint = null;
+}
+
+// 判断横竖屏
+function getOrientation() {
+	const { windowHeight, windowWidth } = uni.getWindowInfo();
+
+	// 判断是否为横屏（宽度大于高度）
+	isLandscape.value = windowWidth > windowHeight;
+}
+
+// 屏幕方向变化监听
+function onOrientationChange() {
+	setTimeout(() => {
+		getOrientation();
+
+		// 重新初始化画布
+		if (props.autoRotate) {
+			initCanvas();
+		}
+	}, 300); // 延迟确保屏幕方向变化完成
+}
+
+// 清除画布
+function clear() {
+	if (!drawCtx) return;
+
+	const { width, height } = size.value;
+
+	// #ifdef APP
+	drawCtx!.reset();
+	// #endif
+	// #ifndef APP
+	drawCtx!.clearRect(0, 0, width, height);
+	// #endif
+
+	// 填充背景色
+	drawCtx!.fillStyle = props.backgroundColor;
+	drawCtx!.fillRect(0, 0, width, height);
+
+	emit("change");
+}
+
+// 获取签名图片
+function toPng(): Promise<string> {
+	return new Promise((resolve, reject) => {
+		if (!canvasCtx) {
+			reject(new Error("Canvas context not initialized"));
+			return;
+		}
+
+		uni.canvasToTempFilePath(
+			{
+				canvasId: canvasId,
+				success: (res) => {
+					resolve(res.tempFilePath);
+				},
+				fail: (err) => {
+					reject(err);
+				}
+			},
+			proxy
+		);
+	});
+}
+
+// 初始化画布
+function initCanvas() {
+	const { width, height } = size.value;
+
+	uni.createCanvasContextAsync({
+		id: canvasId,
+		component: proxy,
+		success: (context: CanvasContext) => {
+			// 设置canvas上下文
+			canvasCtx = context;
+
+			// 获取绘图上下文
+			drawCtx = context.getContext("2d")!;
+
+			// 设置宽高
+			drawCtx!.canvas.width = width;
+			drawCtx!.canvas.height = height;
+
+			// 优化渲染质量
+			drawCtx!.textBaseline = "middle";
+			drawCtx!.textAlign = "center";
+			drawCtx!.miterLimit = 10;
+
+			// 初始化背景
+			clear();
+		}
+	});
+}
+
+onMounted(() => {
+	// 判断横屏竖屏
+	getOrientation();
+
+	// 初始化画布
+	initCanvas();
+
+	// 监听屏幕方向变化
+	if (props.autoRotate) {
+		uni.onWindowResize(onOrientationChange);
+	}
+
+	// 监听全屏状态变化
+	watch(
+		() => props.fullscreen,
+		() => {
+			initCanvas();
+		}
+	);
+});
+
+onUnmounted(() => {
+	// 移除屏幕方向监听
+	if (props.autoRotate) {
+		uni.offWindowResize(onOrientationChange);
+	}
+});
+
+defineExpose({
+	clear,
+	toPng
+});
+</script>

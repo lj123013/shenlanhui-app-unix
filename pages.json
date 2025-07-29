@@ -370,6 +370,12 @@
 					}
 				},
 				{
+					"path": "other/sign",
+					"style": {
+						"navigationBarTitleText": "Sign 签名"
+					}
+				},
+				{
 					"path": "other/day-uts",
 					"style": {
 						"navigationBarTitleText": "DayUts 日期"
