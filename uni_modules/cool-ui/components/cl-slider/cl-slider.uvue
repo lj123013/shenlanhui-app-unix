@@ -189,14 +189,14 @@ const rangePercentage = computed<RangePercentage>(() => {
 
 // 进度条样式
 const progressStyle = computed(() => {
-	const style = new Map<string, string>();
+	const style = {};
 
 	if (props.range) {
 		const { min, max } = rangePercentage.value;
-		style.set("left", `${min}%`);
-		style.set("width", `${max - min}%`);
+		style["left"] = `${min}%`;
+		style["width"] = `${max - min}%`;
 	} else {
-		style.set("width", `${percentage.value}%`);
+		style["width"] = `${percentage.value}%`;
 	}
 
 	return style;
@@ -204,16 +204,16 @@ const progressStyle = computed(() => {
 
 // 创建滑块样式的通用函数
 function createThumbStyle(percent: number) {
-	const style = new Map<string, string>();
+	const style = {};
 
 	// 使用像素定位，确保滑块始终在轨道范围内
 	const effectiveTrackWidth = trackWidth.value - rpx2px(props.blockSize) + 1;
 	const leftPosition = (percent / 100) * effectiveTrackWidth;
 	const finalLeft = Math.max(0, Math.min(effectiveTrackWidth, leftPosition));
 
-	style.set("left", `${finalLeft}px`);
-	style.set("width", `${rpx2px(props.blockSize)}px`);
-	style.set("height", `${rpx2px(props.blockSize)}px`);
+	style["left"] = `${finalLeft}px`;
+	style["width"] = `${rpx2px(props.blockSize)}px`;
+	style["height"] = `${rpx2px(props.blockSize)}px`;
 
 	return style;
 }
@@ -244,15 +244,19 @@ const displayValue = computed<string>(() => {
 });
 
 // 获取滑块轨道的宽度和左边距，用于后续触摸计算
-function getTrackInfo() {
-	uni.createSelectorQuery()
-		.in(proxy)
-		.select(".cl-slider__track")
-		.boundingClientRect((node) => {
-			trackWidth.value = (node as NodeInfo).width ?? 0;
-			trackLeft.value = (node as NodeInfo).left ?? 0;
-		})
-		.exec();
+function getTrackInfo(): Promise<void> {
+	return new Promise((resolve) => {
+		uni.createSelectorQuery()
+			.in(proxy)
+			.select(".cl-slider__track")
+			.boundingClientRect((node) => {
+				trackWidth.value = (node as NodeInfo).width ?? 0;
+				trackLeft.value = (node as NodeInfo).left ?? 0;
+
+				resolve();
+			})
+			.exec();
+	});
 }
 
 // 根据触摸点的clientX计算对应的滑块值
@@ -326,13 +330,12 @@ function updateValue(val: number | number[]) {
 }
 
 // 触摸开始事件，获取轨道信息并初步设置值
-function onTouchStart(e: TouchEvent) {
+async function onTouchStart(e: TouchEvent) {
 	if (props.disabled) return;
 
-	getTrackInfo();
+	await getTrackInfo();
 
-	// 延迟10ms，确保轨道信息已获取
-	setTimeout(() => {
+	nextTick(() => {
 		const clientX = e.touches[0].clientX;
 		const newValue = calculateValue(clientX);
 
@@ -344,7 +347,7 @@ function onTouchStart(e: TouchEvent) {
 		} else {
 			updateValue(newValue);
 		}
-	}, 10);
+	});
 }
 
 // 触摸移动事件，实时更新滑块值
