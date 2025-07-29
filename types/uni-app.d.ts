@@ -377,6 +377,15 @@ declare const onUnhandledRejection: (
 declare const onUnload: (hook: () => any, target?: ComponentInternalInstance | null) => void;
 
 declare interface UniElement {
+	firstChild: UniElement;
+	lastChild: UniElement;
+	previousSibling: UniElement;
+	parentElement: UniElement;
+	children: UniElement[];
+	attributes: Map<string, any>;
+	dataset: Map<string, any>;
+	style: CSSStyleDeclaration;
+	classList: string[];
 	takeSnapshot(options: {
 		success: (res: { tempFilePath: string }) => void;
 		fail: (err: { errCode: number; errMsg: string }) => void;

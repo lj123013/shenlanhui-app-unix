@@ -3,3 +3,4 @@ export * from "./storage";
 export * from "./path";
 export * from "./day";
 export * from "./parse";
+export * from "./file";

@@ -2,8 +2,8 @@
 	<cl-page>
 		<cl-sign
 			ref="signRef"
+			:height="isFullscreen ? windowHeight - 200 : 200"
 			:width="windowWidth"
-			:fullscreen="isFullscreen"
 			:enable-brush="isBrush"
 		></cl-sign>
 
@@ -30,19 +30,21 @@
 import { ref } from "vue";
 import DemoItem from "../components/item.uvue";
 
-const { windowWidth } = uni.getWindowInfo();
+const { windowWidth, windowHeight } = uni.getWindowInfo();
 
 const isFullscreen = ref(false);
 const isBrush = ref(true);
 const signRef = ref<ClSignComponentPublicInstance | null>(null);
 
 function clear() {
-	signRef.value?.clear();
+	signRef.value!.clear();
 }
 
 function preview() {
-	signRef.value?.toPng().then((res) => {
-		console.log(res);
+	signRef.value!.toPng().then((url) => {
+		uni.previewImage({
+			urls: [url]
+		});
 	});
 }
 </script>
