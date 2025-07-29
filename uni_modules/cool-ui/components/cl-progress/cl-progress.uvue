@@ -94,12 +94,12 @@ const width = ref(0);
 
 // 外层样式
 const outerStyle = computed(() => {
-	const style = new Map<string, string>();
+	const style = {};
 
-	style.set("height", parseRpx(props.strokeWidth));
+	style["height"] = parseRpx(props.strokeWidth);
 
 	if (props.unColor != null) {
-		style.set("backgroundColor", props.unColor!);
+		style["backgroundColor"] = props.unColor!;
 	}
 
 	return style;
@@ -107,11 +107,12 @@ const outerStyle = computed(() => {
 
 // 内层样式
 const innerStyle = computed(() => {
-	const style = new Map<string, string>();
-	style.set("width", `${(value.value / 100) * width.value}px`);
+	const style = {};
+
+	style["width"] = `${(value.value / 100) * width.value}px`;
 
 	if (props.color != null) {
-		style.set("backgroundColor", props.color!);
+		style["backgroundColor"] = props.color!;
 	}
 
 	return style;

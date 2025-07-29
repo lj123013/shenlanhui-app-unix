@@ -123,14 +123,14 @@ const list = computed<string[]>(() => {
 
 // 滚动容器样式，动态计算滚动动画相关样式
 const scrollerStyle = computed(() => {
-	const style = new Map<string, string>();
+	const style = {};
 
 	if (props.direction == "horizontal") {
-		style.set("left", `${scroll.left}px`);
-		style.set("transform", `translateX(-${scroll.translateX}px)`);
-		style.set("transition-duration", `${scroll.duration}ms`);
+		style["left"] = `${scroll.left}px`;
+		style["transform"] = `translateX(-${scroll.translateX}px)`;
+		style["transition-duration"] = `${scroll.duration}ms`;
 	} else {
-		style.set("transform", `translateY(${scroll.top}px)`);
+		style["transform"] = `translateY(${scroll.top}px)`;
 	}
 
 	return style;

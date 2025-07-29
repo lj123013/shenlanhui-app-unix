@@ -409,10 +409,10 @@ const loadingIcon = computed<ClLoadingProps>(() => {
 
 // 按钮样式
 const buttonStyle = computed(() => {
-	const style = new Map<string, string>();
+	const style = {};
 
 	if (props.color != "") {
-		style.set("border-color", props.color);
+		style["border-color"] = props.color;
 	}
 
 	return style;

@@ -408,14 +408,15 @@ function onTouchEnd() {
  * 根据滑动状态动态设置transform属性实现位移动画
  */
 const popupStyle = computed(() => {
-	const style = new Map<string, string>();
+	const style = {};
+
 	// 基础样式
-	style.set("height", height.value);
-	style.set("width", width.value);
+	style["height"] = height.value;
+	style["width"] = width.value;
 
 	// 处于触摸状态时添加位移效果
 	if (swipe.isTouch) {
-		style.set("transform", `translateY(${swipe.offsetY}px)`);
+		style["transform"] = `translateY(${swipe.offsetY}px)`;
 	}
 
 	return style;

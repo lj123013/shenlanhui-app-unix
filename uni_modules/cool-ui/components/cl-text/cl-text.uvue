@@ -156,10 +156,10 @@ const pt = computed(() => parsePt<PassThrough>(props.pt));
 
 // 文本样式
 const textStyle = computed(() => {
-	const style = new Map<string, string>();
+	const style = {};
 
 	if (props.color != "") {
-		style.set("color", props.color);
+		style["color"] = props.color;
 	}
 
 	return style;

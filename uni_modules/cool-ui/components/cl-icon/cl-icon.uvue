@@ -120,17 +120,17 @@ const icon = computed<Icon>(() => {
 
 // 图标样式
 const iconStyle = computed(() => {
-	const style = new Map<string, string>();
+	const style = {};
 
 	if (props.color != "") {
-		style.set("color", props.color);
+		style["color"] = props.color;
 	}
 
-	style.set("fontFamily", icon.value.font);
-	style.set("fontSize", parseRpx(props.size!));
-	style.set("height", parseRpx(props.height ?? props.size!));
-	style.set("width", parseRpx(props.width ?? props.size!));
-	style.set("lineHeight", parseRpx(props.size!));
+	style["fontFamily"] = icon.value.font;
+	style["fontSize"] = parseRpx(props.size!);
+	style["height"] = parseRpx(props.height ?? props.size!);
+	style["width"] = parseRpx(props.width ?? props.size!);
+	style["lineHeight"] = parseRpx(props.size!);
 
 	return style;
 });

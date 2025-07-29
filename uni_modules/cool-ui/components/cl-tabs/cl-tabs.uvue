@@ -253,13 +253,14 @@ const itemRects = ref<ItemRect[]>([]);
 
 // 计算下划线样式
 const lineStyle = computed(() => {
-	const style = new Map<string, string>();
-	style.set("transform", `translateX(${lineLeft.value}px)`);
+	const style = {};
+
+	style["transform"] = `translateX(${lineLeft.value}px)`;
 
 	// 获取选中颜色
 	const bgColor = getColor(true);
 	if (bgColor != null) {
-		style.set("backgroundColor", bgColor);
+		style["backgroundColor"] = bgColor;
 	}
 
 	return style;
@@ -267,14 +268,15 @@ const lineStyle = computed(() => {
 
 // 计算滑块样式
 const sliderStyle = computed(() => {
-	const style = new Map<string, string>();
-	style.set("transform", `translateX(${sliderLeft.value}px)`);
-	style.set("width", sliderWidth.value + "px");
+	const style = {};
+
+	style["transform"] = `translateX(${sliderLeft.value}px)`;
+	style["width"] = sliderWidth.value + "px";
 
 	// 获取选中颜色
 	const bgColor = getColor(true);
 	if (bgColor != null) {
-		style.set("backgroundColor", bgColor);
+		style["backgroundColor"] = bgColor;
 	}
 
 	return style;
@@ -282,12 +284,12 @@ const sliderStyle = computed(() => {
 
 // 获取文本样式
 function getTextStyle(item: Item) {
-	const style = new Map<string, string>();
+	const style = {};
 
 	// 获取选中颜色
 	const color = getColor(item.isActive);
 	if (color != null) {
-		style.set("color", color);
+		style["color"] = color;
 	}
 
 	return style;

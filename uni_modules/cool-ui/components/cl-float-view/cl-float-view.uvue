@@ -104,7 +104,7 @@ const dragState = reactive<DragState>({
  * 根据当前位置和拖拽状态计算组件的CSS样式
  */
 const viewStyle = computed(() => {
-	const style = new Map<string, any>();
+	const style = {};
 
 	// 额外的底部偏移
 	let bottomOffset = 0;
@@ -115,19 +115,19 @@ const viewStyle = computed(() => {
 	}
 
 	// 设置水平位置
-	style.set("left", `${position.x}px`);
+	style["left"] = `${position.x}px`;
 	// 设置垂直位置（从底部计算）
-	style.set("bottom", `${bottomOffset + position.y}px`);
+	style["bottom"] = `${bottomOffset + position.y}px`;
 	// 设置z-index
-	style.set("z-index", props.zIndex);
+	style["z-index"] = props.zIndex;
 	// 设置尺寸
-	style.set("width", `${props.size}px`);
+	style["width"] = `${props.size}px`;
 	// 设置高度
-	style.set("height", `${props.size}px`);
+	style["height"] = `${props.size}px`;
 
 	// 非拖拽状态下添加过渡动画，使移动更平滑
 	if (!position.isDragging) {
-		style.set("transition-duration", "300ms");
+		style["transition-duration"] = "300ms";
 	}
 
 	return style;
