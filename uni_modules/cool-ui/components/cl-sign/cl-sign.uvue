@@ -72,11 +72,6 @@ const props = defineProps({
 	velocitySensitivity: {
 		type: Number,
 		default: 0.7
-	},
-	// 是否支持横屏自适应
-	autoRotate: {
-		type: Boolean,
-		default: true
 	}
 });
 

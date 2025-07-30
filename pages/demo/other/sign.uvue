@@ -28,7 +28,6 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import DemoItem from "../components/item.uvue";
 
 const { windowWidth, windowHeight } = uni.getWindowInfo();
 
