@@ -386,6 +386,12 @@
 					"style": {
 						"navigationBarTitleText": "Vibrate 震动"
 					}
+				},
+				{
+					"path": "other/cropper",
+					"style": {
+						"navigationBarTitleText": "Cropper 图片裁剪"
+					}
 				}
 			]
 		}

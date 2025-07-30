@@ -1,0 +1,727 @@
+<template>
+	<view
+		class="cl-cropper"
+		:class="[
+			{
+				'is-disabled': disabled
+			},
+			pt.className
+		]"
+		:style="{
+			width: width + 'px',
+			height: height + 'px'
+		}"
+	>
+		<view class="cl-cropper__container" :class="[pt.inner?.className]">
+			<!-- 图片容器 -->
+			<view
+				class="cl-cropper__image-container"
+				:style="imageContainerStyle"
+				@touchstart="onImageTouchStart"
+				@touchmove="onImageTouchMove"
+				@touchend="onImageTouchEnd"
+			>
+				<image
+					class="cl-cropper__image"
+					:class="[pt.image?.className]"
+					:src="src"
+					:style="imageStyle"
+					mode="aspectFit"
+					@load="onImageLoad"
+				></image>
+			</view>
+
+			<!-- 裁剪框 -->
+			<view
+				class="cl-cropper__crop-box"
+				:class="[pt.cropBox?.className]"
+				:style="cropBoxStyle"
+			>
+				<view class="cl-cropper__crop-mask cl-cropper__crop-mask--top"></view>
+				<view class="cl-cropper__crop-mask cl-cropper__crop-mask--right"></view>
+				<view class="cl-cropper__crop-mask cl-cropper__crop-mask--bottom"></view>
+				<view class="cl-cropper__crop-mask cl-cropper__crop-mask--left"></view>
+
+				<!-- 裁剪区域 -->
+				<view
+					class="cl-cropper__crop-area"
+					:class="{ 'is-resizing': isResizing }"
+					@touchstart="onCropTouchStart"
+					@touchmove="onCropTouchMove"
+					@touchend="onCropTouchEnd"
+				>
+					<!-- 辅助线 -->
+					<view class="cl-cropper__guide-lines" v-if="showGuideLines">
+						<view class="cl-cropper__guide-line cl-cropper__guide-line--h1"></view>
+						<view class="cl-cropper__guide-line cl-cropper__guide-line--h2"></view>
+						<view class="cl-cropper__guide-line cl-cropper__guide-line--v1"></view>
+						<view class="cl-cropper__guide-line cl-cropper__guide-line--v2"></view>
+					</view>
+					
+					<!-- 拖拽点 -->
+					<view 
+						class="cl-cropper__drag-point cl-cropper__drag-point--tl"
+						@touchstart="onResizeTouchStart"
+						@touchmove="onResizeTouchMove" 
+						@touchend="onResizeTouchEnd"
+						data-direction="tl"
+					></view>
+					<view 
+						class="cl-cropper__drag-point cl-cropper__drag-point--tr"
+						@touchstart="onResizeTouchStart"
+						@touchmove="onResizeTouchMove"
+						@touchend="onResizeTouchEnd"
+						data-direction="tr"
+					></view>
+					<view 
+						class="cl-cropper__drag-point cl-cropper__drag-point--bl"
+						@touchstart="onResizeTouchStart"
+						@touchmove="onResizeTouchMove"
+						@touchend="onResizeTouchEnd"
+						data-direction="bl"
+					></view>
+					<view 
+						class="cl-cropper__drag-point cl-cropper__drag-point--br"
+						@touchstart="onResizeTouchStart"
+						@touchmove="onResizeTouchMove"
+						@touchend="onResizeTouchEnd"
+						data-direction="br"
+					></view>
+				</view>
+			</view>
+
+			<!-- 操作按钮 -->
+			<view class="cl-cropper__buttons" v-if="showButtons">
+				<cl-button
+					type="light"
+					size="small"
+					:pt="{ className: pt.button?.className }"
+					@tap="reset"
+				>
+					重置
+				</cl-button>
+				<cl-button
+					type="primary"
+					size="small"
+					:pt="{ className: pt.button?.className }"
+					@tap="crop"
+				>
+					裁剪
+				</cl-button>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="ts">
+import { computed, ref, reactive, onMounted, type PropType } from "vue";
+import type { PassThroughProps } from "../../types";
+import { parsePt, parseRpx } from "@/cool";
+
+defineOptions({
+	name: "cl-cropper"
+});
+
+const props = defineProps({
+	// 透传样式
+	pt: {
+		type: Object,
+		default: () => ({})
+	},
+	// 图片源
+	src: {
+		type: String,
+		default: ""
+	},
+	// 容器宽度
+	width: {
+		type: [String, Number] as PropType<string | number>,
+		default: 375
+	},
+	// 容器高度
+	height: {
+		type: [String, Number] as PropType<string | number>,
+		default: 375
+	},
+	// 裁剪框宽度
+	cropWidth: {
+		type: [String, Number] as PropType<string | number>,
+		default: 200
+	},
+	// 裁剪框高度
+	cropHeight: {
+		type: [String, Number] as PropType<string | number>,
+		default: 200
+	},
+	// 最大缩放比例
+	maxScale: {
+		type: Number,
+		default: 3
+	},
+	// 最小缩放比例
+	minScale: {
+		type: Number,
+		default: 0.5
+	},
+	// 是否显示操作按钮
+	showButtons: {
+		type: Boolean,
+		default: true
+	},
+	// 输出图片质量
+	quality: {
+		type: Number,
+		default: 0.9
+	},
+	// 输出图片格式
+	format: {
+		type: String as PropType<"jpg" | "png">,
+		default: "jpg"
+	},
+	// 是否禁用
+	disabled: {
+		type: Boolean,
+		default: false
+	}
+});
+
+// 事件定义
+const emit = defineEmits(["crop", "load", "error"]);
+
+// 透传样式类型
+type PassThrough = {
+	className?: string;
+	inner?: PassThroughProps;
+	image?: PassThroughProps;
+	cropBox?: PassThroughProps;
+	button?: PassThroughProps;
+};
+
+// 解析透传样式
+const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+// 图片信息
+const imageInfo = reactive({
+	width: 0,
+	height: 0,
+	loaded: false
+});
+
+// 图片变换状态
+const imageTransform = reactive({
+	scale: 1,
+	translateX: 0,
+	translateY: 0
+});
+
+// 裁剪框状态
+const cropBox = reactive({
+	x: 0,
+	y: 0,
+	width: 200,
+	height: 200
+});
+
+// 触摸状态
+const touchState = reactive({
+	startX: 0,
+	startY: 0,
+	startDistance: 0,
+	startScale: 1,
+	startTranslateX: 0,
+	startTranslateY: 0,
+	touching: false,
+	mode: "", // image, crop, resize
+	resizeDirection: "" // tl, tr, bl, br
+});
+
+// 缩放状态
+const isResizing = ref(false);
+const showGuideLines = ref(false);
+
+// 计算图片容器样式
+const imageContainerStyle = computed(() => {
+	return {
+		width: "100%",
+		height: "100%",
+		overflow: "hidden"
+	};
+});
+
+// 计算图片样式
+const imageStyle = computed(() => {
+	return {
+		transform: `translate3d(${imageTransform.translateX}px, ${imageTransform.translateY}px, 0) scale(${imageTransform.scale})`,
+		transformOrigin: "center center",
+		transition: touchState.touching ? "none" : "transform 0.3s ease"
+	};
+});
+
+// 计算裁剪框样式
+const cropBoxStyle = computed(() => {
+	return {
+		left: `${cropBox.x}px`,
+		top: `${cropBox.y}px`,
+		width: `${cropBox.width}px`,
+		height: `${cropBox.height}px`
+	};
+});
+
+// 图片加载完成
+function onImageLoad(e: any) {
+	imageInfo.width = e.detail.width;
+	imageInfo.height = e.detail.height;
+	imageInfo.loaded = true;
+
+	// 初始化裁剪框位置
+	initCropBox();
+
+	emit("load", e);
+}
+
+// 计算图片最小缩放比例（确保图片不小于裁剪框）
+function calculateMinScale() {
+	if (!imageInfo.loaded || !imageInfo.width || !imageInfo.height) {
+		return props.minScale;
+	}
+
+	const containerWidth = parseFloat(parseRpx(props.width!).replace("px", ""));
+	const containerHeight = parseFloat(parseRpx(props.height!).replace("px", ""));
+
+	// 计算图片在容器中的显示尺寸（保持宽高比）
+	const imageAspectRatio = imageInfo.width / imageInfo.height;
+	const containerAspectRatio = containerWidth / containerHeight;
+
+	let displayWidth: number;
+	let displayHeight: number;
+
+	if (imageAspectRatio > containerAspectRatio) {
+		// 图片较宽，以容器宽度为准
+		displayWidth = containerWidth;
+		displayHeight = containerWidth / imageAspectRatio;
+	} else {
+		// 图片较高，以容器高度为准
+		displayHeight = containerHeight;
+		displayWidth = containerHeight * imageAspectRatio;
+	}
+
+	// 计算使图片能够覆盖裁剪框的最小缩放比例
+	const minScaleX = cropBox.width / displayWidth;
+	const minScaleY = cropBox.height / displayHeight;
+	const calculatedMinScale = Math.max(minScaleX, minScaleY);
+
+	// 确保不低于用户设置的最小缩放比例
+	return Math.max(props.minScale, calculatedMinScale);
+}
+
+// 初始化裁剪框
+function initCropBox() {
+	const containerWidth = parseFloat(parseRpx(props.width!).replace("px", ""));
+	const containerHeight = parseFloat(parseRpx(props.height!).replace("px", ""));
+
+	cropBox.width = parseFloat(parseRpx(props.cropWidth!).replace("px", ""));
+	cropBox.height = parseFloat(parseRpx(props.cropHeight!).replace("px", ""));
+	cropBox.x = (containerWidth - cropBox.width) / 2;
+	cropBox.y = (containerHeight - cropBox.height) / 2;
+
+	// 图片加载完成后，确保当前缩放比例不小于最小要求
+	if (imageInfo.loaded) {
+		const minScale = calculateMinScale();
+		if (imageTransform.scale < minScale) {
+			imageTransform.scale = minScale;
+		}
+	}
+}
+
+// 图片触摸开始
+function onImageTouchStart(e: TouchEvent) {
+	if (props.disabled || !imageInfo.loaded) return;
+
+	touchState.touching = true;
+	touchState.mode = "image";
+
+	if (e.touches != null && e.touches.length == 1) {
+		// 单指拖拽
+		touchState.startX = e.touches[0].clientX;
+		touchState.startY = e.touches[0].clientY;
+		touchState.startTranslateX = imageTransform.translateX;
+		touchState.startTranslateY = imageTransform.translateY;
+	} else if (e.touches != null && e.touches.length == 2) {
+		// 双指缩放
+		const touch1 = e.touches[0];
+		const touch2 = e.touches[1];
+		
+		// 计算两指间距离
+		touchState.startDistance = Math.sqrt(
+			Math.pow(touch2.clientX - touch1.clientX, 2) +
+				Math.pow(touch2.clientY - touch1.clientY, 2)
+		);
+		touchState.startScale = imageTransform.scale;
+		
+		// 记录缩放中心点（两指中心）
+		touchState.startX = (touch1.clientX + touch2.clientX) / 2;
+		touchState.startY = (touch1.clientY + touch2.clientY) / 2;
+		touchState.startTranslateX = imageTransform.translateX;
+		touchState.startTranslateY = imageTransform.translateY;
+	}
+}
+
+// 图片触摸移动
+function onImageTouchMove(e: TouchEvent) {
+	if (props.disabled || !touchState.touching || touchState.mode != "image") return;
+
+	e.preventDefault();
+
+	if (e.touches != null && e.touches.length == 1) {
+		// 单指拖拽
+		const deltaX = e.touches[0].clientX - touchState.startX;
+		const deltaY = e.touches[0].clientY - touchState.startY;
+
+		imageTransform.translateX = touchState.startTranslateX + deltaX;
+		imageTransform.translateY = touchState.startTranslateY + deltaY;
+	} else if (e.touches != null && e.touches.length == 2) {
+		// 双指缩放
+		const touch1 = e.touches[0];
+		const touch2 = e.touches[1];
+		
+		// 计算当前两指间距离
+		const distance = Math.sqrt(
+			Math.pow(touch2.clientX - touch1.clientX, 2) +
+				Math.pow(touch2.clientY - touch1.clientY, 2)
+		);
+
+		// 计算缩放比例
+		const scale = (distance / touchState.startDistance) * touchState.startScale;
+		
+		// 使用动态计算的最小缩放比例
+		const minScale = calculateMinScale();
+		const newScale = Math.max(minScale, Math.min(props.maxScale, scale));
+		
+		// 计算当前缩放中心点
+		const centerX = (touch1.clientX + touch2.clientX) / 2;
+		const centerY = (touch1.clientY + touch2.clientY) / 2;
+		
+		// 计算缩放中心相对于容器的偏移
+		const containerWidth = parseFloat(parseRpx(props.width!).replace("px", ""));
+		const containerHeight = parseFloat(parseRpx(props.height!).replace("px", ""));
+		const containerCenterX = containerWidth / 2;
+		const containerCenterY = containerHeight / 2;
+		
+		// 缩放时调整位移，使缩放围绕双指中心进行
+		const scaleDelta = newScale - touchState.startScale;
+		const offsetX = (centerX - containerCenterX - touchState.startX + containerCenterX) * scaleDelta / touchState.startScale;
+		const offsetY = (centerY - containerCenterY - touchState.startY + containerCenterY) * scaleDelta / touchState.startScale;
+		
+		imageTransform.scale = newScale;
+		imageTransform.translateX = touchState.startTranslateX - offsetX;
+		imageTransform.translateY = touchState.startTranslateY - offsetY;
+	}
+}
+
+// 图片触摸结束
+function onImageTouchEnd(e: TouchEvent) {
+	touchState.touching = false;
+	touchState.mode = "";
+}
+
+// 裁剪框触摸开始
+function onCropTouchStart(e: TouchEvent) {
+	if (props.disabled) return;
+
+	e.stopPropagation();
+	touchState.touching = true;
+	touchState.mode = "crop";
+
+	if (e.touches != null && e.touches.length == 1) {
+		touchState.startX = e.touches[0].clientX;
+		touchState.startY = e.touches[0].clientY;
+	}
+}
+
+// 裁剪框触摸移动
+function onCropTouchMove(e: TouchEvent) {
+	if (props.disabled || !touchState.touching || touchState.mode != "crop") return;
+
+	e.preventDefault();
+	e.stopPropagation();
+
+	if (e.touches != null && e.touches.length == 1) {
+		const deltaX = e.touches[0].clientX - touchState.startX;
+		const deltaY = e.touches[0].clientY - touchState.startY;
+
+		const containerWidth = parseFloat(parseRpx(props.width!).replace("px", ""));
+		const containerHeight = parseFloat(parseRpx(props.height!).replace("px", ""));
+
+		// 限制裁剪框在容器内
+		cropBox.x = Math.max(0, Math.min(containerWidth - cropBox.width, cropBox.x + deltaX));
+		cropBox.y = Math.max(0, Math.min(containerHeight - cropBox.height, cropBox.y + deltaY));
+
+		touchState.startX = e.touches[0].clientX;
+		touchState.startY = e.touches[0].clientY;
+	}
+}
+
+// 裁剪框触摸结束
+function onCropTouchEnd(e: TouchEvent) {
+	touchState.touching = false;
+	touchState.mode = "";
+}
+
+// 裁剪框缩放开始
+function onResizeTouchStart(e: TouchEvent) {
+	if (props.disabled) return;
+
+	e.stopPropagation();
+	
+	touchState.touching = true;
+	touchState.mode = "resize";
+	isResizing.value = true;
+	showGuideLines.value = true;
+
+	// 从 data-direction 属性获取缩放方向
+	const target = e.target as HTMLElement;
+	touchState.resizeDirection = target.getAttribute("data-direction") || "";
+
+	if (e.touches != null && e.touches.length == 1) {
+		touchState.startX = e.touches[0].clientX;
+		touchState.startY = e.touches[0].clientY;
+	}
+}
+
+// 裁剪框缩放移动
+function onResizeTouchMove(e: TouchEvent) {
+	if (props.disabled || !touchState.touching || touchState.mode != "resize") return;
+
+	e.preventDefault();
+	e.stopPropagation();
+
+	if (e.touches != null && e.touches.length == 1) {
+		const deltaX = e.touches[0].clientX - touchState.startX;
+		const deltaY = e.touches[0].clientY - touchState.startY;
+
+		const containerWidth = parseFloat(parseRpx(props.width!).replace("px", ""));
+		const containerHeight = parseFloat(parseRpx(props.height!).replace("px", ""));
+
+		// 最小裁剪框尺寸
+		const minSize = 50;
+		
+		let newX = cropBox.x;
+		let newY = cropBox.y;
+		let newWidth = cropBox.width;
+		let newHeight = cropBox.height;
+
+		// 根据拖拽方向调整裁剪框
+		switch (touchState.resizeDirection) {
+			case "tl": // 左上角
+				newX = Math.max(0, cropBox.x + deltaX);
+				newY = Math.max(0, cropBox.y + deltaY);
+				newWidth = cropBox.width - deltaX;
+				newHeight = cropBox.height - deltaY;
+				break;
+			case "tr": // 右上角
+				newY = Math.max(0, cropBox.y + deltaY);
+				newWidth = cropBox.width + deltaX;
+				newHeight = cropBox.height - deltaY;
+				break;
+			case "bl": // 左下角
+				newX = Math.max(0, cropBox.x + deltaX);
+				newWidth = cropBox.width - deltaX;
+				newHeight = cropBox.height + deltaY;
+				break;
+			case "br": // 右下角
+				newWidth = cropBox.width + deltaX;
+				newHeight = cropBox.height + deltaY;
+				break;
+		}
+
+		// 确保尺寸不小于最小值且不超出容器
+		if (newWidth >= minSize && newHeight >= minSize) {
+			// 检查是否超出容器边界
+			if (newX >= 0 && newY >= 0 && 
+				newX + newWidth <= containerWidth && 
+				newY + newHeight <= containerHeight) {
+				
+				cropBox.x = newX;
+				cropBox.y = newY;
+				cropBox.width = newWidth;
+				cropBox.height = newHeight;
+
+				// 当裁剪框大小改变时，检查图片是否需要放大
+				const minScale = calculateMinScale();
+				if (imageTransform.scale < minScale) {
+					imageTransform.scale = minScale;
+				}
+
+				// 更新起始位置
+				touchState.startX = e.touches[0].clientX;
+				touchState.startY = e.touches[0].clientY;
+			}
+		}
+	}
+}
+
+// 裁剪框缩放结束
+function onResizeTouchEnd(e: TouchEvent) {
+	touchState.touching = false;
+	touchState.mode = "";
+	touchState.resizeDirection = "";
+	isResizing.value = false;
+	
+	// 延迟隐藏辅助线，给用户一点时间看到最终位置
+	setTimeout(() => {
+		showGuideLines.value = false;
+	}, 500);
+}
+
+// 重置
+function reset() {
+	// 重置位移
+	imageTransform.translateX = 0;
+	imageTransform.translateY = 0;
+	
+	// 重置裁剪框
+	initCropBox();
+	
+	// 设置合适的初始缩放比例（确保图片能覆盖裁剪框）
+	if (imageInfo.loaded) {
+		const minScale = calculateMinScale();
+		imageTransform.scale = Math.max(1, minScale);
+	} else {
+		imageTransform.scale = 1;
+	}
+}
+
+// 执行裁剪
+function crop() {
+	if (!imageInfo.loaded) {
+		emit("error", "图片未加载完成");
+		return;
+	}
+}
+
+// 初始化
+onMounted(() => {
+	if (props.src != "") {
+		initCropBox();
+	}
+});
+</script>
+
+<style lang="scss" scoped>
+.cl-cropper {
+	@apply relative overflow-hidden bg-surface-100 rounded-xl;
+
+	&.is-disabled {
+		@apply opacity-50;
+	}
+
+	&__container {
+		@apply relative w-full h-full;
+	}
+
+	&__image-container {
+		@apply absolute top-0 left-0 flex items-center justify-center;
+	}
+
+	&__image {
+		@apply max-w-full max-h-full;
+	}
+
+	&__crop-box {
+		@apply absolute;
+	}
+
+	&__crop-mask {
+		@apply absolute bg-black opacity-50;
+
+		&--top {
+			@apply top-0 left-0 w-full;
+			height: var(--crop-top);
+		}
+
+		&--right {
+			@apply top-0 right-0 h-full;
+			width: var(--crop-right);
+		}
+
+		&--bottom {
+			@apply bottom-0 left-0 w-full;
+			height: var(--crop-bottom);
+		}
+
+		&--left {
+			@apply top-0 left-0 h-full;
+			width: var(--crop-left);
+		}
+	}
+
+	&__crop-area {
+		@apply relative w-full h-full border-2 border-white border-solid transition-all duration-300;
+
+		&.is-resizing {
+			@apply border-primary-500;
+		}
+	}
+
+	&__guide-lines {
+		@apply absolute top-0 left-0 w-full h-full pointer-events-none;
+	}
+
+	&__guide-line {
+		@apply absolute bg-white opacity-70;
+
+		&--h1 {
+			@apply top-1/3 left-0 w-full h-px;
+		}
+
+		&--h2 {
+			@apply top-2/3 left-0 w-full h-px;
+		}
+
+		&--v1 {
+			@apply left-1/3 top-0 w-px h-full;
+		}
+
+		&--v2 {
+			@apply left-2/3 top-0 w-px h-full;
+		}
+	}
+
+	&__drag-point {
+		@apply absolute w-3 h-3 bg-white border border-surface-300 border-solid cursor-move transition-all duration-200;
+
+		&:hover {
+			@apply scale-125 border-primary-500;
+		}
+
+		&--tl {
+			@apply -top-1 -left-1;
+			cursor: nw-resize;
+		}
+
+		&--tr {
+			@apply -top-1 -right-1;
+			cursor: ne-resize;
+		}
+
+		&--bl {
+			@apply -bottom-1 -left-1;
+			cursor: sw-resize;
+		}
+
+		&--br {
+			@apply -bottom-1 -right-1;
+			cursor: se-resize;
+		}
+		
+		// 缩放时高亮显示
+		.is-resizing & {
+			@apply scale-125 border-primary-500 shadow-md;
+		}
+	}
+
+	&__buttons {
+		@apply absolute bottom-4 left-0 right-0 flex justify-center space-x-4;
+	}
+}
+</style>
