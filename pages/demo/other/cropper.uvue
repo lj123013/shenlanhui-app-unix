@@ -1,47 +1,17 @@
 <template>
 	<cl-page>
-		<view class="p-4">
-			<cl-text size="lg" bold class="mb-4">图片裁剪器演示</cl-text>
-
-			<view class="mb-4">
-				<cl-text size="sm" color="info" class="mb-2">操作说明：</cl-text>
-				<cl-text size="xs" color="placeholder" class="block mb-1"
-					>• 拖拽图片进行移动</cl-text
-				>
-				<cl-text size="xs" color="placeholder" class="block mb-1"
-					>• 双指缩放图片（围绕双指中心缩放）</cl-text
-				>
-				<cl-text size="xs" color="placeholder" class="block mb-1"
-					>• 拖拽裁剪框进行移动</cl-text
-				>
-				<cl-text size="xs" color="placeholder" class="block mb-1"
-					>• 拖拽裁剪框四角进行缩放</cl-text
-				>
-				<cl-text size="xs" color="placeholder" class="block mb-1"
-					>• 缩放时会显示辅助线</cl-text
-				>
-				<cl-text size="xs" color="warning" class="block"
-					>• 图片会自动保持不小于裁剪框大小</cl-text
-				>
-			</view>
-
-			<view class="flex justify-center">
-				<cl-cropper
-					:src="imageSrc"
-					:width="320"
-					:height="320"
-					:crop-width="200"
-					:crop-height="200"
-					:max-scale="3"
-					:min-scale="0.5"
-					@crop="onCrop"
-					@load="onImageLoad"
-				></cl-cropper>
-			</view>
-
-			<view class="mt-4 space-y-2">
-				<cl-button @tap="selectImage" block>选择图片</cl-button>
-				<cl-button @tap="useDefaultImage" type="light" block>使用默认图片</cl-button>
+		<view class="cropper-demo">
+			<cl-cropper
+				:src="imageSrc"
+				:max-scale="3"
+				:min-scale="0.5"
+				@crop="onCrop"
+				@load="onImageLoad"
+			></cl-cropper>
+			
+			<!-- 选择图片按钮 -->
+			<view class="select-image-btn" @tap="selectImage">
+				<cl-button type="primary" size="small">选择图片</cl-button>
 			</view>
 		</view>
 	</cl-page>
@@ -50,7 +20,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 
-const imageSrc = ref("/static/logo.png");
+const imageSrc = ref("https://unix.cool-js.com/images/demo/avatar.jpg");
 
 function selectImage() {
 	// 选择图片
@@ -66,10 +36,6 @@ function selectImage() {
 	});
 }
 
-function useDefaultImage() {
-	imageSrc.value = "/static/logo.png";
-}
-
 function onCrop(result: any) {
 	console.log("裁剪结果:", result);
 	uni.showToast({
@@ -82,3 +48,14 @@ function onImageLoad(e: any) {
 	console.log("图片加载完成:", e);
 }
 </script>
+
+<style lang="scss" scoped>
+.cropper-demo {
+	@apply relative w-full h-full;
+}
+
+.select-image-btn {
+	@apply absolute top-4 right-4;
+	z-index: 10;
+}
+</style>
