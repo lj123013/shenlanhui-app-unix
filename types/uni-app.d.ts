@@ -198,6 +198,13 @@ declare interface UniMouseEvent extends UniEvent {
 	y: number;
 }
 
+declare interface UniImageLoadEvent extends UniEvent {
+	detail: {
+		width: number;
+		height: number;
+	};
+}
+
 declare interface JSON {
 	parseObject<T>(text: string): T | null;
 }

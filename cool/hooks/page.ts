@@ -48,6 +48,14 @@ class Page {
 	}
 
 	/**
+	 * 是否存在自定义 topbar
+	 * @returns boolean
+	 */
+	hasCustomTopbar() {
+		return router.route()?.isCustomNavbar ?? false;
+	}
+
+	/**
 	 * 获取 tabBar 高度
 	 * @returns tabBar 高度
 	 */
@@ -84,6 +92,31 @@ class Page {
 		}
 
 		return h;
+	}
+
+	/**
+	 * 获取视图高度
+	 * @returns 视图高度
+	 */
+	getViewHeight() {
+		const { screenHeight } = uni.getWindowInfo();
+
+		let h = screenHeight;
+
+		if (!this.hasCustomTopbar()) {
+			h -= 44 + this.getSafeAreaHeight("top");
+		}
+
+		return h;
+	}
+
+	/**
+	 * 获取视图宽度
+	 * @returns 视图宽度
+	 */
+	getViewWidth() {
+		const { screenWidth } = uni.getWindowInfo();
+		return screenWidth;
 	}
 }
 

@@ -363,6 +363,11 @@ const data = computed<Item[]>(() => {
 					path: "/pages/demo/other/sign"
 				},
 				{
+					label: "图片裁剪",
+					icon: "crop-line",
+					path: "/pages/demo/other/cropper"
+				},
+				{
 					label: "DayUts",
 					icon: "timer-2-line",
 					path: "/pages/demo/other/day-uts"
