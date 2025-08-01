@@ -5,20 +5,20 @@
 				<cl-button @tap="chooseImage">{{ t("选择图片") }}</cl-button>
 
 				<cl-list border :pt="{ className: 'mt-5' }">
-					<cl-list-item :label="t('调节裁剪框大小')">
+					<cl-list-item :label="t('可调节裁剪框大小')">
 						<cl-switch v-model="resizable"></cl-switch>
 					</cl-list-item>
 				</cl-list>
 			</demo-item>
 		</view>
-
-		<cl-cropper
-			ref="cropperRef"
-			:resizable="resizable"
-			@crop="onCrop"
-			@load="onImageLoad"
-		></cl-cropper>
 	</cl-page>
+
+	<cl-cropper
+		ref="cropperRef"
+		:resizable="resizable"
+		@crop="onCrop"
+		@load="onImageLoad"
+	></cl-cropper>
 </template>
 
 <script lang="ts" setup>
@@ -43,11 +43,9 @@ function chooseImage() {
 	});
 }
 
-function onCrop(result: any) {
-	console.log("裁剪结果:", result);
-	uni.showToast({
-		title: "裁剪完成",
-		icon: "success"
+function onCrop(url: string) {
+	uni.previewImage({
+		urls: [url]
 	});
 }
 
@@ -56,6 +54,6 @@ function onImageLoad(e: UniImageLoadEvent) {
 }
 
 onReady(() => {
-	cropperRef.value!.open('https://uni-docs.cool-js.com/demo/pages/demo/static/bg2.png');
+	cropperRef.value!.open("https://uni-docs.cool-js.com/demo/pages/demo/static/bg2.png");
 });
 </script>

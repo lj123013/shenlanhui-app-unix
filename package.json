@@ -13,7 +13,7 @@
 	"devDependencies": {
 		"@babel/parser": "^7.27.5",
 		"@babel/types": "^7.27.6",
-		"@cool-vue/ai": "^1.1.4",
+		"@cool-vue/ai": "^1.1.5",
 		"@cool-vue/vite-plugin": "^8.2.5",
 		"@dcloudio/types": "^3.4.16",
 		"@types/node": "^24.0.15",

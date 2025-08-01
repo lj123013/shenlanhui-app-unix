@@ -23,6 +23,7 @@ defineOptions({
 	name: "cl-sign"
 });
 
+// 定义组件属性
 const props = defineProps({
 	pt: {
 		type: Object,
@@ -75,8 +76,10 @@ const props = defineProps({
 	}
 });
 
+// 定义事件发射器
 const emit = defineEmits(["change"]);
 
+// 获取当前实例
 const { proxy } = getCurrentInstance()!;
 
 // 触摸点类型

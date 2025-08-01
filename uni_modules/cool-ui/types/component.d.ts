@@ -157,4 +157,5 @@ declare type ClCropperComponentPublicInstance = {
 	open: (url: string) => void;
 	close: () => void;
 	chooseImage: () => void;
+	toPng: () => Promise<string>;
 };

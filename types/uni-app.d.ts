@@ -394,8 +394,8 @@ declare interface UniElement {
 	style: CSSStyleDeclaration;
 	classList: string[];
 	takeSnapshot(options: {
-		success: (res: { tempFilePath: string }) => void;
-		fail: (err: { errCode: number; errMsg: string }) => void;
+		success?: (res: { tempFilePath: string }) => void;
+		fail?: (err: { errCode: number; errMsg: string }) => void;
 	}): void;
 }
 
