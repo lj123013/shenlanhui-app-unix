@@ -17,9 +17,10 @@ export type ClCropperProps = {
 	cropWidth?: string | number;
 	cropHeight?: string | number;
 	maxScale?: number;
-	minScale?: number;
 	showButtons?: boolean;
 	quality?: number;
 	format?: "jpg" | "png";
 	disabled?: boolean;
+	canResize?: boolean; // 是否可以自定义裁剪框大小
+	canFlip?: boolean; // 是否显示翻转功能
 };

@@ -1,36 +1,43 @@
 <template>
 	<cl-page>
-		<view class="cropper-demo">
-			<cl-cropper
-				:src="imageSrc"
-				:max-scale="3"
-				:min-scale="0.5"
-				@crop="onCrop"
-				@load="onImageLoad"
-			></cl-cropper>
-			
-			<!-- 选择图片按钮 -->
-			<view class="select-image-btn" @tap="selectImage">
-				<cl-button type="primary" size="small">选择图片</cl-button>
-			</view>
+		<view class="p-3">
+			<demo-item :label="t('自定义')">
+				<cl-button @tap="chooseImage">{{ t("选择图片") }}</cl-button>
+
+				<cl-list border :pt="{ className: 'mt-5' }">
+					<cl-list-item :label="t('调节裁剪框大小')">
+						<cl-switch v-model="resizable"></cl-switch>
+					</cl-list-item>
+				</cl-list>
+			</demo-item>
 		</view>
+
+		<cl-cropper
+			ref="cropperRef"
+			:resizable="resizable"
+			@crop="onCrop"
+			@load="onImageLoad"
+		></cl-cropper>
 	</cl-page>
 </template>
 
 <script lang="ts" setup>
+import { t } from "@/locale";
+import DemoItem from "../components/item.uvue";
 import { ref } from "vue";
 
-const imageSrc = ref("https://unix.cool-js.com/images/demo/avatar.jpg");
+const cropperRef = ref<ClCropperComponentPublicInstance | null>(null);
 
-function selectImage() {
-	// 选择图片
+const resizable = ref(true);
+
+function chooseImage() {
 	uni.chooseImage({
 		count: 1,
 		sizeType: ["original", "compressed"],
 		sourceType: ["album", "camera"],
 		success: (res) => {
 			if (res.tempFilePaths.length > 0) {
-				imageSrc.value = res.tempFilePaths[0];
+				cropperRef.value!.open(res.tempFilePaths[0]);
 			}
 		}
 	});
@@ -44,18 +51,11 @@ function onCrop(result: any) {
 	});
 }
 
-function onImageLoad(e: any) {
-	console.log("图片加载完成:", e);
+function onImageLoad(e: UniImageLoadEvent) {
+	console.log("图片加载完成", e);
 }
+
+onReady(() => {
+	cropperRef.value!.open('https://uni-docs.cool-js.com/demo/pages/demo/static/bg2.png');
+});
 </script>
-
-<style lang="scss" scoped>
-.cropper-demo {
-	@apply relative w-full h-full;
-}
-
-.select-image-btn {
-	@apply absolute top-4 right-4;
-	z-index: 10;
-}
-</style>

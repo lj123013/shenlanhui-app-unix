@@ -99,6 +99,11 @@ class Page {
 	 * @returns 视图高度
 	 */
 	getViewHeight() {
+		// #ifdef H5
+		return uni.getWindowInfo().windowHeight;
+		// #endif
+
+		// #ifndef H5
 		const { screenHeight } = uni.getWindowInfo();
 
 		let h = screenHeight;
@@ -108,6 +113,7 @@ class Page {
 		}
 
 		return h;
+		// #endif
 	}
 
 	/**

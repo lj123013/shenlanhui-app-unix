@@ -152,3 +152,9 @@ declare type ClSignComponentPublicInstance = {
 	clear: () => void;
 	toPng: () => Promise<string>;
 };
+
+declare type ClCropperComponentPublicInstance = {
+	open: (url: string) => void;
+	close: () => void;
+	chooseImage: () => void;
+};
