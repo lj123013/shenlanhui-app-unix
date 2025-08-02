@@ -384,6 +384,8 @@ declare const onUnhandledRejection: (
 declare const onUnload: (hook: () => any, target?: ComponentInternalInstance | null) => void;
 
 declare interface UniElement {
+	$vm: ComponentPublicInstance;
+	id: string;
 	firstChild: UniElement;
 	lastChild: UniElement;
 	previousSibling: UniElement;

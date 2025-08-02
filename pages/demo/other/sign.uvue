@@ -3,7 +3,6 @@
 		<cl-sign
 			ref="signRef"
 			:height="isFullscreen ? windowHeight - 200 : 200"
-			:width="windowWidth"
 			:enable-brush="isBrush"
 		></cl-sign>
 
@@ -29,7 +28,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const { windowWidth, windowHeight } = uni.getWindowInfo();
+const { windowHeight } = uni.getWindowInfo();
 
 const isFullscreen = ref(false);
 const isBrush = ref(true);

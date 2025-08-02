@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { canvasToPng, parsePt, uuid } from "@/cool";
-import { computed, getCurrentInstance, onMounted, ref, shallowRef, watch } from "vue";
+import { computed, getCurrentInstance, nextTick, onMounted, ref, shallowRef, watch } from "vue";
 
 defineOptions({
 	name: "cl-sign"
@@ -32,7 +32,7 @@ const props = defineProps({
 	// 画布宽度
 	width: {
 		type: Number,
-		default: 300
+		default: () => uni.getWindowInfo().windowWidth
 	},
 	// 画布高度
 	height: {
@@ -289,11 +289,7 @@ function clear() {
 
 // 获取签名图片
 function toPng(): Promise<string> {
-	return canvasToPng({
-		proxy,
-		canvasId,
-		canvasRef: canvasRef.value!
-	});
+	return canvasToPng(canvasRef.value!);
 }
 
 // 初始化画布
@@ -331,7 +327,9 @@ onMounted(() => {
 	watch(
 		computed(() => [props.width, props.height]),
 		() => {
-			initCanvas();
+			nextTick(() => {
+				initCanvas();
+			});
 		}
 	);
 });

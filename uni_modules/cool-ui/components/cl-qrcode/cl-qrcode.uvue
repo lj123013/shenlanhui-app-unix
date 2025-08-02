@@ -142,11 +142,7 @@ function drawer() {
  * @param call 回调函数，返回图片路径，失败返回空字符串
  */
 function toPng(): Promise<string> {
-	return canvasToPng({
-		canvasId: qrcodeId.value,
-		proxy,
-		canvasRef: canvasRef.value!
-	});
+	return canvasToPng(canvasRef.value!);
 }
 
 // 自动重绘

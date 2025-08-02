@@ -93,37 +93,6 @@ class Page {
 
 		return h;
 	}
-
-	/**
-	 * 获取视图高度
-	 * @returns 视图高度
-	 */
-	getViewHeight() {
-		// #ifndef APP
-		return uni.getWindowInfo().windowHeight;
-		// #endif
-
-		// #ifdef APP
-		const { screenHeight } = uni.getWindowInfo();
-
-		let h = screenHeight;
-
-		if (!this.hasCustomTopbar()) {
-			h -= 44 + this.getSafeAreaHeight("top");
-		}
-
-		return h;
-		// #endif
-	}
-
-	/**
-	 * 获取视图宽度
-	 * @returns 视图宽度
-	 */
-	getViewWidth() {
-		const { screenWidth } = uni.getWindowInfo();
-		return screenWidth;
-	}
 }
 
 export const page = new Page();
