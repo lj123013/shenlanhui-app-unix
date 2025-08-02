@@ -1,10 +1,6 @@
 <template>
 	<cl-page>
-		<cl-sign
-			ref="signRef"
-			:height="isFullscreen ? windowHeight - 200 : 200"
-			:enable-brush="isBrush"
-		></cl-sign>
+		<cl-sign ref="signRef" :height="height" :enable-brush="isBrush"></cl-sign>
 
 		<view class="p-3">
 			<cl-list>
@@ -13,7 +9,7 @@
 					<cl-button @click="preview">预览</cl-button>
 				</cl-list-item>
 
-				<cl-list-item label="全屏">
+				<cl-list-item label="大屏">
 					<cl-switch v-model="isFullscreen"></cl-switch>
 				</cl-list-item>
 
@@ -26,9 +22,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
-const { windowHeight } = uni.getWindowInfo();
+const height = computed(() => {
+	return isFullscreen.value ? uni.getWindowInfo().windowHeight - 200 : 200;
+});
 
 const isFullscreen = ref(false);
 const isBrush = ref(true);
