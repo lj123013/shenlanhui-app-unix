@@ -83,14 +83,14 @@
 		</view>
 
 		<!-- 底部按钮组 -->
-		<view class="cl-cropper__actions" :class="[pt.actions?.className]">
+		<view class="cl-cropper__op" :class="[pt.op?.className]" :style="opStyle" @touchmove.stop>
 			<!-- 关闭 -->
-			<view class="cl-cropper__actions-item">
+			<view class="cl-cropper__op-item">
 				<cl-icon name="close-line" color="white" :size="50" @tap="close"></cl-icon>
 			</view>
 
 			<!-- 旋转 -->
-			<view class="cl-cropper__actions-item">
+			<view class="cl-cropper__op-item">
 				<cl-icon
 					name="anticlockwise-line"
 					color="white"
@@ -100,22 +100,17 @@
 			</view>
 
 			<!-- 重置 -->
-			<view class="cl-cropper__actions-item">
-				<cl-icon
-					name="reset-right-line"
-					color="white"
-					:size="40"
-					@tap="resetCropper"
-				></cl-icon>
+			<view class="cl-cropper__op-item">
+				<cl-icon name="reset-right-line" color="white" :size="40" @tap="reset"></cl-icon>
 			</view>
 
 			<!-- 重新选择 -->
-			<view class="cl-cropper__actions-item">
+			<view class="cl-cropper__op-item">
 				<cl-icon name="image-line" color="white" :size="40" @tap="chooseImage"></cl-icon>
 			</view>
 
 			<!-- 确定 -->
-			<view class="cl-cropper__actions-item">
+			<view class="cl-cropper__op-item">
 				<cl-icon name="check-line" color="white" :size="50" @tap="toPng"></cl-icon>
 			</view>
 		</view>
@@ -248,20 +243,19 @@ function toPixel(value: number): number {
 type PassThrough = {
 	className?: string; // 组件根元素类名
 	image?: PassThroughProps; // 图片元素透传属性
-	op?: PassThroughProps; // 操作按钮组透传属性
-	actions?: PassThroughProps; // 底部按钮组透传属性
+	op?: PassThroughProps; // 底部按钮组透传属性
 	mask?: PassThroughProps; // 遮罩层透传属性
 	cropBox?: PassThroughProps; // 裁剪框透传属性
 	button?: PassThroughProps; // 按钮透传属性
 };
 
-// 解析透传样式配置的计算属性
+// 解析透传样式配置
 const pt = computed(() => parsePt<PassThrough>(props.pt));
 
 // 创建容器尺寸响应式对象
 const container = reactive<Size>({
-	height: page.getViewHeight(), // 获取视图高度
-	width: page.getViewWidth() // 获取视图宽度
+	height: 0, // 获取视图高度
+	width: 0 // 获取视图宽度
 });
 
 // 创建图片信息响应式对象
@@ -320,7 +314,7 @@ const flipVertical = ref(false); // 垂直翻转状态
 // 图片旋转状态
 const rotate = ref(0); // 旋转状态
 
-// 计算图片样式的计算属性
+// 计算图片样式
 const imageStyle = computed(() => {
 	// 构建翻转变换
 	const flipX = flipHorizontal.value ? "scaleX(-1)" : "scaleX(1)";
@@ -342,7 +336,7 @@ const imageStyle = computed(() => {
 	return style;
 });
 
-// 计算裁剪框样式的计算属性
+// 计算裁剪框样式
 const cropBoxStyle = computed(() => {
 	// 返回裁剪框定位和尺寸样式
 	return {
@@ -353,7 +347,7 @@ const cropBoxStyle = computed(() => {
 	};
 });
 
-// 计算遮罩层样式的计算属性
+// 计算遮罩层样式
 const maskStyle = computed<MaskStyle>(() => {
 	// 返回四个方向的遮罩样式
 	return {
@@ -383,6 +377,19 @@ const maskStyle = computed<MaskStyle>(() => {
 			height: "100%", // 遮罩高度与裁剪框相同
 			left: 0
 		}
+	};
+});
+
+// 底部按钮组样式
+const opStyle = computed(() => {
+	let bottom = page.getSafeAreaHeight("bottom");
+
+	if (bottom == 0) {
+		bottom = 10;
+	}
+
+	return {
+		bottom: bottom + "px"
 	};
 });
 
@@ -508,9 +515,18 @@ function getMinImageSize(): Size {
 
 // 初始化裁剪框的函数
 function initCrop() {
+	const { windowHeight, windowWidth } = uni.getWindowInfo();
+
+	// 设置容器尺寸为视口尺寸
+	container.height = windowHeight;
+	container.width = windowWidth;
+
+	console.log(container);
+
 	// 设置裁剪框尺寸为传入的初始值
 	cropBox.width = props.cropWidth; // 设置裁剪框宽度
 	cropBox.height = props.cropHeight; // 设置裁剪框高度
+
 	// 计算裁剪框居中位置
 	cropBox.x = toPixel((container.width - cropBox.width) / 2); // 水平居中
 	cropBox.y = toPixel((container.height - cropBox.height) / 2); // 垂直居中
@@ -615,10 +631,12 @@ function onImageLoaded(e: UniImageLoadEvent) {
 	imageInfo.height = e.detail.height; // 保存图片原始高度
 	imageInfo.isLoaded = true; // 标记图片已加载
 
-	// 执行初始化流程
-	initCrop(); // 初始化裁剪框位置和尺寸
-	setInitialImageSize(); // 设置图片初始显示尺寸
-	adjustBounds(); // 调整图片边界确保覆盖裁剪框
+	nextTick(() => {
+		// 执行初始化流程
+		initCrop(); // 初始化裁剪框位置和尺寸
+		setInitialImageSize(); // 设置图片初始显示尺寸
+		adjustBounds(); // 调整图片边界确保覆盖裁剪框
+	});
 
 	// 触发加载完成事件
 	emit("load", e); // 向父组件发送加载事件
@@ -971,7 +989,7 @@ function onTouchEnd() {
 }
 
 // 重置裁剪器到初始状态的函数
-function resetCropper() {
+function reset() {
 	// 重新初始化裁剪框
 	initCrop(); // 恢复裁剪框到初始位置和尺寸
 
@@ -979,6 +997,10 @@ function resetCropper() {
 	flipHorizontal.value = false; // 重置水平翻转状态
 	flipVertical.value = false; // 重置垂直翻转状态
 	rotate.value = 0; // 重置旋转角度
+
+	// 重置图片位移
+	transform.translateX = 0;
+	transform.translateY = 0;
 
 	// 根据图片加载状态进行不同处理
 	if (imageInfo.isLoaded) {
@@ -1084,14 +1106,9 @@ async function toPng(): Promise<string> {
 				// 获取设备像素比
 				const dpr = uni.getDeviceInfo().devicePixelRatio ?? 1;
 
-				// #ifndef H5
-				// 设置缩放比例
-				ctx!.scale(dpr, dpr);
-				// #endif
-
 				// 设置宽高
-				ctx!.canvas.width = cropBox.width;
-				ctx!.canvas.height = cropBox.height;
+				ctx!.canvas.width = cropBox.width * dpr;
+				ctx!.canvas.height = cropBox.height * dpr;
 
 				let img: Image;
 
@@ -1102,25 +1119,67 @@ async function toPng(): Promise<string> {
 
 				// 其他环境创建图片
 				// #ifndef MP-WEIXIN || APP-HARMONY
-				img = new Image(cropBox.width, cropBox.height);
+				img = new Image();
 				// #endif
 
 				// 设置图片源并在加载完成后绘制
 				img.src = imageUrl.value;
 				img.onload = () => {
-					ctx!.drawImage(img, cropBox.x, cropBox.y, cropBox.width, cropBox.height);
+					let x: number;
+					let y: number;
+
+					// 根据旋转角度计算裁剪位置
+					switch (Math.abs(rotate.value) % 360) {
+						case 270:
+							// 旋转270度时的位置计算
+							x = (imageSize.width - cropBox.height) / 2 - transform.translateY;
+							y = (imageSize.height + cropBox.width) / 2 + transform.translateX;
+							break;
+
+						case 180:
+							// 旋转180度时的位置计算
+							x = (imageSize.width + cropBox.width) / 2 + transform.translateX;
+							y = (imageSize.height + cropBox.height) / 2 + transform.translateY;
+							break;
+
+						case 90:
+							// 旋转90度时的位置计算
+							x = (imageSize.width + cropBox.height) / 2 + transform.translateY;
+							y = (imageSize.height - cropBox.width) / 2 - transform.translateX;
+							break;
+
+						default:
+							// 不旋转时的位置计算
+							x = (imageSize.width - cropBox.width) / 2 - transform.translateX;
+							y = (imageSize.height - cropBox.height) / 2 - transform.translateY;
+							break;
+					}
+
+					if (x < 0) {
+						x = 0;
+					}
+
+					if (y < 0) {
+						y = 0;
+					}
+
+					// 图片旋转
+					ctx!.rotate((rotate.value * Math.PI) / 180);
+
+					// 绘制图片
+					ctx!.drawImage(
+						img,
+						-x * dpr,
+						-y * dpr,
+						imageSize.width * dpr,
+						imageSize.height * dpr
+					);
 
 					setTimeout(() => {
-						canvasToPng({
-							proxy,
-							canvasId,
-							canvasRef: canvasRef.value!
-						})
-							.then((url) => {
-								emit("crop", url);
-								resolve(url);
-							})
-							.catch(() => {});
+						canvasToPng(canvasRef.value!).then((url) => {
+							emit("crop", url);
+							resolve(url);
+						});
 					}, 10);
 				};
 			}
@@ -1263,14 +1322,13 @@ defineExpose({
 		}
 	}
 
-	&__actions {
-		@apply absolute left-0 w-full flex flex-row items-center justify-between;
-		z-index: 10;
-		height: 50px;
-		bottom: env(safe-area-inset-bottom);
+	&__op {
+		@apply absolute left-0 bottom-0 w-full flex flex-row justify-between;
+		z-index: 30;
+		height: 40px;
 
 		&-item {
-			@apply flex flex-row justify-center items-center flex-1;
+			@apply flex flex-row justify-center items-center flex-1 h-full;
 		}
 	}
 

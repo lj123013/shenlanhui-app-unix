@@ -50,10 +50,6 @@ function onCrop(url: string) {
 }
 
 function onImageLoad(e: UniImageLoadEvent) {
-	console.log("图片加载完成", e);
+	console.log("onImageLoad", e);
 }
-
-onReady(() => {
-	cropperRef.value!.open("https://uni-docs.cool-js.com/demo/pages/demo/static/bg2.png");
-});
 </script>
