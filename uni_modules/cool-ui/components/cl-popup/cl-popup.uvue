@@ -38,6 +38,7 @@
 			@touchstart="onTouchStart"
 			@touchmove="onTouchMove"
 			@touchend="onTouchEnd"
+			@touchcancel="onTouchEnd"
 		>
 			<view
 				class="cl-popup__inner"
@@ -85,7 +86,11 @@
 					></cl-icon>
 				</view>
 
-				<view class="cl-popup__container" :class="[pt.container?.className]">
+				<view
+					class="cl-popup__container"
+					:class="[pt.container?.className]"
+					@touchmove.stop
+				>
 					<slot></slot>
 				</view>
 			</view>
@@ -355,6 +360,10 @@ const swipe = reactive<Swipe>({
  * 当弹出层获得焦点且允许滑动关闭时,记录触摸起始位置
  */
 function onTouchStart(e: UniTouchEvent) {
+	if (props.direction != "bottom") {
+		return;
+	}
+
 	if (isOpened.value && isSwipeClose.value) {
 		swipe.isTouch = true; // 标记开始触摸
 		swipe.startY = e.touches[0].clientY; // 记录起始Y坐标
@@ -367,6 +376,8 @@ function onTouchStart(e: UniTouchEvent) {
  * 计算手指移动距离,更新弹出层位置
  */
 function onTouchMove(e: UniTouchEvent) {
+	console.log(111);
+
 	if (swipe.isTouch) {
 		// 标记为移动状态
 		swipe.isMove = true;
