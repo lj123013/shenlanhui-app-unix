@@ -18,14 +18,11 @@
 			</demo-item>
 
 			<demo-item :label="t('单个 true / false')">
-				<view class="flex flex-row justify-between">
-					<cl-checkbox
-						v-model="checked4"
-						:pt="{
-							className: 'mr-5'
-						}"
-						>同意并阅读《用户协议》</cl-checkbox
-					>
+				<view class="flex flex-row items-center">
+					<cl-checkbox v-model="checked4">同意并阅读</cl-checkbox>
+					<cl-text color="primary">《用户协议》</cl-text>
+
+					<view class="flex-1"></view>
 
 					<cl-switch v-model="checked4"></cl-switch>
 				</view>

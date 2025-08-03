@@ -10,7 +10,7 @@
 		<view class="mb-3 flex flex-row">
 			<cl-input
 				v-model="form.phone"
-				prefix-icon="smartphone-line"
+				prefix-icon="device-fill"
 				:placeholder="t('请输入手机号')"
 				:border="false"
 				:pt="{
@@ -30,7 +30,7 @@
 				v-model="form.smsCode"
 				:clearable="false"
 				type="number"
-				prefix-icon="mail-line"
+				prefix-icon="shield-check-fill"
 				:placeholder="t('请输入验证码')"
 				:maxlength="4"
 				:border="false"

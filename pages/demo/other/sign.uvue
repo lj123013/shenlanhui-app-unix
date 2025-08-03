@@ -4,16 +4,16 @@
 
 		<view class="p-3">
 			<cl-list>
-				<cl-list-item label="操作">
-					<cl-button type="info" @click="clear">清空</cl-button>
-					<cl-button @click="preview">预览</cl-button>
+				<cl-list-item :label="t('操作')">
+					<cl-button type="info" @click="clear">{{ t("清空") }}</cl-button>
+					<cl-button @click="preview">{{ t("预览") }}</cl-button>
 				</cl-list-item>
 
-				<cl-list-item label="大屏">
+				<cl-list-item :label="t('设置高度')">
 					<cl-switch v-model="isFullscreen" @change="onFullscreenChange"></cl-switch>
 				</cl-list-item>
 
-				<cl-list-item label="毛笔效果">
+				<cl-list-item :label="t('毛笔效果')">
 					<cl-switch v-model="isBrush"></cl-switch>
 				</cl-list-item>
 			</cl-list>
@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { t } from "@/locale";
 import { ref } from "vue";
 
 const height = ref(0);

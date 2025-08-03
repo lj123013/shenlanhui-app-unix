@@ -14,5 +14,4 @@ export type ClSignProps = {
 	minStrokeWidth?: number;
 	maxStrokeWidth?: number;
 	velocitySensitivity?: number;
-	autoRotate?: boolean;
 };

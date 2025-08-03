@@ -14,16 +14,23 @@
 			<cl-text
 				v-if="showText"
 				:pt="{
-					className: parseClass({
-						'!text-surface-400': disabled
-					})
+					className: parseClass([
+						{
+							'!text-surface-400': disabled
+						},
+						pt.text?.className
+					])
 				}"
 				ellipsis
 			>
 				{{ text }}
 			</cl-text>
 
-			<text class="cl-select-trigger__placeholder" v-else>
+			<text
+				class="cl-select-trigger__placeholder"
+				:class="[pt.placeholder?.className]"
+				v-else
+			>
 				{{ placeholder }}
 			</text>
 		</view>
@@ -53,6 +60,7 @@ import { computed } from "vue";
 import type { ClIconProps } from "../cl-icon/props";
 import { isDark, parseClass, parsePt } from "@/cool";
 import { t } from "@/locale";
+import type { PassThroughProps } from "../../types";
 
 defineOptions({
 	name: "cl-select-trigger"
@@ -98,6 +106,8 @@ const emit = defineEmits(["clear"]);
 type PassThrough = {
 	className?: string; // 根元素类名
 	icon?: ClIconProps; // 图标样式
+	placeholder?: PassThroughProps; // 占位符样式
+	text?: PassThroughProps; // 文本样式
 };
 
 // 解析透传样式配置

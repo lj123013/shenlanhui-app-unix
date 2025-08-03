@@ -38,7 +38,7 @@
 					className: 'flex-row mx-[-10rpx]'
 				},
 				item: {
-					className: 'flex-1 mx-[10rpx]'
+					className: 'flex-1 mx-[10rpx] !rounded-xl'
 				}
 			}"
 		>
@@ -48,10 +48,9 @@
 				</view>
 			</template>
 			<template #append>
-				<view class="pb-5 pt-2 px-3">
-					<cl-checkbox v-model="agree"
-						>请阅读并同意《会员服务协议》和《隐私政策》</cl-checkbox
-					>
+				<view class="pb-5 pt-2 px-3 flex flex-row items-center">
+					<cl-checkbox v-model="agree">请阅读并同意</cl-checkbox>
+					<cl-text color="primary">《会员服务协议》</cl-text>
 				</view>
 			</template>
 
@@ -170,7 +169,7 @@ function openActionSheet6() {
 	function done() {
 		if (!agree.value) {
 			ui.showToast({
-				message: t("请阅读并同意《会员服务协议》和《隐私政策》")
+				message: "请阅读并同意《会员服务协议》"
 			});
 			return;
 		}

@@ -13,7 +13,7 @@
 					></cl-image>
 				</view>
 
-				<cl-text :pt="{ className: '!text-2xl font-bold mt-2' }">{{ config.name }}</cl-text>
+				<cl-text :pt="{ className: '!text-xl font-bold mt-3' }">{{ config.name }}</cl-text>
 			</view>
 
 			<login-phone :form="form" @success="toLogin"></login-phone>
@@ -22,28 +22,26 @@
 			<view class="mt-6 flex flex-row flex-wrap items-center justify-center">
 				<cl-checkbox
 					v-model="agree"
-					:pt="{ icon: { size: 32 } }"
-					active-icon="checkbox-circle-line"
+					:pt="{ icon: { size: 28 } }"
+					active-icon="checkbox-circle-fill"
 					inactive-icon="checkbox-blank-circle-line"
 				>
 				</cl-checkbox>
-				<cl-text :pt="{ className: '!text-sm' }" color="info">
-					{{ t("已阅读并同意") }}
-				</cl-text>
+				<cl-text color="info" :pt="{ className: '!text-xs' }">{{
+					t("已阅读并同意")
+				}}</cl-text>
 				<cl-text
-					:pt="{ className: '!text-sm mx-1' }"
+					:pt="{ className: '!text-xs' }"
 					@tap.stop="toDoc(t('用户协议'), 'userAgreement')"
 				>
-					{{ t("用户协议") }}
+					《{{ t("用户协议") }}》
 				</cl-text>
-				<cl-text :pt="{ className: '!text-sm' }" color="info">
-					{{ t("和") }}
-				</cl-text>
+				<cl-text color="info" :pt="{ className: '!text-xs' }">、</cl-text>
 				<cl-text
-					:pt="{ className: '!text-sm mx-1' }"
+					:pt="{ className: '!text-xs' }"
 					@tap.stop="toDoc(t('隐私政策'), 'privacyPolicy')"
 				>
-					{{ t("隐私政策") }}
+					《{{ t("隐私政策") }}》
 				</cl-text>
 			</view>
 
@@ -101,7 +99,7 @@ function toDoc(name: string, path: string) {}
 function isAgree() {
 	if (!agree.value) {
 		ui.showToast({
-			message: t("请先阅读并同意用户协议和隐私政策")
+			message: t("请先阅读并同意《用户协议》和《隐私政策》")
 		});
 
 		return false;
