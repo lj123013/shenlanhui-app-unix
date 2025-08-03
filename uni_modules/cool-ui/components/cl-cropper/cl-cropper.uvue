@@ -85,12 +85,12 @@
 		<!-- 底部按钮组 -->
 		<view class="cl-cropper__op" :class="[pt.op?.className]" :style="opStyle" @touchmove.stop>
 			<!-- 关闭 -->
-			<view class="cl-cropper__op-item">
+			<view class="cl-cropper__op-item" :class="[pt.opItem?.className]">
 				<cl-icon name="close-line" color="white" :size="50" @tap="close"></cl-icon>
 			</view>
 
 			<!-- 旋转 -->
-			<view class="cl-cropper__op-item">
+			<view class="cl-cropper__op-item" :class="[pt.opItem?.className]">
 				<cl-icon
 					name="anticlockwise-line"
 					color="white"
@@ -100,17 +100,17 @@
 			</view>
 
 			<!-- 重置 -->
-			<view class="cl-cropper__op-item">
+			<view class="cl-cropper__op-item" :class="[pt.opItem?.className]">
 				<cl-icon name="reset-right-line" color="white" :size="40" @tap="reset"></cl-icon>
 			</view>
 
 			<!-- 重新选择 -->
-			<view class="cl-cropper__op-item">
+			<view class="cl-cropper__op-item" :class="[pt.opItem?.className]">
 				<cl-icon name="image-line" color="white" :size="40" @tap="chooseImage"></cl-icon>
 			</view>
 
 			<!-- 确定 -->
-			<view class="cl-cropper__op-item">
+			<view class="cl-cropper__op-item" :class="[pt.opItem?.className]">
 				<cl-icon name="check-line" color="white" :size="50" @tap="toPng"></cl-icon>
 			</view>
 		</view>
@@ -244,9 +244,9 @@ type PassThrough = {
 	className?: string; // 组件根元素类名
 	image?: PassThroughProps; // 图片元素透传属性
 	op?: PassThroughProps; // 底部按钮组透传属性
+	opItem?: PassThroughProps; // 按钮透传属性
 	mask?: PassThroughProps; // 遮罩层透传属性
 	cropBox?: PassThroughProps; // 裁剪框透传属性
-	button?: PassThroughProps; // 按钮透传属性
 };
 
 // 解析透传样式配置
