@@ -376,8 +376,6 @@ function onTouchStart(e: UniTouchEvent) {
  * 计算手指移动距离,更新弹出层位置
  */
 function onTouchMove(e: UniTouchEvent) {
-	console.log(111);
-
 	if (swipe.isTouch) {
 		// 标记为移动状态
 		swipe.isMove = true;

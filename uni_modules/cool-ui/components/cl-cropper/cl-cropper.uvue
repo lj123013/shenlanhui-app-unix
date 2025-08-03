@@ -521,8 +521,6 @@ function initCrop() {
 	container.height = windowHeight;
 	container.width = windowWidth;
 
-	console.log(container);
-
 	// 设置裁剪框尺寸为传入的初始值
 	cropBox.width = props.cropWidth; // 设置裁剪框宽度
 	cropBox.height = props.cropHeight; // 设置裁剪框高度
@@ -633,7 +631,7 @@ function onImageLoaded(e: UniImageLoadEvent) {
 
 	nextTick(() => {
 		// 执行初始化流程
-		initCrop(); // 初始化裁剪框位置和尺寸
+		reset(); // 重置裁剪框
 		setInitialImageSize(); // 设置图片初始显示尺寸
 		adjustBounds(); // 调整图片边界确保覆盖裁剪框
 	});

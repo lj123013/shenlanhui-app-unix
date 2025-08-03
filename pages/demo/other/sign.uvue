@@ -1,6 +1,6 @@
 <template>
 	<cl-page>
-		<cl-sign ref="signRef" :height="height" :enable-brush="isBrush"></cl-sign>
+		<cl-sign ref="signRef" :height="height" :width="width" :enable-brush="isBrush"></cl-sign>
 
 		<view class="p-3">
 			<cl-list>
@@ -10,7 +10,7 @@
 				</cl-list-item>
 
 				<cl-list-item label="大屏">
-					<cl-switch v-model="isFullscreen"></cl-switch>
+					<cl-switch v-model="isFullscreen" @change="onFullscreenChange"></cl-switch>
 				</cl-list-item>
 
 				<cl-list-item label="毛笔效果">
@@ -22,11 +22,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 
-const height = computed(() => {
-	return isFullscreen.value ? uni.getWindowInfo().windowHeight - 200 : 200;
-});
+const height = ref(0);
+const width = ref(0);
 
 const isFullscreen = ref(false);
 const isBrush = ref(true);
@@ -43,4 +42,15 @@ function preview() {
 		});
 	});
 }
+
+function onFullscreenChange() {
+	height.value = isFullscreen.value ? uni.getWindowInfo().windowHeight - 200 : 200;
+}
+
+onReady(() => {
+	const { windowWidth } = uni.getWindowInfo();
+
+	height.value = 200;
+	width.value = windowWidth;
+});
 </script>

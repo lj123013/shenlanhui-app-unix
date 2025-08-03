@@ -32,7 +32,7 @@ const props = defineProps({
 	// 画布宽度
 	width: {
 		type: Number,
-		default: () => uni.getWindowInfo().windowWidth
+		default: 300
 	},
 	// 画布高度
 	height: {
