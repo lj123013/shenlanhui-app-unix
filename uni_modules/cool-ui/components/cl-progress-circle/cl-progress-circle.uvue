@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getColor, isDark, parseClass, parsePt, uuid } from "@/cool";
+import { getColor, getDevicePixelRatio, isDark, parseClass, parsePt, uuid } from "@/cool";
 import { computed, getCurrentInstance, onMounted, ref, watch, type PropType } from "vue";
 import type { PassThroughProps } from "../../types";
 
@@ -89,6 +89,9 @@ const props = defineProps({
 
 const { proxy } = getCurrentInstance()!;
 
+// 获取设备像素比
+const dpr = getDevicePixelRatio();
+
 // 透传样式类型定义
 type PassThrough = {
 	className?: string;
@@ -114,25 +117,22 @@ const value = ref(0);
 function drawProgress() {
 	if (drawCtx == null) return;
 
-	const centerX = props.size / 2;
-	const centerY = props.size / 2;
-	const radius = (props.size - props.strokeWidth) / 2;
+	const centerX = (props.size / 2) * dpr;
+	const centerY = (props.size / 2) * dpr;
+	const radius = ((props.size - props.strokeWidth) / 2) * dpr;
 
 	// 清除画布
 	// #ifdef APP
 	drawCtx!.reset();
 	// #endif
 	// #ifndef APP
-	drawCtx!.clearRect(0, 0, props.size, props.size);
+	drawCtx!.clearRect(0, 0, props.size * dpr, props.size * dpr);
 	// #endif
 
-	// 获取设备像素比
-	const dpr = uni.getDeviceInfo().devicePixelRatio ?? 1;
-
-	// #ifndef H5
-	// 设置缩放比例
-	drawCtx!.scale(dpr, dpr);
-	// #endif
+	// 优化渲染质量
+	drawCtx!.textBaseline = "middle";
+	drawCtx!.textAlign = "center";
+	drawCtx!.miterLimit = 10;
 
 	// 保存当前状态
 	drawCtx!.save();
@@ -143,7 +143,7 @@ function drawProgress() {
 		drawCtx!.beginPath();
 		drawCtx!.arc(centerX, centerY, radius, startAngle, endAngle, false);
 		drawCtx!.strokeStyle = color;
-		drawCtx!.lineWidth = props.strokeWidth;
+		drawCtx!.lineWidth = props.strokeWidth * dpr;
 		drawCtx!.lineCap = "round";
 		drawCtx!.lineJoin = "round";
 		drawCtx!.stroke();
@@ -214,13 +214,8 @@ function initCanvas() {
 			drawCtx = context.getContext("2d")!;
 
 			// 设置宽高
-			drawCtx!.canvas.width = props.size;
-			drawCtx!.canvas.height = props.size;
-
-			// 优化渲染质量
-			drawCtx!.textBaseline = "middle";
-			drawCtx!.textAlign = "center";
-			drawCtx!.miterLimit = 10;
+			drawCtx!.canvas.width = props.size * dpr;
+			drawCtx!.canvas.height = props.size * dpr;
 
 			// 开始动画
 			animate(props.value);

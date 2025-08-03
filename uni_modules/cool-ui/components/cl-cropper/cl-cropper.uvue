@@ -132,7 +132,7 @@
 <script setup lang="ts">
 import { computed, ref, reactive, nextTick, getCurrentInstance } from "vue";
 import type { PassThroughProps } from "../../types";
-import { canvasToPng, parsePt, usePage, uuid } from "@/cool";
+import { canvasToPng, getDevicePixelRatio, parsePt, usePage, uuid } from "@/cool";
 
 // 定义遮罩层样式类型
 type MaskStyle = {
@@ -1085,24 +1085,25 @@ async function toPng(): Promise<string> {
 			id: canvasId,
 			component: proxy,
 			success: (context: CanvasContext) => {
+				// 获取设备像素比
+				const dpr = getDevicePixelRatio();
+
 				// 获取绘图上下文
 				const ctx = context.getContext("2d")!;
+
+				// 设置宽高
+				ctx!.canvas.width = cropBox.width * dpr;
+				ctx!.canvas.height = cropBox.height * dpr;
 
 				// #ifdef APP
 				ctx!.reset();
 				// #endif
 
 				// #ifndef APP
-				ctx!.clearRect(0, 0, cropBox.width, cropBox.height);
+				ctx!.clearRect(0, 0, cropBox.width * dpr, cropBox.height * dpr);
 				// #endif
 
-				// 获取设备像素比
-				const dpr = uni.getDeviceInfo().devicePixelRatio ?? 1;
-
-				// 设置宽高
-				ctx!.canvas.width = cropBox.width * dpr;
-				ctx!.canvas.height = cropBox.height * dpr;
-
+				// 创建图片
 				let img: Image;
 
 				// 微信小程序环境创建图片

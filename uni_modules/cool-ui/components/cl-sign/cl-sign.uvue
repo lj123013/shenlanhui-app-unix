@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { canvasToPng, parsePt, uuid } from "@/cool";
+import { canvasToPng, getDevicePixelRatio, parsePt, uuid } from "@/cool";
 import { computed, getCurrentInstance, nextTick, onMounted, ref, shallowRef, watch } from "vue";
 
 defineOptions({
@@ -77,10 +77,13 @@ const props = defineProps({
 });
 
 // 定义事件发射器
-const emit = defineEmits(["change"]);
+const emit = defineEmits(["change", "clear"]);
 
 // 获取当前实例
 const { proxy } = getCurrentInstance()!;
+
+// 获取设备像素比
+const dpr = getDevicePixelRatio();
 
 // 触摸点类型
 type Point = { x: number; y: number; time: number };
@@ -241,10 +244,10 @@ function onTouchMove(e: TouchEvent) {
 
 	// 绘制线条
 	drawCtx!.beginPath();
-	drawCtx!.moveTo(lastPoint!.x, lastPoint!.y);
-	drawCtx!.lineTo(currentPoint.x, currentPoint.y);
+	drawCtx!.moveTo(lastPoint!.x * dpr, lastPoint!.y * dpr);
+	drawCtx!.lineTo(currentPoint.x * dpr, currentPoint.y * dpr);
 	drawCtx!.strokeStyle = props.strokeColor;
-	drawCtx!.lineWidth = strokeWidth;
+	drawCtx!.lineWidth = strokeWidth * dpr;
 	drawCtx!.lineCap = "round";
 	drawCtx!.lineJoin = "round";
 	drawCtx!.stroke();
@@ -269,22 +272,14 @@ function clear() {
 	// #endif
 
 	// #ifndef APP
-	drawCtx!.clearRect(0, 0, props.width, props.height);
-	// #endif
-
-	// 获取设备像素比
-	const dpr = uni.getDeviceInfo().devicePixelRatio ?? 1;
-
-	// #ifndef H5
-	// 设置缩放比例
-	drawCtx!.scale(dpr, dpr);
+	drawCtx!.clearRect(0, 0, props.width * dpr, props.height * dpr);
 	// #endif
 
 	// 填充背景色
 	drawCtx!.fillStyle = props.backgroundColor;
-	drawCtx!.fillRect(0, 0, props.width, props.height);
+	drawCtx!.fillRect(0, 0, props.width * dpr, props.height * dpr);
 
-	emit("change");
+	emit("clear");
 }
 
 // 获取签名图片
@@ -300,10 +295,9 @@ function initCanvas() {
 		success: (context: CanvasContext) => {
 			// 获取绘图上下文
 			drawCtx = context.getContext("2d")!;
-
 			// 设置宽高
-			drawCtx!.canvas.width = props.width;
-			drawCtx!.canvas.height = props.height;
+			drawCtx!.canvas.width = props.width * dpr;
+			drawCtx!.canvas.height = props.height * dpr;
 
 			// 优化渲染质量
 			drawCtx!.textBaseline = "middle";
