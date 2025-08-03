@@ -622,24 +622,6 @@ function adjustBounds() {
 	transform.translateY = toPixel(y); // 更新垂直位移
 }
 
-// 处理图片加载完成事件的函数
-function onImageLoaded(e: UniImageLoadEvent) {
-	// 更新图片原始尺寸信息
-	imageInfo.width = e.detail.width; // 保存图片原始宽度
-	imageInfo.height = e.detail.height; // 保存图片原始高度
-	imageInfo.isLoaded = true; // 标记图片已加载
-
-	nextTick(() => {
-		// 执行初始化流程
-		reset(); // 重置裁剪框
-		setInitialImageSize(); // 设置图片初始显示尺寸
-		adjustBounds(); // 调整图片边界确保覆盖裁剪框
-	});
-
-	// 触发加载完成事件
-	emit("load", e); // 向父组件发送加载事件
-}
-
 // 开始调整裁剪框尺寸的函数
 function onResizeStart(e: TouchEvent, direction: string) {
 	// 设置调整状态
@@ -1045,6 +1027,24 @@ function chooseImage() {
 			}
 		}
 	});
+}
+
+// 处理图片加载完成事件的函数
+function onImageLoaded(e: UniImageLoadEvent) {
+	// 更新图片原始尺寸信息
+	imageInfo.width = e.detail.width; // 保存图片原始宽度
+	imageInfo.height = e.detail.height; // 保存图片原始高度
+	imageInfo.isLoaded = true; // 标记图片已加载
+
+	nextTick(() => {
+		// 执行初始化流程
+		reset(); // 重置裁剪框
+		setInitialImageSize(); // 设置图片初始显示尺寸
+		adjustBounds(); // 调整图片边界确保覆盖裁剪框
+	});
+
+	// 触发加载完成事件
+	emit("load", e); // 向父组件发送加载事件
 }
 
 // 切换水平翻转状态的函数
