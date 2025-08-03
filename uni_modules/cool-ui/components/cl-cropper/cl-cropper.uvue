@@ -1036,12 +1036,7 @@ function onImageLoaded(e: UniImageLoadEvent) {
 	imageInfo.height = e.detail.height; // 保存图片原始高度
 	imageInfo.isLoaded = true; // 标记图片已加载
 
-	nextTick(() => {
-		// 执行初始化流程
-		reset(); // 重置裁剪框
-		setInitialImageSize(); // 设置图片初始显示尺寸
-		adjustBounds(); // 调整图片边界确保覆盖裁剪框
-	});
+	reset(); // 重置裁剪框
 
 	// 触发加载完成事件
 	emit("load", e); // 向父组件发送加载事件
