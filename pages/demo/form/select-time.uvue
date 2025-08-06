@@ -22,6 +22,7 @@
 					v-model="form.time3"
 					:disabled="isDisabled"
 					:label-format="labelFormat"
+					:type="type"
 				></cl-select-time>
 
 				<cl-list
@@ -30,6 +31,18 @@
 						className: 'mt-3'
 					}"
 				>
+					<cl-list-item :label="t('时')">
+						<cl-switch v-model="isHour"></cl-switch>
+					</cl-list-item>
+
+					<cl-list-item :label="t('时:分')">
+						<cl-switch v-model="isMinute"></cl-switch>
+					</cl-list-item>
+
+					<cl-list-item :label="t('时:分:秒')">
+						<cl-switch v-model="isSecond"></cl-switch>
+					</cl-list-item>
+
 					<cl-list-item :label="t('标签格式化')">
 						<cl-switch v-model="isFormat"></cl-switch>
 					</cl-list-item>
@@ -65,14 +78,9 @@ const form = reactive<Form>({
 
 const isDisabled = ref(false);
 const isFormat = ref(false);
-
-const labelFormat = computed(() => {
-	if (isFormat.value) {
-		return "{H}时{m}分{s}秒";
-	} else {
-		return "{H}:{m}:{s}";
-	}
-});
+const isHour = ref(false);
+const isMinute = ref(false);
+const isSecond = ref(true);
 
 const selectRef2 = ref<ClSelectTimeComponentPublicInstance | null>(null);
 
@@ -83,4 +91,33 @@ function openSelect2() {
 		});
 	});
 }
+
+const type = computed(() => {
+	if (isHour.value) {
+		return "hour";
+	}
+
+	if (isMinute.value) {
+		return "minute";
+	}
+
+	return "second";
+});
+
+const labelFormat = computed(() => {
+	if (isFormat.value) {
+		switch (type.value) {
+			case "hour":
+				return "{H}时";
+			case "minute":
+				return "{H}时{m}分";
+			case "second":
+				return "{H}时{m}分{s}秒";
+			default:
+				return null;
+		}
+	} else {
+		return null;
+	}
+});
 </script>

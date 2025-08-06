@@ -1,4 +1,4 @@
-import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps, Type, ClButtonType, Size, ClListViewItem, ClInputType, ClListItem, Justify, ClConfirmAction, ClConfirmOptions, ClToastOptions, ClSelectOption, ClPopupDirection, ClQrcodeMode, ClSelectDateShortcut, ClTabsItem, ClTextType, ClUploadItem } from "./types";
+import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps, Type, ClButtonType, Size, ClListViewItem, ClFormLabelPosition, ClFormRule, ClFormValidateError, ClInputType, ClListItem, Justify, ClConfirmAction, ClConfirmOptions, ClToastOptions, ClSelectOption, ClPopupDirection, ClQrcodeMode, ClSelectDateShortcut, ClTabsItem, ClTextType, ClUploadItem } from "./types";
 import { type UiInstance } from "./hooks";
 import { type QrcodeOptions } from "./draw";
 
@@ -16,8 +16,8 @@ import type { ClCropperProps, ClCropperPassThrough } from "./components/cl-cropp
 import type { ClDraggableProps, ClDraggablePassThrough } from "./components/cl-draggable/props";
 import type { ClFloatViewProps } from "./components/cl-float-view/props";
 import type { ClFooterProps, ClFooterPassThrough } from "./components/cl-footer/props";
-import type { ClFormProps } from "./components/cl-form/props";
-import type { ClFormItemProps } from "./components/cl-form-item/props";
+import type { ClFormProps, ClFormPassThrough } from "./components/cl-form/props";
+import type { ClFormItemProps, ClFormItemPassThrough } from "./components/cl-form-item/props";
 import type { ClIconProps, ClIconPassThrough } from "./components/cl-icon/props";
 import type { ClImageProps, ClImagePassThrough } from "./components/cl-image/props";
 import type { ClIndexBarProps, ClIndexBarPassThrough } from "./components/cl-index-bar/props";

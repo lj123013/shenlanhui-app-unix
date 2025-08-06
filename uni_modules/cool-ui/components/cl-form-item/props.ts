@@ -1,16 +1,21 @@
-import type { ClFormItemPassThrough } from "./props";
-import type { ClFormRule } from "../cl-form/props";
+import type { ClFormLabelPosition, PassThroughProps } from "../../types";
+
+export type ClFormItemPassThrough = {
+	className?: string;
+	inner?: PassThroughProps;
+	label?: PassThroughProps;
+	content?: PassThroughProps;
+	error?: PassThroughProps;
+};
 
 export type ClFormItemProps = {
 	className?: string;
 	pt?: ClFormItemPassThrough;
 	label?: string;
 	prop?: string;
+	labelPosition?: ClFormLabelPosition;
+	labelWidth?: string | any;
+	showAsterisk?: boolean | any;
+	showMessage?: boolean | any;
 	required?: boolean;
-	labelPosition?: "left" | "top" | "right";
-	labelWidth?: string;
-	rules?: ClFormRule | ClFormRule[];
-	showRequiredAsterisk?: boolean;
-	error?: string;
-	disabled?: boolean;
 };

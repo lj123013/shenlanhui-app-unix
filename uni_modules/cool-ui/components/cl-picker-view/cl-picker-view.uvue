@@ -37,15 +37,14 @@
 						v-for="(item, index) in column"
 						:key="index"
 					>
-						<text
-							class="cl-picker-view__item-text"
-							:class="[
-								{
-									'is-active': index == value[columnIndex],
-									'is-dark': isDark
-								}
-							]"
-							>{{ item.label }}</text
+						<cl-text
+							:pt="{
+								className: parseClass([
+									[isDark, '!text-surface-500'],
+									[isDark && index == value[columnIndex], '!text-white']
+								])
+							}"
+							>{{ item.value }}</cl-text
 						>
 					</view>
 				</picker-view-column>
@@ -55,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { forInObject, isDark, rpx2px } from "@/cool";
+import { forInObject, isDark, parseClass, rpx2px } from "@/cool";
 import type { ClSelectOption } from "../../types";
 import { parseRpx } from "@/cool";
 import { computed } from "vue";
@@ -197,18 +196,6 @@ function onChange(e: UniPickerViewChangeEvent) {
 
 	&__item {
 		@apply flex flex-row items-center justify-center;
-
-		&-text {
-			@apply text-md text-center text-surface-700;
-
-			&.is-dark {
-				@apply text-surface-500;
-
-				&.is-active {
-					@apply text-white;
-				}
-			}
-		}
 	}
 
 	.uni-picker-view-indicator {

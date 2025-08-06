@@ -12,6 +12,7 @@ export type ClSelectTimeProps = {
 	pt?: ClSelectTimePassThrough;
 	modelValue?: string;
 	headers?: string[];
+	type?: "hour" | "minute" | "second";
 	title?: string;
 	placeholder?: string;
 	showTrigger?: boolean;
@@ -20,5 +21,5 @@ export type ClSelectTimeProps = {
 	showConfirm?: boolean;
 	cancelText?: string;
 	showCancel?: boolean;
-	labelFormat?: string;
+	labelFormat?: string | any;
 };

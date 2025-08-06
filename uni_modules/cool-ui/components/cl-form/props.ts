@@ -1,12 +1,17 @@
-import type { ClFormData, ClFormRule, ClFormValidateResult, ClFormPassThrough } from "./props";
+import type { ClFormLabelPosition, ClFormRule, ClFormValidateError } from "../../types";
+
+export type ClFormPassThrough = {
+	className?: string;
+};
 
 export type ClFormProps = {
 	className?: string;
 	pt?: ClFormPassThrough;
-	modelValue?: ClFormData;
-	rules?: Record<string, ClFormRule | ClFormRule[]>;
-	labelPosition?: "left" | "top" | "right";
+	modelValue?: any;
+	rules?: Map<string, ClFormRule[]>;
+	labelPosition?: ClFormLabelPosition;
 	labelWidth?: string;
-	showRequiredAsterisk?: boolean;
+	showAsterisk?: boolean;
+	showMessage?: boolean;
 	disabled?: boolean;
 };

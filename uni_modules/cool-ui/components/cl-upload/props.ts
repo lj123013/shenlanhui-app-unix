@@ -22,4 +22,5 @@ export type ClUploadProps = {
 	multiple?: boolean;
 	limit?: number;
 	disabled?: boolean;
+	test?: boolean;
 };

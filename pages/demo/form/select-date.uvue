@@ -2,18 +2,15 @@
 	<cl-page>
 		<view class="p-3">
 			<demo-item :label="t('基础用法')">
-				<cl-select-date v-model="form.date1" type="year"></cl-select-date>
+				<cl-select-date v-model="form.date1" type="date"></cl-select-date>
 			</demo-item>
 
-			<demo-item :label="t('精确到秒')">
-				<cl-select-date v-model="form.date2" type="second"></cl-select-date>
-			</demo-item>
-
-			<demo-item :label="t('固定开始、结束时间')">
+			<demo-item :label="t('固定开始、结束日期')">
 				<cl-select-date
 					v-model="form.date3"
-					start="2025-06-01 10:00:00"
-					end="2026-06-01 10:00:00"
+					start="2025-06-01"
+					end="2026-06-01"
+					type="date"
 				></cl-select-date>
 			</demo-item>
 

@@ -251,7 +251,7 @@ const props = defineProps({
 	// 范围分隔符
 	rangeSeparator: {
 		type: String,
-		default: () => t("")
+		default: () => t("至")
 	},
 	// 是否显示快捷选项
 	showShortcuts: {
@@ -404,7 +404,9 @@ const list = computed(() => {
 	// 判断是否为闰年
 	const isLeapYear = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
 	// 根据月份和是否闰年获取当月天数
-	const days = [31, isLeapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+	const days = [31, isLeapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][
+		month > 0 ? month - 1 : 0
+	];
 	// 计算年份范围，确保至少有60年可选
 	const yearRange = Math.max(60, endYear - startYear + 1);
 	// 遍历生成年月日时分秒的选项
@@ -562,9 +564,18 @@ function getText() {
 
 // 选择器值改变事件，更新value
 async function onChange(arr: number[]) {
+	const data = [] as number[];
+
 	for (let i = 0; i < arr.length; i++) {
-		value.value[i] = list.value[i][arr[i]].value as number;
+		const item = list.value[i][arr[i]];
+
+		if (item != null) {
+			data[i] = item.value as number;
+		}
 	}
+
+	// 更新value
+	value.value = data;
 
 	// 设置范围值
 	if (props.rangeable) {
@@ -582,6 +593,8 @@ async function onChange(arr: number[]) {
 
 // 设置value
 function setValue(val: string) {
+	text.value = "";
+
 	// 如果值为空，使用当前时间
 	if (isNull(val) || isEmpty(val)) {
 		value.value = dayUts().toArray();

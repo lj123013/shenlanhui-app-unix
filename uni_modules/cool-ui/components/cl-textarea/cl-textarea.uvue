@@ -109,7 +109,7 @@ const props = defineProps({
 	// 占位符
 	placeholder: {
 		type: String,
-		default: t("请输入")
+		default: () => t("请输入")
 	},
 	// 占位符样式类
 	placeholderClass: {

@@ -20,4 +20,5 @@ export type ClTextProps = {
 	selectable?: boolean;
 	space?: "ensp" | "emsp" | "nbsp";
 	decode?: boolean;
+	preWrap?: boolean;
 };
