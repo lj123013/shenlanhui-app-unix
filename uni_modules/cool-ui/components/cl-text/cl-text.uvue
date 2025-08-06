@@ -5,7 +5,8 @@
 		:class="[
 			isDark ? 'text-surface-50' : 'text-surface-700',
 			{
-				'truncate w-full': ellipsis
+				'truncate w-full': ellipsis,
+				'cl-text--pre-wrap': preWrap
 			},
 			{
 				'!text-primary-500': color == 'primary',
@@ -35,7 +36,8 @@
 		:class="[
 			isDark ? 'text-surface-50' : 'text-surface-700',
 			{
-				'truncate w-full': ellipsis
+				'truncate w-full': ellipsis,
+				'cl-text--pre-wrap': preWrap
 			},
 			{
 				'!text-primary-500': color == 'primary',
@@ -138,6 +140,11 @@ const props = defineProps({
 	},
 	// 是否解码 (app平台如需解析字符实体，需要配置为 true)
 	decode: {
+		type: Boolean,
+		default: false
+	},
+	// 是否保留单词
+	preWrap: {
 		type: Boolean,
 		default: false
 	}
@@ -268,5 +275,11 @@ const content = computed(() => {
 <style lang="scss" scoped>
 .cl-text {
 	@apply text-md;
+
+	&--pre-wrap {
+		// #ifdef H5
+		white-space: pre-wrap;
+		// #endif
+	}
 }
 </style>

@@ -51,7 +51,7 @@
 						@tap="setRange(0)"
 					>
 						<cl-text
-							v-if="values[0] != ''"
+							v-if="values.length > 0 && values[0] != ''"
 							:pt="{
 								className: 'text-center'
 							}"
@@ -78,7 +78,7 @@
 						@tap="setRange(1)"
 					>
 						<cl-text
-							v-if="values[1] != ''"
+							v-if="values.length > 1 && values[1] != ''"
 							:pt="{
 								className: 'text-center'
 							}"
@@ -393,10 +393,14 @@ const list = computed(() => {
 	).toArray();
 	// 解析结束日期为年月日时分秒数组
 	const [endYear, endMonth, endDate, endHour, endMinute, endSecond] = dayUts(props.end).toArray();
-	// 获取当前选中的年月日时分秒值
-	const [year, month, date, hour, minute] = value.value;
 	// 初始化年月日时分秒六个选项数组
 	const arr = [[], [], [], [], [], []] as ClSelectOption[][];
+	// 边界处理，如果value为空，返回空数组
+	if (isEmpty(value.value)) {
+		return arr;
+	}
+	// 获取当前选中的年月日时分秒值
+	const [year, month, date, hour, minute] = value.value;
 	// 判断是否为闰年
 	const isLeapYear = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
 	// 根据月份和是否闰年获取当月天数

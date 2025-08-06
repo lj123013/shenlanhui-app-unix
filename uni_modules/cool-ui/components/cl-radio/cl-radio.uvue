@@ -3,7 +3,7 @@
 		class="cl-radio"
 		:class="[
 			{
-				'cl-radio--disabled': disabled,
+				'cl-radio--disabled': isDisabled,
 				'cl-radio--checked': isChecked
 			},
 			pt.className
@@ -47,6 +47,7 @@ import { computed, useSlots } from "vue";
 import type { PassThroughProps } from "../../types";
 import { get, parseClass, parsePt } from "@/cool";
 import type { ClIconProps } from "../cl-icon/props";
+import { useForm } from "../../hooks";
 
 defineOptions({
 	name: "cl-radio"
@@ -108,6 +109,12 @@ type PassThrough = {
 // 解析透传样式配置
 const pt = computed(() => parsePt<PassThrough>(props.pt));
 
+// cl-form 上下文
+const { disabled } = useForm();
+
+// 是否禁用
+const isDisabled = computed(() => props.disabled || disabled.value);
+
 // 是否为选中状态
 const isChecked = computed(() => props.modelValue == props.value);
 
@@ -130,7 +137,7 @@ const iconName = computed(() => {
  * 在非禁用状态下切换选中状态
  */
 function onTap() {
-	if (!props.disabled) {
+	if (!isDisabled.value) {
 		emit("update:modelValue", props.value);
 		emit("change", props.value);
 	}
@@ -142,7 +149,7 @@ function onTap() {
 	@apply flex flex-row items-center;
 
 	&--disabled {
-		@apply opacity-70;
+		@apply opacity-50;
 	}
 }
 </style>

@@ -3,7 +3,7 @@
 		class="cl-slider"
 		:class="[
 			{
-				'cl-slider--disabled': disabled
+				'cl-slider--disabled': isDisabled
 			},
 			pt.className
 		]"
@@ -62,14 +62,16 @@
 			></view>
 		</view>
 
-		<cl-text
-			v-if="showValue"
-			:pt="{
-				className: parseClass(['text-center w-[100rpx]', pt.value?.className])
-			}"
-		>
-			{{ displayValue }}
-		</cl-text>
+		<slot name="value" :value="displayValue">
+			<cl-text
+				v-if="showValue"
+				:pt="{
+					className: parseClass(['text-center w-[100rpx]', pt.value?.className])
+				}"
+			>
+				{{ displayValue }}
+			</cl-text>
+		</slot>
 	</view>
 </template>
 
@@ -77,6 +79,7 @@
 import { computed, getCurrentInstance, nextTick, onMounted, ref, watch, type PropType } from "vue";
 import { parseClass, parsePt, rpx2px } from "@/cool";
 import type { PassThroughProps } from "../../types";
+import { useForm } from "../../hooks";
 
 defineOptions({
 	name: "cl-slider"
@@ -156,6 +159,12 @@ type PassThrough = {
 
 // 计算样式穿透对象
 const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+// cl-form 上下文
+const { disabled } = useForm();
+
+// 是否禁用
+const isDisabled = computed(() => props.disabled || disabled.value);
 
 // 当前滑块的值，单值模式
 const value = ref<number>(props.modelValue);
@@ -356,7 +365,7 @@ function updateValue(newValue: number | number[]) {
 
 // 触摸开始事件：获取轨道信息并初始化滑块位置
 async function onTouchStart(e: TouchEvent) {
-	if (props.disabled) return;
+	if (isDisabled.value) return;
 
 	// 先获取轨道的位置和尺寸信息，这是后续计算的基础
 	await getTrackInfo();
@@ -381,7 +390,7 @@ async function onTouchStart(e: TouchEvent) {
 
 // 触摸移动事件：实时更新滑块位置
 function onTouchMove(e: TouchEvent) {
-	if (props.disabled) return;
+	if (isDisabled.value) return;
 
 	const clientX = e.touches[0].clientX;
 	const calculatedValue = calculateValue(clientX);
@@ -399,7 +408,7 @@ function onTouchMove(e: TouchEvent) {
 
 // 触摸结束事件：完成拖动，触发最终的change事件
 function onTouchEnd() {
-	if (props.disabled) return;
+	if (isDisabled.value) return;
 
 	// 触发change事件，表示用户完成了一次完整的拖动操作
 	if (props.range) {
@@ -500,8 +509,7 @@ onMounted(() => {
 	@apply flex flex-row items-center w-full overflow-visible;
 
 	&--disabled {
-		opacity: 0.6;
-		pointer-events: none;
+		@apply opacity-50;
 	}
 
 	&__inner {
@@ -528,6 +536,8 @@ onMounted(() => {
 		transform: translateY(-50%);
 		pointer-events: none;
 		z-index: 1;
+		border-width: 4rpx;
+		box-shadow: 0 0 2rpx 2rpx rgba(100, 100, 100, 0.1);
 
 		&--min {
 			z-index: 2;

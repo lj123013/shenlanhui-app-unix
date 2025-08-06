@@ -3,7 +3,7 @@
 		class="cl-switch"
 		:class="[
 			{
-				'cl-switch--disabled': disabled,
+				'cl-switch--disabled': isDisabled,
 				'cl-switch--checked': isChecked
 			},
 
@@ -53,6 +53,7 @@ import { computed, ref, watch } from "vue";
 import { isDark, parseClass, parsePt } from "@/cool";
 import type { PassThroughProps } from "../../types";
 import { vibrate } from "@/uni_modules/cool-vibrate";
+import { useForm } from "../../hooks";
 
 defineOptions({
 	name: "cl-switch"
@@ -107,6 +108,12 @@ type PassThrough = {
 // 解析透传样式配置
 const pt = computed(() => parsePt<PassThrough>(props.pt));
 
+// cl-form 上下文
+const { disabled } = useForm();
+
+// 是否禁用
+const isDisabled = computed(() => props.disabled || disabled.value);
+
 // 绑定值
 const value = ref(props.modelValue);
 
@@ -147,7 +154,7 @@ const rect = computed<Rect>(() => {
  * 在非禁用且非加载状态下切换开关状态
  */
 function onTap() {
-	if (!props.disabled && !props.loading) {
+	if (!isDisabled.value && !props.loading) {
 		// 切换开关状态
 		const val = !value.value;
 		value.value = val;

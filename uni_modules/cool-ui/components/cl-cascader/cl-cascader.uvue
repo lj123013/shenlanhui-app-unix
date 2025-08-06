@@ -358,10 +358,6 @@ const visible = ref(false);
  * 检查禁用状态，如果未禁用则显示弹窗
  */
 function open() {
-	if (props.disabled) {
-		return;
-	}
-
 	visible.value = true;
 }
 

@@ -25,7 +25,7 @@
 import { t } from "@/locale";
 import { ref } from "vue";
 
-const height = ref(0);
+const height = ref(200);
 const width = ref(0);
 
 const isFullscreen = ref(false);
@@ -49,9 +49,6 @@ function onFullscreenChange() {
 }
 
 onReady(() => {
-	const { windowWidth } = uni.getWindowInfo();
-
-	height.value = 200;
-	width.value = windowWidth;
+	width.value = uni.getWindowInfo().windowWidth;
 });
 </script>

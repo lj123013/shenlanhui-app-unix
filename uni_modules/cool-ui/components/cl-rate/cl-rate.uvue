@@ -1,5 +1,5 @@
 <template>
-	<view class="cl-rate" :class="[pt.className]">
+	<view class="cl-rate" :class="[{ 'cl-rate--disabled': isDisabled }, pt.className]">
 		<view
 			v-for="(item, index) in max"
 			:key="index"
@@ -48,6 +48,7 @@ import { computed } from "vue";
 import { parseClass, parsePt } from "@/cool";
 import type { PassThroughProps } from "../../types";
 import type { ClIconProps } from "../cl-icon/props";
+import { useForm } from "../../hooks";
 
 defineOptions({
 	name: "cl-rate"
@@ -126,6 +127,12 @@ type PassThrough = {
 // 解析透传样式
 const pt = computed(() => parsePt<PassThrough>(props.pt));
 
+// cl-form 上下文
+const { disabled } = useForm();
+
+// 是否禁用
+const isDisabled = computed(() => props.disabled || disabled.value);
+
 // 获取图标激活宽度
 function getIconActiveWidth(item: number) {
 	// 如果评分值大于等于当前项,返回null表示完全填充
@@ -144,7 +151,7 @@ function getIconActiveWidth(item: number) {
 
 // 点击事件处理
 function onTap(index: number) {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return;
 	}
 
@@ -176,11 +183,14 @@ function onTap(index: number) {
 .cl-rate {
 	@apply flex flex-row items-center;
 
+	&--disabled {
+		@apply opacity-50;
+	}
+
 	&__item {
-		@apply flex items-center justify-center relative duration-200;
+		@apply flex items-center justify-center relative duration-200 overflow-hidden;
 		transition-property: color;
 		margin-right: 6rpx;
-		overflow: hidden;
 	}
 }
 </style>
