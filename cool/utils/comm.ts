@@ -596,6 +596,22 @@ export function base64ToBlob(data: string, type: string = "image/jpeg"): Blob {
 }
 
 /**
+ * 检查两个值是否相等
+ * @param a 值1
+ * @param b 值2
+ * @returns 是否相等
+ */
+export function isEqual(a: any, b: any): boolean {
+	if (isObject(a) && isObject(b)) {
+		return isEqual(JSON.stringify(a), JSON.stringify(b));
+	} else if (isArray(a) && isArray(b)) {
+		return isEqual(JSON.stringify(a), JSON.stringify(b));
+	}
+
+	return a == b;
+}
+
+/**
  * 检查是否为小程序环境
  * @returns 是否为小程序环境
  */

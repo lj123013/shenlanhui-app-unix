@@ -111,11 +111,11 @@ export const parseClass = (data: any): string => {
  * @returns 转换后的UTSJSONObject对象
  */
 export function parseToObject<T>(data: T): UTSJSONObject {
-	// #ifdef APP
+	// #ifdef APP-ANDROID
 	return JSON.parseObject(JSON.stringify(data)!)!;
 	// #endif
 
-	// #ifndef APP
+	// #ifndef APP-ANDROID
 	return JSON.parse(JSON.stringify(data)) as UTSJSONObject;
 	// #endif
 }

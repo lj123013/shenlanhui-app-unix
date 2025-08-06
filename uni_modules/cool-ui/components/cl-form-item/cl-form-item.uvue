@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, watch, type PropType } from "vue";
-import { parseClass, parsePt } from "@/cool";
+import { isEqual, parseClass, parsePt } from "@/cool";
 import type { ClFormLabelPosition, PassThroughProps } from "../../types";
 import { useForm } from "../../hooks";
 
@@ -163,10 +163,20 @@ watch(
 
 onMounted(() => {
 	watch(
-		computed(() => getValue(props.prop)!),
-		() => {
+		computed(() => {
+			const value = getValue(props.prop);
+
+			if (value == null) {
+				return "";
+			}
+
+			return value;
+		}),
+		(val: any, val2: any) => {
 			if (props.required) {
-				validateField(props.prop);
+				if (!isEqual(val, val2)) {
+					validateField(props.prop);
+				}
 			}
 		},
 		{

@@ -67,6 +67,7 @@ const props = defineProps({
 	}
 });
 
+// 透传样式类型
 type PassThrough = {
 	className?: string;
 };
@@ -98,8 +99,15 @@ const showMessage = computed(() => props.showMessage);
 // 是否禁用整个表单
 const disabled = computed(() => props.disabled);
 
+// 错误信息锁定
+const errorLock = ref(false);
+
 // 设置字段错误信息
 function setError(prop: string, error: string) {
+	if (errorLock.value) {
+		return;
+	}
+
 	if (prop != "") {
 		errors.value.set(prop, error);
 	}
@@ -171,17 +179,29 @@ function validateRule(value: any | null, rule: ClFormRule): null | string {
 
 	// 最小长度验证
 	if (rule.min != null) {
-		const len = Array.isArray(value) ? value.length : `${value}`.length;
-		if (len < rule.min) {
-			return rule.message ?? $t(`最少需要{min}个字符`, { min: rule.min });
+		if (typeof value == "number") {
+			if ((value as number) < rule.min) {
+				return rule.message ?? $t(`最小值为{min}`, { min: rule.min });
+			}
+		} else {
+			const len = Array.isArray(value) ? value.length : `${value}`.length;
+			if (len < rule.min) {
+				return rule.message ?? $t(`最少需要{min}个字符`, { min: rule.min });
+			}
 		}
 	}
 
 	// 最大长度验证
 	if (rule.max != null) {
-		const len = Array.isArray(value) ? value.length : `${value}`.length;
-		if (len > rule.max) {
-			return rule.message ?? $t(`最多允许{max}个字符`, { max: rule.max });
+		if (typeof value == "number") {
+			if (value > rule.max) {
+				return rule.message ?? $t(`最大值为{max}`, { max: rule.max });
+			}
+		} else {
+			const len = Array.isArray(value) ? value.length : `${value}`.length;
+			if (len > rule.max) {
+				return rule.message ?? $t(`最多允许{max}个字符`, { max: rule.max });
+			}
 		}
 	}
 
@@ -205,8 +225,11 @@ function validateRule(value: any | null, rule: ClFormRule): null | string {
 
 // 清除所有验证
 function clearValidate() {
+	errorLock.value = true;
+
 	nextTick(() => {
 		clearErrors();
+		errorLock.value = false;
 	});
 }
 
