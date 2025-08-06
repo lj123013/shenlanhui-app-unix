@@ -1,0 +1,175 @@
+<template>
+	<cl-page>
+		<view class="p-3">
+			<demo-item>
+				<cl-form
+					:pt="{
+						className: 'p-2 pb-0'
+					}"
+					v-model="formData"
+					ref="formRef"
+					:rules="rules"
+					:disabled="saving"
+					label-position="top"
+				>
+					<cl-form-item label="头像" prop="avatarUrl" required>
+						<cl-upload v-model="formData.avatarUrl"></cl-upload>
+					</cl-form-item>
+
+					<cl-form-item label="用户名" prop="nickName" required>
+						<cl-input v-model="formData.nickName" placeholder="请输入用户名"></cl-input>
+					</cl-form-item>
+
+					<cl-form-item label="邮箱" prop="email">
+						<cl-input v-model="formData.email" placeholder="请输入邮箱地址"></cl-input>
+					</cl-form-item>
+
+					<cl-form-item label="年龄" prop="age">
+						<cl-input-number
+							v-model="formData.age"
+							:min="18"
+							:max="50"
+						></cl-input-number>
+					</cl-form-item>
+
+					<cl-form-item label="性别" prop="gender">
+						<cl-select
+							v-model="formData.gender"
+							:options="options['gender']"
+						></cl-select>
+					</cl-form-item>
+
+					<cl-form-item label="个人简介" prop="description">
+						<cl-textarea
+							v-model="formData.description"
+							placeholder="请输入个人简介"
+							:maxlength="200"
+						></cl-textarea>
+					</cl-form-item>
+				</cl-form>
+			</demo-item>
+
+			<demo-item>
+				<cl-text :pt="{ className: '!text-sm p-2' }">{{
+					JSON.stringify(formData, null, 4)
+				}}</cl-text>
+			</demo-item>
+		</view>
+
+		<cl-footer>
+			<view class="flex flex-row">
+				<cl-button type="info" :pt="{ className: 'flex-1' }" @click="reset">重置</cl-button>
+				<cl-button
+					type="primary"
+					:loading="saving"
+					:pt="{ className: 'flex-1' }"
+					@click="submit"
+					>提交</cl-button
+				>
+			</view>
+		</cl-footer>
+	</cl-page>
+</template>
+
+<script setup lang="ts">
+import { reactive, ref, type Ref } from "vue";
+import DemoItem from "../components/item.uvue";
+import { useForm, useUi, type ClFormRule, type ClSelectOption } from "@/uni_modules/cool-ui";
+
+const ui = useUi();
+const { formRef, validate, clearValidate } = useForm();
+
+const options = reactive({
+	gender: [
+		{
+			label: "未知",
+			value: 0
+		},
+		{
+			label: "男",
+			value: 1
+		},
+		{
+			label: "女",
+			value: 2
+		}
+	] as ClSelectOption[]
+});
+
+type FormData = {
+	avatarUrl: string;
+	nickName: string;
+	email: string;
+	age: number;
+	gender: number;
+	description: string;
+	pics: string[];
+};
+
+// 表单数据
+const formData = ref<FormData>({
+	avatarUrl: "",
+	nickName: "神仙都没用",
+	email: "",
+	age: 18,
+	gender: 0,
+	description: "",
+	pics: []
+}) as Ref<FormData>;
+
+// 表单验证规则
+const rules = new Map<string, ClFormRule[]>([
+	["avatarUrl", [{ required: true, message: "头像不能为空" }]],
+	[
+		"nickName",
+		[
+			{ required: true, message: "用户名不能为空" },
+			{ min: 3, max: 20, message: "用户名长度在3-20个字符之间" }
+		]
+	],
+	[
+		"email",
+		[
+			{ required: true, message: "邮箱不能为空" },
+			{ pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "邮箱格式不正确" }
+		]
+	]
+]);
+
+// 是否保存中
+const saving = ref(false);
+
+function reset() {
+	formData.value.avatarUrl = "";
+	formData.value.nickName = "";
+	formData.value.email = "";
+	formData.value.age = 18;
+	formData.value.gender = 0;
+	formData.value.description = "";
+	formData.value.pics = [];
+
+	clearValidate();
+}
+
+function submit() {
+	validate((valid, errors) => {
+		if (valid) {
+			saving.value = true;
+
+			setTimeout(() => {
+				ui.showToast({
+					message: "提交成功",
+					icon: "check-line"
+				});
+
+				saving.value = false;
+				reset();
+			}, 2000);
+		} else {
+			ui.showToast({
+				message: errors[0].message
+			});
+		}
+	});
+}
+</script>

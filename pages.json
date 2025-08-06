@@ -113,6 +113,12 @@
 					}
 				},
 				{
+					"path": "form/form",
+					"style": {
+						"navigationBarTitleText": "Form 表单验证"
+					}
+				},
+				{
 					"path": "form/input",
 					"style": {
 						"navigationBarTitleText": "Input 输入框"

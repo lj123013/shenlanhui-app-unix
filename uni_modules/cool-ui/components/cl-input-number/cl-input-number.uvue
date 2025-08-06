@@ -3,7 +3,7 @@
 		class="cl-input-number"
 		:class="[
 			{
-				'cl-input-number--disabled': disabled
+				'cl-input-number--disabled': isDisabled
 			},
 			pt.className
 		]"
@@ -41,7 +41,7 @@
 			<cl-input
 				:model-value="`${value}`"
 				:type="inputType"
-				:disabled="disabled"
+				:disabled="isDisabled"
 				:clearable="false"
 				:readonly="inputable == false"
 				:placeholder="placeholder"
@@ -92,6 +92,7 @@ import { computed, nextTick, ref, watch, type PropType } from "vue";
 import type { PassThroughProps } from "../../types";
 import type { ClIconProps } from "../cl-icon/props";
 import { useLongPress, parsePt, parseRpx } from "@/cool";
+import { useForm } from "../../hooks";
 
 defineOptions({
 	name: "cl-input-number"
@@ -156,6 +157,14 @@ const emit = defineEmits(["update:modelValue", "change"]);
 // 长按操作
 const longPress = useLongPress();
 
+// cl-form 上下文
+const { disabled } = useForm();
+
+// 是否禁用
+const isDisabled = computed(() => {
+	return disabled.value || props.disabled;
+});
+
 // 数值样式
 type ValuePassThrough = {
 	className?: string;
@@ -184,10 +193,10 @@ const pt = computed(() => parsePt<PassThrough>(props.pt));
 const value = ref(props.modelValue);
 
 // 是否可以继续增加数值
-const isPlus = computed(() => !props.disabled && value.value < props.max);
+const isPlus = computed(() => !isDisabled.value && value.value < props.max);
 
 // 是否可以继续减少数值
-const isMinus = computed(() => !props.disabled && value.value > props.min);
+const isMinus = computed(() => !isDisabled.value && value.value > props.min);
 
 /**
  * 更新数值并触发事件
@@ -232,7 +241,7 @@ function update() {
  * 在非禁用状态下增加step值
  */
 function onPlus() {
-	if (props.disabled || !isPlus.value) return;
+	if (isDisabled.value || !isPlus.value) return;
 
 	longPress.start(() => {
 		if (isPlus.value) {
@@ -248,7 +257,7 @@ function onPlus() {
  * 在非禁用状态下减少step值
  */
 function onMinus() {
-	if (props.disabled || !isMinus.value) return;
+	if (isDisabled.value || !isMinus.value) return;
 
 	longPress.start(() => {
 		if (isMinus.value) {

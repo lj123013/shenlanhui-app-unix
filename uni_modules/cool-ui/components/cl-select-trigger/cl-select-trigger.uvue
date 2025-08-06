@@ -4,11 +4,12 @@
 		:class="[
 			{
 				'is-dark': isDark,
-				'cl-select-trigger--disabled': disabled,
+				'cl-select-trigger--disabled': isDisabled,
 				'cl-select-trigger--focus': focus
 			},
 			pt.className
 		]"
+		@tap="open"
 	>
 		<view class="cl-select-trigger__content">
 			<cl-text
@@ -16,7 +17,7 @@
 				:pt="{
 					className: parseClass([
 						{
-							'!text-surface-400': disabled
+							'!text-surface-400': isDisabled
 						},
 						pt.text?.className
 					])
@@ -35,7 +36,7 @@
 			</text>
 		</view>
 
-		<view v-if="showText && !disabled" class="cl-select-trigger__icon" @tap.stop="clear">
+		<view v-if="showText && !isDisabled" class="cl-select-trigger__icon" @tap.stop="clear">
 			<cl-icon
 				name="close-circle-fill"
 				:size="32"
@@ -43,7 +44,7 @@
 			></cl-icon>
 		</view>
 
-		<view v-if="!disabled && !showText" class="cl-select-trigger__icon">
+		<view v-if="!isDisabled && !showText" class="cl-select-trigger__icon">
 			<cl-icon
 				:name="pt.icon?.name ?? arrowIcon"
 				:size="pt.icon?.size ?? 32"
@@ -61,6 +62,7 @@ import type { ClIconProps } from "../cl-icon/props";
 import { isDark, parseClass, parsePt } from "@/cool";
 import { t } from "@/locale";
 import type { PassThroughProps } from "../../types";
+import { useForm } from "../../hooks";
 
 defineOptions({
 	name: "cl-select-trigger"
@@ -100,7 +102,14 @@ const props = defineProps({
 	}
 });
 
-const emit = defineEmits(["clear"]);
+const emit = defineEmits(["open", "clear"]);
+
+const { disabled } = useForm();
+
+// 是否禁用
+const isDisabled = computed(() => {
+	return disabled.value || props.disabled;
+});
 
 // 透传样式类型定义
 type PassThrough = {
@@ -119,6 +128,15 @@ const showText = computed(() => props.text != "");
 // 清空文本
 function clear() {
 	emit("clear");
+}
+
+// 打开选择器
+function open() {
+	if (isDisabled.value) {
+		return;
+	}
+
+	emit("open");
 }
 </script>
 

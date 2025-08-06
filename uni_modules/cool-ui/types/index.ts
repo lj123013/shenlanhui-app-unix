@@ -128,3 +128,31 @@ export type ClSelectDateShortcut = {
 	label: string;
 	value: string[];
 };
+
+// 表单规则类型
+export type ClFormRule = {
+	// 是否必填
+	required?: boolean;
+	// 错误信息
+	message?: string;
+	// 最小长度
+	min?: number;
+	// 最大长度
+	max?: number;
+	// 正则验证
+	pattern?: RegExp;
+	// 自定义验证函数
+	validator?: (value: any | null) => boolean | string;
+};
+
+export type ClFormValidateError = {
+	field: string;
+	message: string;
+};
+
+export type ClFormValidateResult = {
+	valid: boolean;
+	errors: ClFormValidateError[];
+};
+
+export type ClFormLabelPosition = "left" | "top" | "right";

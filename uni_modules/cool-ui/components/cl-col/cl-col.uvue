@@ -55,7 +55,7 @@ const props = defineProps({
 });
 
 // 获取父组件实例
-const parent = useParent<ClRowComponentPublicInstance>();
+const parent = useParent<ClRowComponentPublicInstance>("cl-row");
 
 // 透传类型定义
 type PassThrough = {
@@ -67,7 +67,7 @@ type PassThrough = {
 const pt = computed(() => parsePt<PassThrough>(props.pt));
 
 // 计算列的padding,用于实现栅格间隔
-const padding = computed(() => parseRpx(parent.gutter / 2));
+const padding = computed(() => (parent == null ? "0" : parseRpx(parent.gutter / 2)));
 </script>
 
 <style lang="scss" scoped>

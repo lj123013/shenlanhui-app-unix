@@ -1,3 +1,4 @@
+import { ref, type Ref } from "vue";
 import { forEach, forInObject, isArray, isObject, isString } from "./comm";
 
 /**
@@ -103,6 +104,21 @@ export const parseClass = (data: any): string => {
 	// 将类名数组用空格连接成字符串返回
 	return names.join(" ");
 };
+
+/**
+ * 将自定义类型数据转换为UTSJSONObject对象
+ * @param data 要转换的数据
+ * @returns 转换后的UTSJSONObject对象
+ */
+export function parseToObject<T>(data: T): UTSJSONObject {
+	// #ifdef APP
+	return JSON.parseObject(JSON.stringify(data)!)!;
+	// #endif
+
+	// #ifndef APP
+	return JSON.parse(JSON.stringify(data)) as UTSJSONObject;
+	// #endif
+}
 
 /**
  * 将数值或字符串转换为rpx单位的字符串

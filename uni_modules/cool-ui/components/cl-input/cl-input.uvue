@@ -7,7 +7,7 @@
 				'is-dark': isDark,
 				'cl-input--border': border,
 				'cl-input--focus': isFocus,
-				'cl-input--disabled': disabled
+				'cl-input--disabled': isDisabled
 			}
 		]"
 		@tap="onTap"
@@ -26,13 +26,13 @@
 			class="cl-input__inner"
 			:class="[
 				{
-					'is-disabled': disabled,
+					'is-disabled': isDisabled,
 					'is-dark': isDark
 				},
 				pt.inner?.className
 			]"
 			:value="value"
-			:disabled="readonly ?? disabled"
+			:disabled="readonly ?? isDisabled"
 			:type="type"
 			:password="isPassword"
 			:focus="isFocus"
@@ -80,11 +80,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, watch, type PropType } from "vue";
+import { computed, nextTick, onMounted, ref, watch, type PropType } from "vue";
 import type { ClInputType, PassThroughProps } from "../../types";
 import { isDark, parseClass, parsePt } from "@/cool";
 import type { ClIconProps } from "../cl-icon/props";
 import { t } from "@/locale";
+import { useForm } from "../../hooks";
 
 defineOptions({
 	name: "cl-input"
@@ -201,6 +202,14 @@ const emit = defineEmits([
 	"keyboardheightchange"
 ]);
 
+// cl-form 上下文
+const { disabled } = useForm();
+
+// 是否禁用
+const isDisabled = computed(() => {
+	return disabled.value || props.disabled;
+});
+
 // 透传样式类型定义
 type PassThrough = {
 	className?: string;
@@ -271,7 +280,7 @@ function onKeyboardheightchange(e: UniInputKeyboardHeightChangeEvent) {
 
 // 点击事件
 function onTap() {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return;
 	}
 

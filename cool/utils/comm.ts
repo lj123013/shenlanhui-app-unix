@@ -166,7 +166,7 @@ export function get(object: any, path: string, defaultValue: any | null = null):
  * 设置对象的属性值
  * @example set({a: 1}, 'b', 2) // {a: 1, b: 2}
  */
-export function set(object: any, key: string, value: any): void {
+export function set(object: any, key: string, value: any | null): void {
 	(object as UTSJSONObject)[key] = value;
 }
 

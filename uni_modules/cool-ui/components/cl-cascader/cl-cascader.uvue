@@ -9,7 +9,7 @@
 		:disabled="disabled"
 		:focus="popupRef?.isOpen"
 		:text="text"
-		@tap="open"
+		@open="open"
 		@clear="clear"
 	></cl-select-trigger>
 

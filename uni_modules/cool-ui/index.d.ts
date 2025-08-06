@@ -16,6 +16,8 @@ import type { ClCropperProps, ClCropperPassThrough } from "./components/cl-cropp
 import type { ClDraggableProps, ClDraggablePassThrough } from "./components/cl-draggable/props";
 import type { ClFloatViewProps } from "./components/cl-float-view/props";
 import type { ClFooterProps, ClFooterPassThrough } from "./components/cl-footer/props";
+import type { ClFormProps } from "./components/cl-form/props";
+import type { ClFormItemProps } from "./components/cl-form-item/props";
 import type { ClIconProps, ClIconPassThrough } from "./components/cl-icon/props";
 import type { ClImageProps, ClImagePassThrough } from "./components/cl-image/props";
 import type { ClIndexBarProps, ClIndexBarPassThrough } from "./components/cl-index-bar/props";
@@ -84,6 +86,8 @@ declare module "vue" {
 		"cl-draggable": (typeof import('./components/cl-draggable/cl-draggable.uvue')['default']) & import('vue').DefineComponent<ClDraggableProps>;
 		"cl-float-view": (typeof import('./components/cl-float-view/cl-float-view.uvue')['default']) & import('vue').DefineComponent<ClFloatViewProps>;
 		"cl-footer": (typeof import('./components/cl-footer/cl-footer.uvue')['default']) & import('vue').DefineComponent<ClFooterProps>;
+		"cl-form": (typeof import('./components/cl-form/cl-form.uvue')['default']) & import('vue').DefineComponent<ClFormProps>;
+		"cl-form-item": (typeof import('./components/cl-form-item/cl-form-item.uvue')['default']) & import('vue').DefineComponent<ClFormItemProps>;
 		"cl-icon": (typeof import('./components/cl-icon/cl-icon.uvue')['default']) & import('vue').DefineComponent<ClIconProps>;
 		"cl-image": (typeof import('./components/cl-image/cl-image.uvue')['default']) & import('vue').DefineComponent<ClImageProps>;
 		"cl-index-bar": (typeof import('./components/cl-index-bar/cl-index-bar.uvue')['default']) & import('vue').DefineComponent<ClIndexBarProps>;

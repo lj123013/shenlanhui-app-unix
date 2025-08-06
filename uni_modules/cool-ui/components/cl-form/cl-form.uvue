@@ -1,0 +1,302 @@
+<template>
+	<view
+		class="cl-form"
+		:class="[
+			`cl-form--label-${labelPosition}`,
+			{
+				'cl-form--disabled': disabled
+			},
+			pt.className
+		]"
+	>
+		<slot></slot>
+	</view>
+</template>
+
+<script setup lang="ts">
+import { computed, nextTick, ref, watch, type PropType } from "vue";
+import { isEmpty, parsePt, parseToObject } from "@/cool";
+import type { ClFormLabelPosition, ClFormRule, ClFormValidateError } from "../../types";
+import { $t, t } from "@/locale";
+
+defineOptions({
+	name: "cl-form"
+});
+
+// 组件属性定义
+const props = defineProps({
+	// 透传样式
+	pt: {
+		type: Object,
+		default: () => ({})
+	},
+	// 表单数据模型
+	modelValue: {
+		type: Object as PropType<any>,
+		default: () => ({})
+	},
+	// 表单规则
+	rules: {
+		type: Object as PropType<Map<string, ClFormRule[]>>,
+		default: () => new Map<string, ClFormRule[]>()
+	},
+	// 标签位置
+	labelPosition: {
+		type: String as PropType<ClFormLabelPosition>,
+		default: "top"
+	},
+	// 标签宽度
+	labelWidth: {
+		type: String,
+		default: "140rpx"
+	},
+	// 是否显示必填星号
+	showAsterisk: {
+		type: Boolean,
+		default: true
+	},
+	// 是否显示错误信息
+	showMessage: {
+		type: Boolean,
+		default: true
+	},
+	// 是否禁用整个表单
+	disabled: {
+		type: Boolean,
+		default: false
+	}
+});
+
+type PassThrough = {
+	className?: string;
+};
+
+// 解析透传样式
+const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+// 表单数据
+const data = ref({} as UTSJSONObject);
+
+// 表单字段错误信息
+const errors = ref(new Map<string, string>());
+
+// 表单字段集合
+const fields = ref(new Set<string>([]));
+
+// 标签位置
+const labelPosition = computed(() => props.labelPosition);
+
+// 标签宽度
+const labelWidth = computed(() => props.labelWidth);
+
+// 是否显示必填星号
+const showAsterisk = computed(() => props.showAsterisk);
+
+// 是否显示错误信息
+const showMessage = computed(() => props.showMessage);
+
+// 是否禁用整个表单
+const disabled = computed(() => props.disabled);
+
+// 设置字段错误信息
+function setError(prop: string, error: string) {
+	if (prop != "") {
+		errors.value.set(prop, error);
+	}
+}
+
+// 移除字段错误信息
+function removeError(prop: string) {
+	if (prop != "") {
+		errors.value.delete(prop);
+	}
+}
+
+// 获取字段错误信息
+function getError(prop: string): string {
+	if (prop != "") {
+		return errors.value.get(prop) ?? "";
+	}
+
+	return "";
+}
+
+// 清除所有错误信息
+function clearErrors() {
+	errors.value.clear();
+}
+
+// 获取字段值
+function getValue(prop: string): any | null {
+	if (prop != "") {
+		return data.value[prop];
+	}
+
+	return null;
+}
+
+// 注册表单字段
+function addField(prop: string) {
+	if (prop != "") {
+		fields.value.add(prop);
+	}
+}
+
+// 注销表单字段
+function removeField(prop: string) {
+	if (prop != "") {
+		fields.value.delete(prop);
+		removeError(prop);
+	}
+}
+
+// 获取字段规则
+function getRule(prop: string): ClFormRule[] {
+	return props.rules.get(prop) ?? ([] as ClFormRule[]);
+}
+
+// 验证单个规则
+function validateRule(value: any | null, rule: ClFormRule): null | string {
+	// 必填验证
+	if (rule.required == true) {
+		if (value == null || value == "" || (Array.isArray(value) && value.length == 0)) {
+			return rule.message ?? t("此字段为必填项");
+		}
+	}
+
+	// 如果值为空且不是必填，直接通过
+	if ((value == null || value == "") && rule.required != true) {
+		return null;
+	}
+
+	// 最小长度验证
+	if (rule.min != null) {
+		const len = Array.isArray(value) ? value.length : `${value}`.length;
+		if (len < rule.min) {
+			return rule.message ?? $t(`最少需要{min}个字符`, { min: rule.min });
+		}
+	}
+
+	// 最大长度验证
+	if (rule.max != null) {
+		const len = Array.isArray(value) ? value.length : `${value}`.length;
+		if (len > rule.max) {
+			return rule.message ?? $t(`最多允许{max}个字符`, { max: rule.max });
+		}
+	}
+
+	// 正则验证
+	if (rule.pattern != null) {
+		if (!rule.pattern.test(`${value}`)) {
+			return rule.message ?? t("格式不正确");
+		}
+	}
+
+	// 自定义验证
+	if (rule.validator != null) {
+		const result = rule.validator(value);
+		if (result != true) {
+			return typeof result == "string" ? result : (rule.message ?? t("验证失败"));
+		}
+	}
+
+	return null;
+}
+
+// 清除所有验证
+function clearValidate() {
+	nextTick(() => {
+		clearErrors();
+	});
+}
+
+// 验证单个字段
+function validateField(prop: string): string | null {
+	let error = null as string | null;
+
+	if (prop != "") {
+		const value = getValue(prop);
+		const rules = getRule(prop);
+
+		if (!isEmpty(rules)) {
+			// 逐个验证规则
+			rules.find((rule) => {
+				const msg = validateRule(value, rule);
+
+				if (msg != null) {
+					error = msg;
+					return true;
+				}
+
+				return false;
+			});
+		}
+
+		removeError(prop);
+	}
+
+	if (error != null) {
+		setError(prop, error!);
+	}
+
+	return error;
+}
+
+// 验证整个表单
+function validate(callback: (valid: boolean, errors: ClFormValidateError[]) => void) {
+	const errs = [] as ClFormValidateError[];
+
+	fields.value.forEach((prop) => {
+		const result = validateField(prop);
+
+		if (result != null) {
+			errs.push({
+				field: prop,
+				message: result
+			});
+		}
+	});
+
+	callback(errs.length == 0, errs);
+}
+
+watch(
+	computed(() => parseToObject(props.modelValue)),
+	(val: UTSJSONObject) => {
+		data.value = val;
+	},
+	{
+		immediate: true,
+		deep: true
+	}
+);
+
+defineExpose({
+	labelPosition,
+	labelWidth,
+	showAsterisk,
+	showMessage,
+	disabled,
+	data,
+	errors,
+	fields,
+	addField,
+	removeField,
+	getValue,
+	setError,
+	getError,
+	removeError,
+	clearErrors,
+	getRule,
+	validateRule,
+	clearValidate,
+	validateField,
+	validate
+});
+</script>
+
+<style lang="scss" scoped>
+.cl-form {
+	@apply w-full;
+}
+</style>

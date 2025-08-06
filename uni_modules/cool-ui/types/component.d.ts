@@ -159,3 +159,34 @@ declare type ClCropperComponentPublicInstance = {
 	chooseImage: () => void;
 	toPng: () => Promise<string>;
 };
+
+declare type ClFormComponentPublicInstance = {
+	labelPosition: "left" | "top" | "right";
+	labelWidth: string;
+	showAsterisk: boolean;
+	showMessage: boolean;
+	disabled: boolean;
+	data: UTSJSONObject;
+	errors: Map<string, string>;
+	fields: Set<string>;
+	addField: (prop: string) => void;
+	removeField: (prop: string) => void;
+	getValue: (prop: string) => any | null;
+	setData: (data: UTSJSONObject) => void;
+	setError: (prop: string, error: string) => void;
+	getError: (prop: string) => string;
+	removeError: (prop: string) => void;
+	clearErrors: () => void;
+	getRule: (prop: string) => ClFormRule[];
+	validateRule: (value: any | null, rule: ClFormRule) => string | null;
+	clearValidate: () => void;
+	validateField: (prop: string) => string | null;
+	validate: (callback: (valid: boolean, errors: ClFormValidateError[]) => void) => void;
+};
+
+declare type ClFormItemComponentPublicInstance = {
+	validate: () => Promise<boolean>;
+	clearValidate: () => void;
+	hasError: boolean;
+	currentError: string;
+};

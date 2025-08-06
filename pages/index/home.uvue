@@ -119,6 +119,11 @@ const data = computed<Item[]>(() => {
 			label: t("表单组件"),
 			children: [
 				{
+					label: t("表单验证"),
+					icon: "draft-line",
+					path: "/pages/demo/form/form"
+				},
+				{
 					label: t("输入框"),
 					icon: "input-field",
 					path: "/pages/demo/form/input"

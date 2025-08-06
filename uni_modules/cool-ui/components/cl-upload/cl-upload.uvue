@@ -7,7 +7,7 @@
 			:class="[
 				{
 					'is-dark': isDark,
-					'is-disabled': disabled
+					'is-disabled': isDisabled
 				},
 				pt.item?.className
 			]"
@@ -33,7 +33,7 @@
 					className: 'cl-upload__close'
 				}"
 				@tap.stop="remove(item.uid)"
-				v-if="!disabled"
+				v-if="!isDisabled"
 			></cl-icon>
 
 			<view class="cl-upload__progress" v-if="item.progress < 100">
@@ -47,7 +47,7 @@
 			:class="[
 				{
 					'is-dark': isDark,
-					'is-disabled': disabled
+					'is-disabled': isDisabled
 				},
 				pt.add?.className
 			]"
@@ -84,6 +84,7 @@ import { forInObject, isDark, parseClass, parsePt, parseRpx, uploadFile, uuid } 
 import { t } from "@/locale";
 import { computed, reactive, ref, watch, type PropType } from "vue";
 import type { ClUploadItem, PassThroughProps } from "../../types";
+import { useForm } from "../../hooks";
 
 defineOptions({
 	name: "cl-upload"
@@ -156,6 +157,14 @@ const emit = defineEmits([
 	"progress" // 上传进度更新时触发
 ]);
 
+// cl-form 上下文
+const { disabled } = useForm();
+
+// 是否禁用
+const isDisabled = computed(() => {
+	return disabled.value || props.disabled;
+});
+
 // 透传属性的类型定义
 type PassThrough = {
 	className?: string;
@@ -179,7 +188,7 @@ const activeIndex = ref(0);
 const isAdd = computed(() => {
 	const n = list.value.length;
 
-	if (props.disabled) {
+	if (isDisabled.value) {
 		// 禁用状态下，只有没有文件时才显示添加按钮
 		return n == 0;
 	} else {
@@ -294,7 +303,7 @@ function remove(uid: string) {
  * @param {number} index - 操作的索引，-1表示新增，其他表示替换
  */
 function choose(index: number) {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return;
 	}
 
