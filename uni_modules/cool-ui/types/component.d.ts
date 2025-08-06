@@ -172,7 +172,6 @@ declare type ClFormComponentPublicInstance = {
 	addField: (prop: string) => void;
 	removeField: (prop: string) => void;
 	getValue: (prop: string) => any | null;
-	setData: (data: UTSJSONObject) => void;
 	setError: (prop: string, error: string) => void;
 	getError: (prop: string) => string;
 	removeError: (prop: string) => void;

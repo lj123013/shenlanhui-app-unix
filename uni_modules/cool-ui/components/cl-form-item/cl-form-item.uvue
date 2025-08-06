@@ -50,6 +50,10 @@ defineOptions({
 	name: "cl-form-item"
 });
 
+defineSlots<{
+	error(props: { error: string }): any;
+}>();
+
 // 组件属性定义
 const props = defineProps({
 	// 透传样式
@@ -172,9 +176,9 @@ onMounted(() => {
 
 			return value;
 		}),
-		(val: any, val2: any) => {
+		(a: any, b: any) => {
 			if (props.required) {
-				if (!isEqual(val, val2)) {
+				if (!isEqual(a, b)) {
 					validateField(props.prop);
 				}
 			}
