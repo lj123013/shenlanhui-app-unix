@@ -11,7 +11,7 @@
 		<view
 			class="cl-slider__inner"
 			:style="{
-				height: blockSize + 'rpx'
+				height: blockSize + 8 + 'rpx'
 			}"
 		>
 			<view
