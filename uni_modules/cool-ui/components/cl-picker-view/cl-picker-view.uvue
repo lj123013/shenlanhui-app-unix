@@ -89,15 +89,10 @@ const props = defineProps({
 	height: {
 		type: Number,
 		default: 600
-	},
-	// 选择后子集是否回到0
-	resetOnChange: {
-		type: Boolean,
-		default: true
 	}
 });
 
-const emit = defineEmits(["change"]);
+const emit = defineEmits(["change-value", "change-index"]);
 
 // 获取窗口宽度,用于计算选择器列宽
 const { windowWidth } = uni.getWindowInfo();
@@ -151,33 +146,19 @@ const indicatorStyle = computed(() => {
 	return str;
 });
 
-// 选择器值改变事件
+// 监听选择器值改变事件
 function onChange(e: UniPickerViewChangeEvent) {
 	// 获取选择器当前选中值数组
-	const arr = e.detail.value;
+	const indexs = e.detail.value;
 
-	// 如果选择后子集是否回到0
-	if (props.resetOnChange) {
-		// 记录第一个发生变化的列的索引,初始为-1表示未发生变化
-		let start = -1;
+	// 获取所有列的值
+	const values = props.columns.map((c, i) => {
+		return c[indexs[i]].value;
+	});
 
-		// 遍历原选中值数组
-		props.value.forEach((e, i) => {
-			if (start >= 0) {
-				// 如果之前的列发生过变化,后续列都重置为0
-				arr[i] = 0;
-			} else {
-				// 比较当前列的值是否发生变化
-				if (e != arr[i]) {
-					// 记录第一个变化的列的索引
-					start = i;
-				}
-			}
-		});
-	}
-
-	// 触发change事件,传递新的选中值数组
-	emit("change", arr);
+	// 返回所有列的值或下标
+	emit("change-value", values);
+	emit("change-index", indexs);
 }
 </script>
 

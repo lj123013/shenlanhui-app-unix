@@ -33,7 +33,7 @@
 					:headers="headers"
 					:columns="columns"
 					:reset-on-change="false"
-					@change="onChange"
+					@change-index="onChange"
 				></cl-picker-view>
 			</view>
 

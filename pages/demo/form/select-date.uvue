@@ -2,14 +2,18 @@
 	<cl-page>
 		<view class="p-3">
 			<demo-item :label="t('基础用法')">
-				<cl-select-date v-model="form.date1" type="date"></cl-select-date>
+				<cl-select-date
+					v-model="form.date1"
+					type="date"
+					@change="onDateChange"
+				></cl-select-date>
 			</demo-item>
 
 			<demo-item :label="t('固定开始、结束日期')">
 				<cl-select-date
 					v-model="form.date3"
 					start="2025-06-01"
-					end="2026-06-01"
+					end="2027-08-01"
 					type="date"
 				></cl-select-date>
 			</demo-item>
@@ -34,7 +38,7 @@
 
 			<demo-item :label="t('自定义快捷选项')">
 				<cl-select-date
-					v-model:values="form.date5"
+					v-model:values="form.date6"
 					type="date"
 					rangeable
 					:shortcuts="shortcuts"
@@ -43,7 +47,7 @@
 
 			<demo-item :label="t('自定义')">
 				<cl-select-date
-					v-model="form.date6"
+					v-model="form.date7"
 					:type="type"
 					:label-format="labelFormat"
 					:disabled="isDisabled"
@@ -129,13 +133,23 @@ import { dayUts } from "@/cool";
 
 const ui = useUi();
 
+// 测试日期选择变化事件
+function onDateChange(value: string) {
+	console.log("日期选择变化:", value);
+	ui.showToast({
+		message: `选择了日期: ${value}`,
+		type: "success"
+	});
+}
+
 type Form = {
 	date1: string;
 	date2: string;
 	date3: string;
 	date4: string;
 	date5: string[];
-	date6: string;
+	date6: string[];
+	date7: string;
 };
 
 const form = reactive<Form>({
@@ -144,7 +158,8 @@ const form = reactive<Form>({
 	date3: "",
 	date4: "",
 	date5: [],
-	date6: ""
+	date6: [],
+	date7: ""
 });
 
 const isDisabled = ref(false);
