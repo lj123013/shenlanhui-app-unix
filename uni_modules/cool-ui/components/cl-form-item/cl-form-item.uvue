@@ -27,7 +27,7 @@
 			</view>
 		</view>
 
-		<template v-if="hasError && showMessage">
+		<view class="cl-form-item__error" v-if="hasError && showMessage">
 			<slot name="error" :error="errorText">
 				<cl-text
 					color="error"
@@ -38,7 +38,7 @@
 					{{ errorText }}
 				</cl-text>
 			</slot>
-		</template>
+		</view>
 	</view>
 </template>
 
