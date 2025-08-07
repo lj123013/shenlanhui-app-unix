@@ -27,16 +27,18 @@
 			</view>
 		</view>
 
-		<slot name="error" :error="errorText" v-if="hasError && showMessage">
-			<cl-text
-				color="error"
-				:pt="{
-					className: parseClass(['mt-2 !text-sm', pt.error?.className])
-				}"
-			>
-				{{ errorText }}
-			</cl-text>
-		</slot>
+		<template v-if="hasError && showMessage">
+			<slot name="error" :error="errorText">
+				<cl-text
+					color="error"
+					:pt="{
+						className: parseClass(['mt-2 !text-sm', pt.error?.className])
+					}"
+				>
+					{{ errorText }}
+				</cl-text>
+			</slot>
+		</template>
 	</view>
 </template>
 
