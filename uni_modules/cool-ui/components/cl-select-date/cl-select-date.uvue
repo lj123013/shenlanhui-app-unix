@@ -569,8 +569,8 @@ async function onChange(arr: number[]) {
 	for (let i = 0; i < arr.length; i++) {
 		const item = list.value[i][arr[i]];
 
-		if (item != null) {
-			data[i] = item.value as number;
+		if (!isNull(item)) {
+			data.push(item.value as number);
 		}
 	}
 
