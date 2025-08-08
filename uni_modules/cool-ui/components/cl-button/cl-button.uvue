@@ -312,7 +312,13 @@ const emit = defineEmits([
 ]);
 
 const slots = useSlots();
-const { cache } = useCache(() => [props.type, props.text, props.disabled, props.loading]);
+const { cache } = useCache(() => [
+	props.type,
+	props.text,
+	props.disabled,
+	props.loading,
+	props.color
+]);
 
 // 样式穿透类型
 type PassThrough = {

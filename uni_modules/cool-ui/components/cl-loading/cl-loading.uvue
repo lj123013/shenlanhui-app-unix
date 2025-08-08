@@ -3,7 +3,7 @@
 		class="cl-loading"
 		:class="[
 			{
-				'is-dark': isDark && color == '',
+				'cl-loading--dark': isDark && color == '',
 				'cl-loading--spin': loading,
 				'!border-primary-500': color == 'primary',
 				'!border-green-500': color == 'success',
@@ -23,7 +23,10 @@
 			// #endif
 			height: parseRpx(size!),
 			width: parseRpx(size!),
-			borderColor: color
+			borderTopColor: color,
+			borderRightColor: 'transparent',
+			borderBottomColor: color,
+			borderLeftColor: color
 		}"
 		v-if="loading"
 	>
@@ -113,8 +116,9 @@ onMounted(() => {
 	@apply border-surface-700 border-solid;
 	border-width: 2rpx;
 
-	&.is-dark {
-		@apply border-white;
+	&--dark {
+		border-color: white !important;
+		border-right-color: transparent !important;
 	}
 
 	// #ifdef H5 || MP
