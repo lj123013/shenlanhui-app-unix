@@ -39,10 +39,7 @@
 			v-else-if="isLoading && showLoading"
 		>
 			<slot name="loading">
-				<cl-loading
-					:loading="true"
-					:pt="{ icon: { className: '!text-surface-400' } }"
-				></cl-loading>
+				<cl-loading :loading="true"></cl-loading>
 			</slot>
 		</view>
 

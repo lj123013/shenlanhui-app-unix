@@ -3,7 +3,7 @@
 		class="cl-loading"
 		:class="[
 			{
-				'is-dark': isDark,
+				'is-dark': isDark && color == '',
 				'cl-loading--spin': loading,
 				'!border-primary-500': color == 'primary',
 				'!border-green-500': color == 'success',
