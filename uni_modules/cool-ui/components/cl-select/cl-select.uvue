@@ -30,7 +30,7 @@
 				<cl-picker-view
 					:value="indexes"
 					:columns="columns"
-					@change="onChange"
+					@change-index="onChange"
 				></cl-picker-view>
 			</view>
 
@@ -68,7 +68,6 @@ import { isEmpty, parsePt } from "@/cool";
 import type { ClSelectTriggerPassThrough } from "../cl-select-trigger/props";
 import type { ClPopupPassThrough } from "../cl-popup/props";
 import { t } from "@/locale";
-import { useForm } from "../../hooks";
 
 defineOptions({
 	name: "cl-select"

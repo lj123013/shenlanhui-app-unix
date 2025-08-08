@@ -44,7 +44,7 @@
 									[isDark && index == value[columnIndex], '!text-white']
 								])
 							}"
-							>{{ item.value }}</cl-text
+							>{{ item.label }}</cl-text
 						>
 					</view>
 				</picker-view-column>
