@@ -105,7 +105,7 @@ export type ClListItem = {
 };
 
 export type ClListViewItem = {
-	label: string;
+	label?: string;
 	value?: any;
 	index?: string;
 	children?: ClListViewItem[];

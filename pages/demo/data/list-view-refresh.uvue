@@ -1,0 +1,77 @@
+<template>
+	<cl-page>
+		<view class="p-3">
+			<cl-list-view :data="data" :virtual="false">
+				<template #item="{ value }">
+					<goods-item :item="value"></goods-item>
+				</template>
+			</cl-list-view>
+		</view>
+	</cl-page>
+</template>
+
+<script lang="ts" setup>
+import { useListView } from "@/uni_modules/cool-ui";
+import { ref } from "vue";
+import { random } from "@/cool";
+import GoodsItem from "../components/goods-item.uvue";
+
+let id = 0;
+
+const data = useListView([
+	{
+		id: id++,
+		likeCount: random(100, 1000),
+		title: "春日樱花盛开时节，粉色花瓣如诗如画般飘洒",
+		image: "https://unix.cool-js.com/images/demo/1.jpg"
+	},
+	{
+		id: id++,
+		likeCount: random(100, 1000),
+		title: "夕阳西下的海滩边，金色阳光温柔地洒在波光粼粼的海面上，构成令人心旷神怡的日落美景",
+		image: "https://unix.cool-js.com/images/demo/2.jpg"
+	},
+	{
+		id: id++,
+		likeCount: random(100, 1000),
+		title: "寒冬腊月时分，洁白雪花纷纷扬扬地覆盖着整个世界，感受冬日的宁静与美好",
+		image: "https://unix.cool-js.com/images/demo/3.jpg"
+	},
+	{
+		id: id++,
+		likeCount: random(100, 1000),
+		title: "都市夜景霓虹闪烁，五彩斑斓光芒照亮城市营造梦幻般景象",
+		image: "https://unix.cool-js.com/images/demo/5.jpg"
+	},
+	{
+		id: id++,
+		likeCount: random(100, 1000),
+		title: "云雾缭绕的山间风光如诗如画让人心旷神怡，微风轻抚树梢带来阵阵清香，鸟儿在林间自由歌唱",
+		image: "https://unix.cool-js.com/images/demo/6.jpg"
+	},
+	{
+		id: id++,
+		likeCount: random(100, 1000),
+		title: "古老建筑与现代摩天大楼交相辉映，传统与现代完美融合创造独特城市景观",
+		image: "https://unix.cool-js.com/images/demo/7.jpg"
+	},
+	{
+		id: id++,
+		likeCount: random(100, 1000),
+		title: "广袤田野绿意盎然风光无限，金黄麦浪在微风中轻柔摇曳，农家炊烟袅袅升起",
+		image: "https://unix.cool-js.com/images/demo/8.jpg"
+	},
+	{
+		id: id++,
+		likeCount: random(100, 1000),
+		title: "璀璨星空下银河横跨天际，繁星闪烁神秘光芒营造浪漫夜空美景",
+		image: "https://unix.cool-js.com/images/demo/9.jpg"
+	},
+	{
+		id: id++,
+		likeCount: random(100, 1000),
+		title: "雄伟瀑布从高耸悬崖飞流直下激起千层浪花，彩虹在水雾中若隐若现如梦如幻",
+		image: "https://unix.cool-js.com/images/demo/10.jpg"
+	}
+]);
+</script>

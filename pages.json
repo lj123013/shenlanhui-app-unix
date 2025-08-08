@@ -263,6 +263,12 @@
 					}
 				},
 				{
+					"path": "data/list-view-refresh",
+					"style": {
+						"navigationBarTitleText": "ListViewRefresh 列表刷新"
+					}
+				},
+				{
 					"path": "data/waterfall",
 					"style": {
 						"navigationBarTitleText": "Waterfall 瀑布流"

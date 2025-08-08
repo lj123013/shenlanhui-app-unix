@@ -7,5 +7,4 @@ export type ClSelectPickerViewProps = {
 	columns?: ClSelectOption[][];
 	itemHeight?: number;
 	height?: number;
-	resetOnChange?: boolean;
 };

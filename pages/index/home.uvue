@@ -43,7 +43,7 @@
 								class="item dark:!bg-surface-800"
 								hover-class="opacity-80"
 								:hover-stay-time="50"
-								@tap="toPath(child.path!)"
+								@tap="toPath(child)"
 							>
 								<cl-icon :name="child.icon" :size="36"></cl-icon>
 								<cl-text
@@ -80,6 +80,7 @@ type Item = {
 	label: string;
 	icon?: string;
 	path?: string;
+	disabled?: boolean;
 	children?: Item[];
 };
 
@@ -140,7 +141,7 @@ const data = computed<Item[]>(() => {
 				},
 				{
 					label: t("口令输入"),
-					icon: "t-box-line",
+					icon: "input-method-line",
 					path: "/pages/demo/form/input-otp"
 				},
 				{
@@ -259,6 +260,12 @@ const data = computed<Item[]>(() => {
 					path: "/pages/demo/data/list-view"
 				},
 				{
+					label: t("列表刷新"),
+					icon: "refresh-line",
+					path: "/pages/demo/data/list-view-refresh",
+					disabled: true
+				},
+				{
 					label: t("瀑布流"),
 					icon: "layout-column-line",
 					path: "/pages/demo/data/waterfall"
@@ -374,6 +381,12 @@ const data = computed<Item[]>(() => {
 					path: "/pages/demo/other/cropper"
 				},
 				{
+					label: t("富文本"),
+					icon: "text-snippet",
+					path: "/pages/demo/other/rict-text",
+					disabled: true
+				},
+				{
 					label: "DayUts",
 					icon: "timer-2-line",
 					path: "/pages/demo/other/day-uts"
@@ -388,8 +401,14 @@ const data = computed<Item[]>(() => {
 	];
 });
 
-function toPath(path: string) {
-	router.to(path);
+function toPath(item: Item) {
+	if (item.disabled == true) {
+		return ui.showToast({
+			message: t("该功能正在开发中")
+		});
+	}
+
+	router.to(item.path!);
 }
 
 function setLocale() {

@@ -126,6 +126,10 @@ declare type ClListItemComponentPublicInstance = {
 	initSwipe: () => void;
 };
 
+declare type ClListViewComponentPublicInstance = {
+	data: ClListViewItem[];
+};
+
 declare type ClCascaderComponentPublicInstance = {
 	open: () => void;
 	close: () => void;

@@ -18,7 +18,10 @@
 			direction="vertical"
 			@scroll="onScroll"
 		>
-			<view class="cl-list-view__virtual-list" :style="{ height: listHeight + 'px' }">
+			<view
+				class="cl-list-view__virtual-list"
+				:style="{ height: virtual ? listHeight + 'px' : 'auto' }"
+			>
 				<view class="cl-list-view__spacer-top" :style="{ height: spacerTopHeight + 'px' }">
 					<slot name="top"></slot>
 				</view>
@@ -54,14 +57,12 @@
 							},
 							pt.item?.className
 						]"
-						:hover-class="parseClass([[isDark, '!bg-surface-800', '!bg-surface-50']])"
-						:hover-stay-time="50"
 						:style="{
-							height: itemHeight + 'px'
+							height: virtual ? itemHeight + 'px' : 'auto'
 						}"
 						@tap="onItemTap(item)"
 					>
-						<slot name="item" :data="item.data" :item="item">
+						<slot name="item" :item="item" :data="item.data" :value="item.data.value">
 							<view class="cl-list-view__item-inner">
 								<cl-text> {{ item.data.label }} </cl-text>
 							</view>
@@ -133,7 +134,7 @@ defineSlots<{
 	// 分组头部插槽
 	header(props: { index: string }): any;
 	// 列表项插槽
-	item(props: { data: ClListViewItem; item: VirtualItem }): any;
+	item(props: { data: ClListViewItem; item: VirtualItem; value: any | null }): any;
 	// 底部插槽
 	bottom(): any;
 	// 索引插槽
@@ -489,6 +490,10 @@ onMounted(() => {
 			immediate: true
 		}
 	);
+});
+
+defineExpose({
+	data
 });
 </script>
 
