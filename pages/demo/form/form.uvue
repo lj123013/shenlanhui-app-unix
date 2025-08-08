@@ -31,7 +31,7 @@
 						></cl-input>
 					</cl-form-item>
 
-					<cl-form-item :label="t('身高（cm）')" prop="height" required>
+					<cl-form-item :label="t('身高')" prop="height" required>
 						<cl-slider v-model="formData.height" :max="220" show-value>
 							<template #value="{ value }">
 								<cl-text
@@ -44,7 +44,7 @@
 						</cl-slider>
 					</cl-form-item>
 
-					<cl-form-item :label="t('体重（kg）')" prop="weight" required>
+					<cl-form-item :label="t('体重')" prop="weight" required>
 						<cl-slider v-model="formData.weight" :max="150" show-value>
 							<template #value="{ value }">
 								<cl-text
