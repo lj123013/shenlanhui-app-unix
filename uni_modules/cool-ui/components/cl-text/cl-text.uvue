@@ -276,8 +276,12 @@ const content = computed(() => {
 .cl-text {
 	@apply text-md;
 
+	// #ifndef APP
+	flex-shrink: unset;
+	// #endif
+
 	&--pre-wrap {
-		// #ifdef H5
+		// #ifndef APP
 		white-space: pre-wrap;
 		// #endif
 	}
