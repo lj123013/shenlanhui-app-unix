@@ -695,5 +695,21 @@ export const remixicon = {
 	"shield-user-fill": "f10b",
 	"circle-line": "f3c2",
 	"circle-fill": "f3c1",
-	"sketching": "f35f"
+	"sketching": "f35f",
+	"align-bottom": "ea24",
+	"restart-line": "f080",
+	"restart-fill": "f07f",
+	"refresh-line": "f064",
+	"refresh-fill": "f063",
+	"reset-left-line": "f542",
+	"reset-left-fill": "f541",
+	"skip-down-line": "f361",
+	"skip-down-fill": "f360",
+	"skip-right-line": "f365",
+	"skip-right-fill": "f364",
+	"skip-left-fill": "f362",
+	"skip-left-line": "f363",
+	"text-snippet": "f46e",
+	"input-method-line": "ee60",
+	"input-method-fill": "ee5f"
 };
