@@ -47,14 +47,16 @@
 					height: refresherThreshold + 'px'
 				}"
 			>
-				<cl-loading
-					v-if="refresherStatus === 'refreshing'"
-					:size="28"
-					:pt="{
-						className: 'mr-2'
-					}"
-				></cl-loading>
-				<cl-text> {{ refresherText }} </cl-text>
+				<slot name="refresher" :status="refresherStatus" :text="refresherText">
+					<cl-loading
+						v-if="refresherStatus === 'refreshing'"
+						:size="28"
+						:pt="{
+							className: 'mr-2'
+						}"
+					></cl-loading>
+					<cl-text> {{ refresherText }} </cl-text>
+				</slot>
 			</view>
 
 			<view
@@ -122,6 +124,7 @@
 			</view>
 
 			<cl-empty v-if="noData" :fixed="false"></cl-empty>
+			<cl-back-top :top="scrollTop" v-if="showBackTop" @tap="scrollToTop"></cl-back-top>
 		</scroll-view>
 
 		<view
@@ -142,30 +145,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, onMounted, ref, watch, type PropType } from "vue";
-import type { ClListViewItem, PassThroughProps } from "../../types";
+import { computed, getCurrentInstance, nextTick, onMounted, ref, watch, type PropType } from "vue";
+import type {
+	ClListViewItem,
+	ClListViewGroup,
+	ClListViewVirtualItem,
+	PassThroughProps,
+	ClListViewRefresherStatus
+} from "../../types";
 import { isApp, isDark, isEmpty, parseClass, parsePt } from "@/cool";
-
-// 定义虚拟列表项
-type VirtualItem = {
-	// 每一项的唯一标识符,用于v-for的key
-	key: string;
-	// 项目类型:header表示分组头部,item表示列表项
-	type: "header" | "item";
-	// 在整个列表中的索引号
-	index: number;
-	// 该项距离列表顶部的像素距离
-	top: number;
-	// 该项的高度,header和item可以不同
-	height: number;
-	// 该项的具体数据
-	data: ClListViewItem;
-};
-
-type Group = {
-	index: string;
-	children: ClListViewItem[];
-};
+import { t } from "@/locale";
 
 defineOptions({
 	name: "cl-list-view"
@@ -177,11 +166,18 @@ defineSlots<{
 	// 分组头部插槽
 	header(props: { index: string }): any;
 	// 列表项插槽
-	item(props: { data: ClListViewItem; item: VirtualItem; value: any | null; index: number }): any;
+	item(props: {
+		data: ClListViewItem;
+		item: ClListViewVirtualItem;
+		value: any | null;
+		index: number;
+	}): any;
 	// 底部插槽
 	bottom(): any;
 	// 索引插槽
 	index(props: { index: string }): any;
+	// 下拉刷新插槽
+	refresher(props: { status: ClListViewRefresherStatus; text: string }): any;
 }>();
 
 const props = defineProps({
@@ -248,7 +244,7 @@ const props = defineProps({
 	// 下拉刷新触发距离，相当于下拉内容高度
 	refresherThreshold: {
 		type: Number,
-		default: 45
+		default: 50
 	},
 	// 下拉刷新区域背景色
 	refresherBackground: {
@@ -258,17 +254,22 @@ const props = defineProps({
 	// 下拉刷新默认文案
 	refresherDefaultText: {
 		type: String,
-		default: "下拉刷新"
+		default: () => t("下拉刷新")
 	},
 	// 释放刷新文案
 	refresherPullingText: {
 		type: String,
-		default: "释放立即刷新"
+		default: () => t("释放立即刷新")
 	},
 	// 正在刷新文案
 	refresherRefreshingText: {
 		type: String,
-		default: "加载中"
+		default: () => t("加载中")
+	},
+	// 是否显示回到顶部按钮
+	showBackTop: {
+		type: Boolean,
+		default: true
 	}
 });
 
@@ -317,9 +318,9 @@ const hasIndex = computed(() => {
 });
 
 // 计算属性:将原始数据按索引分组
-const data = computed<Group[]>(() => {
+const data = computed<ClListViewGroup[]>(() => {
 	// 初始化分组数组
-	const group: Group[] = [];
+	const group: ClListViewGroup[] = [];
 
 	// 遍历原始数据,按index字段进行分组
 	props.data.forEach((item) => {
@@ -334,7 +335,7 @@ const data = computed<Group[]>(() => {
 			group.push({
 				index: item.index ?? "",
 				children: [item]
-			} as Group);
+			} as ClListViewGroup);
 		}
 	});
 
@@ -347,9 +348,9 @@ const indexList = computed<string[]>(() => {
 });
 
 // 计算属性:将分组数据扁平化为虚拟列表项数组
-const virtualItems = computed<VirtualItem[]>(() => {
+const virtualItems = computed<ClListViewVirtualItem[]>(() => {
 	// 初始化虚拟列表数组
-	const items: VirtualItem[] = [];
+	const items: ClListViewVirtualItem[] = [];
 
 	// 初始化顶部位置,考虑预留空间
 	let top = props.topHeight;
@@ -415,7 +416,7 @@ const targetScrollTop = ref(0);
 const scrollerHeight = ref(0);
 
 // 计算属性:获取当前可见区域的列表项
-const visibleItems = computed<VirtualItem[]>(() => {
+const visibleItems = computed<ClListViewVirtualItem[]>(() => {
 	// 如果虚拟列表为空,返回空数组
 	if (isEmpty(virtualItems.value)) {
 		return [];
@@ -434,7 +435,7 @@ const visibleItems = computed<VirtualItem[]>(() => {
 	const viewportBottom = scrollTop.value + scrollerHeight.value + bufferHeight;
 
 	// 初始化可见项目数组
-	const visible: VirtualItem[] = [];
+	const visible: ClListViewVirtualItem[] = [];
 
 	// 使用二分查找优化查找起始位置
 	let startIndex = 0;
@@ -599,7 +600,7 @@ function onScrollEnd(e: UniScrollEvent) {
 }
 
 // 行点击事件处理函数
-function onItemTap(item: VirtualItem) {
+function onItemTap(item: ClListViewVirtualItem) {
 	emit("item-tap", item.data);
 }
 
@@ -619,12 +620,13 @@ function onIndexChange(index: number) {
 
 // 下拉刷新事件处理函数
 function onRefresherPulling(e: UniRefresherEvent) {
-	if (e.detail.dy > props.refresherThreshold * 1.5) {
+	if (e.detail.dy > props.refresherThreshold) {
 		refresherStatus.value = "pulling";
 	}
 	emit("refresher-pulling", e);
 }
 
+// 下拉刷新事件处理函数
 function onRefresherRefresh(e: UniRefresherEvent) {
 	refresherStatus.value = "refreshing";
 	refreshTriggered.value = true;
@@ -632,14 +634,25 @@ function onRefresherRefresh(e: UniRefresherEvent) {
 	emit("pull", e);
 }
 
+// 恢复下拉刷新
 function onRefresherRestore(e: UniRefresherEvent) {
 	refresherStatus.value = "default";
 	emit("refresher-restore", e);
 }
 
+// 停止下拉刷新
 function onRefresherAbort(e: UniRefresherEvent) {
 	refresherStatus.value = "default";
 	emit("refresher-abort", e);
+}
+
+// 滚动到顶部
+function scrollToTop() {
+	targetScrollTop.value = 0.01;
+
+	nextTick(() => {
+		targetScrollTop.value = 0;
+	});
 }
 
 // 获取滚动容器的高度
