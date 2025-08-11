@@ -2,7 +2,7 @@ import { computed, ref, type ComputedRef } from "vue";
 import type { ClFormRule, ClFormValidateError } from "../types";
 import { useParent } from "@/cool";
 
-class Form {
+export class FormValidate {
 	public formRef = ref<ClFormComponentPublicInstance | null>(null);
 	public disabled: ComputedRef<boolean>;
 
@@ -17,7 +17,13 @@ class Form {
 		}
 
 		// 监听表单是否禁用
-		this.disabled = computed<boolean>(() => this.formRef.value?.disabled ?? false);
+		this.disabled = computed<boolean>(() => {
+			if (this.formRef.value == null) {
+				return false;
+			}
+
+			return this.formRef.value.disabled;
+		});
 	}
 
 	// 注册表单字段
@@ -81,6 +87,6 @@ class Form {
 	};
 }
 
-export function useForm() {
-	return new Form();
-}
+export const useForm = (): FormValidate => {
+	return new FormValidate();
+};
