@@ -114,6 +114,6 @@ export class Pager {
 }
 
 // 创建分页器实例
-export function usePager(cb: PagerCallback) {
+export const usePager = (cb: PagerCallback): Pager => {
 	return new Pager(cb);
-}
+};
