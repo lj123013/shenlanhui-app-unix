@@ -26,8 +26,9 @@
 </template>
 
 <script lang="ts" setup>
-import { isEmpty, router, usePage } from "@/cool";
+import { isEmpty, router } from "@/cool";
 import { computed, getCurrentInstance, nextTick, onMounted, reactive, ref, watch } from "vue";
+import { usePage } from "../../hooks";
 
 defineOptions({
 	name: "cl-sticky"
@@ -53,8 +54,10 @@ const props = defineProps({
 	}
 });
 
-const page = usePage();
 const { proxy } = getCurrentInstance()!;
+
+// cl-page 上下文
+const page = usePage();
 
 // 定义Rect类型，表示元素的位置信息
 type Rect = {

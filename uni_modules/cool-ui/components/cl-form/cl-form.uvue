@@ -14,10 +14,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, watch, type PropType } from "vue";
+import { computed, getCurrentInstance, nextTick, ref, watch, type PropType } from "vue";
 import { isEmpty, isString, parsePt, parseToObject } from "@/cool";
 import type { ClFormLabelPosition, ClFormRule, ClFormValidateError } from "../../types";
 import { $t, t } from "@/locale";
+import { usePage } from "../../hooks";
 
 defineOptions({
 	name: "cl-form"
@@ -64,8 +65,18 @@ const props = defineProps({
 	disabled: {
 		type: Boolean,
 		default: false
+	},
+	// 滚动到第一个错误位置
+	scrollToError: {
+		type: Boolean,
+		default: true
 	}
 });
+
+const { proxy } = getCurrentInstance()!;
+
+// cl-page 上下文
+const page = usePage();
 
 // 透传样式类型
 type PassThrough = {
@@ -269,6 +280,31 @@ function validateField(prop: string): string | null {
 	return error;
 }
 
+// 滚动到第一个错误位置
+function scrollToError(prop: string) {
+	if (props.scrollToError == false) {
+		return;
+	}
+
+	nextTick(() => {
+		let component = proxy;
+
+		// #ifdef MP
+		component = proxy?.$children.find((e: any) => e.prop == prop);
+		// #endif
+
+		uni.createSelectorQuery()
+			.in(component)
+			.select(".cl-form-item--error")
+			.boundingClientRect((res) => {
+				if (res != null) {
+					page.scrollTo(((res as NodeInfo).top ?? 0) + page.getScrollTop());
+				}
+			})
+			.exec();
+	});
+}
+
 // 验证整个表单
 function validate(callback: (valid: boolean, errors: ClFormValidateError[]) => void) {
 	const errs = [] as ClFormValidateError[];
@@ -283,6 +319,11 @@ function validate(callback: (valid: boolean, errors: ClFormValidateError[]) => v
 			});
 		}
 	});
+
+	// 滚动到第一个错误位置
+	if (errs.length > 0) {
+		scrollToError(errs[0].field);
+	}
 
 	callback(errs.length == 0, errs);
 }

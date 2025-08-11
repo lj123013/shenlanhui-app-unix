@@ -1,5 +1,13 @@
 <template>
-	<view class="cl-form-item" :class="[pt.className]">
+	<view
+		class="cl-form-item"
+		:class="[
+			{
+				'cl-form-item--error': isError
+			},
+			pt.className
+		]"
+	>
 		<view class="cl-form-item__inner" :class="[`is-${labelPosition}`, pt.inner?.className]">
 			<view
 				class="cl-form-item__label"

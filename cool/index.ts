@@ -1,12 +1,8 @@
-import { page } from "./hooks";
 import { initTheme, setH5 } from "./theme";
 import { initLocale } from "@/locale";
 
 export function cool(app: VueApp) {
 	app.mixin({
-		onPageScroll(e) {
-			page.triggerScroll(e.scrollTop);
-		},
 		onShow() {
 			// #ifdef H5
 			setTimeout(() => {

@@ -192,3 +192,9 @@ declare type ClFormItemComponentPublicInstance = {
 	prop: string;
 	isError: boolean;
 };
+
+declare type ClPageComponentPublicInstance = {
+	scrollTop: number;
+	scrollTo: (top: number) => void;
+	scrollToTop: () => void;
+};

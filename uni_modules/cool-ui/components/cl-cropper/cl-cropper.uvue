@@ -132,7 +132,7 @@
 <script setup lang="ts">
 import { computed, ref, reactive, nextTick, getCurrentInstance } from "vue";
 import type { PassThroughProps } from "../../types";
-import { canvasToPng, getDevicePixelRatio, parsePt, usePage, uuid } from "@/cool";
+import { canvasToPng, getDevicePixelRatio, getSafeAreaHeight, parsePt, uuid } from "@/cool";
 
 // 定义遮罩层样式类型
 type MaskStyle = {
@@ -224,9 +224,6 @@ const emit = defineEmits(["crop", "load", "error"]);
 
 // 获取当前实例
 const { proxy } = getCurrentInstance()!;
-
-// 获取页面实例，用于获取视图尺寸
-const page = usePage();
 
 // 创建唯一的canvas ID
 const canvasId = `cl-cropper__${uuid()}`;
@@ -382,7 +379,7 @@ const maskStyle = computed<MaskStyle>(() => {
 
 // 底部按钮组样式
 const opStyle = computed(() => {
-	let bottom = page.getSafeAreaHeight("bottom");
+	let bottom = getSafeAreaHeight("bottom");
 
 	if (bottom == 0) {
 		bottom = 10;

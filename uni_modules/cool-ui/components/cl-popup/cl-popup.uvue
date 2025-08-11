@@ -100,7 +100,7 @@
 
 <script lang="ts" setup>
 import { computed, reactive, ref, watch, type PropType } from "vue";
-import { parsePt, parseRpx, usePage } from "@/cool";
+import { getSafeAreaHeight, getTabBarHeight, hasCustomTabBar, parsePt, parseRpx } from "@/cool";
 import type { ClPopupDirection, PassThroughProps } from "../../types";
 import { isDark, router } from "@/cool";
 import { config } from "../../config";
@@ -185,15 +185,12 @@ const props = defineProps({
 // 定义组件事件
 const emit = defineEmits(["update:modelValue", "open", "opened", "close", "closed", "maskClose"]);
 
-// 页面实例
-const page = usePage();
-
+// 透传样式类型定义
 type HeaderPassThrough = {
 	className?: string;
 	text?: PassThroughProps;
 };
 
-// 透传样式类型定义
 type PassThrough = {
 	className?: string;
 	inner?: PassThroughProps;
@@ -255,7 +252,7 @@ const paddingBottom = computed(() => {
 	let h = 0;
 
 	if (props.direction == "bottom") {
-		h += page.hasCustomTabBar() ? page.getTabBarHeight() : page.getSafeAreaHeight("bottom");
+		h += hasCustomTabBar() ? getTabBarHeight() : getSafeAreaHeight("bottom");
 	}
 
 	return h + "px";

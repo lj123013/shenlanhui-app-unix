@@ -81,18 +81,10 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
 				timeout,
 
 				success(res) {
-					if (!isObject(res.data as any)) {
-						resolve(res.data as T);
-						return;
-					}
-
-					// 解析响应数据
-					const { code, message, data } = parse<Response>(res.data ?? { code: 0 })!;
-
 					// 401 无权限
 					if (res.statusCode == 401) {
 						user.logout();
-						return reject({ message } as Response);
+						return reject({ message: t("无权限") } as Response);
 					}
 
 					// 502 服务异常
@@ -111,6 +103,14 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
 
 					// 200 正常响应
 					if (res.statusCode == 200) {
+						if (!isObject(res.data as any)) {
+							resolve(res.data as T);
+							return;
+						}
+
+						// 解析响应数据
+						const { code, message, data } = parse<Response>(res.data ?? { code: 0 })!;
+
 						switch (code) {
 							case 1000:
 								resolve(data as T);

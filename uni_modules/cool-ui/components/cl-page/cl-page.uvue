@@ -23,11 +23,11 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
-import { router, usePage } from "@/cool";
 import Theme from "./theme.uvue";
 import Ui from "./ui.uvue";
 import { locale, t } from "@/locale";
 import { config } from "@/config";
+import { router } from "@/cool";
 
 defineOptions({
 	name: "cl-page"
@@ -41,32 +41,43 @@ defineProps({
 	}
 });
 
-const page = usePage();
+// 滚动距离
+const scrollTop = ref(0);
 
 // scroll-view 滚动位置
 const scrollViewTop = ref(0);
 
 // view 滚动事件
 function onScroll(e: UniScrollEvent) {
-	page.triggerScroll(e.detail.scrollTop);
+	scrollTop.value = e.detail.scrollTop;
 }
 
-// 回到顶部
-function scrollToTop() {
+// 页面滚动事件
+onPageScroll((e) => {
+	scrollTop.value = e.scrollTop;
+});
+
+// 滚动到指定位置
+function scrollTo(top: number) {
 	// #ifdef H5
-	window.scrollTo({ top: 0, behavior: "smooth" });
+	window.scrollTo({ top, behavior: "smooth" });
 	// #endif
 
 	// #ifdef MP
 	uni.pageScrollTo({
-		scrollTop: 0,
+		scrollTop: top,
 		duration: 300
 	});
 	// #endif
 
 	// #ifdef APP
-	scrollViewTop.value = 0 + Math.random() / 1000;
+	scrollViewTop.value = top;
 	// #endif
+}
+
+// 回到顶部
+function scrollToTop() {
+	scrollTo(0 + Math.random() / 1000);
 }
 
 onMounted(() => {
@@ -90,5 +101,11 @@ onMounted(() => {
 		}
 	);
 	// #endif
+});
+
+defineExpose({
+	scrollTop,
+	scrollTo,
+	scrollToTop
 });
 </script>

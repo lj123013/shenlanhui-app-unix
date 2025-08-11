@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { router, usePage } from "@/cool";
+import { getSafeAreaHeight, getTabBarHeight, hasCustomTabBar, router } from "@/cool";
 import { computed, reactive } from "vue";
 
 defineOptions({
@@ -59,9 +59,6 @@ const props = defineProps({
 
 // 获取设备屏幕信息
 const { screenWidth, statusBarHeight, screenHeight } = uni.getWindowInfo();
-
-// 页面实例
-const page = usePage();
 
 /**
  * 悬浮按钮位置状态类型定义
@@ -110,8 +107,8 @@ const viewStyle = computed(() => {
 	let bottomOffset = 0;
 
 	// 标签页需要额外减去标签栏高度和安全区域
-	if (page.hasCustomTabBar()) {
-		bottomOffset += page.getTabBarHeight();
+	if (hasCustomTabBar()) {
+		bottomOffset += getTabBarHeight();
 	}
 
 	// 设置水平位置
@@ -151,7 +148,7 @@ function calculateMaxY(): number {
 
 	// 标签页需要额外减去标签栏高度和安全区域
 	if (router.isTabPage()) {
-		maxY -= page.getTabBarHeight();
+		maxY -= getTabBarHeight();
 	}
 
 	return maxY;
@@ -206,7 +203,7 @@ function onTouchMove(e: TouchEvent) {
 	let minY = 0;
 	// 非标签页时，底部需要考虑安全区域
 	if (!router.isTabPage()) {
-		minY += page.getSafeAreaHeight("bottom");
+		minY += getSafeAreaHeight("bottom");
 	}
 
 	// 确保按钮不超出屏幕上下边界

@@ -1,5 +1,5 @@
 <template>
-	<view class="cl-back-top-wrapper" :style="{ bottom }">
+	<view class="cl-back-top-wrapper" :style="{ bottom }" @tap="toTop">
 		<view
 			class="cl-back-top"
 			:class="{
@@ -12,8 +12,9 @@
 </template>
 
 <script setup lang="ts">
+import { getTabBarHeight, hasCustomTabBar } from "@/cool";
 import { computed, onMounted, ref, watch, type PropType } from "vue";
-import { usePage } from "@/cool";
+import { usePage } from "../../hooks";
 
 defineOptions({
 	name: "cl-back-top"
@@ -26,8 +27,10 @@ const props = defineProps({
 	}
 });
 
-const page = usePage();
 const { screenHeight } = uni.getWindowInfo();
+
+// cl-page 上下文
+const page = usePage();
 
 // 是否显示回到顶部按钮
 const visible = ref(false);
@@ -36,16 +39,21 @@ const visible = ref(false);
 const bottom = computed(() => {
 	let h = 20;
 
-	if (page.hasCustomTabBar()) {
-		h += page.getTabBarHeight();
+	if (hasCustomTabBar()) {
+		h += getTabBarHeight();
 	}
 
 	return h + "px";
 });
 
-// 控制是否显示回到顶部按钮
-function update(top: number) {
+// 控制是否显示
+function onVisible(top: number) {
 	visible.value = top > screenHeight - 100;
+}
+
+// 回到顶部
+function toTop() {
+	page.scrollToTop();
 }
 
 onMounted(() => {
@@ -54,7 +62,7 @@ onMounted(() => {
 		watch(
 			computed(() => props.top!),
 			(top: number) => {
-				update(top);
+				onVisible(top);
 			},
 			{
 				immediate: true
@@ -63,7 +71,7 @@ onMounted(() => {
 	} else {
 		// 监听页面滚动
 		page.onPageScroll((top) => {
-			update(top);
+			onVisible(top);
 		});
 	}
 });
