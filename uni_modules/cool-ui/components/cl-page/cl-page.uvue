@@ -6,7 +6,7 @@
 		:scroll-with-animation="true"
 		@scroll="onScroll"
 	>
-		<back-top v-if="backTop" @tap="scrollToTop"></back-top>
+		<cl-back-top v-if="backTop" @tap="scrollToTop"></cl-back-top>
 		<theme></theme>
 		<ui></ui>
 		<slot></slot>
@@ -14,7 +14,7 @@
 	<!-- #endif -->
 
 	<!-- #ifndef APP -->
-	<back-top v-if="backTop" @tap="scrollToTop"></back-top>
+	<cl-back-top v-if="backTop" @tap="scrollToTop"></cl-back-top>
 	<theme></theme>
 	<ui></ui>
 	<slot></slot>
@@ -24,7 +24,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import { router, usePage } from "@/cool";
-import BackTop from "./back-top.uvue";
 import Theme from "./theme.uvue";
 import Ui from "./ui.uvue";
 import { locale, t } from "@/locale";
@@ -34,7 +33,7 @@ defineOptions({
 	name: "cl-page"
 });
 
-const props = defineProps({
+defineProps({
 	// 是否显示回到顶部按钮
 	backTop: {
 		type: Boolean,

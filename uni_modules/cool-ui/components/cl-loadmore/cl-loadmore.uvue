@@ -16,6 +16,8 @@
 				>{{ message }}</cl-text
 			>
 		</view>
+
+		<cl-safe-area type="bottom" v-if="safeAreaBottom"></cl-safe-area>
 	</view>
 </template>
 
@@ -53,6 +55,11 @@ const props = defineProps({
 	finishText: {
 		type: String,
 		default: () => t("没有更多了")
+	},
+	// 是否显示底部安全区
+	safeAreaBottom: {
+		type: Boolean,
+		default: true
 	}
 });
 
@@ -80,7 +87,7 @@ const message = computed(() => {
 
 <style lang="scss" scoped>
 .cl-loadmore-wrapper {
-	@apply flex flex-row items-center justify-center py-2;
+	@apply flex flex-col items-center justify-center py-2;
 }
 
 .cl-loadmore {

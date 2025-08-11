@@ -111,6 +111,22 @@ export type ClListViewItem = {
 	children?: ClListViewItem[];
 };
 
+export type ClListViewGroup = {
+	index: string;
+	children: ClListViewItem[];
+};
+
+export type ClListViewVirtualItem = {
+	key: string;
+	type: "header" | "item";
+	index: number;
+	top: number;
+	height: number;
+	data: ClListViewItem;
+};
+
+export type ClListViewRefresherStatus = "default" | "pulling" | "refreshing";
+
 export type ClCascaderOption = ClListViewItem;
 
 export type ClPopupDirection = "top" | "right" | "bottom" | "center" | "left";

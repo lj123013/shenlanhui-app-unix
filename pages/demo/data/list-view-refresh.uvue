@@ -2,7 +2,7 @@
 	<cl-page>
 		<cl-list-view
 			ref="listViewRef"
-			:data="data"
+			:data="listView"
 			:virtual="false"
 			:pt="{
 				refresher: {
@@ -27,10 +27,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useListView, useUi, type ClListViewItem } from "@/uni_modules/cool-ui";
-import { computed, ref } from "vue";
+import { useUi } from "@/uni_modules/cool-ui";
+import { ref } from "vue";
 import { usePager } from "@/cool";
 import GoodsItem from "../components/goods-item.uvue";
+import { t } from "@/locale";
 
 const ui = useUi();
 
@@ -38,8 +39,9 @@ const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
 
 let id = 0;
 
-const { refresh, list, loading, loadMore } = usePager((params) => {
+const { refresh, list, listView, loading, loadMore } = usePager((params) => {
 	return new Promise((resolve) => {
+		// 模拟请求
 		setTimeout(() => {
 			resolve({
 				list: [
@@ -101,17 +103,14 @@ const { refresh, list, loading, loadMore } = usePager((params) => {
 	});
 });
 
-const data = computed<ClListViewItem[]>(() => {
-	return useListView(list.value);
-});
-
 async function onPull() {
 	await refresh({ page: 1 });
 	listViewRef.value!.stopRefresh();
 }
 
 onReady(() => {
-	ui.showLoading("加载中");
+	ui.showLoading(t("加载中"));
+	// 默认请求
 	refresh({});
 });
 </script>
