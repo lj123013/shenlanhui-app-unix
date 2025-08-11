@@ -14,13 +14,14 @@ export default {
 	onShow: function () {
 		console.log("App Show");
 
-		const { dict, user } = useStore();
+		// 根据业务情况判断是否要预先调用
+		// const { dict, user } = useStore();
 
 		// 获取用户信息，未登录不执行
-		user.get();
+		// user.get();
 
 		// 刷新字典数据
-		dict.refresh(null);
+		// dict.refresh(null);
 	},
 	onHide: function () {
 		console.log("App Hide");

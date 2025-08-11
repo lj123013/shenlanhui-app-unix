@@ -22,7 +22,8 @@ export default defineConfig({
 			},
 			eps: {
 				dist: ".cool"
-			}
+			},
+			clean: true // 是否纯净版
 		})
 	],
 
