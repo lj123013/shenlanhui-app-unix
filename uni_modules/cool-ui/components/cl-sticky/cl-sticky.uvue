@@ -57,9 +57,9 @@ const props = defineProps({
 const { proxy } = getCurrentInstance()!;
 
 // cl-page 上下文
-const page = usePage();
+const { onScroll } = usePage();
 
-// 定义Rect类型，表示元素的位置信息
+// 表示元素的位置信息
 type Rect = {
 	height: number; // 高度
 	width: number; // 宽度
@@ -67,7 +67,7 @@ type Rect = {
 	top: number; // 距离页面顶部的距离
 };
 
-// rect为响应式对象，存储当前sticky元素的位置信息
+// 存储当前sticky元素的位置信息
 const rect = reactive<Rect>({
 	height: 0,
 	width: 0,
@@ -75,7 +75,7 @@ const rect = reactive<Rect>({
 	top: 0
 });
 
-// scrollTop为当前页面滚动的距离
+// 当前页面滚动的距离
 const scrollTop = ref(0);
 
 // 计算属性，判断当前是否处于吸顶状态
@@ -128,14 +128,16 @@ function getRect() {
 	});
 }
 
-// 监听页面滚动事件
-page.onPageScroll((top) => {
-	scrollTop.value = top;
-});
-
 onMounted(() => {
+	// 获取元素位置信息
 	getRect();
 
+	// 监听页面滚动事件
+	onScroll((top) => {
+		scrollTop.value = top;
+	});
+
+	// 监听参数变化
 	watch(
 		computed(() => props.scrollTop),
 		(top: number) => {

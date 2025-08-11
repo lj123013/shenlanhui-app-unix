@@ -1,16 +1,6 @@
 <template>
 	<view class="cl-list-view" :class="[pt.className]">
-		<cl-index-bar
-			v-if="hasIndex"
-			v-model="activeIndex"
-			:list="indexList"
-			:pt="{
-				className: parseClass([pt.indexBar?.className])
-			}"
-			@change="onIndexChange"
-		>
-		</cl-index-bar>
-
+		<!-- 滚动容器 -->
 		<scroll-view
 			class="cl-list-view__scroller"
 			:class="[pt.scroller?.className]"
@@ -33,6 +23,7 @@
 			@refresherrestore="onRefresherRestore"
 			@refresherabort="onRefresherAbort"
 		>
+			<!-- 下拉刷新 -->
 			<view
 				slot="refresher"
 				class="cl-list-view__refresher"
@@ -59,15 +50,18 @@
 				</slot>
 			</view>
 
+			<!-- 列表 -->
 			<view
 				class="cl-list-view__virtual-list"
 				:class="[pt.list?.className]"
 				:style="listStyle"
 			>
+				<!-- 顶部占位 -->
 				<view class="cl-list-view__spacer-top" :style="spacerTopStyle">
 					<slot name="top"></slot>
 				</view>
 
+				<!-- 列表项 -->
 				<view
 					v-for="(item, index) in visibleItems"
 					:key="item.key"
@@ -99,6 +93,7 @@
 							},
 							pt.item?.className
 						]"
+						:hover-class="pt.itemHover?.className"
 						:style="{
 							height: virtual ? itemHeight + 'px' : 'auto'
 						}"
@@ -118,15 +113,29 @@
 					</view>
 				</view>
 
+				<!-- 底部占位 -->
 				<view class="cl-list-view__spacer-bottom" :style="spacerBottomStyle">
 					<slot name="bottom"></slot>
 				</view>
 			</view>
 
+			<!-- 空状态 -->
 			<cl-empty v-if="noData" :fixed="false"></cl-empty>
-			<cl-back-top :top="scrollTop" v-if="showBackTop" @tap="scrollToTop"></cl-back-top>
 		</scroll-view>
 
+		<!-- 右侧索引栏 -->
+		<cl-index-bar
+			v-if="hasIndex"
+			v-model="activeIndex"
+			:list="indexList"
+			:pt="{
+				className: parseClass([pt.indexBar?.className])
+			}"
+			@change="onIndexChange"
+		>
+		</cl-index-bar>
+
+		<!-- 索引提示 -->
 		<view
 			class="cl-list-view__index"
 			:class="[
@@ -141,6 +150,9 @@
 				<cl-text> {{ indexList[activeIndex] }} </cl-text>
 			</slot>
 		</view>
+
+		<!-- 回到顶部 -->
+		<cl-back-top :top="scrollTop" v-if="showBackTop" @back-top="scrollToTop"></cl-back-top>
 	</view>
 </template>
 
@@ -295,6 +307,7 @@ const { proxy } = getCurrentInstance()!;
 type PassThrough = {
 	className?: string;
 	item?: PassThroughProps;
+	itemHover?: PassThroughProps;
 	list?: PassThroughProps;
 	indexBar?: PassThroughProps;
 	scroller?: PassThroughProps;
