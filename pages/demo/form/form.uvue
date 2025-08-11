@@ -62,6 +62,7 @@
 							<cl-checkbox
 								v-model="formData.tags"
 								v-for="(item, index) in tagsOptions"
+								:key="index"
 								:value="index"
 								:pt="{
 									className: 'mr-5 mt-2'

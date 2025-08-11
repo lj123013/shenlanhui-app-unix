@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, ref, watch, type PropType } from "vue";
-import { isEmpty, isString, parsePt, parseToObject } from "@/cool";
+import { isEmpty, isNull, isString, parsePt, parseToObject } from "@/cool";
 import type { ClFormLabelPosition, ClFormRule, ClFormValidateError } from "../../types";
 import { $t, t } from "@/locale";
 import { usePage } from "../../hooks";
@@ -297,7 +297,7 @@ function scrollToError(prop: string) {
 			.in(component)
 			.select(".cl-form-item--error")
 			.boundingClientRect((res) => {
-				if (res != null) {
+				if (!isNull(res)) {
 					page.scrollTo(((res as NodeInfo).top ?? 0) + page.getScrollTop());
 				}
 			})
