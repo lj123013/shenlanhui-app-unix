@@ -1,13 +1,15 @@
 <template>
-	<view class="w-full p-3 bg-white rounded-xl mb-3 dark:bg-surface-800">
-		<cl-image :src="item.image" mode="widthFix" width="100%" height="250rpx"></cl-image>
-		<cl-text :pt="{ className: 'mt-2' }">{{ item.title }}</cl-text>
+	<view class="p-3 pb-0">
+		<view class="w-full p-3 bg-white rounded-xl dark:bg-surface-800">
+			<cl-image :src="item?.image" mode="aspectFill" width="100%" height="280rpx"></cl-image>
+			<cl-text :pt="{ className: 'mt-2' }">{{ item?.title }}</cl-text>
+		</view>
 	</view>
 </template>
 
 <script lang="ts" setup>
-import { computed, type PropType } from "vue";
-import { useParent } from "@/cool";
+import { computed } from "vue";
+import { parse } from "@/cool";
 
 defineOptions({
 	name: "goods-item"
@@ -15,15 +17,16 @@ defineOptions({
 
 type GoodsItem = {
 	id: number;
-	likeCount: number;
 	title: string;
 	image: string;
 };
 
 const props = defineProps({
-	item: {
-		type: Object as PropType<GoodsItem>,
+	value: {
+		type: Object,
 		default: () => ({})
 	}
 });
+
+const item = computed(() => parse<GoodsItem>(props.value));
 </script>

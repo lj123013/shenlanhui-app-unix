@@ -48,4 +48,9 @@ export default {
 		margin-top: 0;
 	}
 }
+
+.uni-toast {
+	border-radius: 32rpx;
+	background-color: rgba(0, 0, 0, 0.8) !important;
+}
 </style>

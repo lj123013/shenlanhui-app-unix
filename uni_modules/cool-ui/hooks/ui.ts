@@ -79,6 +79,25 @@ class Ui {
 			instance.showToast(options);
 		}
 	}
+
+	/**
+	 * 显示加载中弹窗
+	 * @param title 提示内容
+	 * @param mask 是否显示蒙层
+	 */
+	showLoading(title: string, mask: boolean | null = null): void {
+		uni.showLoading({
+			title,
+			mask: mask ?? true
+		});
+	}
+
+	/**
+	 * 隐藏加载中弹窗
+	 */
+	hideLoading(): void {
+		uni.hideLoading();
+	}
 }
 
 /**

@@ -179,6 +179,24 @@ declare interface UniScrollEvent extends UniEvent {
 	};
 }
 
+declare interface UniScrollToUpperEvent extends UniEvent {
+	detail: {
+		direction: string;
+	};
+}
+
+declare interface UniScrollToLowerEvent extends UniEvent {
+	detail: {
+		direction: string;
+	};
+}
+
+declare interface UniRefresherEvent extends UniEvent {
+	detail: {
+		dy: number;
+	};
+}
+
 declare interface UniSwiperChangeEvent extends UniEvent {
 	detail: {
 		current: number;

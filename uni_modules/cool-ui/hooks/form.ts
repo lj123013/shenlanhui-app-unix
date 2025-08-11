@@ -2,7 +2,7 @@ import { computed, ref, type ComputedRef } from "vue";
 import type { ClFormRule, ClFormValidateError } from "../types";
 import { useParent } from "@/cool";
 
-class UseForm {
+class Form {
 	public formRef = ref<ClFormComponentPublicInstance | null>(null);
 	public disabled: ComputedRef<boolean>;
 
@@ -82,5 +82,5 @@ class UseForm {
 }
 
 export function useForm() {
-	return new UseForm();
+	return new Form();
 }

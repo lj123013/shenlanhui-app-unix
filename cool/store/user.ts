@@ -57,7 +57,7 @@ export class User {
 					}
 				})
 				.catch(() => {
-					this.logout();
+					// this.logout();
 				});
 		}
 	}

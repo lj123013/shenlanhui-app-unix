@@ -263,7 +263,7 @@ const data = computed<Item[]>(() => {
 					label: t("列表刷新"),
 					icon: "refresh-line",
 					path: "/pages/demo/data/list-view-refresh",
-					disabled: true
+					disabled: false
 				},
 				{
 					label: t("瀑布流"),

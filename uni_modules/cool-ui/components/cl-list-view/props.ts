@@ -16,4 +16,12 @@ export type ClListViewProps = {
 	bottomHeight?: number;
 	bufferSize?: number;
 	virtual?: boolean;
+	// 下拉刷新相关属性
+	refresherEnabled?: boolean;
+	refresherThreshold?: number;
+	refresherTriggered?: boolean;
+	refresherBackground?: string;
+	refresherDefaultText?: string;
+	refresherPullingText?: string;
+	refresherRefreshingText?: string;
 };

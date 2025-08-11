@@ -1,5 +1,5 @@
 <template>
-	<view class="cl-list-view">
+	<view class="cl-list-view" :class="[pt.className]">
 		<cl-index-bar
 			v-if="hasIndex"
 			v-model="activeIndex"
@@ -13,21 +13,61 @@
 
 		<scroll-view
 			class="cl-list-view__scroller"
+			:class="[pt.scroller?.className]"
 			:scroll-top="targetScrollTop"
-			:show-scrollbar="false"
+			:scroll-into-view="scrollIntoView"
+			:scroll-with-animation="scrollWithAnimation"
+			:show-scrollbar="showScrollbar"
+			:refresher-triggered="refreshTriggered"
+			:refresher-enabled="refresherEnabled"
+			:refresher-threshold="refresherThreshold"
+			:refresher-background="refresherBackground"
+			refresher-default-style="none"
 			direction="vertical"
+			@scrolltoupper="onScrollToUpper"
+			@scrolltolower="onScrollToLower"
 			@scroll="onScroll"
+			@scrollend="onScrollEnd"
+			@refresherpulling="onRefresherPulling"
+			@refresherrefresh="onRefresherRefresh"
+			@refresherrestore="onRefresherRestore"
+			@refresherabort="onRefresherAbort"
 		>
 			<view
-				class="cl-list-view__virtual-list"
-				:style="{ height: virtual ? listHeight + 'px' : 'auto' }"
+				slot="refresher"
+				class="cl-list-view__refresher"
+				:class="[
+					{
+						'is-pulling': refresherStatus === 'pulling',
+						'is-refreshing': refresherStatus === 'refreshing'
+					},
+					pt.refresher?.className
+				]"
+				:style="{
+					height: refresherThreshold + 'px'
+				}"
 			>
-				<view class="cl-list-view__spacer-top" :style="{ height: spacerTopHeight + 'px' }">
+				<cl-loading
+					v-if="refresherStatus === 'refreshing'"
+					:size="28"
+					:pt="{
+						className: 'mr-2'
+					}"
+				></cl-loading>
+				<cl-text> {{ refresherText }} </cl-text>
+			</view>
+
+			<view
+				class="cl-list-view__virtual-list"
+				:class="[pt.list?.className]"
+				:style="listStyle"
+			>
+				<view class="cl-list-view__spacer-top" :style="spacerTopStyle">
 					<slot name="top"></slot>
 				</view>
 
 				<view
-					v-for="item in visibleItems"
+					v-for="(item, index) in visibleItems"
 					:key="item.key"
 					class="cl-list-view__virtual-item"
 				>
@@ -62,7 +102,13 @@
 						}"
 						@tap="onItemTap(item)"
 					>
-						<slot name="item" :item="item" :data="item.data" :value="item.data.value">
+						<slot
+							name="item"
+							:item="item"
+							:data="item.data"
+							:value="item.data.value"
+							:index="index"
+						>
 							<view class="cl-list-view__item-inner">
 								<cl-text> {{ item.data.label }} </cl-text>
 							</view>
@@ -70,10 +116,7 @@
 					</view>
 				</view>
 
-				<view
-					class="cl-list-view__spacer-bottom"
-					:style="{ height: spacerBottomHeight + 'px' }"
-				>
+				<view class="cl-list-view__spacer-bottom" :style="spacerBottomStyle">
 					<slot name="bottom"></slot>
 				</view>
 			</view>
@@ -134,7 +177,7 @@ defineSlots<{
 	// 分组头部插槽
 	header(props: { index: string }): any;
 	// 列表项插槽
-	item(props: { data: ClListViewItem; item: VirtualItem; value: any | null }): any;
+	item(props: { data: ClListViewItem; item: VirtualItem; value: any | null; index: number }): any;
 	// 底部插槽
 	bottom(): any;
 	// 索引插槽
@@ -181,18 +224,80 @@ const props = defineProps({
 	virtual: {
 		type: Boolean,
 		default: true
+	},
+	// 滚动到指定位置
+	scrollIntoView: {
+		type: String,
+		default: ""
+	},
+	// 是否启用滚动动画
+	scrollWithAnimation: {
+		type: Boolean,
+		default: false
+	},
+	// 是否显示滚动条
+	showScrollbar: {
+		type: Boolean,
+		default: false
+	},
+	// 是否启用下拉刷新
+	refresherEnabled: {
+		type: Boolean,
+		default: false
+	},
+	// 下拉刷新触发距离，相当于下拉内容高度
+	refresherThreshold: {
+		type: Number,
+		default: 45
+	},
+	// 下拉刷新区域背景色
+	refresherBackground: {
+		type: String,
+		default: "transparent"
+	},
+	// 下拉刷新默认文案
+	refresherDefaultText: {
+		type: String,
+		default: "下拉刷新"
+	},
+	// 释放刷新文案
+	refresherPullingText: {
+		type: String,
+		default: "释放立即刷新"
+	},
+	// 正在刷新文案
+	refresherRefreshingText: {
+		type: String,
+		default: "加载中"
 	}
 });
 
-const emit = defineEmits(["item-tap"]);
+const emit = defineEmits([
+	"item-tap",
+	"refresher-pulling",
+	"refresher-refresh",
+	"refresher-restore",
+	"refresher-abort",
+	"scrolltoupper",
+	"scrolltolower",
+	"scroll",
+	"scrollend",
+	"pull",
+	"top",
+	"bottom"
+]);
 
 // 获取当前组件实例,用于后续DOM操作
 const { proxy } = getCurrentInstance()!;
 
+// 透传样式配置类型
 type PassThrough = {
 	className?: string;
 	item?: PassThroughProps;
+	list?: PassThroughProps;
 	indexBar?: PassThroughProps;
+	scroller?: PassThroughProps;
+	refresher?: PassThroughProps;
 };
 
 // 解析透传样式配置
@@ -371,10 +476,6 @@ const spacerTopHeight = computed<number>(() => {
 	if (isEmpty(visibleItems.value)) {
 		return 0;
 	}
-	// 如果未启用虚拟列表,返回0
-	if (!props.virtual) {
-		return 0;
-	}
 	// 返回第一个可见项目的顶部位置
 	return visibleItems.value[0].top;
 });
@@ -385,14 +486,31 @@ const spacerBottomHeight = computed<number>(() => {
 	if (isEmpty(visibleItems.value)) {
 		return 0;
 	}
-	// 如果未启用虚拟列表,返回0
-	if (!props.virtual) {
-		return 0;
-	}
 	// 获取最后一个可见项目
 	const lastItem = visibleItems.value[visibleItems.value.length - 1];
 	// 计算下方占位高度
 	return listHeight.value - (lastItem.top + lastItem.height);
+});
+
+// 列表样式
+const listStyle = computed(() => {
+	return {
+		height: props.virtual ? `${listHeight.value}px` : "auto"
+	};
+});
+
+// 上方占位容器样式
+const spacerTopStyle = computed(() => {
+	return {
+		height: props.virtual ? `${spacerTopHeight.value}px` : "auto"
+	};
+});
+
+// 下方占位容器样式
+const spacerBottomStyle = computed(() => {
+	return {
+		height: props.virtual ? `${spacerBottomHeight.value}px` : "auto"
+	};
 });
 
 // 存储每个分组头部距离顶部的位置数组
@@ -418,6 +536,42 @@ function getTops() {
 	tops.value = arr;
 }
 
+// 下拉刷新触发标志
+const refreshTriggered = ref(false);
+
+// 下拉刷新相关状态
+const refresherStatus = ref<"default" | "pulling" | "refreshing">("default");
+
+// 下拉刷新文案
+const refresherText = computed(() => {
+	switch (refresherStatus.value) {
+		case "pulling":
+			return props.refresherPullingText;
+		case "refreshing":
+			return props.refresherRefreshingText;
+		default:
+			return props.refresherDefaultText;
+	}
+});
+
+// 停止下拉刷新
+function stopRefresh() {
+	refreshTriggered.value = false;
+	refresherStatus.value = "default";
+}
+
+// 滚动到顶部事件处理函数
+function onScrollToUpper(e: UniScrollToUpperEvent) {
+	emit("scrolltoupper", e);
+	emit("top");
+}
+
+// 滚动到底部事件处理函数
+function onScrollToLower(e: UniScrollToLowerEvent) {
+	emit("scrolltolower", e);
+	emit("bottom");
+}
+
 // 滚动锁定标志,用于防止滚动时触发不必要的计算
 let scrollLock = false;
 
@@ -435,6 +589,13 @@ function onScroll(e: UniScrollEvent) {
 			activeIndex.value = index;
 		}
 	});
+
+	emit("scroll", e);
+}
+
+// 滚动结束事件处理函数
+function onScrollEnd(e: UniScrollEvent) {
+	emit("scrollend", e);
 }
 
 // 行点击事件处理函数
@@ -454,6 +615,31 @@ function onIndexChange(index: number) {
 	setTimeout(() => {
 		scrollLock = false;
 	}, 300);
+}
+
+// 下拉刷新事件处理函数
+function onRefresherPulling(e: UniRefresherEvent) {
+	if (e.detail.dy > props.refresherThreshold * 1.5) {
+		refresherStatus.value = "pulling";
+	}
+	emit("refresher-pulling", e);
+}
+
+function onRefresherRefresh(e: UniRefresherEvent) {
+	refresherStatus.value = "refreshing";
+	refreshTriggered.value = true;
+	emit("refresher-refresh", e);
+	emit("pull", e);
+}
+
+function onRefresherRestore(e: UniRefresherEvent) {
+	refresherStatus.value = "default";
+	emit("refresher-restore", e);
+}
+
+function onRefresherAbort(e: UniRefresherEvent) {
+	refresherStatus.value = "default";
+	emit("refresher-abort", e);
 }
 
 // 获取滚动容器的高度
@@ -493,7 +679,8 @@ onMounted(() => {
 });
 
 defineExpose({
-	data
+	data,
+	stopRefresh
 });
 </script>
 
@@ -516,10 +703,7 @@ defineExpose({
 
 	&__index {
 		@apply flex flex-row items-center bg-white;
-		@apply absolute top-0 left-0 w-full;
-		top: 0px;
-		padding: 0 20rpx;
-		z-index: 11;
+		@apply absolute top-0 left-0 w-full px-[20rpx] z-20;
 
 		&.is-dark {
 			@apply bg-surface-600 border-none;
@@ -531,16 +715,17 @@ defineExpose({
 	}
 
 	&__header {
-		@apply flex flex-row items-center;
-		padding: 0 20rpx;
-		position: relative;
-		z-index: 10;
+		@apply flex flex-row items-center relative px-[20rpx] z-10;
 	}
 
 	&__item {
 		&-inner {
 			@apply flex flex-row items-center px-[20rpx] h-full;
 		}
+	}
+
+	&__refresher {
+		@apply flex flex-row items-center justify-center w-full h-full;
 	}
 }
 </style>

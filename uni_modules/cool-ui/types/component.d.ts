@@ -128,6 +128,7 @@ declare type ClListItemComponentPublicInstance = {
 
 declare type ClListViewComponentPublicInstance = {
 	data: ClListViewItem[];
+	stopRefresh: () => void;
 };
 
 declare type ClCascaderComponentPublicInstance = {
