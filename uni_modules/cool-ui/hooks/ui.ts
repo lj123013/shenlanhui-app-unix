@@ -1,5 +1,6 @@
 import { router } from "@/cool";
 import type { ClConfirmAction, ClConfirmOptions, ClToastOptions } from "../types";
+import { t } from "@/locale";
 
 /**
  * UiInstance 类型定义
@@ -85,9 +86,9 @@ class Ui {
 	 * @param title 提示内容
 	 * @param mask 是否显示蒙层
 	 */
-	showLoading(title: string, mask: boolean | null = null): void {
+	showLoading(title: string | null = null, mask: boolean | null = null): void {
 		uni.showLoading({
-			title,
+			title: title ?? t("加载中"),
 			mask: mask ?? true
 		});
 	}
