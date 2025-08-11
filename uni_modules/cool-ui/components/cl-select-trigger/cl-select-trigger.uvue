@@ -5,7 +5,8 @@
 			{
 				'is-dark': isDark,
 				'cl-select-trigger--disabled': isDisabled,
-				'cl-select-trigger--focus': focus
+				'cl-select-trigger--focus': focus,
+				'cl-select-trigger--error': isError
 			},
 			pt.className
 		]"
@@ -62,7 +63,7 @@ import type { ClIconProps } from "../cl-icon/props";
 import { isDark, parseClass, parsePt } from "@/cool";
 import { t } from "@/locale";
 import type { PassThroughProps } from "../../types";
-import { useForm } from "../../hooks";
+import { useForm, useFormItem } from "../../hooks";
 
 defineOptions({
 	name: "cl-select-trigger"
@@ -104,7 +105,11 @@ const props = defineProps({
 
 const emit = defineEmits(["open", "clear"]);
 
+// cl-form 上下文
 const { disabled } = useForm();
+
+// cl-form-item 上下文
+const { isError } = useFormItem();
 
 // 是否禁用
 const isDisabled = computed(() => {
@@ -170,6 +175,10 @@ function open() {
 		&.is-dark {
 			@apply border-primary-500;
 		}
+	}
+
+	&--error {
+		@apply border-red-500;
 	}
 
 	&.is-dark {

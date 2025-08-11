@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, watch, type PropType } from "vue";
-import { isEmpty, parsePt, parseToObject } from "@/cool";
+import { isEmpty, isString, parsePt, parseToObject } from "@/cool";
 import type { ClFormLabelPosition, ClFormRule, ClFormValidateError } from "../../types";
 import { $t, t } from "@/locale";
 
@@ -167,13 +167,17 @@ function getRule(prop: string): ClFormRule[] {
 function validateRule(value: any | null, rule: ClFormRule): null | string {
 	// 必填验证
 	if (rule.required == true) {
-		if (value == null || value == "" || (Array.isArray(value) && value.length == 0)) {
+		if (
+			value == null ||
+			(value == "" && isString(value)) ||
+			(Array.isArray(value) && value.length == 0)
+		) {
 			return rule.message ?? t("此字段为必填项");
 		}
 	}
 
 	// 如果值为空且不是必填，直接通过
-	if ((value == null || value == "") && rule.required != true) {
+	if ((value == null || (value == "" && isString(value))) && rule.required != true) {
 		return null;
 	}
 

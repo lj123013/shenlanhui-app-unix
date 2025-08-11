@@ -189,8 +189,6 @@ declare type ClFormComponentPublicInstance = {
 };
 
 declare type ClFormItemComponentPublicInstance = {
-	validate: () => Promise<boolean>;
-	clearValidate: () => void;
-	hasError: boolean;
-	currentError: string;
+	prop: string;
+	isError: boolean;
 };

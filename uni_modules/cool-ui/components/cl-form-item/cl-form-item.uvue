@@ -27,7 +27,7 @@
 			</view>
 		</view>
 
-		<view class="cl-form-item__error" v-if="hasError && showMessage">
+		<view class="cl-form-item__error" v-if="isError && showMessage">
 			<slot name="error" :error="errorText">
 				<cl-text
 					color="error"
@@ -121,7 +121,7 @@ const errorText = computed<string>(() => {
 });
 
 // 是否有错误
-const hasError = computed<boolean>(() => {
+const isError = computed<boolean>(() => {
 	return errorText.value != "";
 });
 
@@ -193,6 +193,10 @@ onMounted(() => {
 
 onUnmounted(() => {
 	removeField(props.prop);
+});
+
+defineExpose({
+	prop: props.prop
 });
 </script>
 

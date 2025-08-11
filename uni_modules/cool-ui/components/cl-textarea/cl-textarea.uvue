@@ -7,7 +7,8 @@
 				'is-dark': isDark,
 				'cl-textarea--border': border,
 				'cl-textarea--focus': isFocus,
-				'cl-textarea--disabled': isDisabled
+				'cl-textarea--disabled': isDisabled,
+				'cl-textarea--error': isError
 			}
 		]"
 		@tap="onTap"
@@ -63,7 +64,7 @@ import { parsePt, parseRpx } from "@/cool";
 import type { PassThroughProps } from "../../types";
 import { isDark } from "@/cool";
 import { t } from "@/locale";
-import { useForm } from "../../hooks";
+import { useForm, useFormItem } from "../../hooks";
 
 defineOptions({
 	name: "cl-textarea"
@@ -225,6 +226,9 @@ const emit = defineEmits([
 // cl-form 上下文
 const { disabled } = useForm();
 
+// cl-form-item 上下文
+const { isError } = useFormItem();
+
 // 是否禁用
 const isDisabled = computed(() => {
 	return disabled.value || props.disabled;
@@ -358,6 +362,10 @@ defineExpose({
 
 	&--disabled {
 		@apply bg-surface-100 opacity-70;
+	}
+
+	&--error {
+		@apply border-red-500;
 	}
 
 	&.is-dark {
