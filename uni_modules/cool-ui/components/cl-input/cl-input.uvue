@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch, type PropType } from "vue";
+import { computed, nextTick, ref, watch, type PropType } from "vue";
 import type { ClInputType, PassThroughProps } from "../../types";
 import { isDark, parseClass, parsePt } from "@/cool";
 import type { ClIconProps } from "../cl-icon/props";

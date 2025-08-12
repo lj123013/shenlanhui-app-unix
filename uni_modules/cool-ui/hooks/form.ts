@@ -93,19 +93,27 @@ export class Form {
 }
 
 class FormItem {
+	public formItemRef = ref<ClFormItemComponentPublicInstance | null>(null);
 	public isError: ComputedRef<boolean>;
 
 	constructor() {
 		const { isError } = new Form();
-		const ClFormItem = useParent<ClFormItemComponentPublicInstance>("cl-form-item");
+
+		if (this.formItemRef.value == null) {
+			const ClFormItem = useParent<ClFormItemComponentPublicInstance>("cl-form-item");
+
+			if (ClFormItem != null) {
+				this.formItemRef.value = ClFormItem;
+			}
+		}
 
 		// 监听表单字段是否验证错误
 		this.isError = computed<boolean>(() => {
-			if (ClFormItem == null) {
+			if (this.formItemRef.value == null) {
 				return false;
 			}
 
-			return isError(ClFormItem.prop);
+			return isError(this.formItemRef.value.prop);
 		});
 	}
 }
