@@ -24,11 +24,11 @@ class Size {
 		"text-9xl"
 	];
 
-	// 对应的字号大小(px)
-	public sizes = [10, 12, 14, 16, 18, 22, 28, 34, 46, 58, 70, 94, 126];
+	// 对应的字号大小
+	public sizes = [20, 24, 28, 32, 36, 44, 52, 60, 72, 84, 96, 120, 152];
 
-	// 对应的行高(px)
-	public lineHeights = [14, 18, 22, 26, 26, 1, 1, 1, 1, 1, 1, 1, 1];
+	// 对应的行高
+	public lineHeights = [28, 36, 44, 52, 52, 1, 1, 1, 1, 1, 1, 1, 1];
 
 	// 原始类名
 	public className: ComputedRef<string> = computed(() => "");
@@ -104,7 +104,7 @@ class Size {
 			return null;
 		}
 
-		return this.getRpx(size ?? px2rpx(this.sizes[this.getIndex()]));
+		return this.getRpx(size ?? this.sizes[this.getIndex()]);
 	};
 
 	/**
@@ -117,7 +117,7 @@ class Size {
 		}
 
 		const lineHeight = this.lineHeights[this.getIndex()];
-		return lineHeight == 1 ? `1` : this.getRpx(px2rpx(lineHeight));
+		return lineHeight == 1 ? `1` : this.getRpx(lineHeight);
 	};
 }
 

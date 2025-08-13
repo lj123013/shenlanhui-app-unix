@@ -11,7 +11,7 @@
 			<view class="px-3 absolute top-0 left-0 z-10">
 				<cl-text
 					:style="{
-						fontSize: px2rpx(14) * size + 'rpx'
+						fontSize: 28 * size + 'rpx'
 					}"
 					>{{ t("这是一段示例文字，用于预览不同字号的效果。") }}</cl-text
 				>
@@ -21,7 +21,6 @@
 </template>
 
 <script setup lang="ts">
-import { px2rpx } from "@/cool";
 import { t } from "@/locale";
 import { type ClSelectOption } from "@/uni_modules/cool-ui";
 import { config } from "@/uni_modules/cool-ui/config";
