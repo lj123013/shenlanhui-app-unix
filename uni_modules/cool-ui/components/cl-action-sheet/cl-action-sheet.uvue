@@ -15,7 +15,12 @@
 			<slot name="prepend"></slot>
 
 			<view class="cl-action-sheet__description" v-if="config.description != ''">
-				<text class="text-surface-400 text-md">{{ config.description }}</text>
+				<cl-text
+					:pt="{
+						className: '!text-surface-400 !text-md text-center'
+					}"
+					>{{ config.description }}</cl-text
+				>
 			</view>
 
 			<view class="cl-action-sheet__list" :class="[pt.list?.className]">

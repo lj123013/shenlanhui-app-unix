@@ -37,13 +37,7 @@
 					</cl-list-item>
 
 					<view class="p-2">
-						<cl-tabs
-							v-model="mode"
-							:height="66"
-							:list="modeList"
-							show-slider
-							fill
-						></cl-tabs>
+						<cl-tabs v-model="mode" :height="66" :list="modeList" show-slider></cl-tabs>
 					</view>
 				</cl-list>
 			</demo-item>

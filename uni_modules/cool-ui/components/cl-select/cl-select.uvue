@@ -26,6 +26,8 @@
 		}"
 	>
 		<view class="cl-select-popup" @touchmove.stop>
+			<slot name="prepend"></slot>
+
 			<view class="cl-select-popup__picker">
 				<cl-picker-view
 					:value="indexes"
@@ -33,6 +35,8 @@
 					@change-index="onChange"
 				></cl-picker-view>
 			</view>
+
+			<slot name="append"></slot>
 
 			<view class="cl-select-popup__op">
 				<cl-button
@@ -72,6 +76,11 @@ import { t } from "@/locale";
 defineOptions({
 	name: "cl-select"
 });
+
+defineSlots<{
+	prepend(): any;
+	append(): any;
+}>();
 
 // 值类型
 type Value = string[] | number[] | number | string | null;
@@ -146,7 +155,7 @@ const props = defineProps({
 });
 
 // 定义事件
-const emit = defineEmits(["update:modelValue", "change"]);
+const emit = defineEmits(["update:modelValue", "change", "changing"]);
 
 // 弹出层引用
 const popupRef = ref<ClPopupComponentPublicInstance | null>(null);
@@ -230,6 +239,11 @@ const text = computed(() => {
 		.join(props.splitor);
 });
 
+// 获取当前选中值
+function getValue() {
+	return props.columnCount == 1 ? value.value[0] : value.value;
+}
+
 // 选择器值改变事件
 function onChange(a: number[]) {
 	// 复制当前组件内部维护的索引数组
@@ -258,6 +272,9 @@ function onChange(a: number[]) {
 	indexes.value = b;
 	// 根据最新的索引数组,更新选中的值数组
 	value.value = b.map((e, i) => columns.value[i][e].value);
+
+	// 触发changing事件
+	emit("changing", getValue());
 }
 
 // 选择器显示状态
@@ -291,7 +308,7 @@ function clear() {
 // 确认选择
 function confirm() {
 	// 根据列数返回单个值或数组
-	const val = props.columnCount == 1 ? value.value[0] : value.value;
+	const val = getValue();
 
 	// 触发更新事件
 	emit("update:modelValue", val);

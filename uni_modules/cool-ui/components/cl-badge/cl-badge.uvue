@@ -13,10 +13,16 @@
 			},
 			pt.className
 		]"
+		:style="badgeStyle"
 	>
-		<text class="cl-badge__text" v-if="!dot">
+		<cl-text
+			:pt="{
+				className: parseClass(['cl-badge__text', pt.text?.className])
+			}"
+			v-if="!dot"
+		>
 			{{ value }}
-		</text>
+		</cl-text>
 
 		<slot></slot>
 	</view>
@@ -25,8 +31,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { PropType } from "vue";
-import type { Type } from "../../types";
-import { parsePt } from "@/cool";
+import type { PassThroughProps, Type } from "../../types";
+import { parseClass, parsePt } from "@/cool";
+import { useSize } from "../../hooks";
 
 defineOptions({
 	name: "cl-badge"
@@ -55,11 +62,39 @@ const props = defineProps({
 	}
 });
 
+const { getRpx } = useSize();
+
 type PassThrough = {
 	className?: string;
+	text?: PassThroughProps;
 };
 
 const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+const badgeStyle = computed(() => {
+	const style = {};
+
+	if (props.dot) {
+		style["height"] = getRpx(10);
+		style["width"] = getRpx(10);
+		style["minWidth"] = getRpx(10);
+		style["padding"] = 0;
+	} else {
+		style["height"] = getRpx(30);
+		style["minWidth"] = getRpx(30);
+		style["padding"] = `0 ${getRpx(6)}`;
+	}
+
+	if (props.position) {
+		style["transform"] = "translate(50%, -50%)";
+
+		if (props.dot) {
+			style["transform"] = `translate(-${getRpx(5)}, ${getRpx(5)})`;
+		}
+	}
+
+	return style;
+});
 </script>
 
 <style lang="scss" scoped>
@@ -67,29 +102,12 @@ const pt = computed(() => parsePt<PassThrough>(props.pt));
 	@apply flex flex-row items-center justify-center;
 	@apply rounded-full;
 
-	height: 30rpx;
-	min-width: 30rpx;
-	padding: 0 6rpx;
-
 	&__text {
-		@apply text-white;
-		font-size: 18rpx;
-	}
-
-	&--dot {
-		height: 10rpx;
-		width: 10rpx;
-		min-width: 10rpx;
-		padding: 0;
+		@apply text-white text-sm;
 	}
 
 	&--position {
 		@apply absolute z-10 right-0 top-0;
-		transform: translate(50%, -50%);
-
-		&.cl-badge--dot {
-			transform: translate(-5rpx, 5rpx);
-		}
 	}
 }
 </style>

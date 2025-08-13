@@ -16,9 +16,21 @@
 					></cl-image>
 				</view>
 
-				<text class="text-xl text-primary-500 dark:!text-white mr-auto ml-2 flex-1">
+				<cl-text
+					color="primary"
+					:pt="{
+						className: '!text-xl mr-auto ml-2 flex-1'
+					}"
+				>
 					{{ config.name }}
-				</text>
+				</cl-text>
+
+				<view
+					class="bg-surface-500 h-8 w-8 rounded-full flex flex-row items-center justify-center mr-3"
+					@tap="setSize"
+				>
+					<cl-icon name="font-size" color="white"></cl-icon>
+				</view>
 
 				<view
 					class="bg-primary-500 h-8 w-8 rounded-full flex flex-row items-center justify-center"
@@ -34,7 +46,9 @@
 
 		<view class="p-3">
 			<view class="group" v-for="item in data" :key="item.label">
-				<text class="title dark:!text-surface-50">{{ item.label }}</text>
+				<cl-text :pt="{ className: '!text-sm !text-surface-400 mb-2 ml-1' }">{{
+					item.label
+				}}</cl-text>
 
 				<view class="list">
 					<cl-row :gutter="10">
@@ -60,18 +74,24 @@
 		</view>
 
 		<tabbar></tabbar>
+
+		<!-- 主题设置 -->
 		<locale-set :ref="refs.set('localeSet')"></locale-set>
+
+		<!-- 字体大小设置 -->
+		<size-set :ref="refs.set('sizeSet')"></size-set>
 	</cl-page>
 </template>
 
 <script lang="ts" setup>
 import { isMp, router, useRefs } from "@/cool";
-import LocaleSet from "@/components/locale-set.uvue";
 import { t } from "@/locale";
 import { computed } from "vue";
-import Tabbar from "@/components/tabbar.uvue";
 import { useUi } from "@/uni_modules/cool-ui";
 import { config } from "@/config";
+import LocaleSet from "@/components/locale-set.uvue";
+import SizeSet from "@/components/size-set.uvue";
+import Tabbar from "@/components/tabbar.uvue";
 
 const ui = useUi();
 const refs = useRefs();
@@ -414,20 +434,20 @@ function toPath(item: Item) {
 function setLocale() {
 	refs.open("localeSet");
 }
+
+function setSize() {
+	refs.open("sizeSet");
+}
 </script>
 
 <style lang="scss" scoped>
 .group {
 	@apply mb-10;
 
-	.title {
-		@apply text-sm mb-2 ml-1 text-surface-500;
-	}
-
 	.list {
 		.item {
 			@apply flex flex-col items-center;
-			@apply rounded-xl bg-white p-2;
+			@apply rounded-xl bg-white px-2;
 			height: 140rpx;
 			margin-bottom: 10rpx;
 			padding-top: 36rpx;

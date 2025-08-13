@@ -2,7 +2,7 @@
 	<cl-page back-top>
 		<cl-sticky>
 			<view class="bg-primary-500 p-3 h-[40px] flex flex-row items-center">
-				<text class="text-white">Header</text>
+				<cl-text color="white">Header - 1</cl-text>
 			</view>
 		</cl-sticky>
 
@@ -14,7 +14,7 @@
 
 		<cl-sticky :offset-top="40">
 			<view class="bg-red-500 p-3 h-[40px] flex flex-row items-center">
-				<text class="text-white">Header - 2</text>
+				<cl-text color="white">Header - 2</cl-text>
 			</view>
 		</cl-sticky>
 
@@ -26,7 +26,7 @@
 
 		<cl-sticky :offset-top="80">
 			<view class="bg-purple-500 p-3 h-[40px] flex flex-row items-center">
-				<text class="text-white">Header - 3</text>
+				<cl-text color="white">Header - 3</cl-text>
 			</view>
 		</cl-sticky>
 

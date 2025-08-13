@@ -24,8 +24,9 @@
 
 <script setup lang="ts">
 import { computed, type PropType } from "vue";
-import { forInObject, get, has, parseRpx, parsePt, useCache, isDark } from "@/cool";
+import { forInObject, get, has, parsePt, useCache, isDark } from "@/cool";
 import { icons } from "@/icons";
+import { useSize } from "../../hooks";
 
 defineOptions({
 	name: "cl-icon"
@@ -67,6 +68,9 @@ const props = defineProps({
 
 // 缓存
 const { cache } = useCache(() => [props.color]);
+
+// 字号
+const { getRpx } = useSize();
 
 // 透传样式类型定义
 type PassThrough = {
@@ -126,11 +130,14 @@ const iconStyle = computed(() => {
 		style["color"] = props.color;
 	}
 
-	style["fontFamily"] = icon.value.font;
-	style["fontSize"] = parseRpx(props.size!);
-	style["height"] = parseRpx(props.height ?? props.size!);
-	style["width"] = parseRpx(props.width ?? props.size!);
-	style["lineHeight"] = parseRpx(props.size!);
+	if (icon.value.font != "") {
+		style["fontFamily"] = icon.value.font;
+	}
+
+	style["fontSize"] = getRpx(props.size!);
+	style["height"] = getRpx(props.height ?? props.size!);
+	style["width"] = getRpx(props.width ?? props.size!);
+	style["lineHeight"] = getRpx(props.size!);
 
 	return style;
 });

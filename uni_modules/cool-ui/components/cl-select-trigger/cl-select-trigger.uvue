@@ -28,13 +28,14 @@
 				{{ text }}
 			</cl-text>
 
-			<text
-				class="cl-select-trigger__placeholder"
-				:class="[pt.placeholder?.className]"
+			<cl-text
+				:pt="{
+					className: parseClass(['!text-surface-400', pt.placeholder?.className])
+				}"
 				v-else
 			>
 				{{ placeholder }}
-			</text>
+			</cl-text>
 		</view>
 
 		<view v-if="showText && !isDisabled" class="cl-select-trigger__icon" @tap.stop="clear">
@@ -151,10 +152,6 @@ function open() {
 	@apply border border-solid border-surface-200 rounded-lg bg-white;
 	height: 66rpx;
 	padding: 0 20rpx;
-
-	&__placeholder {
-		@apply text-surface-400 text-md;
-	}
 
 	&__content {
 		flex: 1;

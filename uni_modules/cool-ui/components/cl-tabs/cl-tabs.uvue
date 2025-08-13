@@ -35,19 +35,21 @@
 					@tap="change(index)"
 				>
 					<slot name="item" :item="item" :active="item.isActive">
-						<text
-							class="cl-tabs__item-label"
-							:class="[
-								{
-									'is-active': item.isActive,
-									'is-disabled': item.disabled,
-									'is-dark': isDark,
-									'is-fill': fill
-								},
-								pt.text?.className
-							]"
+						<cl-text
+							:pt="{
+								className: parseClass([
+									'cl-tabs__item-label',
+									{
+										'is-active': item.isActive,
+										'is-disabled': item.disabled,
+										'is-dark': isDark,
+										'is-fill': fill
+									},
+									pt.text?.className
+								])
+							}"
 							:style="getTextStyle(item)"
-							>{{ item.label }}</text
+							>{{ item.label }}</cl-text
 						>
 					</slot>
 				</view>
@@ -73,7 +75,7 @@
 
 <script lang="ts" setup>
 import { type PropType, computed, getCurrentInstance, nextTick, onMounted, ref, watch } from "vue";
-import { isDark, isEmpty, isHarmony, isNull, parsePt, parseRpx, rpx2px } from "@/cool";
+import { isDark, isEmpty, isHarmony, isNull, parseClass, parsePt, parseRpx, rpx2px } from "@/cool";
 import type { ClTabsItem, PassThroughProps } from "../../types";
 
 // 定义标签类型

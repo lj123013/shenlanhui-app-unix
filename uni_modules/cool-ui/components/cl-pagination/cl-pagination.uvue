@@ -30,13 +30,17 @@
 			]"
 			@tap="toPage(item)"
 		>
-			<text
-				class="cl-pagination__item-text"
-				:class="{
-					'is-active': item == value,
-					'is-dark': isDark
+			<cl-text
+				:pt="{
+					className: parseClass([
+						'cl-pagination__item-text',
+						{
+							'is-active': item == value,
+							'is-dark': isDark
+						}
+					])
 				}"
-				>{{ item }}</text
+				>{{ item }}</cl-text
 			>
 		</view>
 
@@ -61,7 +65,7 @@
 
 <script setup lang="ts">
 import type { PassThroughProps } from "../../types";
-import { isDark, parsePt } from "@/cool";
+import { isDark, parseClass, parsePt } from "@/cool";
 import { computed, ref, watch } from "vue";
 
 defineOptions({

@@ -20,11 +20,9 @@
 					'is-disabled': isDisabled,
 					'is-dark': isDark
 				},
-				pt.inner?.className
+				ptClassName
 			]"
-			:style="{
-				height: parseRpx(height)
-			}"
+			:style="textareaStyle"
 			:value="value"
 			:name="name"
 			:disabled="readonly ?? isDisabled"
@@ -48,12 +46,14 @@
 			@input="onInput"
 			@linechange="onLineChange"
 			@blur="onBlur"
-			@keyboardheightchange="onKeyboardheightchange"
 			@focus="onFocus"
+			@keyboardheightchange="onKeyboardheightchange"
 		/>
 
-		<text class="cl-textarea__count" v-if="showWordLimit"
-			>{{ value.length }}/{{ maxlength }}</text
+		<cl-text
+			:pt="{ className: 'absolute right-2 bottom-2 !text-xs !text-surface-400' }"
+			v-if="showWordLimit"
+			>{{ value.length }} / {{ maxlength }}</cl-text
 		>
 	</view>
 </template>
@@ -64,7 +64,7 @@ import { parsePt, parseRpx } from "@/cool";
 import type { PassThroughProps } from "../../types";
 import { isDark } from "@/cool";
 import { t } from "@/locale";
-import { useForm, useFormItem } from "../../hooks";
+import { useForm, useFormItem, useSize } from "../../hooks";
 
 defineOptions({
 	name: "cl-textarea"
@@ -243,6 +243,24 @@ type PassThrough = {
 // 解析透传样式
 const pt = computed(() => parsePt<PassThrough>(props.pt));
 
+// 字号
+const { ptClassName, getSize } = useSize(() => pt.value.inner?.className ?? "");
+
+// 文本框样式
+const textareaStyle = computed(() => {
+	const style = {
+		height: parseRpx(props.height)
+	};
+
+	// 字号
+	const fontSize = getSize(null);
+	if (fontSize != null) {
+		style["fontSize"] = fontSize;
+	}
+
+	return style;
+});
+
 // 绑定值
 const value = ref(props.modelValue);
 
@@ -346,10 +364,6 @@ defineExpose({
 	&__icon {
 		@apply flex items-center justify-center h-full;
 		padding-left: 20rpx;
-	}
-
-	&__count {
-		@apply text-surface-400 text-sm absolute right-2 bottom-2;
 	}
 
 	&--border {

@@ -6,9 +6,9 @@ import Build from "android.os.Build";
 
 /**
  * 震动
- * @param {number} duriation 震动时间单位ms
+ * @param {number} duration 震动时间单位ms
  */
-export function vibrate(duriation: number) {
+export function vibrate(duration: number) {
 	try {
 		const context = UTSAndroid.getAppContext() as Context;
 		let vb: Vibrator | null = null;
@@ -25,7 +25,7 @@ export function vibrate(duriation: number) {
 			// Android 8.0 (API 26) 及以上使用 VibrationEffect
 			if (Build.VERSION.SDK_INT >= 26) {
 				const effect = VibrationEffect.createOneShot(
-					duriation.toLong(),
+					duration.toLong(),
 					VibrationEffect.DEFAULT_AMPLITUDE
 				);
 				vb.vibrate(effect);

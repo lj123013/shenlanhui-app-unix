@@ -22,14 +22,21 @@
 					class="cl-keyboard-number__value"
 					:class="[pt.value?.className]"
 				>
-					<text
-						class="cl-keyboard-number__value-text dark:!text-white"
+					<cl-text
 						v-if="value != ''"
-						>{{ value }}</text
+						:pt="{
+							className: '!text-2xl'
+						}"
+						>{{ value }}</cl-text
 					>
-					<text class="cl-keyboard-number__value-placeholder" v-else>{{
-						placeholder
-					}}</text>
+
+					<cl-text
+						v-else
+						:pt="{
+							className: '!text-md !text-surface-400'
+						}"
+						>{{ placeholder }}</cl-text
+					>
 				</view>
 			</slot>
 
@@ -61,15 +68,21 @@
 									v-else-if="item == 'confirm'"
 									class="cl-keyboard-number__item-confirm"
 								>
-									<text class="cl-keyboard-number__item-text">{{
-										confirmText
-									}}</text>
+									<cl-text
+										color="white"
+										:pt="{
+											className: '!text-lg'
+										}"
+										>{{ confirmText }}</cl-text
+									>
 								</view>
 
-								<text
+								<cl-text
 									v-else
-									class="cl-keyboard-number__item-text dark:!text-white"
-									>{{ item }}</text
+									:pt="{
+										className: '!text-lg'
+									}"
+									>{{ item }}</cl-text
 								>
 							</slot>
 						</view>
@@ -346,16 +359,8 @@ defineExpose({
 
 	&__value {
 		@apply flex flex-row items-center justify-center;
-		height: 60rpx;
-		margin-bottom: 28rpx;
-
-		&-text {
-			@apply text-2xl text-surface-700;
-		}
-
-		&-placeholder {
-			@apply text-md text-surface-400;
-		}
+		height: 80rpx;
+		margin-bottom: 20rpx;
 	}
 
 	&__list {
@@ -372,10 +377,6 @@ defineExpose({
 			@apply bg-surface-800;
 		}
 
-		&-text {
-			@apply text-lg;
-		}
-
 		&.is-keycode-delete {
 			@apply bg-surface-200;
 
@@ -386,10 +387,6 @@ defineExpose({
 
 		&.is-keycode-confirm {
 			@apply bg-transparent relative;
-
-			.cl-keyboard-number__item-text {
-				@apply text-white;
-			}
 		}
 
 		&-confirm {

@@ -711,5 +711,8 @@ export const remixicon = {
 	"skip-left-line": "f363",
 	"text-snippet": "f46e",
 	"input-method-line": "ee60",
-	"input-method-fill": "ee5f"
+	"input-method-fill": "ee5f",
+	"font-size": "ed8d",
+	"font-size-2": "ed8c",
+	"font-color": "ed8b"
 };

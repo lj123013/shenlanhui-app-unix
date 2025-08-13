@@ -37,7 +37,13 @@
 					></cl-icon>
 				</view>
 
-				<text class="cl-toast__text">{{ item.message }}</text>
+				<cl-text
+					color="white"
+					:pt="{
+						className: 'text-center'
+					}"
+					>{{ item.message }}</cl-text
+				>
 			</view>
 		</view>
 	</cl-popup>
@@ -156,10 +162,6 @@ defineExpose({
 	background-color: rgba(50, 50, 50, 0.9);
 	max-width: 600rpx;
 	opacity: 0;
-
-	&__text {
-		@apply text-md text-center font-bold text-white;
-	}
 
 	&.is-open {
 		opacity: 1;

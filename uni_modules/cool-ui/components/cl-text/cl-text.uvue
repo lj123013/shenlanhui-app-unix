@@ -18,7 +18,7 @@
 				'!text-surface-50': color == 'light',
 				'!text-surface-400': color == 'disabled'
 			},
-			pt.className
+			ptClassName
 		]"
 		:style="textStyle"
 		:selectable="selectable"
@@ -49,7 +49,7 @@
 				'!text-surface-50': color == 'light',
 				'!text-surface-400': color == 'disabled'
 			},
-			pt.className
+			ptClassName
 		]"
 		:style="textStyle"
 		:selectable="selectable"
@@ -66,6 +66,7 @@
 import { computed, type PropType } from "vue";
 import { isDark, parsePt, useCache } from "@/cool";
 import type { ClTextType } from "../../types";
+import { useSize } from "../../hooks";
 
 defineOptions({
 	name: "cl-text"
@@ -87,6 +88,11 @@ const props = defineProps({
 	color: {
 		type: String,
 		default: ""
+	},
+	// 字体大小
+	size: {
+		type: [Number, String] as PropType<number | string | null>,
+		default: null
 	},
 	// 文本类型
 	type: {
@@ -161,12 +167,27 @@ type PassThrough = {
 // 解析透传样式
 const pt = computed(() => parsePt<PassThrough>(props.pt));
 
+// 文本大小
+const { getSize, getLineHeight, ptClassName } = useSize(() => pt.value.className ?? "");
+
 // 文本样式
 const textStyle = computed(() => {
 	const style = {};
 
 	if (props.color != "") {
 		style["color"] = props.color;
+	}
+
+	// 字号
+	const fontSize = getSize(props.size);
+	if (fontSize != null) {
+		style["fontSize"] = fontSize;
+	}
+
+	// 行高
+	const lineHeight = getLineHeight();
+	if (lineHeight != null) {
+		style["lineHeight"] = lineHeight;
 	}
 
 	return style;

@@ -16,10 +16,11 @@
 				}"
 			>
 				<slot name="text" :item="item">
-					<text
-						class="cl-noticebar__text dark:!text-white"
-						:class="[pt.text?.className]"
-						>{{ item }}</text
+					<cl-text
+						:pt="{
+							className: parseClass(['cl-noticebar__text', pt.text?.className])
+						}"
+						>{{ item }}</cl-text
 					>
 				</slot>
 			</view>
@@ -37,7 +38,7 @@ import {
 	type PropType,
 	watch
 } from "vue";
-import { parseRpx, parsePt } from "@/cool";
+import { parseRpx, parsePt, parseClass } from "@/cool";
 import type { PassThroughProps } from "../../types";
 
 defineOptions({
@@ -248,7 +249,6 @@ onUnmounted(() => {
 	}
 
 	&__text {
-		@apply text-md text-surface-700;
 		white-space: nowrap;
 	}
 }

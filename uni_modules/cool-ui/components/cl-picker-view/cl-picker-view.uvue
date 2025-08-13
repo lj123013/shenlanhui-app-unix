@@ -1,11 +1,13 @@
 <template>
 	<view class="cl-picker-view">
 		<view class="cl-picker-view__header" v-if="headers.length > 0">
-			<text
-				class="cl-picker-view__header-item dark:!text-white"
+			<cl-text
+				:pt="{
+					className: 'flex-1 !text-sm text-center'
+				}"
 				v-for="(label, index) in headers"
 				:key="index"
-				>{{ label }}</text
+				>{{ label }}</cl-text
 			>
 		</view>
 
@@ -168,11 +170,6 @@ function onChange(e: UniPickerViewChangeEvent) {
 
 	&__header {
 		@apply flex flex-row items-center py-4;
-
-		&-item {
-			@apply text-center text-sm text-surface-700;
-			flex: 1;
-		}
 	}
 
 	&__item {

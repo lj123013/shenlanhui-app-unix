@@ -30,8 +30,9 @@
 					'is-disabled': isDisabled,
 					'is-dark': isDark
 				},
-				pt.inner?.className
+				ptClassName
 			]"
+			:style="inputStyle"
 			:value="value"
 			:disabled="readonly ?? isDisabled"
 			:type="type"
@@ -86,7 +87,7 @@ import type { ClInputType, PassThroughProps } from "../../types";
 import { isDark, parseClass, parsePt } from "@/cool";
 import type { ClIconProps } from "../cl-icon/props";
 import { t } from "@/locale";
-import { useForm, useFormItem } from "../../hooks";
+import { useForm, useFormItem, useSize } from "../../hooks";
 
 defineOptions({
 	name: "cl-input"
@@ -224,6 +225,22 @@ type PassThrough = {
 
 // 解析透传样式
 const pt = computed(() => parsePt<PassThrough>(props.pt));
+
+// 字号
+const { ptClassName, getSize } = useSize(() => pt.value.inner?.className ?? "");
+
+// 输入框样式
+const inputStyle = computed(() => {
+	const style = {};
+
+	// 字号
+	const fontSize = getSize(null);
+	if (fontSize != null) {
+		style["fontSize"] = fontSize;
+	}
+
+	return style;
+});
 
 // 绑定值
 const value = ref<string>("");

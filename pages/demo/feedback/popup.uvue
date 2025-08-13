@@ -10,7 +10,6 @@
 							v-model="direction"
 							:list="directionList"
 							show-slider
-							fill
 							:height="66"
 						></cl-tabs>
 					</view>

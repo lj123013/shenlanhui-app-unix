@@ -14,7 +14,7 @@
 			</demo-item>
 
 			<demo-item :label="t('结合按钮')">
-				<view class="flex flex-row pt-2">
+				<view class="flex flex-row overflow-visible">
 					<cl-button>
 						{{ t("购买") }}
 						<template #content>

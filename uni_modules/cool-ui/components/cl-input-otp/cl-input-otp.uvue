@@ -1,5 +1,13 @@
 <template>
-	<view class="cl-input-otp" :class="[pt.className]">
+	<view
+		class="cl-input-otp"
+		:class="[
+			{
+				'cl-input-otp--disabled': disabled
+			},
+			pt.className
+		]"
+	>
 		<view class="cl-input-otp__inner">
 			<cl-input
 				v-model="value"
@@ -33,16 +41,11 @@
 					pt.item?.className
 				]"
 			>
-				<text
-					class="cl-input-otp__value"
-					:class="[
-						{
-							'is-disabled': disabled,
-							'is-dark': isDark
-						},
-						pt.value?.className
-					]"
-					>{{ item }}</text
+				<cl-text
+					:pt="{
+						className: pt.value?.className
+					}"
+					>{{ item }}</cl-text
 				>
 				<view
 					class="cl-input-otp__cursor"
@@ -268,14 +271,6 @@ function animateCursor(isIncreasing: boolean) {
 		}
 	}
 
-	&__value {
-		@apply text-surface-700 text-md;
-
-		&.is-dark {
-			@apply text-white;
-		}
-	}
-
 	&__cursor {
 		@apply absolute;
 		@apply bg-primary-500;
@@ -302,5 +297,9 @@ function animateCursor(isIncreasing: boolean) {
 		}
 	}
 	// #endif
+
+	&--disabled {
+		@apply opacity-50;
+	}
 }
 </style>

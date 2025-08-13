@@ -25,6 +25,11 @@
 								className: parseClass({
 									'!text-sky-700': isCustom
 								})
+							},
+							cursor: {
+								className: parseClass({
+									'!bg-sky-700': isCustom
+								})
 							}
 						}"
 						@done="toDone"

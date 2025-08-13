@@ -54,7 +54,7 @@
 								className: 'justify-between'
 							},
 							item: {
-								className: '!h-8 !w-8'
+								className: '!h-9 !w-9'
 							},
 							cursor: {
 								className: '!h-3'

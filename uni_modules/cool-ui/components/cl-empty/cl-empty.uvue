@@ -18,13 +18,24 @@
 			v-if="showIcon"
 		></image>
 
-		<text class="cl-empty__text dark:!text-surface-100" v-if="text">{{ text }}</text>
+		<cl-text
+			:pt="{
+				className: parseClass([
+					'cl-empty__text',
+					{
+						'!text-surface-100': isDark
+					}
+				])
+			}"
+			v-if="text"
+			>{{ text }}</cl-text
+		>
 	</view>
 </template>
 
 <script lang="ts" setup>
 import { t } from "@/locale";
-import { parsePt, parseRpx } from "@/cool";
+import { isDark, parseClass, parsePt, parseRpx } from "@/cool";
 import { computed } from "vue";
 
 // 组件属性定义

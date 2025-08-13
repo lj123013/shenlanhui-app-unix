@@ -36,11 +36,21 @@
 					}"
 				>
 					<template #prev>
-						<cl-text class="!text-sm">{{ t("上一页") }}</cl-text>
+						<cl-text
+							:pt="{
+								className: '!text-sm'
+							}"
+							>{{ t("上一页") }}</cl-text
+						>
 					</template>
 
 					<template #next>
-						<cl-text class="!text-sm">{{ t("下一页") }}</cl-text>
+						<cl-text
+							:pt="{
+								className: '!text-sm'
+							}"
+							>{{ t("下一页") }}</cl-text
+						>
 					</template>
 				</cl-pagination>
 			</demo-item>

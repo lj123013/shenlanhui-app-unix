@@ -252,7 +252,7 @@ const paddingBottom = computed(() => {
 	let h = 0;
 
 	if (props.direction == "bottom") {
-		h += hasCustomTabBar() ? getTabBarHeight() : getSafeAreaHeight("bottom");
+		h += getSafeAreaHeight("bottom");
 	}
 
 	return h + "px";

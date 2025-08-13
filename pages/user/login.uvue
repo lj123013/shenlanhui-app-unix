@@ -3,6 +3,7 @@
 		<cl-topbar safe-area-top background-color="transparent"></cl-topbar>
 
 		<view class="px-10">
+			<!-- Logo -->
 			<view class="flex flex-col items-center justify-center py-20">
 				<view class="p-3 bg-primary-500 rounded-2xl">
 					<cl-image
@@ -16,9 +17,13 @@
 				<cl-text :pt="{ className: '!text-xl font-bold mt-3' }">{{ config.name }}</cl-text>
 			</view>
 
+			<!-- 手机号登录 -->
 			<login-phone :form="form" @success="toLogin"></login-phone>
+
+			<!-- 微信登录 -->
 			<login-wx :ref="refs.set('loginWx')" @success="toLogin"></login-wx>
 
+			<!-- 协议 -->
 			<view class="mt-6 flex flex-row flex-wrap items-center justify-center">
 				<cl-checkbox
 					v-model="agree"
@@ -45,17 +50,19 @@
 				</cl-text>
 			</view>
 
+			<!-- 第三方登录 -->
 			<view class="flex flex-row justify-center mt-10 px-10">
 				<view
-					class="mx-5flex items-center justify-center h-10 w-10 rounded-full bg-white dark:bg-surface-700 border border-solid border-surface-100 dark:border-surface-600"
+					class="login-item"
+					:class="{
+						'is-dark': isDark
+					}"
 					@tap="refs.callMethod('loginWx', 'login')"
 				>
 					<cl-icon name="wechat-fill" :size="38" color="#00b223"></cl-icon>
 				</view>
 
-				<view
-					class="mx-5 flex items-center justify-center h-10 w-10 rounded-full bg-white dark:bg-surface-700 border border-solid border-surface-100 dark:border-surface-600"
-				>
+				<view class="login-item" :class="{ 'is-dark': isDark }">
 					<cl-icon name="apple-fill" :size="38"></cl-icon>
 				</view>
 			</view>
@@ -65,7 +72,7 @@
 
 <script setup lang="ts">
 import { config } from "@/config";
-import { parse, router, useRefs, useStore, type Token } from "@/cool";
+import { isDark, parse, router, useRefs, useStore, type Token } from "@/cool";
 import { t } from "@/locale";
 import { provide, reactive, ref } from "vue";
 import type { LoginForm } from "./types";
@@ -110,3 +117,13 @@ function isAgree() {
 
 provide("isAgree", isAgree);
 </script>
+
+<style lang="scss" scoped>
+.login-item {
+	@apply mx-2 p-2 flex items-center justify-center rounded-full bg-white border border-solid border-surface-100;
+
+	&.is-dark {
+		@apply border-surface-600 bg-surface-700;
+	}
+}
+</style>
