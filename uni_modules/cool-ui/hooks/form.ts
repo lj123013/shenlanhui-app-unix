@@ -27,8 +27,8 @@ export class Form {
 	}
 
 	// 注册表单字段
-	addField = (prop: string): void => {
-		this.formRef.value!.addField(prop);
+	addField = (prop: string, rules: ClFormRule[]): void => {
+		this.formRef.value!.addField(prop, rules);
 	};
 
 	// 注销表单字段
@@ -51,6 +51,11 @@ export class Form {
 		return this.formRef.value!.getError(prop);
 	};
 
+	// 获取所有错误信息
+	getErrors = async (): Promise<ClFormValidateError[]> => {
+		return this.formRef.value!.getErrors();
+	};
+
 	// 移除字段错误信息
 	removeError = (prop: string): void => {
 		this.formRef.value!.removeError(prop);
@@ -64,6 +69,16 @@ export class Form {
 	// 获取字段规则
 	getRule = (prop: string): ClFormRule[] => {
 		return this.formRef.value!.getRule(prop);
+	};
+
+	// 设置字段规则
+	setRule = (prop: string, rules: ClFormRule[]): void => {
+		this.formRef.value!.setRule(prop, rules);
+	};
+
+	// 移除字段规则
+	removeRule = (prop: string): void => {
+		this.formRef.value!.removeRule(prop);
 	};
 
 	// 验证单个规则

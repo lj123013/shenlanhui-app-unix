@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, ref, watch, type PropType } from "vue";
-import { isEmpty, isNull, isString, parsePt, parseToObject } from "@/cool";
+import { get, isEmpty, isNull, isString, parsePt, parseToObject } from "@/cool";
 import type { ClFormLabelPosition, ClFormRule, ClFormValidateError } from "../../types";
 import { $t, t } from "@/locale";
 import { usePage } from "../../hooks";
@@ -140,6 +140,105 @@ function getError(prop: string): string {
 	return "";
 }
 
+// 获得错误信息，并滚动到第一个错误位置
+async function getErrors(): Promise<ClFormValidateError[]> {
+	return new Promise((resolve) => {
+		// 错误信息
+		const errs = [] as ClFormValidateError[];
+
+		// 错误信息位置
+		const tops = new Map<string, number>();
+
+		// 完成回调，将错误信息添加到数组中
+		function done() {
+			tops.forEach((top, prop) => {
+				errs.push({
+					field: prop,
+					message: getError(prop)
+				});
+			});
+
+			// 滚动到第一个错误位置
+			if (props.scrollToError && errs.length > 0) {
+				page.scrollTo((tops.get(errs[0].field) ?? 0) + page.getScrollTop());
+			}
+
+			resolve(errs);
+		}
+
+		// 如果错误信息为空，直接返回
+		if (errors.value.size == 0) {
+			done();
+			return;
+		}
+
+		nextTick(() => {
+			let component = proxy;
+
+			// #ifdef MP
+			let num = 0; // 记录已处理的表单项数量
+
+			// 并查找其错误节点的位置
+			const deep = (el: any, index: number) => {
+				// 遍历当前节点的所有子节点
+				el?.$children.map((e: any) => {
+					// 限制递归深度，防止死循环
+					if (index < 5) {
+						// 判断是否为 cl-form-item 组件且 prop 存在
+						if (e.prop != null && e.$options.name == "cl-form-item") {
+							// 如果该字段已注册到 fields 中，则计数加一
+							if (fields.value.has(e.prop)) {
+								num += 1;
+							}
+
+							// 查询该 cl-form-item 下是否有错误节点，并获取其位置信息
+							uni.createSelectorQuery()
+								.in(e)
+								.select(".cl-form-item--error")
+								.boundingClientRect((res) => {
+									// 如果未获取到节点信息，直接返回
+									if (res == null) {
+										return;
+									}
+
+									// 记录该字段的错误节点 top 值
+									tops.set(e.prop, (res as NodeInfo).top!);
+
+									// 如果已处理的表单项数量达到总数，执行 done 回调
+									if (num >= fields.value.size) {
+										done();
+									}
+								})
+								.exec();
+						}
+
+						// 递归查找子节点
+						deep(e, index + 1);
+					}
+				});
+			};
+
+			deep(component, 0);
+			// #endif
+
+			// #ifndef MP
+			uni.createSelectorQuery()
+				.in(component)
+				.selectAll(".cl-form-item--error")
+				.boundingClientRect((res) => {
+					(res as NodeInfo[]).map((e) => {
+						tops.set((e.id ?? "").replace("cl-form-item-", ""), e.top ?? 0);
+					});
+
+					done();
+				})
+				.exec();
+
+			// #endif
+		});
+	});
+}
+
 // 清除所有错误信息
 function clearErrors() {
 	errors.value.clear();
@@ -148,16 +247,36 @@ function clearErrors() {
 // 获取字段值
 function getValue(prop: string): any | null {
 	if (prop != "") {
-		return data.value[prop];
+		return get(data.value, prop, null);
 	}
 
 	return null;
 }
 
+// 获取字段规则
+function getRule(prop: string): ClFormRule[] {
+	return props.rules.get(prop) ?? ([] as ClFormRule[]);
+}
+
+// 设置字段规则
+function setRule(prop: string, rules: ClFormRule[]) {
+	if (prop != "" && !isEmpty(rules)) {
+		props.rules.set(prop, rules);
+	}
+}
+
+// 移除字段规则
+function removeRule(prop: string) {
+	if (prop != "") {
+		props.rules.delete(prop);
+	}
+}
+
 // 注册表单字段
-function addField(prop: string) {
+function addField(prop: string, rules: ClFormRule[]) {
 	if (prop != "") {
 		fields.value.add(prop);
+		setRule(prop, rules);
 	}
 }
 
@@ -165,13 +284,9 @@ function addField(prop: string) {
 function removeField(prop: string) {
 	if (prop != "") {
 		fields.value.delete(prop);
+		removeRule(prop);
 		removeError(prop);
 	}
-}
-
-// 获取字段规则
-function getRule(prop: string): ClFormRule[] {
-	return props.rules.get(prop) ?? ([] as ClFormRule[]);
 }
 
 // 验证单个规则
@@ -270,6 +385,7 @@ function validateField(prop: string): string | null {
 			});
 		}
 
+		// 移除错误信息
 		removeError(prop);
 	}
 
@@ -280,51 +396,17 @@ function validateField(prop: string): string | null {
 	return error;
 }
 
-// 滚动到第一个错误位置
-function scrollToError(prop: string) {
-	if (props.scrollToError == false) {
-		return;
-	}
-
-	nextTick(() => {
-		let component = proxy;
-
-		// #ifdef MP
-		component = proxy?.$children.find((e: any) => e.prop == prop);
-		// #endif
-
-		uni.createSelectorQuery()
-			.in(component)
-			.select(".cl-form-item--error")
-			.boundingClientRect((res) => {
-				if (!isNull(res)) {
-					page.scrollTo(((res as NodeInfo).top ?? 0) + page.getScrollTop());
-				}
-			})
-			.exec();
-	});
-}
-
 // 验证整个表单
-function validate(callback: (valid: boolean, errors: ClFormValidateError[]) => void) {
-	const errs = [] as ClFormValidateError[];
-
+async function validate(callback: (valid: boolean, errors: ClFormValidateError[]) => void) {
+	// 验证所有字段
 	fields.value.forEach((prop) => {
-		const result = validateField(prop);
-
-		if (result != null) {
-			errs.push({
-				field: prop,
-				message: result
-			});
-		}
+		validateField(prop);
 	});
 
-	// 滚动到第一个错误位置
-	if (errs.length > 0) {
-		scrollToError(errs[0].field);
-	}
+	// 获取所有错误信息，并滚动到第一个错误位置
+	const errs = await getErrors();
 
+	// 回调
 	callback(errs.length == 0, errs);
 }
 
@@ -353,9 +435,12 @@ defineExpose({
 	getValue,
 	setError,
 	getError,
+	getErrors,
 	removeError,
 	clearErrors,
 	getRule,
+	setRule,
+	removeRule,
 	validateRule,
 	clearValidate,
 	validateField,

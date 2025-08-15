@@ -40,6 +40,7 @@ declare interface Uni {
 }
 
 declare interface NodeInfo {
+	id?: string;
 	bottom?: number;
 	context?: number;
 	dataset?: number;

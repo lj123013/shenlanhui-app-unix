@@ -174,18 +174,21 @@ declare type ClFormComponentPublicInstance = {
 	data: UTSJSONObject;
 	errors: Map<string, string>;
 	fields: Set<string>;
-	addField: (prop: string) => void;
+	addField: (prop: string, rules: ClFormRule[]) => void;
 	removeField: (prop: string) => void;
 	getValue: (prop: string) => any | null;
 	setError: (prop: string, error: string) => void;
 	getError: (prop: string) => string;
+	getErrors: () => Promise<ClFormValidateError[]>;
 	removeError: (prop: string) => void;
 	clearErrors: () => void;
 	getRule: (prop: string) => ClFormRule[];
+	setRule: (prop: string, rules: ClFormRule[]) => void;
+	removeRule: (prop: string) => void;
 	validateRule: (value: any | null, rule: ClFormRule) => string | null;
 	clearValidate: () => void;
 	validateField: (prop: string) => string | null;
-	validate: (callback: (valid: boolean, errors: ClFormValidateError[]) => void) => void;
+	validate: (callback: (valid: boolean, errors: ClFormValidateError[]) => void) => Promise<void>;
 };
 
 declare type ClFormItemComponentPublicInstance = {
