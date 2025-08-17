@@ -16,12 +16,14 @@
 				}"
 			>
 				<slot name="text" :item="item">
-					<cl-text
-						:pt="{
-							className: parseClass(['cl-noticebar__text', pt.text?.className])
-						}"
-						>{{ item }}</cl-text
-					>
+					<view class="cl-noticebar__text">
+						<cl-text
+							:pt="{
+								className: parseClass(['whitespace-nowrap', pt.text?.className])
+							}"
+							>{{ item }}</cl-text
+						>
+					</view>
 				</slot>
 			</view>
 		</view>
@@ -159,6 +161,7 @@ function refresh() {
 			// 获取容器高度和宽度
 			const boxHeight = (box as NodeInfo).height ?? 0;
 			const boxWidth = (box as NodeInfo).width ?? 0;
+			console.log(boxWidth);
 
 			// 查询文本节点尺寸
 			uni.createSelectorQuery()
@@ -228,6 +231,8 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .cl-noticebar {
+	flex-shrink: 1;
+
 	&__scroller {
 		@apply flex;
 		transition-property: transform;
@@ -246,10 +251,6 @@ onUnmounted(() => {
 
 	&__item {
 		@apply flex flex-row items-center;
-	}
-
-	&__text {
-		white-space: nowrap;
 	}
 }
 </style>
