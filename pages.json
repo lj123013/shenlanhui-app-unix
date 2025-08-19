@@ -405,6 +405,12 @@
 					"style": {
 						"navigationBarTitleText": "Cropper 图片裁剪"
 					}
+				},
+				{
+					"path": "other/canvas",
+					"style": {
+						"navigationBarTitleText": "Canvas 画布"
+					}
 				}
 			]
 		}
