@@ -1,7 +1,8 @@
-import type { Type } from "../../types";
+import type { PassThroughProps, Type } from "../../types";
 
 export type ClBadgePassThrough = {
 	className?: string;
+	text?: PassThroughProps;
 };
 
 export type ClBadgeProps = {

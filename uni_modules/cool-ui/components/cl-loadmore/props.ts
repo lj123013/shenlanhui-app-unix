@@ -13,4 +13,5 @@ export type ClLoadmoreProps = {
 	loadingText?: string;
 	finish?: boolean;
 	finishText?: string;
+	safeAreaBottom?: boolean;
 };

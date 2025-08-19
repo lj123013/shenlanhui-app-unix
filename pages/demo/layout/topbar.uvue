@@ -27,6 +27,22 @@
 				<cl-topbar :title="t('标题')" color="white" background-color="#409EFF"> </cl-topbar>
 			</demo-item>
 
+			<demo-item :label="t('使用 PT 自定义颜色')">
+				<cl-topbar
+					:title="t('标题')"
+					:pt="{
+						className: 'bg-surface-800',
+						title: {
+							className: 'text-white'
+						},
+						back: {
+							className: 'text-white'
+						}
+					}"
+				>
+				</cl-topbar>
+			</demo-item>
+
 			<demo-item :label="t('自定义返回图标')">
 				<cl-topbar
 					:title="t('标题')"

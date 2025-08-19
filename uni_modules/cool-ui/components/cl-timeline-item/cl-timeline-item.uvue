@@ -1,5 +1,5 @@
 <template>
-	<view class="cl-timeline-item" :class="[pt.classNames]">
+	<view class="cl-timeline-item" :class="[pt.className]">
 		<view class="cl-timeline-item__left">
 			<cl-icon
 				v-if="icon != ''"
@@ -99,7 +99,7 @@ const props = defineProps({
 });
 
 type PassThrough = {
-	classNames?: string;
+	className?: string;
 	icon?: PassThroughProps;
 	title?: PassThroughProps;
 	content?: PassThroughProps;

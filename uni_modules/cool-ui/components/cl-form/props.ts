@@ -14,4 +14,5 @@ export type ClFormProps = {
 	showAsterisk?: boolean;
 	showMessage?: boolean;
 	disabled?: boolean;
+	scrollToError?: boolean;
 };

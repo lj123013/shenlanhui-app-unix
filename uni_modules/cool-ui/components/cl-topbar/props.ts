@@ -2,7 +2,7 @@ import type { PassThroughProps } from "../../types";
 import type { ClIconProps } from "../cl-icon/props";
 
 export type ClTopbarPassThrough = {
-	classNames?: string;
+	className?: string;
 	title?: PassThroughProps;
 	back?: ClIconProps;
 };

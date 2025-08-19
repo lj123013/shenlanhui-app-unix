@@ -1,9 +1,10 @@
-import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps, Type, ClButtonType, Size, ClListViewItem, ClFormLabelPosition, ClFormRule, ClFormValidateError, ClInputType, ClListItem, Justify, ClConfirmAction, ClConfirmOptions, ClToastOptions, ClSelectOption, ClPopupDirection, ClQrcodeMode, ClSelectDateShortcut, ClTabsItem, ClTextType, ClUploadItem } from "./types";
+import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps, Type, ClButtonType, Size, ClListViewItem, ClFormLabelPosition, ClFormRule, ClFormValidateError, ClInputType, ClListItem, Justify, ClListViewGroup, ClListViewVirtualItem, ClListViewRefresherStatus, ClConfirmAction, ClConfirmOptions, ClToastOptions, ClSelectOption, ClPopupDirection, ClQrcodeMode, ClSelectDateShortcut, ClTabsItem, ClTextType, ClUploadItem } from "./types";
 import { type UiInstance } from "./hooks";
 import { type QrcodeOptions } from "./draw";
 
 import type { ClActionSheetProps, ClActionSheetPassThrough } from "./components/cl-action-sheet/props";
 import type { ClAvatarProps, ClAvatarPassThrough } from "./components/cl-avatar/props";
+import type { ClBackTopProps } from "./components/cl-back-top/props";
 import type { ClBadgeProps, ClBadgePassThrough } from "./components/cl-badge/props";
 import type { ClBannerProps, ClBannerPassThrough } from "./components/cl-banner/props";
 import type { ClButtonProps, ClButtonPassThrough } from "./components/cl-button/props";
@@ -33,7 +34,6 @@ import type { ClListViewProps, ClListViewPassThrough } from "./components/cl-lis
 import type { ClLoadingProps, ClLoadingPassThrough } from "./components/cl-loading/props";
 import type { ClLoadmoreProps, ClLoadmorePassThrough } from "./components/cl-loadmore/props";
 import type { ClNoticebarProps, ClNoticebarPassThrough } from "./components/cl-noticebar/props";
-import type { ClPageBackTopProps } from "./components/cl-page-back-top/props";
 import type { ClPageProps } from "./components/cl-page/props";
 import type { ClPageThemeProps } from "./components/cl-page-theme/props";
 import type { ClPageUiProps } from "./components/cl-page-ui/props";
@@ -74,6 +74,7 @@ declare module "vue" {
 	export interface GlobalComponents {
 		"cl-action-sheet": (typeof import('./components/cl-action-sheet/cl-action-sheet.uvue')['default']) & import('vue').DefineComponent<ClActionSheetProps>;
 		"cl-avatar": (typeof import('./components/cl-avatar/cl-avatar.uvue')['default']) & import('vue').DefineComponent<ClAvatarProps>;
+		"cl-back-top": (typeof import('./components/cl-back-top/cl-back-top.uvue')['default']) & import('vue').DefineComponent<ClBackTopProps>;
 		"cl-badge": (typeof import('./components/cl-badge/cl-badge.uvue')['default']) & import('vue').DefineComponent<ClBadgeProps>;
 		"cl-banner": (typeof import('./components/cl-banner/cl-banner.uvue')['default']) & import('vue').DefineComponent<ClBannerProps>;
 		"cl-button": (typeof import('./components/cl-button/cl-button.uvue')['default']) & import('vue').DefineComponent<ClButtonProps>;
@@ -103,7 +104,6 @@ declare module "vue" {
 		"cl-loading": (typeof import('./components/cl-loading/cl-loading.uvue')['default']) & import('vue').DefineComponent<ClLoadingProps>;
 		"cl-loadmore": (typeof import('./components/cl-loadmore/cl-loadmore.uvue')['default']) & import('vue').DefineComponent<ClLoadmoreProps>;
 		"cl-noticebar": (typeof import('./components/cl-noticebar/cl-noticebar.uvue')['default']) & import('vue').DefineComponent<ClNoticebarProps>;
-		"cl-page-back-top": (typeof import('./components/cl-page-back-top/cl-page-back-top.uvue')['default']) & import('vue').DefineComponent<ClPageBackTopProps>;
 		"cl-page": (typeof import('./components/cl-page/cl-page.uvue')['default']) & import('vue').DefineComponent<ClPageProps>;
 		"cl-page-theme": (typeof import('./components/cl-page-theme/cl-page-theme.uvue')['default']) & import('vue').DefineComponent<ClPageThemeProps>;
 		"cl-page-ui": (typeof import('./components/cl-page-ui/cl-page-ui.uvue')['default']) & import('vue').DefineComponent<ClPageUiProps>;

@@ -1,9 +1,13 @@
-import type { ClListViewItem, PassThroughProps } from "../../types";
+import type { ClListViewItem, ClListViewGroup, ClListViewVirtualItem, PassThroughProps, ClListViewRefresherStatus } from "../../types";
 
 export type ClListViewPassThrough = {
 	className?: string;
 	item?: PassThroughProps;
+	itemHover?: PassThroughProps;
+	list?: PassThroughProps;
 	indexBar?: PassThroughProps;
+	scroller?: PassThroughProps;
+	refresher?: PassThroughProps;
 };
 
 export type ClListViewProps = {
@@ -16,12 +20,14 @@ export type ClListViewProps = {
 	bottomHeight?: number;
 	bufferSize?: number;
 	virtual?: boolean;
-	// 下拉刷新相关属性
+	scrollIntoView?: string;
+	scrollWithAnimation?: boolean;
+	showScrollbar?: boolean;
 	refresherEnabled?: boolean;
 	refresherThreshold?: number;
-	refresherTriggered?: boolean;
 	refresherBackground?: string;
 	refresherDefaultText?: string;
 	refresherPullingText?: string;
 	refresherRefreshingText?: string;
+	showBackTop?: boolean;
 };

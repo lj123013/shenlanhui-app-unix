@@ -1,5 +1,5 @@
 <template>
-	<view class="cl-timeline" :class="[pt.classNames]">
+	<view class="cl-timeline" :class="[pt.className]">
 		<slot></slot>
 	</view>
 </template>
@@ -20,7 +20,7 @@ const props = defineProps({
 });
 
 type PassThrough = {
-	classNames?: string;
+	className?: string;
 };
 
 const pt = computed(() => parsePt<PassThrough>(props.pt));

@@ -1,5 +1,5 @@
 export type ClTimelinePassThrough = {
-	classNames?: string;
+	className?: string;
 };
 
 export type ClTimelineProps = {

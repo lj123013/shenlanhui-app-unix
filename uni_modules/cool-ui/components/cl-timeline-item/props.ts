@@ -1,7 +1,7 @@
 import type { PassThroughProps } from "../../types";
 
 export type ClTimelineItemPassThrough = {
-	classNames?: string;
+	className?: string;
 	icon?: PassThroughProps;
 	title?: PassThroughProps;
 	content?: PassThroughProps;

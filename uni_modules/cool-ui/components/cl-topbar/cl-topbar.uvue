@@ -7,16 +7,16 @@
 
 	<view
 		class="cl-topbar"
-		:class="[{ 'cl-topbar--fixed': fixed }, pt.classNames]"
-		:style="{
-			paddingTop: offsetTop,
-			backgroundColor
-		}"
+		:class="[{ 'cl-topbar--fixed': fixed }, pt.className]"
+		:style="topbarStyle"
 	>
 		<view class="cl-topbar__inner" :style="{ height }">
 			<view class="cl-topbar__prepend">
 				<view v-if="showBack" class="cl-topbar__icon" @tap="back()">
 					<cl-icon
+						:pt="{
+							className: pt.back?.className
+						}"
 						:name="backIcon"
 						:size="pt.back?.size ?? 48"
 						:color="pt.back?.color ?? color"
@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { computed, type PropType } from "vue";
-import { getConfig, parseClass, parsePt, parseRpx, router } from "@/cool";
+import { getConfig, getSafeAreaHeight, parseClass, parsePt, parseRpx, router } from "@/cool";
 import type { PassThroughProps } from "../../types";
 import type { ClIconProps } from "../cl-icon/props";
 
@@ -109,11 +109,9 @@ const props = defineProps({
 	}
 });
 
-const { safeAreaInsets } = uni.getWindowInfo();
-
 // 定义样式透传的类型接口
 type PassThrough = {
-	classNames?: string;
+	className?: string;
 	title?: PassThroughProps;
 	back?: ClIconProps;
 };
@@ -124,7 +122,7 @@ const pt = computed(() => parsePt<PassThrough>(props.pt));
 // 使用设备安全区域顶部边距
 const offsetTop = computed(() => {
 	if (props.safeAreaTop) {
-		return safeAreaInsets.top + "px";
+		return getSafeAreaHeight("top") + "px";
 	}
 
 	return "0px";
@@ -179,6 +177,20 @@ const color = computed(() => {
 
 	// 最后使用全局配置的导航栏文字样式
 	return getConfig("navTxtStyle");
+});
+
+// 导航栏样式
+const topbarStyle = computed(() => {
+	const style = {
+		paddingTop: offsetTop.value
+	};
+
+	// 不与 pt 样式中的背景色冲突
+	if (pt.value.className == null || !pt.value.className.includes("bg-")) {
+		style["backgroundColor"] = backgroundColor.value;
+	}
+
+	return style;
 });
 
 // 返回按钮点击事件

@@ -1,5 +1,5 @@
 export type ClWaterfallPassThrough = {
-	classNames?: string;
+	className?: string;
 };
 
 export type ClWaterfallProps = {

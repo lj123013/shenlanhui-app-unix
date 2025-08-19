@@ -1,4 +1,4 @@
-import type { ClFormLabelPosition, PassThroughProps } from "../../types";
+import type { ClFormLabelPosition, ClFormRule, PassThroughProps } from "../../types";
 
 export type ClFormItemPassThrough = {
 	className?: string;
@@ -13,6 +13,7 @@ export type ClFormItemProps = {
 	pt?: ClFormItemPassThrough;
 	label?: string;
 	prop?: string;
+	rules?: ClFormRule[];
 	labelPosition?: ClFormLabelPosition;
 	labelWidth?: string | any;
 	showAsterisk?: boolean | any;

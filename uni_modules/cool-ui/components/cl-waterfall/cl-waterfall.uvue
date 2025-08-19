@@ -1,7 +1,7 @@
 <template>
 	<view
 		class="cl-waterfall"
-		:class="[pt.classNames]"
+		:class="[pt.className]"
 		:style="{
 			padding: `0 ${props.gutter / 2}rpx`
 		}"
@@ -72,7 +72,7 @@ const props = defineProps({
 const { proxy } = getCurrentInstance()!;
 
 type PassThrough = {
-	classNames?: string;
+	className?: string;
 };
 
 const pt = computed(() => parsePt<PassThrough>(props.pt));

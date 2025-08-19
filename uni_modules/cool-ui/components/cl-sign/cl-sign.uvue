@@ -295,6 +295,7 @@ function initCanvas() {
 		success: (context: CanvasContext) => {
 			// 获取绘图上下文
 			drawCtx = context.getContext("2d")!;
+
 			// 设置宽高
 			drawCtx!.canvas.width = props.width * dpr;
 			drawCtx!.canvas.height = props.height * dpr;
