@@ -99,8 +99,8 @@ class Size {
 	 * @param size - 指定字号大小，为空则使用预设值
 	 */
 	getSize = (size: number | string | null): null | string => {
-		// 未设置全局字号时返回null
-		if (config.fontSize == null) {
+		// 如果未设置全局字号，且未指定size，直接返回null；否则返回对应rpx值
+		if (config.fontSize == null && size == null) {
 			return null;
 		}
 
