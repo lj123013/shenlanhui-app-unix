@@ -17,7 +17,7 @@
 	>
 		<cl-text
 			:pt="{
-				className: parseClass(['cl-badge__text', pt.text?.className])
+				className: parseClass(['cl-badge__text !text-white !text-sm', pt.text?.className])
 			}"
 			v-if="!dot"
 		>
@@ -101,10 +101,6 @@ const badgeStyle = computed(() => {
 .cl-badge {
 	@apply flex flex-row items-center justify-center;
 	@apply rounded-full;
-
-	&__text {
-		@apply text-white text-sm;
-	}
 
 	&--position {
 		@apply absolute z-10 right-0 top-0;
