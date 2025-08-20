@@ -428,6 +428,12 @@
 					"style": {
 						"navigationBarTitleText": "%商品分类%"
 					}
+				},
+				{
+					"path": "shop/shopping-cart",
+					"style": {
+						"navigationStyle": "custom"
+					}
 				}
 			]
 		}

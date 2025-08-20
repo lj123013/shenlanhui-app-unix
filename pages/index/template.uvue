@@ -55,7 +55,8 @@ const list = computed<Item[]>(() => [
 				label: t("商品列表、筛选")
 			},
 			{
-				label: t("购物车")
+				label: t("购物车"),
+				path: "/pages/template/shop/shopping-cart"
 			},
 			{
 				label: t("订单列表、详情")
