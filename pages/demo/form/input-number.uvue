@@ -28,6 +28,7 @@
 								})
 							}
 						}"
+						@change="onChange"
 					></cl-input-number>
 				</view>
 
@@ -78,11 +79,15 @@ import { t } from "@/locale";
 const num = ref(0);
 
 const isStep = ref(false);
-const isMin = ref(true);
+const isMin = ref(false);
 const isMax = ref(false);
 const isDigit = ref(false);
 const isInput = ref(true);
 const isDisabled = ref(false);
 const isSize = ref(false);
 const isCustom = ref(false);
+
+function onChange(value: number) {
+	console.log(value);
+}
 </script>

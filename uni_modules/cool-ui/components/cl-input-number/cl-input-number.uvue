@@ -226,13 +226,14 @@ function update() {
 			val = parseFloat(val.toFixed(2));
 		}
 
-		// 更新绑定值
-		if (val != value.value) {
-			value.value = val;
-		}
+		// 更新值，确保值是数字
+		value.value = val;
 
-		emit("update:modelValue", val);
-		emit("change", val);
+		// 如果值发生变化，则触发事件
+		if (val != props.modelValue) {
+			emit("update:modelValue", val);
+			emit("change", val);
+		}
 	});
 }
 
