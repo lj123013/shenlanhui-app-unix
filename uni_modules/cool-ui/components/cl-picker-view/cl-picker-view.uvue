@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { forInObject, isDark, parseClass, rpx2px } from "@/cool";
+import { forInObject, isDark, isEqual, parseClass, rpx2px } from "@/cool";
 import type { ClSelectOption } from "../../types";
 import { parseRpx } from "@/cool";
 import { computed } from "vue";
@@ -152,6 +152,11 @@ const indicatorStyle = computed(() => {
 function onChange(e: UniPickerViewChangeEvent) {
 	// 获取选择器当前选中值数组
 	const indexs = e.detail.value;
+
+	// 相同值不触发事件
+	if (isEqual(indexs, props.value)) {
+		return;
+	}
 
 	// 获取所有列的值
 	const values = props.columns.map((c, i) => {

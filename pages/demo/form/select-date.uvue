@@ -271,8 +271,8 @@ const shortcuts = ref<ClSelectDateShortcut[]>([
 	{
 		label: "本周",
 		value: [
-			dayUts().startOf("week").format("YYYY-MM-DD"),
-			dayUts().endOf("week").format("YYYY-MM-DD")
+			dayUts().startOf("week").add(1, "day").format("YYYY-MM-DD"),
+			dayUts().endOf("week").add(1, "day").format("YYYY-MM-DD")
 		]
 	},
 	{

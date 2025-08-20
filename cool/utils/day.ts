@@ -135,7 +135,9 @@ export class DayUts {
 				newDate.setMilliseconds(999);
 				break;
 			case "week":
-				newDate.setDate(newDate.getDate() + 7);
+				const day = newDate.getDay();
+				const diff = 6 - day;
+				newDate.setDate(newDate.getDate() + diff);
 				newDate.setHours(23);
 				newDate.setMinutes(59);
 				newDate.setSeconds(59);
