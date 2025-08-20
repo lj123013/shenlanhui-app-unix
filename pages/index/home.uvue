@@ -46,7 +46,7 @@
 
 		<view class="p-3">
 			<view class="group" v-for="item in data" :key="item.label">
-				<cl-text :pt="{ className: '!text-sm !text-surface-400 mb-2 ml-1' }">{{
+				<cl-text :pt="{ className: '!text-sm !text-surface-400 mb-2 ml-2' }">{{
 					item.label
 				}}</cl-text>
 
