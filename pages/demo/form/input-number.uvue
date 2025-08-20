@@ -78,7 +78,7 @@ import { t } from "@/locale";
 const num = ref(0);
 
 const isStep = ref(false);
-const isMin = ref(false);
+const isMin = ref(true);
 const isMax = ref(false);
 const isDigit = ref(false);
 const isInput = ref(true);

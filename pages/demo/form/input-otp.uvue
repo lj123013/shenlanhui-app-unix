@@ -2,11 +2,11 @@
 	<cl-page>
 		<view class="p-3">
 			<demo-item :label="t('基础用法')">
-				<cl-input-otp></cl-input-otp>
+				<cl-input-otp @done="toDone"></cl-input-otp>
 			</demo-item>
 
 			<demo-item :label="t('自动聚焦')">
-				<cl-input-otp autofocus></cl-input-otp>
+				<cl-input-otp autofocus @done="toDone"></cl-input-otp>
 			</demo-item>
 
 			<demo-item :label="t('自定义')">

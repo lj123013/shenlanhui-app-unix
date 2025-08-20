@@ -52,7 +52,7 @@
 						className: `text-center ${pt.value?.input?.className}`
 					}
 				}"
-				@change="onInput"
+				@blur="onBlur"
 			></cl-input>
 		</view>
 
@@ -269,14 +269,14 @@ function onMinus() {
 }
 
 /**
- * 输入框输入处理函数
+ * 输入框失去焦点处理函数
  * @param val 输入的字符串值
  */
-function onInput(val: string) {
-	if (val == "") {
+function onBlur(e: UniInputBlurEvent) {
+	if (e.detail.value == "") {
 		value.value = 0;
 	} else {
-		value.value = parseFloat(val);
+		value.value = parseFloat(e.detail.value);
 	}
 
 	update();

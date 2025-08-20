@@ -262,14 +262,14 @@ function showPassword() {
 }
 
 // 获取焦点事件
-function onFocus() {
+function onFocus(e: UniInputFocusEvent) {
 	isFocus.value = true;
-	emit("focus");
+	emit("focus", e);
 }
 
 // 失去焦点事件
-function onBlur() {
-	emit("blur");
+function onBlur(e: UniInputBlurEvent) {
+	emit("blur", e);
 
 	setTimeout(() => {
 		isFocus.value = false;
@@ -278,14 +278,16 @@ function onBlur() {
 
 // 输入事件
 function onInput(e: UniInputEvent) {
-	const val = e.detail.value;
-	value.value = val;
+	const v1 = e.detail.value;
+	const v2 = value.value;
 
-	emit("update:modelValue", val);
-	emit("input", val);
+	value.value = v1;
 
-	if (val != value.value) {
-		emit("change", val);
+	emit("update:modelValue", v1);
+	emit("input", e);
+
+	if (v1 != v2) {
+		emit("change", v1);
 	}
 }
 

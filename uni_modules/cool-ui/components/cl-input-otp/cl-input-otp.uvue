@@ -21,7 +21,7 @@
 				:maxlength="length"
 				:hold-keyboard="false"
 				:clearable="false"
-				@input="onInput"
+				@change="onChange"
 				@focus="animateCursor(true)"
 				@blur="animateCursor(true)"
 			></cl-input>
@@ -174,7 +174,7 @@ watch(
  * 输入事件处理
  * @param val 输入值
  */
-function onInput(val: string) {
+function onChange(val: string) {
 	// 更新绑定值
 	emit("update:modelValue", val);
 
