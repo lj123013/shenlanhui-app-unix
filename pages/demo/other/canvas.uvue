@@ -11,17 +11,18 @@
 
 		<cl-footer>
 			<!-- #ifdef H5 -->
-			<cl-button type="primary" @click="previewImage">预览图片</cl-button>
+			<cl-button type="primary" @click="previewImage">{{ t("预览图片") }}</cl-button>
 			<!-- #endif -->
 
 			<!-- #ifndef H5 -->
-			<cl-button type="primary" @click="saveImage">保存图片</cl-button>
+			<cl-button type="primary" @click="saveImage">{{ t("保存图片") }}</cl-button>
 			<!-- #endif -->
 		</cl-footer>
 	</cl-page>
 </template>
 
 <script lang="ts" setup>
+import { t } from "@/locale";
 import { Canvas } from "@/uni_modules/cool-canvas";
 import { useUi } from "@/uni_modules/cool-ui";
 import { ref } from "vue";
@@ -219,9 +220,9 @@ onReady(() => {
 	width.value = uni.getWindowInfo().windowWidth;
 
 	ui.showConfirm({
-		title: "提示",
-		message: "本页面内容由 canvas 渲染生成，是否立即预览图片效果？",
-		confirmText: "预览",
+		title: t("提示"),
+		message: t("本页面内容由 canvas 渲染生成，是否立即预览图片效果？"),
+		confirmText: t("预览"),
 		callback(action) {
 			if (action == "confirm") {
 				canvasRef.value!.previewImage();

@@ -300,7 +300,7 @@ function onCategoryChange(index: number) {
 
 	setTimeout(() => {
 		scrollLock.value = false;
-	}, 50);
+	}, 350);
 }
 
 // 滚动时，更新当前选中的分类

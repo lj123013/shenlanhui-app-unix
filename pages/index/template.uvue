@@ -14,11 +14,6 @@
 					:key="child.label"
 					:label="child.label"
 					:arrow="child.path != null"
-					:pt="{
-						label: {
-							className: '!w-auto'
-						}
-					}"
 					@tap="toPath(child)"
 				>
 				</cl-list-item>

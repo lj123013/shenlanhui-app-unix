@@ -41,7 +41,8 @@
 					v-if="label"
 					:pt="{
 						className: parseClass([
-							'cl-list-item__label w-24 whitespace-nowrap overflow-visible',
+							'cl-list-item__label whitespace-nowrap overflow-visible',
+							[justify == 'start', 'w-24'],
 							pt.label?.className
 						])
 					}"

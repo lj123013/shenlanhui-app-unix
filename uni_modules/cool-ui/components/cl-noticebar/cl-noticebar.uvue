@@ -161,7 +161,6 @@ function refresh() {
 			// 获取容器高度和宽度
 			const boxHeight = (box as NodeInfo).height ?? 0;
 			const boxWidth = (box as NodeInfo).width ?? 0;
-			console.log(boxWidth);
 
 			// 查询文本节点尺寸
 			uni.createSelectorQuery()

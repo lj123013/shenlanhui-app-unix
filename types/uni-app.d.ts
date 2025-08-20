@@ -73,6 +73,34 @@ declare interface UniInputEvent extends UniEvent {
 	};
 }
 
+declare interface UniInputFocusEvent extends UniEvent {
+	detail: {
+		value: string;
+		height: number;
+	};
+}
+
+declare interface UniTextareaFocusEvent extends UniEvent {
+	detail: {
+		value: string;
+		height: number;
+	};
+}
+
+declare interface UniInputBlurEvent extends UniEvent {
+	detail: {
+		value: string;
+		cursor: number;
+	};
+}
+
+declare interface UniTextareaBlurEvent extends UniEvent {
+	detail: {
+		value: string;
+		cursor: number;
+	};
+}
+
 declare interface UniInputConfirmEvent extends UniEvent {
 	type: "confirm";
 	detail: {
