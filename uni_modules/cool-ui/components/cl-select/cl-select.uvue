@@ -273,20 +273,23 @@ function setValue(val: Value) {
 
 	// 遍历所有列
 	for (let i = 0; i < props.columnCount; i++) {
+		// 获取当前列的选项数据
+		const column = columns.value[i];
+
 		// 判断是否超出选中值数组长度
 		if (i >= _value.length) {
 			// 添加默认索引0
 			_indexes.push(0);
 
 			// 添加默认值
-			if (!isNull(columns.value[i][0])) {
-				_value.push(columns.value[i][0].value);
+			if (!isNull(column) && column.length > 0 && !isNull(column[0])) {
+				_value.push(column[0].value);
 			}
 		}
 		// 在范围内
 		else {
 			// 查找匹配的选项索引
-			let index = columns.value[i].findIndex((e) => e.value == _value[i]);
+			let index = column.findIndex((e) => e.value == _value[i]);
 
 			// 索引无效时重置为0
 			if (index < 0) {
