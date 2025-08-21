@@ -14,6 +14,7 @@
 <script setup lang="ts">
 import { getSafeAreaHeight, getTabBarHeight, hasCustomTabBar, router } from "@/cool";
 import { computed, reactive } from "vue";
+import { clFooterOffset } from "../cl-footer/offset";
 
 defineOptions({
 	name: "cl-float-view"
@@ -109,6 +110,9 @@ const viewStyle = computed(() => {
 	// 标签页需要额外减去标签栏高度和安全区域
 	if (hasCustomTabBar()) {
 		bottomOffset += getTabBarHeight();
+	} else {
+		// 获取其他组件注入的底部偏移
+		bottomOffset += clFooterOffset.get();
 	}
 
 	// 设置水平位置

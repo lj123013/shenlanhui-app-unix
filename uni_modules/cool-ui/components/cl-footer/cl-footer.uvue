@@ -23,6 +23,7 @@
 import { getSafeAreaHeight, isDark, isHarmony, parsePt } from "@/cool";
 import { computed, getCurrentInstance, nextTick, onMounted, ref, watch } from "vue";
 import type { PassThroughProps } from "../../types";
+import { clFooterOffset } from "./offset";
 
 defineOptions({
 	name: "cl-footer"
@@ -77,6 +78,9 @@ function getHeight() {
 
 						// 如果内容高度大于最小高度，则显示
 						visible.value = h > props.minHeight + getSafeAreaHeight("bottom");
+
+						// 隔离高度
+						clFooterOffset.set(visible.value ? h : 0);
 					})
 					.exec();
 			},

@@ -15,6 +15,7 @@
 import { getTabBarHeight, hasCustomTabBar, scroller } from "@/cool";
 import { computed, onMounted, ref, watch, type PropType } from "vue";
 import { usePage } from "../../hooks";
+import { clFooterOffset } from "../cl-footer/offset";
 
 defineOptions({
 	name: "cl-back-top"
@@ -43,6 +44,8 @@ const bottom = computed(() => {
 
 	if (hasCustomTabBar()) {
 		h += getTabBarHeight();
+	} else {
+		h += clFooterOffset.get();
 	}
 
 	return h + "px";
