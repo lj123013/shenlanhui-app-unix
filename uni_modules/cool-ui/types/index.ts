@@ -172,3 +172,12 @@ export type ClFormValidateResult = {
 };
 
 export type ClFormLabelPosition = "left" | "top" | "right";
+
+export type ClFilterItemType = "switch" | "sort" | "select";
+
+export type ClFilterItem = {
+	label: string;
+	value: any;
+	type: ClFilterItemType;
+	options?: ClSelectOption[];
+};

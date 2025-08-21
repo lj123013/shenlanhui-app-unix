@@ -310,6 +310,11 @@ const data = computed<Item[]>(() => {
 					label: t("拖拽"),
 					icon: "drag-move-line",
 					path: "/pages/demo/data/draggable"
+				},
+				{
+					label: t("筛选栏"),
+					icon: "filter-line",
+					path: "/pages/demo/data/filter-bar"
 				}
 			]
 		},

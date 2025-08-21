@@ -311,6 +311,12 @@
 					}
 				},
 				{
+					"path": "data/filter-bar",
+					"style": {
+						"navigationBarTitleText": "FilterBar 筛选栏"
+					}
+				},
+				{
 					"path": "status/badge",
 					"style": {
 						"navigationBarTitleText": "Badge 角标"
