@@ -217,21 +217,74 @@ const columns = computed(() => {
 });
 
 // 显示文本
-const text = computed(() => {
+const text = ref("");
+
+// 更新文本内容
+function updateText() {
 	// 获取当前v-model绑定的时间字符串
 	const val = props.modelValue;
 
 	// 如果值为空或为null，返回空字符串
 	if (isEmpty(val) || isNull(val)) {
-		return "";
+		text.value = "";
+	} else {
+		// 拆分时间字符串，分别获取小时、分钟、秒
+		const [h, m, s] = val.split(":");
+
+		// 按照labelFormat格式化显示文本
+		text.value = labelFormat.value.replace("{H}", h).replace("{m}", m).replace("{s}", s);
+	}
+}
+
+// 设置值
+function setValue(val: string) {
+	// 声明选中值数组
+	let _value: string[];
+
+	// 判断输入值是否为空
+	if (isEmpty(val) || isNull(val)) {
+		// 设置空数组
+		_value = [];
+	} else {
+		// 按冒号分割字符串为数组
+		_value = val.split(":");
 	}
 
-	// 拆分时间字符串，分别获取小时、分钟、秒
-	const [h, m, s] = val.split(":");
+	// 声明索引数组
+	let _indexes = [] as number[];
 
-	// 按照labelFormat格式化显示文本
-	return labelFormat.value.replace("{H}", h).replace("{m}", m).replace("{s}", s);
-});
+	// 遍历时分秒三列
+	for (let i = 0; i < 3; i++) {
+		// 判断是否需要设置默认值
+		if (i >= _value.length) {
+			// 添加默认索引0
+			_indexes.push(0);
+
+			// 添加默认值
+			_value.push(list.value[i][0].value as string);
+		} else {
+			// 查找当前值对应的索引
+			let index = list.value[i].findIndex((e) => e.value == _value[i]);
+
+			// 索引无效时重置为0
+			if (index < 0) {
+				index = 0;
+			}
+
+			// 添加索引
+			_indexes.push(index);
+		}
+	}
+
+	// 更新选中值
+	value.value = _value;
+
+	// 更新索引值
+	indexes.value = _indexes;
+
+	// 更新文本内容
+	updateText();
+}
 
 // 选择器值改变事件
 function onChange(a: number[]) {
@@ -265,7 +318,13 @@ function open(cb: ((value: string) => void) | null = null) {
 		return;
 	}
 
+	// 显示选择器弹窗
 	visible.value = true;
+
+	// 设置值
+	setValue(props.modelValue);
+
+	// 保存回调函数
 	callback = cb;
 }
 
@@ -276,6 +335,7 @@ function close() {
 
 // 清空选择器
 function clear() {
+	text.value = "";
 	emit("update:modelValue", "");
 	emit("change", "");
 }
@@ -302,52 +362,18 @@ function confirm() {
 watch(
 	computed(() => props.modelValue),
 	(val: string) => {
-		// 声明选中值数组
-		let _value: string[];
-
-		// 判断输入值是否为空
-		if (isEmpty(val) || isNull(val)) {
-			// 设置空数组
-			_value = [];
-		} else {
-			// 按冒号分割字符串为数组
-			_value = val.split(":");
-		}
-
-		// 声明索引数组
-		let _indexes = [] as number[];
-
-		// 遍历时分秒三列
-		for (let i = 0; i < 3; i++) {
-			// 判断是否需要设置默认值
-			if (i >= _value.length) {
-				// 添加默认索引0
-				_indexes.push(0);
-
-				// 添加默认值
-				_value.push(list.value[i][0].value as string);
-			} else {
-				// 查找当前值对应的索引
-				let index = list.value[i].findIndex((e) => e.value == _value[i]);
-
-				// 索引无效时重置为0
-				if (index < 0) {
-					index = 0;
-				}
-
-				// 添加索引
-				_indexes.push(index);
-			}
-		}
-
-		// 更新选中值
-		value.value = _value;
-
-		// 更新索引值
-		indexes.value = _indexes;
+		setValue(val);
 	},
 	{
 		immediate: true
+	}
+);
+
+// 监听labelFormat和type变化
+watch(
+	computed(() => [props.labelFormat, props.type]),
+	() => {
+		updateText();
 	}
 );
 

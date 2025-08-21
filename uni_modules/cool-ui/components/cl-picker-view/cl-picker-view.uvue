@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { forInObject, isDark, isEqual, parseClass, rpx2px } from "@/cool";
+import { forInObject, isDark, isEqual, isNull, parseClass, rpx2px } from "@/cool";
 import type { ClSelectOption } from "../../types";
 import { parseRpx } from "@/cool";
 import { computed } from "vue";
@@ -153,6 +153,17 @@ function onChange(e: UniPickerViewChangeEvent) {
 	// 获取选择器当前选中值数组
 	const indexs = e.detail.value;
 
+	// 处理因快速滑动导致下级数据未及时渲染而产生的索引越界问题
+	indexs.forEach((v, i, arr) => {
+		if (i < props.columns.length) {
+			const n = props.columns[i].length;
+
+			if (v >= n) {
+				arr[i] = n - 1;
+			}
+		}
+	});
+
 	// 相同值不触发事件
 	if (isEqual(indexs, props.value)) {
 		return;
@@ -160,7 +171,7 @@ function onChange(e: UniPickerViewChangeEvent) {
 
 	// 获取所有列的值
 	const values = props.columns.map((c, i) => {
-		return c[indexs[i]].value;
+		return isNull(c[indexs[i]]) ? 0 : c[indexs[i]].value;
 	});
 
 	// 返回所有列的值或下标

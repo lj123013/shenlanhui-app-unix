@@ -608,11 +608,11 @@ function checkDate(values: number[]): number[] {
 	return [year, month, date, hour, minute, second];
 }
 
-// 显示文本，展示当前选中的日期字符串
+// 显示文本
 const text = ref("");
 
-// 获取显示文本，格式化为labelFormat格式
-function getText() {
+// 更新文本内容
+function updateText() {
 	if (props.rangeable) {
 		text.value = values.value
 			.map((e) => dayUts(e).format(labelFormat.value))
@@ -661,7 +661,7 @@ function setValue(val: string) {
 	} else {
 		// 否则解析为数组
 		value.value = checkDate(dayUts(val).toArray());
-		getText();
+		updateText();
 	}
 }
 
@@ -792,7 +792,7 @@ function confirm() {
 	}
 
 	// 更新显示文本
-	getText();
+	updateText();
 
 	// 关闭选择器
 	close();
@@ -824,7 +824,7 @@ watch(
 watch(
 	computed(() => props.labelFormat),
 	() => {
-		getText();
+		updateText();
 	}
 );
 
