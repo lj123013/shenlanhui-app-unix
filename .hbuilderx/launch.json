@@ -2,14 +2,6 @@
     "version" : "1.0",
     "configurations" : [
         {
-            "bundleId" : "com.zyys.zy",
-            "certificateFile" : "/Users/icssoa/Desktop/coding/cool/uniapp/unix/.cool/ios/证书.p12",
-            "certificateProfileFile" : "/Users/icssoa/Desktop/coding/cool/uniapp/unix/.cool/ios/zy.mobileprovision",
-            "playground" : "custom",
-            "runSignStatus" : 1,
-            "type" : "uni-app:app-ios"
-        },
-        {
             "playground" : "standard",
             "type" : "uni-app:app-ios_simulator"
         },

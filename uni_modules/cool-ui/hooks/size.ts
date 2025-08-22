@@ -1,6 +1,5 @@
 import { computed, type ComputedRef } from "vue";
 import { config } from "../config";
-import { px2rpx } from "@/cool";
 
 /**
  * 字号管理类

@@ -1,4 +1,4 @@
-import { config } from "../../config";
+import { config } from "@/config";
 import { service } from "../service";
 import { basename, extname, filename, parse, parseObject, pathJoin, uuid } from "../utils";
 import { useStore } from "../store";
