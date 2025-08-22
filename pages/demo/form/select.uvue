@@ -30,6 +30,25 @@
 				></cl-select>
 			</demo-item>
 
+			<demo-item :label="t('弹窗中使用')">
+				<cl-button @tap="visible3 = true">打开</cl-button>
+
+				<cl-popup v-model="visible3" direction="center" size="80%" :title="t('选择地区')">
+					<view class="p-3 pt-0">
+						<demo-tips>
+							H5 和 APP 端通过 teleport 实现弹窗内的选择器使用，小程序端则通过
+							root-portal 实现。
+						</demo-tips>
+
+						<cl-select
+							v-model="form.selected3"
+							:options="options3"
+							:column-count="3"
+						></cl-select>
+					</view>
+				</cl-popup>
+			</demo-item>
+
 			<demo-item :label="t('自定义')">
 				<cl-text
 					:pt="{
@@ -359,4 +378,6 @@ function openSelect2() {
 		});
 	});
 }
+
+const visible3 = ref(false);
 </script>

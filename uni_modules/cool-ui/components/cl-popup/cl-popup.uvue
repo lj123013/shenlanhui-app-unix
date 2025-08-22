@@ -1,106 +1,123 @@
 <template>
-	<view
-		class="cl-popup-wrapper"
-		:class="[`cl-popup-wrapper--${direction}`]"
-		:style="{
-			zIndex,
-			pointerEvents
-		}"
-		v-show="visible"
-		v-if="keepAlive ? true : visible"
-		@touchmove.stop.prevent
-	>
-		<view
-			class="cl-popup-mask"
-			:class="[
-				{
-					'is-open': status == 1,
-					'is-close': status == 2
-				},
-				pt.mask?.className
-			]"
-			@tap="maskClose"
-			v-if="showMask"
-		></view>
+	<!-- #ifdef H5 -->
+	<teleport to="#app">
+		<!-- #endif -->
 
-		<view
-			class="cl-popup"
-			:class="[
-				{
-					'is-open': status == 1,
-					'is-close': status == 2,
-					'is-custom-navbar': router.isCustomNavbarPage(),
-					'stop-transition': swipe.isTouch
-				},
-				pt.className
-			]"
-			:style="popupStyle"
-			@touchstart="onTouchStart"
-			@touchmove="onTouchMove"
-			@touchend="onTouchEnd"
-			@touchcancel="onTouchEnd"
-		>
+		<!-- #ifdef MP -->
+		<root-portal>
+			<!-- #endif -->
 			<view
-				class="cl-popup__inner"
-				:class="[
-					{
-						'is-dark': isDark
-					},
-					pt.inner?.className
-				]"
+				class="cl-popup-wrapper"
+				:class="[`cl-popup-wrapper--${direction}`]"
 				:style="{
-					paddingBottom
+					zIndex,
+					pointerEvents
 				}"
+				v-show="visible"
+				v-if="keepAlive ? true : visible"
+				@touchmove.stop.prevent
 			>
 				<view
-					class="cl-popup__draw"
+					class="cl-popup-mask"
 					:class="[
 						{
-							'!bg-surface-400': swipe.isMove
+							'is-open': status == 1,
+							'is-close': status == 2
 						},
-						pt.draw?.className
+						pt.mask?.className
 					]"
-					v-if="isSwipeClose"
+					@tap="maskClose"
+					v-if="showMask"
 				></view>
 
-				<view class="cl-popup__header" :class="[pt.header?.className]" v-if="showHeader">
-					<slot name="header">
-						<cl-text
-							:pt="{
-								className: `text-lg font-bold ${pt.header?.text?.className}`
-							}"
-							>{{ title }}</cl-text
-						>
-					</slot>
-
-					<cl-icon
-						name="close-circle-fill"
-						:size="40"
-						:pt="{
-							className:
-								'absolute right-[24rpx] !text-surface-400 dark:!text-surface-50'
-						}"
-						@tap="close"
-						@touchmove.stop
-						v-if="isOpen && showClose"
-					></cl-icon>
-				</view>
-
 				<view
-					class="cl-popup__container"
-					:class="[pt.container?.className]"
-					@touchmove.stop
+					class="cl-popup"
+					:class="[
+						{
+							'is-open': status == 1,
+							'is-close': status == 2,
+							'is-custom-navbar': router.isCustomNavbarPage(),
+							'stop-transition': swipe.isTouch
+						},
+						pt.className
+					]"
+					:style="popupStyle"
+					@touchstart="onTouchStart"
+					@touchmove="onTouchMove"
+					@touchend="onTouchEnd"
+					@touchcancel="onTouchEnd"
 				>
-					<slot></slot>
+					<view
+						class="cl-popup__inner"
+						:class="[
+							{
+								'is-dark': isDark
+							},
+							pt.inner?.className
+						]"
+						:style="{
+							paddingBottom
+						}"
+					>
+						<view
+							class="cl-popup__draw"
+							:class="[
+								{
+									'!bg-surface-400': swipe.isMove
+								},
+								pt.draw?.className
+							]"
+							v-if="isSwipeClose"
+						></view>
+
+						<view
+							class="cl-popup__header"
+							:class="[pt.header?.className]"
+							v-if="showHeader"
+						>
+							<slot name="header">
+								<cl-text
+									:pt="{
+										className: `text-lg font-bold ${pt.header?.text?.className}`
+									}"
+									>{{ title }}</cl-text
+								>
+							</slot>
+
+							<cl-icon
+								name="close-circle-fill"
+								:size="40"
+								:pt="{
+									className:
+										'absolute right-[24rpx] !text-surface-400 dark:!text-surface-50'
+								}"
+								@tap="close"
+								@touchmove.stop
+								v-if="isOpen && showClose"
+							></cl-icon>
+						</view>
+
+						<view
+							class="cl-popup__container"
+							:class="[pt.container?.className]"
+							@touchmove.stop
+						>
+							<slot></slot>
+						</view>
+					</view>
 				</view>
 			</view>
-		</view>
-	</view>
+			<!-- #ifdef MP -->
+		</root-portal>
+		<!-- #endif -->
+		<!-- #ifdef H5 -->
+	</teleport>
+	<!-- #endif -->
 </template>
 
 <script lang="ts" setup>
 import { computed, reactive, ref, watch, type PropType } from "vue";
-import { getSafeAreaHeight, getTabBarHeight, hasCustomTabBar, parsePt, parseRpx } from "@/cool";
+import { getSafeAreaHeight, parsePt, parseRpx } from "@/cool";
 import type { ClPopupDirection, PassThroughProps } from "../../types";
 import { isDark, router } from "@/cool";
 import { config } from "../../config";
@@ -543,7 +560,7 @@ defineExpose({
 		.cl-popup {
 			@apply left-0 top-0;
 
-			&__inner {
+			.cl-popup__inner {
 				@apply rounded-b-2xl;
 			}
 
@@ -554,7 +571,7 @@ defineExpose({
 	&--left,
 	&--right,
 	&--top {
-		.cl-popup {
+		& > .cl-popup {
 			// #ifdef H5
 			top: 44px;
 			// #endif
@@ -567,7 +584,7 @@ defineExpose({
 
 	&--left,
 	&--right {
-		.cl-popup {
+		& > .cl-popup {
 			// #ifdef H5
 			height: calc(100% - 44px) !important;
 			// #endif
@@ -575,11 +592,11 @@ defineExpose({
 	}
 
 	&--bottom {
-		.cl-popup {
+		& > .cl-popup {
 			@apply left-0 bottom-0;
 			transform: translateY(100%);
 
-			&__inner {
+			.cl-popup__inner {
 				@apply rounded-t-2xl;
 			}
 		}
@@ -588,11 +605,11 @@ defineExpose({
 	&--center {
 		@apply flex flex-col items-center justify-center;
 
-		.cl-popup {
+		& > .cl-popup {
 			transform: scale(1.3);
 			opacity: 0;
 
-			&__inner {
+			.cl-popup__inner {
 				@apply rounded-2xl;
 			}
 		}

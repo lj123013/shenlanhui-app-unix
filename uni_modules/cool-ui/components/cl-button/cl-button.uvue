@@ -548,7 +548,7 @@ function onTouchCancel() {
 }
 
 .cl-button {
-	@apply flex flex-row items-center justify-center relative;
+	@apply flex flex-row items-center justify-center relative box-border;
 	@apply border border-transparent border-solid;
 	overflow: visible;
 	transition-duration: 0.3s;
