@@ -38,13 +38,10 @@
 						<cl-text
 							:pt="{
 								className: parseClass([
-									'cl-tabs__item-label',
-									{
-										'is-active': item.isActive,
-										'is-disabled': item.disabled,
-										'is-dark': isDark,
-										'is-fill': fill
-									},
+									[
+										item.isActive && color == '' && unColor == '',
+										showSlider ? '!text-white' : '!text-primary-500'
+									],
 									pt.text?.className
 								])
 							}"
@@ -418,22 +415,6 @@ onMounted(() => {
 
 	&__item {
 		@apply flex flex-row items-center justify-center h-full relative z-10;
-
-		&-label {
-			@apply text-surface-700 text-md;
-
-			&.is-dark {
-				@apply text-white;
-			}
-
-			&.is-active {
-				@apply text-primary-500;
-			}
-
-			&.is-disabled {
-				@apply text-surface-400;
-			}
-		}
 	}
 
 	&__line {
@@ -456,12 +437,6 @@ onMounted(() => {
 
 	&--slider {
 		@apply bg-surface-50 rounded-lg;
-
-		.cl-tabs__item-label {
-			&.is-active {
-				@apply text-white;
-			}
-		}
 
 		&.is-dark {
 			@apply bg-surface-700;
