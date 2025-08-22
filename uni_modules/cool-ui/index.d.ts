@@ -1,4 +1,4 @@
-import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps, Type, ClButtonType, Size, ClListViewItem, ClFormLabelPosition, ClFormRule, ClFormValidateError, ClInputType, ClListItem, Justify, ClListViewGroup, ClListViewVirtualItem, ClListViewRefresherStatus, ClConfirmAction, ClConfirmOptions, ClToastOptions, ClSelectOption, ClPopupDirection, ClQrcodeMode, ClSelectDateShortcut, ClTabsItem, ClTextType, ClUploadItem } from "./types";
+import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps, Type, ClButtonType, Size, ClListViewItem, ClFilterItemType, ClSelectOption, ClFormLabelPosition, ClFormRule, ClFormValidateError, ClInputType, ClListItem, Justify, ClListViewGroup, ClListViewVirtualItem, ClListViewRefresherStatus, ClConfirmAction, ClConfirmOptions, ClToastOptions, ClPopupDirection, ClQrcodeMode, ClSelectDateShortcut, ClTabsItem, ClTextType, ClUploadItem } from "./types";
 import { type UiInstance } from "./hooks";
 import { type QrcodeOptions } from "./draw";
 
@@ -15,6 +15,8 @@ import type { ClCollapseProps, ClCollapsePassThrough } from "./components/cl-col
 import type { ClCountdownProps, ClCountdownPassThrough } from "./components/cl-countdown/props";
 import type { ClCropperProps, ClCropperPassThrough } from "./components/cl-cropper/props";
 import type { ClDraggableProps, ClDraggablePassThrough } from "./components/cl-draggable/props";
+import type { ClFilterBarProps } from "./components/cl-filter-bar/props";
+import type { ClFilterItemProps, ClFilterItemPassThrough } from "./components/cl-filter-item/props";
 import type { ClFloatViewProps } from "./components/cl-float-view/props";
 import type { ClFooterProps, ClFooterPassThrough } from "./components/cl-footer/props";
 import type { ClFormProps, ClFormPassThrough } from "./components/cl-form/props";
@@ -85,6 +87,8 @@ declare module "vue" {
 		"cl-countdown": (typeof import('./components/cl-countdown/cl-countdown.uvue')['default']) & import('vue').DefineComponent<ClCountdownProps>;
 		"cl-cropper": (typeof import('./components/cl-cropper/cl-cropper.uvue')['default']) & import('vue').DefineComponent<ClCropperProps>;
 		"cl-draggable": (typeof import('./components/cl-draggable/cl-draggable.uvue')['default']) & import('vue').DefineComponent<ClDraggableProps>;
+		"cl-filter-bar": (typeof import('./components/cl-filter-bar/cl-filter-bar.uvue')['default']) & import('vue').DefineComponent<ClFilterBarProps>;
+		"cl-filter-item": (typeof import('./components/cl-filter-item/cl-filter-item.uvue')['default']) & import('vue').DefineComponent<ClFilterItemProps>;
 		"cl-float-view": (typeof import('./components/cl-float-view/cl-float-view.uvue')['default']) & import('vue').DefineComponent<ClFloatViewProps>;
 		"cl-footer": (typeof import('./components/cl-footer/cl-footer.uvue')['default']) & import('vue').DefineComponent<ClFooterProps>;
 		"cl-form": (typeof import('./components/cl-form/cl-form.uvue')['default']) & import('vue').DefineComponent<ClFormProps>;
