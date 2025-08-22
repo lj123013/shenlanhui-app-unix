@@ -211,10 +211,15 @@ export function drawQrcode(context: CanvasContext, options: QrcodeOptions) {
 	): boolean {
 		if (logoSize <= 0) return false;
 
-		// 计算logo在矩阵中占用的点数
-		const logoPoints = Math.ceil(logoSize / px);
-		// 添加缓冲区，logo周围额外空出1个点的距离
-		const buffer = 1;
+		// 计算logo在矩阵中占用的点数，限制最大不超过二维码总宽度的25%
+		// 根据二维码标准，中心区域最多可以遮挡约30%的数据，但为了确保识别率，我们限制在20%
+		const maxLogoRatio = 0.2; // 20%的区域用于logo
+		const maxLogoPoints = Math.floor(width * maxLogoRatio);
+		const logoPoints = Math.min(Math.ceil(logoSize / px), maxLogoPoints);
+		
+		// 减少缓冲区，只保留必要的边距，避免过度遮挡数据
+		// 当logo较小时不需要缓冲区，当logo较大时才添加最小缓冲区
+		const buffer = logoPoints > width * 0.1 ? 1 : 0;
 		const totalLogoPoints = logoPoints + buffer * 2;
 
 		// 计算logo区域在矩阵中的中心位置
@@ -322,17 +327,17 @@ export function drawQrcode(context: CanvasContext, options: QrcodeOptions) {
 		img = new Image(options.logoSize, options.logoSize);
 		// #endif
 
-		// 设置图片源并在加载完成后绘制
-		img.src = options.logo;
+		// 设置图片加载完成后的回调，然后设置图片源
 		img.onload = () => {
 			drawLogo(ctx, options, img);
 		};
+		img.src = options.logo;
 	}
 }
 
 /**
  * 在二维码中心绘制Logo
- * 在二维码中心位置绘制Logo图片,并添加白色背景
+ * 在二维码中心位置绘制Logo图片,优化背景处理以减少对二维码数据的影响
  * @param ctx Canvas上下文
  * @param options 二维码配置
  * @param img Logo图片对象
@@ -345,15 +350,19 @@ function drawLogo(ctx: CanvasRenderingContext2D, options: QrcodeOptions, img: Im
 	const contentCenterX = options.padding + contentSize / 2;
 	const contentCenterY = options.padding + contentSize / 2;
 
-	// 添加额外的背景边距，与数据点避让区域保持一致
-	const backgroundPadding = 6; // 背景比logo大6px
+	// 优化背景处理：减少背景边距，最小化对二维码数据的影响
+	// 背景边距从6px减少到3px，降低对数据点的遮挡
+	const backgroundPadding = 3; // 背景比logo大3px
 	const backgroundSize = options.logoSize + backgroundPadding * 2;
 
-	// 绘制白色背景作为Logo的底色（稍大于logo）
-	ctx.fillStyle = "#fff";
+	// 绘制白色背景作为Logo的底色（适当大于logo以确保可读性）
+	ctx.fillStyle = options.background; // 使用二维码背景色而不是固定白色，保持一致性
 	const backgroundX = contentCenterX - backgroundSize / 2;
 	const backgroundY = contentCenterY - backgroundSize / 2;
-	ctx.fillRect(backgroundX, backgroundY, backgroundSize, backgroundSize);
+	
+	// 绘制圆角背景，让logo与二维码更好融合
+	const cornerRadius = Math.min(backgroundSize * 0.1, 6); // 背景圆角半径
+	drawRoundedRect(ctx, backgroundX, backgroundY, backgroundSize, backgroundSize, cornerRadius);
 
 	// 获取图片信息后绘制Logo
 	uni.getImageInfo({
@@ -363,14 +372,17 @@ function drawLogo(ctx: CanvasRenderingContext2D, options: QrcodeOptions, img: Im
 			const logoX = contentCenterX - options.logoSize / 2;
 			const logoY = contentCenterY - options.logoSize / 2;
 
-			// 绘制Logo图片,四周留出3px边距
+			// 绘制Logo图片，减少边距从3px到1.5px，让logo更大一些
+			const logoPadding = 1.5;
+			const actualLogoSize = options.logoSize - logoPadding * 2;
+			
 			// #ifdef APP-HARMONY
 			ctx.drawImage(
 				img,
-				logoX + 3,
-				logoY + 3,
-				options.logoSize - 6,
-				options.logoSize - 6,
+				logoX + logoPadding,
+				logoY + logoPadding,
+				actualLogoSize,
+				actualLogoSize,
 				0,
 				0,
 				imgInfo.width,
@@ -379,7 +391,7 @@ function drawLogo(ctx: CanvasRenderingContext2D, options: QrcodeOptions, img: Im
 			// #endif
 
 			// #ifndef APP-HARMONY
-			ctx.drawImage(img, logoX + 3, logoY + 3, options.logoSize - 6, options.logoSize - 6);
+			ctx.drawImage(img, logoX + logoPadding, logoY + logoPadding, actualLogoSize, actualLogoSize);
 			// #endif
 
 			ctx.restore(); // 恢复之前的绘图状态

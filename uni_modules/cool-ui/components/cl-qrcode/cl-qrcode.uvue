@@ -72,10 +72,10 @@ const props = defineProps({
 		type: String,
 		default: ""
 	},
-	// logo 大小，支持 px/rpx 单位
+	// logo 大小，支持 px/rpx 单位 (建议不超过二维码尺寸的20%以确保识别率)
 	logoSize: {
 		type: String,
-		default: "50px"
+		default: "40px"
 	},
 	// 二维码边距，单位 px
 	padding: {
