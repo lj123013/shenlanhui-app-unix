@@ -13,12 +13,15 @@
 				<cl-banner
 					:list="list"
 					:pt="{
-						className: 'mx-[-12rpx]',
+						className: 'mx-[-12rpx] !rounded-none',
 						item: {
 							className: parseClass(['scale-y-80 !px-[12rpx]'])
 						},
 						itemActive: {
 							className: parseClass(['!scale-y-100'])
+						},
+						image: {
+							className: '!rounded-none'
 						}
 					}"
 					:previous-margin="40"
