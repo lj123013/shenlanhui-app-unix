@@ -1,10 +1,10 @@
 <template>
 	<!-- #ifdef H5 -->
-	<teleport to="#app">
+	<teleport to="uni-app" :disabled="!enablePortal">
 		<!-- #endif -->
 
 		<!-- #ifdef MP -->
-		<root-portal>
+		<root-portal :enable="enablePortal">
 			<!-- #endif -->
 			<view
 				class="cl-popup-wrapper"
@@ -196,6 +196,11 @@ const props = defineProps({
 	keepAlive: {
 		type: Boolean,
 		default: false
+	},
+	// 是否启用 portal
+	enablePortal: {
+		type: Boolean,
+		default: true
 	}
 });
 
