@@ -1,4 +1,4 @@
-import { isNull, forInObject, isEmpty, storage } from "@/cool";
+import { isNull, forInObject, isEmpty, storage, router } from "@/cool";
 import { ref } from "vue";
 import { zhcn } from "./zh-cn";
 import { en } from "./en";
@@ -59,6 +59,13 @@ export const getLocale = (): string => {
 	return value;
 };
 
+// 追加数据
+export const appendLocale = (name: string, data: string[][]) => {
+	if (messages[name] != null) {
+		(messages[name] as string[][]).push(...data);
+	}
+};
+
 // 不带参数的翻译方法
 export const t = (name: string) => {
 	let data = messages[locale.value] as string[][] | null;
@@ -67,7 +74,13 @@ export const t = (name: string) => {
 		return name;
 	}
 
-	return data.find((e) => e[0] == name)?.[1] ?? name;
+	let text = data.find((e) => e[0] == name)?.[1];
+
+	if (text == null || text == "") {
+		text = name;
+	}
+
+	return text;
 };
 
 // 带参数的翻译方法
@@ -99,3 +112,16 @@ export const initLocale = () => {
 	});
 	// #endif
 };
+
+// 更新标题
+export function updateTitle() {
+	const style = router.route()?.style;
+
+	if (style != null) {
+		if (style.navigationBarTitleText != null) {
+			uni.setNavigationBarTitle({
+				title: t(style.navigationBarTitleText as string)
+			});
+		}
+	}
+}
