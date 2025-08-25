@@ -31,7 +31,7 @@
 			</demo-item>
 
 			<demo-item :label="t('弹窗中使用')">
-				<cl-button @tap="visible3 = true">打开</cl-button>
+				<cl-button @tap="visible3 = true">{{ t("打开") }}</cl-button>
 
 				<cl-popup v-model="visible3" direction="center" size="80%" :title="t('选择地区')">
 					<view class="p-3 pt-0">

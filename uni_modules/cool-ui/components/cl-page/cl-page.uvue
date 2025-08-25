@@ -22,12 +22,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { ref } from "vue";
 import Theme from "./theme.uvue";
 import Ui from "./ui.uvue";
-import { locale, t } from "@/locale";
 import { config } from "@/config";
-import { router, scroller } from "@/cool";
+import { scroller } from "@/cool";
 
 defineOptions({
 	name: "cl-page"
@@ -80,29 +79,6 @@ function scrollTo(top: number) {
 function scrollToTop() {
 	scrollTo(0 + Math.random() / 1000);
 }
-
-onMounted(() => {
-	// 标题多语言
-	// #ifdef H5 || APP
-	watch(
-		computed(() => locale.value),
-		() => {
-			const style = router.route()?.style;
-
-			if (style != null) {
-				if (style.navigationBarTitleText != null) {
-					uni.setNavigationBarTitle({
-						title: t((style.navigationBarTitleText as string).replaceAll("%", ""))
-					});
-				}
-			}
-		},
-		{
-			immediate: true
-		}
-	);
-	// #endif
-});
 
 defineExpose({
 	scrollTop,

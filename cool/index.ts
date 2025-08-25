@@ -1,6 +1,8 @@
+import { watch } from "vue";
 import { scroller } from "./scroller";
 import { initTheme, setH5 } from "./theme";
-import { initLocale } from "@/locale";
+import { initLocale, locale, updateTitle } from "@/locale";
+import "@/uni_modules/cool-ui";
 
 export function cool(app: VueApp) {
 	app.mixin({
@@ -8,11 +10,20 @@ export function cool(app: VueApp) {
 			scroller.emit(e.scrollTop);
 		},
 		onShow() {
+			// 更新标题
+			updateTitle();
+
 			// #ifdef H5
 			setTimeout(() => {
 				setH5();
 			}, 0);
 			// #endif
+		},
+		onLoad() {
+			// 监听语言切换，更新标题
+			watch(locale, () => {
+				updateTitle();
+			});
 		}
 	});
 
