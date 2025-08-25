@@ -423,6 +423,12 @@
 					"style": {
 						"navigationBarTitleText": "Canvas 画布"
 					}
+				},
+				{
+					"path": "other/svg",
+					"style": {
+						"navigationBarTitleText": "SVG 图标"
+					}
 				}
 			]
 		},

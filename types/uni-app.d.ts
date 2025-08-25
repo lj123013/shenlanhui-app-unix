@@ -456,3 +456,19 @@ declare interface CanvasContext extends HTMLCanvasElement {
 declare type Image = HTMLImageElement;
 
 declare type VueApp = any;
+
+declare interface UniNativeViewElement extends UniElement {
+	bindAndroidView(view: any): void;
+	bindIOSView(): void;
+	bindHarmonyFrameNode(node: FrameNode): void;
+	bindHarmonyWrappedBuilder<O extends Object>(
+		builder: WrappedBuilder<[options: O]>
+	): BuilderNode<[O]>;
+	getHarmonyFrameNode(): FrameNode | null;
+}
+
+declare type UniNativeViewInitEvent = {
+	detail: {
+		element: UniNativeViewElement;
+	};
+};

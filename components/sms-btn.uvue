@@ -10,8 +10,9 @@
 		ref="popupRef"
 		direction="center"
 		:title="t('获取短信验证码')"
+		:size="500"
 	>
-		<view class="p-3 pt-2 pb-4 w-[460rpx]" v-if="captcha.visible">
+		<view class="p-3 pt-2 pb-4 w-full" v-if="captcha.visible">
 			<view class="flex flex-row items-center">
 				<cl-input
 					v-model="code"
@@ -25,19 +26,17 @@
 					@confirm="send"
 				></cl-input>
 
-				<cl-image
-					:src="captcha.img"
-					:height="70"
-					:width="200"
-					:pt="{
-						className: '!rounded-lg',
-						error: {
-							className: parseClass([[isDark, '!bg-surface-800', '!bg-surface-200']]),
-							name: 'refresh-line'
-						}
-					}"
+				<view
+					class="dark:!bg-surface-800 bg-surface-100 rounded-lg h-[70rpx] w-[200rpx] flex flex-row justify-center items-center"
 					@tap="getCaptcha"
-				></cl-image>
+				>
+					<cl-loading v-if="captcha.loading" :size="28"></cl-loading>
+					<cl-svg
+						v-else
+						class="h-full w-full pointer-events-none"
+						:src="captcha.img"
+					></cl-svg>
+				</view>
 			</view>
 
 			<cl-button
@@ -59,7 +58,7 @@
 import { computed, reactive, ref } from "vue";
 import { useUi } from "@/uni_modules/cool-ui";
 import { $t, t } from "@/locale";
-import { isDark, parse, parseClass, service, type Response } from "@/cool";
+import { isDark, parse, service, type Response } from "@/cool";
 
 const props = defineProps({
 	phone: String
@@ -158,7 +157,9 @@ async function getCaptcha() {
 			});
 		});
 
-	captcha.loading = false;
+	setTimeout(() => {
+		captcha.loading = false;
+	}, 200);
 }
 
 // 发送短信
