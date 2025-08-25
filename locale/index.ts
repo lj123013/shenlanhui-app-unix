@@ -1,15 +1,31 @@
 import { isNull, forInObject, isEmpty, storage, router } from "@/cool";
 import { ref } from "vue";
-import { zhcn } from "./zh-cn";
-import { en } from "./en";
-import { es } from "./es";
+import zhcn from "./zh-cn.json";
+import zhtw from "./zh-tw.json";
+import en from "./en.json";
+import es from "./es.json";
+import ja from "./ja.json";
+import ko from "./ko.json";
+import fr from "./fr.json";
 import { config } from "@/config";
 
-// 语言包对象，包含所有支持的语言
+// 解析语言包
+function parse(val: string[][]) {
+	return val[0][0].split("<__&__>").map((e) => e.split("<__=__>"));
+}
+
+/**
+ * 语言包映射对象，包含所有已支持的语言。
+ * 如需新增语言，只需新建对应的 xx.json 文件并在此处引入即可。
+ */
 const messages = {
-	"zh-cn": zhcn,
-	en,
-	es
+	"zh-cn": parse(zhcn),
+	"zh-tw": parse(zhtw),
+	en: parse(en),
+	es: parse(es),
+	ja: parse(ja),
+	ko: parse(ko),
+	fr: parse(fr)
 };
 
 // 当前语言，默认中文
