@@ -396,7 +396,7 @@ defineExpose({
 		@apply bg-surface-800;
 
 		&.cl-input--border {
-			@apply border-surface-700;
+			@apply border-surface-600;
 
 			&.cl-input--focus {
 				@apply border-primary-500;

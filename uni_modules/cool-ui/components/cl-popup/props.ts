@@ -29,4 +29,5 @@ export type ClPopupProps = {
 	swipeCloseThreshold?: number;
 	pointerEvents?: "auto" | "none";
 	keepAlive?: boolean;
+	enablePortal?: boolean;
 };
