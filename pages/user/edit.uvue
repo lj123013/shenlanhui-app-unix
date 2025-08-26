@@ -77,7 +77,7 @@
 					@tap="open('birthday')"
 				>
 					<cl-text>{{ user.info.birthday }}</cl-text>
-					<cl-text color="info" v-if="user.info['birthday'] == null">{{
+					<cl-text color="info" v-if="user.info.birthday == null">{{
 						t("选择生日")
 					}}</cl-text>
 				</cl-list-item>
