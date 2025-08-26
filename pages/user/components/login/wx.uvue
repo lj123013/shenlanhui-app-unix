@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { service, upload, useStore, type Response } from "@/cool";
+import { parse, router, service, upload, useStore, useWx, type Response, type Token } from "@/cool";
 import { t } from "@/locale";
 import { useUi } from "@/uni_modules/cool-ui";
 import { reactive, ref } from "vue";
@@ -83,6 +83,7 @@ const emit = defineEmits(["success"]);
 
 const { user } = useStore();
 const ui = useUi();
+const wx = useWx();
 
 // 是否显示编辑
 const editVisible = ref(false);
@@ -142,6 +143,9 @@ async function editSave() {
 
 			// 关闭弹窗
 			editClose();
+
+			// 跳转首页
+			router.nextLogin();
 		})
 		.catch((err) => {
 			// 上传失败，提示错误信息
@@ -168,16 +172,38 @@ function onEditClose() {
 
 // 微信小程序登录
 async function miniLogin() {
-	await service.user.login
-		.mini({})
-		.then((res) => {
-			emit("success", res);
-		})
-		.catch((err) => {
-			ui.showToast({
-				message: (err as Response).message!
+	// #ifdef MP
+	ui.showLoading(t("登录中"));
+
+	await wx.miniLogin().then(async (data) => {
+		await service.user.login
+			.mini(data)
+			.then(async (res) => {
+				// 设置token
+				user.setToken(parse<Token>(res)!);
+
+				// 获取用户信息
+				await user.get();
+
+				// 是否首次注册，根据业务情况调整判断逻辑
+				if (user.info.nickName == "微信用户") {
+					// 打开编辑弹窗
+					editOpen();
+				} else {
+					// 跳转首页
+					router.nextLogin();
+				}
+			})
+			.catch((err) => {
+				ui.showToast({
+					message: (err as Response).message!
+				});
 			});
-		});
+	});
+
+	ui.hideLoading();
+
+	// #endif
 }
 
 // 微信APP登录
@@ -185,21 +211,13 @@ function appLogin() {}
 
 // 微信登录
 async function login() {
-	ui.showToast({
-		message: t("开发中，敬请期待")
-	});
-
-	return;
-
-	// #ifdef MP-WEIXIN
+	// #ifdef MP
 	miniLogin();
 	// #endif
 
 	// #ifdef APP
 	appLogin();
 	// #endif
-
-	emit("success");
 }
 
 defineExpose({

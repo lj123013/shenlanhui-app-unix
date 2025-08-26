@@ -21,7 +21,7 @@
 			<login-phone :form="form" @success="toLogin"></login-phone>
 
 			<!-- 微信登录 -->
-			<login-wx :ref="refs.set('loginWx')" @success="toLogin"></login-wx>
+			<login-wx :ref="refs.set('loginWx')"></login-wx>
 
 			<!-- 协议 -->
 			<view class="mt-6 flex flex-row flex-wrap items-center justify-center">
@@ -94,9 +94,9 @@ const form = reactive<LoginForm>({
 const agree = ref(false);
 
 // 登录成功
-function toLogin(res: any) {
+async function toLogin(res: any) {
 	user.setToken(parse<Token>(res)!);
-	router.home();
+	router.nextLogin();
 }
 
 // 跳转文档
