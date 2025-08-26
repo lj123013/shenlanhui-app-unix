@@ -52,6 +52,10 @@ const props = defineProps({
 
 // 颜色值
 const color = computed(() => {
+	if (props.color == "none") {
+		return "";
+	}
+
 	if (props.color != "") {
 		if (props.color == "primary") {
 			return getColor("primary-500");
