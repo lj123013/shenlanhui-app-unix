@@ -327,6 +327,10 @@ export type UserLogin = {
 
 export type DictKey = "brand" | "occupation";
 
+export type BaseInterface = { comm: BaseComm };
+
+export type DictInterface = { info: DictInfo };
+
 export type UserInterface = {
 	address: UserAddress;
 	comm: UserComm;
@@ -334,8 +338,4 @@ export type UserInterface = {
 	login: UserLogin;
 };
 
-export type DictInterface = { info: DictInfo };
-
-export type BaseInterface = { comm: BaseComm };
-
-export type Service = { user: UserInterface; dict: DictInterface; base: BaseInterface };
+export type Service = { base: BaseInterface; dict: DictInterface; user: UserInterface };

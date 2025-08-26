@@ -14,6 +14,9 @@ importers:
       vue:
         specifier: ^3.5.13
         version: 3.5.17
+      weixin-js-sdk:
+        specifier: ^1.6.5
+        version: 1.6.5
     devDependencies:
       '@babel/parser':
         specifier: ^7.27.5
@@ -25,8 +28,8 @@ importers:
         specifier: ^1.1.6
         version: 1.1.6
       '@cool-vue/vite-plugin':
-        specifier: ^8.2.7
-        version: 8.2.7
+        specifier: ^8.2.8
+        version: 8.2.8
       '@dcloudio/types':
         specifier: ^3.4.16
         version: 3.4.16
@@ -85,8 +88,8 @@ packages:
     resolution: {integrity: sha512-+5vEnjuMHhmOlAlozasGMaSkx2TZ5p45nOuLzx88ZVyqO0dMYXUJ5I8eVR5XV7huYCLCw7dYwfVg5B03ngsYwg==}
     hasBin: true
 
-  '@cool-vue/vite-plugin@8.2.7':
-    resolution: {integrity: sha512-Q3mKFvvVit7EYk+lmkUJnnUuDBlfsKL4i6oxyvAlbQDg1BQnANBI50V76ur6/BV9W8Onsk/GAo6a6yhFsThOqA==}
+  '@cool-vue/vite-plugin@8.2.8':
+    resolution: {integrity: sha512-MoiNQt/9Dr8e+P39LIaCEz2Y0OvdDauK9mGseyUCEmyKFRuF5KEmTlDzr2ChW/Z7IQMvXZnj47wiAmyuEzxwLA==}
 
   '@dcloudio/types@3.4.16':
     resolution: {integrity: sha512-gJIr1OWtePTDDdjtp8Kh72S/ZGLunoSfHiUvRtXhBmAFNkDWuAKFO90hv62k3GYN/st04xUBQNtBfvhu/YHjww==}
@@ -1319,6 +1322,9 @@ packages:
   wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
 
+  weixin-js-sdk@1.6.5:
+    resolution: {integrity: sha512-Gph1WAWB2YN/lMOFB/ymb+hbU/wYazzJgu6PMMktCy9cSCeW5wA6Zwt0dpahJbJ+RJEwtTv2x9iIu0U4enuVSQ==}
+
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
     engines: {node: '>= 8'}
@@ -1370,7 +1376,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@cool-vue/vite-plugin@8.2.7':
+  '@cool-vue/vite-plugin@8.2.8':
     dependencies:
       '@vue/compiler-sfc': 3.5.17
       axios: 1.10.0
@@ -2502,6 +2508,8 @@ snapshots:
   wcwidth@1.0.1:
     dependencies:
       defaults: 1.0.4
+
+  weixin-js-sdk@1.6.5: {}
 
   which@2.0.2:
     dependencies:
