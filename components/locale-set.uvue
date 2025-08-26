@@ -63,7 +63,7 @@ function open() {
 	}
 
 	selectRef.value!.open((value) => {
-		ui.showLoading("切换中");
+		ui.showLoading(t("切换中"));
 
 		setTimeout(() => {
 			setLocale(value as string);

@@ -78,7 +78,7 @@ export const getLocale = (): string => {
 // 追加数据
 export const appendLocale = (name: string, data: string[][]) => {
 	if (messages[name] != null) {
-		(messages[name] as string[][]).push(...data);
+		(messages[name] as string[][]).push(...parse(data));
 	}
 };
 
