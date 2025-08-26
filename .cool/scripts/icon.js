@@ -101,20 +101,20 @@ function ttfToBase64(ttfPath) {
 }
 
 // 生成TypeScript文件
-function generateTypeScript(folderName, iconData) {
-	const tsContent = `export const ${folderName} = {\n${iconData
+function generateTypeScript(originalFolderName, camelCaseName, iconData) {
+	const tsContent = `export const ${camelCaseName} = {\n${iconData
 		.map((item) => `\t"${item.name}": "${item.unicode}"`)
 		.join(",\n")}\n};\n`;
 
-	const outputPath = path.join("icons", folderName, "index.ts");
+	const outputPath = path.join("icons", originalFolderName, "index.ts");
 	fs.writeFileSync(outputPath, tsContent);
 }
 
 // 生成SCSS文件
-function generateSCSS(folderName, base64Data) {
-	const scssContent = `@font-face {\n\tfont-family: "${folderName}";\n\tsrc: url("data:font/ttf;base64,${base64Data}") format("woff");\n}\n`;
+function generateSCSS(originalFolderName, base64Data) {
+	const scssContent = `@font-face {\n\tfont-family: "${originalFolderName}";\n\tsrc: url("data:font/ttf;base64,${base64Data}") format("woff");\n}\n`;
 
-	const outputPath = path.join("icons", folderName, "index.scss");
+	const outputPath = path.join("icons", originalFolderName, "index.scss");
 	fs.writeFileSync(outputPath, scssContent);
 }
 
@@ -159,13 +159,19 @@ function processIconData(jsonPath) {
 	}
 }
 
+// 将连字符转换为驼峰命名的函数
+function toCamelCase(str) {
+	return str.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
+}
+
 // 处理单个zip文件
 function processZipFile(zipFileName) {
-	const folderName = path.basename(zipFileName, ".zip");
+	const originalFolderName = path.basename(zipFileName, ".zip");
+	const folderName = toCamelCase(originalFolderName); // 转换为驼峰命名用于变量名
 	const zipPath = path.join(".cool", "icons", zipFileName);
 
-	// 解压zip文件
-	const tempDir = extractZipFile(zipPath, folderName);
+	// 解压zip文件 (使用原始文件夹名称)
+	const tempDir = extractZipFile(zipPath, originalFolderName);
 	if (!tempDir) {
 		return null;
 	}
@@ -224,26 +230,29 @@ function processZipFile(zipFileName) {
 		return null;
 	}
 
-	// 为该文件夹创建icons子目录
-	ensureDistDir(folderName);
+	// 为该文件夹创建icons子目录 (使用原始文件夹名称)
+	ensureDistDir(originalFolderName);
 
-	// 生成TypeScript文件
-	generateTypeScript(folderName, iconData);
+	// 生成TypeScript文件 (使用驼峰命名作为变量名，原始名称作为路径)
+	generateTypeScript(originalFolderName, folderName, iconData);
 
-	// 生成SCSS文件
-	generateSCSS(folderName, base64Data);
+	// 生成SCSS文件 (使用原始名称作为路径和字体名称)
+	generateSCSS(originalFolderName, base64Data);
 
-	return folderName;
+	return { originalName: originalFolderName, camelName: folderName };
 }
 
 // 生成主index.ts文件
-function generateIndexTS(processedFolders) {
-	const imports = processedFolders
-		.map((folder) => `import { ${folder} } from "./${folder}";`)
+function generateIndexTS(actualFolders) {
+	const imports = actualFolders
+		.map((folder) => {
+			const camelName = toCamelCase(folder);
+			return `import { ${camelName} } from "./${folder}";`;
+		})
 		.join("\n");
 
-	const exports = `export const icons = {\n${processedFolders
-		.map((folder) => `\t${folder}`)
+	const exports = `export const icons = {\n${actualFolders
+		.map((folder) => `\t${toCamelCase(folder)}`)
 		.join(",\n")}\n};\n`;
 
 	const content = `${imports}\n\n${exports}`;
@@ -251,8 +260,8 @@ function generateIndexTS(processedFolders) {
 }
 
 // 生成主index.scss文件
-function generateIndexSCSS(processedFolders) {
-	const imports = processedFolders
+function generateIndexSCSS(actualFolders) {
+	const imports = actualFolders
 		.map((folder) => `@import "./${folder}/index.scss";`)
 		.join("\n");
 
@@ -306,8 +315,9 @@ function main() {
 		}
 
 		if (processedFolders.length > 0) {
+			const folderNames = processedFolders.map(f => typeof f === 'string' ? f : f.originalName);
 			console.log(
-				`\n🎉 成功处理了 ${processedFolders.length} 个字体包: ${processedFolders.join(", ")}`
+				`\n🎉 成功处理了 ${processedFolders.length} 个字体包: ${folderNames.join(", ")}`
 			);
 		}
 	} catch (error) {
