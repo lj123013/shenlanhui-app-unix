@@ -97,7 +97,9 @@ export class Form {
 	};
 
 	// 验证整个表单
-	validate = (callback: (valid: boolean, errors: ClFormValidateError[]) => void): void => {
+	validate = (
+		callback: (valid: boolean, errors: ClFormValidateError[]) => void | Promise<void>
+	): void => {
 		this.formRef.value!.validate(callback);
 	};
 

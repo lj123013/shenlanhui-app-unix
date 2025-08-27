@@ -211,8 +211,3 @@ defineExpose({
 	stop
 });
 </script>
-
-<style lang="scss" scoped>
-.cl-rolling-number {
-}
-</style>

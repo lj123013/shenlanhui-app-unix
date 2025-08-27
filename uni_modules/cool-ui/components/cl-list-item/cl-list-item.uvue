@@ -326,6 +326,7 @@ function onTouchEnd() {
  * 触摸取消事件处理
  */
 function onTouchCancel() {
+	onTouchEnd();
 	isHover.value = false; // 移除点击效果
 }
 
