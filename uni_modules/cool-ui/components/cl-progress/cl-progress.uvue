@@ -19,7 +19,7 @@
 
 		<slot name="text">
 			<cl-rolling-number
-				:model-value="value"
+				:value="value"
 				:pt="{
 					className: parseClass(['w-[100rpx] text-center', pt.text?.className])
 				}"
