@@ -1,4 +1,3 @@
-import type { Service } from "../types";
 import { isDev, ignoreTokens, config } from "@/config";
 import { locale, t } from "@/locale";
 import { isNull, isObject, parse, storage } from "../utils";
@@ -43,7 +42,7 @@ const isIgnoreToken = (url: string) => {
  * @param options 请求参数
  * @returns Promise<T>
  */
-export function request<T = any>(options: RequestOptions): Promise<T> {
+export function request(options: RequestOptions): Promise<any | null> {
 	let { url, method = "GET", data = {}, header = {}, timeout = 60000 } = options;
 
 	const { user } = useStore();
@@ -84,40 +83,43 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
 					// 401 无权限
 					if (res.statusCode == 401) {
 						user.logout();
-						return reject({ message: t("无权限") } as Response);
+						reject({ message: t("无权限") } as Response);
 					}
 
 					// 502 服务异常
-					if (res.statusCode == 502) {
-						return reject({
+					else if (res.statusCode == 502) {
+						reject({
 							message: t("服务异常")
 						} as Response);
 					}
 
 					// 404 未找到
-					if (res.statusCode == 404) {
+					else if (res.statusCode == 404) {
 						return reject({
 							message: `[404] ${url}`
 						} as Response);
 					}
 
 					// 200 正常响应
-					if (res.statusCode == 200) {
-						if (!isObject(res.data as any)) {
-							resolve(res.data as T);
-							return;
-						}
+					else if (res.statusCode == 200) {
+						if (res.data == null) {
+							resolve(null);
+						} else if (!isObject(res.data as any)) {
+							resolve(res.data);
+						} else {
+							// 解析响应数据
+							const { code, message, data } = parse<Response>(
+								res.data ?? { code: 0 }
+							)!;
 
-						// 解析响应数据
-						const { code, message, data } = parse<Response>(res.data ?? { code: 0 })!;
-
-						switch (code) {
-							case 1000:
-								resolve(data as T);
-								break;
-							default:
-								reject({ message, code } as Response);
-								break;
+							switch (code) {
+								case 1000:
+									resolve(data);
+									break;
+								default:
+									reject({ message, code } as Response);
+									break;
+							}
 						}
 					} else {
 						reject({ message: t("服务异常") } as Response);
@@ -178,6 +180,3 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
 		next();
 	});
 }
-
-// 服务对象（实际会在其他地方赋值）
-export const service = {} as Service;

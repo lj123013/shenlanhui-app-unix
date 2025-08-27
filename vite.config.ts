@@ -19,11 +19,7 @@ export default defineConfig({
 			proxy,
 			tailwind: {
 				enable: true
-			},
-			eps: {
-				dist: ".cool"
-			},
-			clean: true // 是否纯净版
+			}
 		})
 	],
 

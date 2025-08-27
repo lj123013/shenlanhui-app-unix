@@ -74,7 +74,17 @@
 </template>
 
 <script setup lang="ts">
-import { parse, router, service, upload, useStore, useWx, type Response, type Token } from "@/cool";
+import {
+	parse,
+	request,
+	router,
+	upload,
+	userInfo,
+	useStore,
+	useWx,
+	type Response,
+	type Token
+} from "@/cool";
 import { t } from "@/locale";
 import { useUi } from "@/uni_modules/cool-ui";
 import { reactive, ref } from "vue";
@@ -176,8 +186,11 @@ async function miniLogin() {
 	ui.showLoading(t("登录中"));
 
 	await wx.miniLogin().then(async (data) => {
-		await service.user.login
-			.mini(data)
+		await request({
+			url: "/app/user/login/mini",
+			method: "POST",
+			data
+		})
 			.then(async (res) => {
 				// 设置token
 				user.setToken(parse<Token>(res)!);
@@ -186,7 +199,7 @@ async function miniLogin() {
 				await user.get();
 
 				// 是否首次注册，根据业务情况调整判断逻辑
-				if (user.info.nickName == "微信用户") {
+				if (userInfo.value?.nickName == "微信用户") {
 					// 打开编辑弹窗
 					editOpen();
 				} else {
@@ -202,12 +215,13 @@ async function miniLogin() {
 	});
 
 	ui.hideLoading();
-
 	// #endif
 }
 
 // 微信APP登录
-function appLogin() {}
+function appLogin() {
+	// 开发中
+}
 
 // 微信登录
 async function login() {

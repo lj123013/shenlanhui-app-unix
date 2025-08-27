@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { assign, getUrlParam, storage } from "../utils";
-import { service } from "../service";
+import { request } from "../service";
 import { t } from "@/locale";
 import { config } from "@/config";
 
@@ -62,20 +62,28 @@ export class Wx {
 	 */
 	getMpConfig() {
 		if (this.isWxBrowser()) {
-			service.user.comm
-				.wxMpConfig({
+			request({
+				url: "/app/user/common/wxMpConfig",
+				method: "POST",
+				data: {
 					url: `${location.origin}${location.pathname}`
-				})
-				.then((res) => {
+				}
+			}).then((res) => {
+				if (res != null) {
 					wx.config({
 						debug: config.wx.debug,
-						jsApiList: ["chooseWXPay"],
-						...res
+						jsApiList: res.jsApiList || ["chooseWXPay"],
+						appId: res.appId,
+						timestamp: res.timestamp,
+						nonceStr: res.nonceStr,
+						signature: res.signature,
+						openTagList: res.openTagList
 					});
 
 					// 合并配置到mpConfig
 					assign(this.mpConfig, res);
-				});
+				}
+			});
 		}
 	}
 

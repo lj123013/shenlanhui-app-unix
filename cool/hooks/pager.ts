@@ -16,7 +16,7 @@ type PagerResponse = {
 };
 
 // 分页回调函数类型
-type PagerCallback = (params: UTSJSONObject) => Promise<UTSJSONObject>;
+type PagerCallback = (params: UTSJSONObject) => Promise<any>;
 
 // 分页器类
 export class Pager {
@@ -75,15 +75,15 @@ export class Pager {
 					this.size = pagination.size;
 					this.total = pagination.total;
 
-					// 更新加载完成状态
-					this.finished.value = this.list.value.length >= this.total;
-
 					// 更新列表数据
 					if (data.page == 1) {
 						this.list.value = [...list];
 					} else {
 						this.list.value.push(...list);
 					}
+
+					// 更新加载完成状态
+					this.finished.value = this.list.value.length >= this.total;
 
 					resolve(res);
 				})

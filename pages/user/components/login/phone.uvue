@@ -73,7 +73,7 @@ import { t } from "@/locale";
 import { computed, inject, ref, type PropType } from "vue";
 import type { LoginForm } from "../../types";
 import SmsBtn from "@/components/sms-btn.uvue";
-import { isDark, parseClass, service, useRefs, type Response } from "@/cool";
+import { isDark, parseClass, request, useRefs, type Response } from "@/cool";
 import { useUi } from "@/uni_modules/cool-ui";
 
 const props = defineProps({
@@ -112,11 +112,14 @@ async function toLogin() {
 
 	loading.value = true;
 
-	await service.user.login
-		.phone({
+	await request({
+		url: "/app/user/login/phone",
+		method: "POST",
+		data: {
 			phone,
 			smsCode
-		})
+		}
+	})
 		.then((res) => {
 			emit("success", res);
 		})

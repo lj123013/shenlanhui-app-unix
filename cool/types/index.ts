@@ -1,5 +1,3 @@
-export * from "@/.cool/eps";
-
 export type PushAnimationType =
 	| "auto"
 	| "none"

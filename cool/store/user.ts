@@ -1,28 +1,21 @@
-import { reactive } from "vue";
-import type { UserInfoEntity } from "../types";
-import { forInObject, isNull, parse, storage } from "../utils";
-import { service } from "../service";
+import { computed, ref } from "vue";
+import { forInObject, isNull, isObject, parse, storage } from "../utils";
 import { router } from "../router";
+import { request } from "../service";
+import type { UserInfo } from "@/types";
 
-/**
- * Token类型定义
- * @property token 访问token
- * @property expire token过期时间（秒）
- * @property refreshToken 刷新token
- * @property refreshExpire 刷新token过期时间（秒）
- */
 export type Token = {
-	token: string;
-	expire: number;
-	refreshToken: string;
-	refreshExpire: number;
+	token: string; // 访问token
+	expire: number; // token过期时间（秒）
+	refreshToken: string; // 刷新token
+	refreshExpire: number; // 刷新token过期时间（秒）
 };
 
 export class User {
 	/**
-	 * 用户信息，响应式对象，属性结构见UserInfoEntity
+	 * 用户信息，响应式对象
 	 */
-	info = reactive<UserInfoEntity>({});
+	info = ref<UserInfo | null>(null);
 
 	/**
 	 * 当前token，字符串或null
@@ -40,7 +33,9 @@ export class User {
 		this.token = token == "" ? null : token;
 
 		// 初始化用户信息
-		this.set(userInfo!);
+		if (userInfo != null && isObject(userInfo)) {
+			this.set(userInfo);
+		}
 	}
 
 	/**
@@ -49,10 +44,11 @@ export class User {
 	 */
 	async get() {
 		if (this.token != null) {
-			await service.user.info
-				.person({})
+			await request({
+				url: "/app/user/info/person"
+			})
 				.then((res) => {
-					if (!isNull(res)) {
+					if (res != null) {
 						this.set(res);
 					}
 				})
@@ -71,13 +67,8 @@ export class User {
 			return;
 		}
 
-		// 先清空原有信息
-		this.remove();
-
-		// 逐项赋值到响应式info对象
-		forInObject(data, (value, key) => {
-			this.info[key] = value;
-		});
+		// 设置
+		this.info.value = parse<UserInfo>(data)!;
 
 		// 持久化到本地存储
 		storage.set("userInfo", data, 0);
@@ -87,43 +78,38 @@ export class User {
 	 * 更新用户信息（本地与服务端同步）
 	 * @param data 新的用户信息
 	 */
-	async update(data: UserInfoEntity) {
-		if (isNull(data) || this.isNull()) {
+	async update(data: any) {
+		if (isNull(data) || isNull(this.info.value)) {
 			return;
 		}
 
-		const params = { ...data };
-
 		// 本地同步更新
-		forInObject(params as any, (value, key) => {
-			this.info[key] = value;
+		forInObject(data, (value, key) => {
+			this.info.value![key] = value;
 		});
 
 		// 同步到服务端
-		await service.user.info.updatePerson(params);
-	}
-
-	/**
-	 * 移除用户信息（仅清空本地响应式对象，不清除本地存储）
-	 */
-	remove() {
-		forInObject({ ...this.info } as any, (_, key) => {
-			// #ifdef APP
-			this.info[key] = null;
-			// #endif
-
-			// #ifndef APP
-			delete this.info[key];
-			// #endif
+		await request({
+			url: "/app/user/info/updatePerson",
+			method: "POST",
+			data
 		});
 	}
 
 	/**
-	 * 判断用户信息是否为空（以id字段为准）
+	 * 移除用户信息
+	 */
+	remove() {
+		this.info.value = null;
+		storage.remove("userInfo");
+	}
+
+	/**
+	 * 判断用户信息是否为空
 	 * @returns boolean
 	 */
 	isNull() {
-		return isNull(this.info["id"]);
+		return this.info.value == null;
 	}
 
 	/**
@@ -164,16 +150,21 @@ export class User {
 	 */
 	refreshToken(): Promise<string> {
 		return new Promise((resolve, reject) => {
-			service.user.login
-				.refreshToken({
+			request({
+				url: "/app/user/login/refreshToken",
+				method: "POST",
+				data: {
 					refreshToken: storage.get("refreshToken")
-				})
+				}
+			})
 				.then((res) => {
-					const token = parse<Token>(res);
+					if (res != null) {
+						const token = parse<Token>(res);
 
-					if (token != null) {
-						this.setToken(token);
-						resolve(token.token);
+						if (token != null) {
+							this.setToken(token);
+							resolve(token.token);
+						}
 					}
 				})
 				.catch((err) => {
@@ -189,9 +180,6 @@ export class User {
 export const user = new User();
 
 /**
- * 获取用户单例实例（组合式API用法）
- * @returns User
+ * 用户信息，响应式对象
  */
-export function useUser() {
-	return user;
-}
+export const userInfo = computed(() => user.info.value);

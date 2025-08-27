@@ -42,11 +42,11 @@ const data = ref<ClListViewItem[]>([]);
 onReady(() => {
 	ui.showLoading();
 
-	request<UTSJSONObject[]>({
+	request({
 		url: "https://unix.cool-js.com/data/pca_flat.json"
 	})
 		.then((res) => {
-			data.value = useListView(res);
+			data.value = useListView(res as UTSJSONObject[]);
 		})
 		.catch((err) => {
 			console.error(err);

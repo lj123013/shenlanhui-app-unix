@@ -12,7 +12,7 @@
 					<!-- #endif -->
 
 					<cl-avatar
-						:src="user.info.avatarUrl"
+						:src="userInfo?.avatarUrl"
 						:size="150"
 						:pt="{ className: '!rounded-3xl', icon: { size: 60 } }"
 						@tap="uploadAvatar"
@@ -35,10 +35,10 @@
 					justify="start"
 					@tap="router.to('/pages/user/edit-name')"
 				>
-					<cl-text>{{ user.info.nickName }}</cl-text>
+					<cl-text>{{ userInfo?.nickName }}</cl-text>
 				</cl-list-item>
 				<cl-list-item label="手机号" hoverable justify="start">
-					<cl-text>{{ user.info.phone }}</cl-text>
+					<cl-text>{{ userInfo?.phone }}</cl-text>
 				</cl-list-item>
 			</cl-list>
 
@@ -50,10 +50,10 @@
 					justify="start"
 					@tap="router.to('/pages/user/edit-description')"
 				>
-					<cl-text color="info" v-if="user.info.description == null">{{
+					<cl-text color="info" v-if="userInfo?.description == null">{{
 						t("介绍一下自己")
 					}}</cl-text>
-					<cl-text ellipsis v-else>{{ user.info.description }}</cl-text>
+					<cl-text ellipsis v-else>{{ userInfo?.description }}</cl-text>
 				</cl-list-item>
 			</cl-list>
 
@@ -76,8 +76,8 @@
 					justify="start"
 					@tap="open('birthday')"
 				>
-					<cl-text>{{ user.info.birthday }}</cl-text>
-					<cl-text color="info" v-if="user.info.birthday == null">{{
+					<cl-text>{{ userInfo?.birthday }}</cl-text>
+					<cl-text color="info" v-if="userInfo?.birthday == null">{{
 						t("选择生日")
 					}}</cl-text>
 				</cl-list-item>
@@ -98,7 +98,7 @@
 
 			<cl-select
 				:title="t('选择性别')"
-				:model-value="user.info.gender"
+				:model-value="userInfo?.gender"
 				:ref="refs.set('gender')"
 				:options="genderOptions"
 				:show-trigger="false"
@@ -107,7 +107,7 @@
 
 			<cl-select-date
 				:title="t('选择生日')"
-				:model-value="user.info.birthday"
+				:model-value="userInfo?.birthday"
 				:ref="refs.set('birthday')"
 				type="date"
 				:end="today"
@@ -127,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import { dayUts, router, upload, useRefs, useStore, type Response } from "@/cool";
+import { dayUts, router, upload, useRefs, useStore, type Response, userInfo } from "@/cool";
 import { t } from "@/locale";
 import { useCascader, useUi, type ClSelectOption } from "@/uni_modules/cool-ui";
 import { computed, ref } from "vue";
@@ -158,7 +158,7 @@ const genderOptions = ref<ClSelectOption[]>([
 
 // 性别文本
 const genderText = computed(() => {
-	return [t("保密"), t("男"), t("女")][user.info.gender!];
+	return [t("保密"), t("男"), t("女")][userInfo.value?.gender!];
 });
 
 // 性别改变
@@ -188,7 +188,7 @@ const regionOptions = useCascader(pca);
 
 // 地区文本
 const regionText = computed(() => {
-	return [user.info.province, user.info.city, user.info.district]
+	return [userInfo.value?.province, userInfo.value?.city, userInfo.value?.district]
 		.filter((e) => e != null)
 		.join(" - ");
 });

@@ -22,7 +22,7 @@
 			<view class="flex flex-col justify-center items-center pt-6 pb-3">
 				<view class="relative overflow-visible" @tap="toEdit">
 					<cl-avatar
-						:src="user.info.avatarUrl"
+						:src="userInfo?.avatarUrl"
 						:size="150"
 						:pt="{ className: '!rounded-3xl', icon: { size: 60 } }"
 					>
@@ -38,9 +38,9 @@
 
 				<view class="flex-1 flex flex-col justify-center items-center w-full" @tap="toEdit">
 					<cl-text :pt="{ className: '!text-xl mt-5 mb-1 font-bold' }">{{
-						user.info.nickName ?? t("未登录")
+						userInfo?.nickName ?? t("未登录")
 					}}</cl-text>
-					<cl-text color="info" v-if="!user.isNull()">{{ user.info.phone }}</cl-text>
+					<cl-text color="info" v-if="!user.isNull()">{{ userInfo?.phone }}</cl-text>
 				</view>
 			</view>
 
@@ -242,7 +242,7 @@
 </template>
 
 <script setup lang="ts">
-import { router, useStore } from "@/cool";
+import { router, userInfo, useStore } from "@/cool";
 import { t } from "@/locale";
 import { useUi } from "@/uni_modules/cool-ui";
 import Tabbar from "@/components/tabbar.uvue";

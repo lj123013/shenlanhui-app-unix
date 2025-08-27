@@ -1,6 +1,5 @@
 import { reactive } from "vue";
-import { service } from "../service";
-import type { DictKey } from "../types";
+import { request } from "../service";
 import { forInObject, isNull, parse } from "../utils";
 
 // 字典项类型定义
@@ -40,7 +39,7 @@ export class Dict {
 	 * @param key 字典key
 	 * @returns 字典项数组
 	 */
-	get(key: DictKey): DictItem[] {
+	get(key: string): DictItem[] {
 		return this.find(key)?.list ?? new Array<DictItem>();
 	}
 
@@ -50,7 +49,7 @@ export class Dict {
 	 * @param value 字典项值
 	 * @returns 字典项或null
 	 */
-	getItem(key: DictKey, value: any): DictItem | null {
+	getItem(key: string, value: any): DictItem | null {
 		const item = this.get(key).find((e) => e.value == value);
 
 		if (isNull(item)) {
@@ -66,7 +65,7 @@ export class Dict {
 	 * @param values 字典项值数组
 	 * @returns 字典项数组
 	 */
-	getItems(key: DictKey, values: any[]): DictItem[] {
+	getItems(key: string, values: any[]): DictItem[] {
 		return values.map((e) => this.getItem(key, e)).filter((e) => !isNull(e)) as DictItem[];
 	}
 
@@ -76,7 +75,7 @@ export class Dict {
 	 * @param value 字典项值
 	 * @returns 字典项label字符串
 	 */
-	getItemLabel(key: DictKey, value: any): string {
+	getItemLabel(key: string, value: any): string {
 		const item = this.getItem(key, value);
 
 		if (isNull(item) || isNull(item?.label)) {
@@ -90,8 +89,16 @@ export class Dict {
 	 * 刷新字典数据
 	 * @param types 可选，指定需要刷新的字典key数组
 	 */
-	async refresh(types?: DictKey[] | null): Promise<void> {
-		const res = await service.dict.info.data({ types });
+	async refresh(types?: string[] | null): Promise<void> {
+		const res = await request({
+			url: "/app/dict/info/data",
+			method: "POST",
+			data: { types }
+		});
+
+		if (res == null) {
+			return;
+		}
 
 		// 遍历返回的字典数据
 		forInObject(res, (arr, key) => {
@@ -127,11 +134,3 @@ export class Dict {
 
 // 单例字典对象
 export const dict = new Dict();
-
-/**
- * 获取字典实例
- * @returns Dict实例
- */
-export function useDict() {
-	return dict;
-}

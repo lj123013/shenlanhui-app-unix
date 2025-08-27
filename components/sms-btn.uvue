@@ -59,7 +59,7 @@
 import { computed, reactive, ref } from "vue";
 import { useUi } from "@/uni_modules/cool-ui";
 import { $t, t } from "@/locale";
-import { isDark, parse, service, type Response } from "@/cool";
+import { isDark, parse, request, type Response } from "@/cool";
 
 const props = defineProps({
 	phone: String
@@ -144,18 +144,23 @@ async function getCaptcha() {
 		data: string;
 	};
 
-	await service.user.login
-		.captcha({
+	await request({
+		url: "/app/user/login/captcha",
+		method: "POST",
+		data: {
 			color: isDark.value ? "#ffffff" : "#2c3142",
 			phone: props.phone,
 			width: 200,
 			height: 70
-		})
+		}
+	})
 		.then((res) => {
-			const data = parse<Res>(res)!;
+			if (res != null) {
+				const data = parse<Res>(res)!;
 
-			captchaId.value = data.captchaId;
-			captcha.img = data.data;
+				captchaId.value = data.captchaId;
+				captcha.img = data.data;
+			}
 		})
 		.catch((err) => {
 			ui.showToast({
@@ -173,12 +178,15 @@ async function send() {
 	if (code.value != "") {
 		captcha.sending = true;
 
-		await service.user.login
-			.smsCode({
+		await request({
+			url: "/app/user/login/smsCode",
+			method: "POST",
+			data: {
 				phone: props.phone,
 				code: code.value,
 				captchaId: captchaId.value
-			})
+			}
+		})
 			.then(() => {
 				ui.showToast({
 					message: t("短信已发送，请查收")

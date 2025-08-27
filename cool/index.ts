@@ -42,3 +42,4 @@ export * from "./store";
 export * from "./theme";
 export * from "./upload";
 export * from "./utils";
+export * from "./types";

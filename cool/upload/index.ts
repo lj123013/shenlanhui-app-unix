@@ -1,5 +1,5 @@
 import { config } from "@/config";
-import { service } from "../service";
+import { request } from "../service";
 import { basename, extname, filename, parse, parseObject, pathJoin, uuid } from "../utils";
 import { useStore } from "../store";
 
@@ -57,8 +57,11 @@ export type LocalUploadResponse = {
 
 // 获取上传模式（本地/云端及云类型）
 async function getUploadMode(): Promise<UploadMode> {
-	const res = await service.base.comm.uploadMode({});
-	return parse<UploadMode>(res)!;
+	const res = await request({
+		url: "/app/base/comm/uploadMode"
+	});
+
+	return parse<UploadMode>(res!)!;
 }
 
 /**
@@ -199,10 +202,13 @@ export async function uploadFile(
 			}
 
 			// 获取云上传参数
-			service.base.comm
-				.upload(data)
+			request({
+				url: "/app/base/comm/upload",
+				method: "POST",
+				data
+			})
 				.then((res) => {
-					const d = parse<CloudUploadResponse>(res)!;
+					const d = parse<CloudUploadResponse>(res!)!;
 
 					switch (type) {
 						// 腾讯云COS

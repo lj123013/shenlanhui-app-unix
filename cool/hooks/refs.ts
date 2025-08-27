@@ -2,10 +2,12 @@ import { reactive } from "vue";
 import { isNull } from "../utils";
 
 // #ifdef APP
+// @ts-ignore
 type Instance = ComponentPublicInstance | null;
 // #endif
 
 // #ifndef APP
+// @ts-ignore
 type Instance = any;
 // #endif
 
