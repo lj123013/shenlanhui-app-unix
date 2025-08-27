@@ -60,6 +60,10 @@ const list = computed<Item[]>(() => [
 			},
 			{
 				label: t("订单列表、详情")
+			},
+			{
+				label: t("收货地址"),
+				path: "/pages/template/shop/address"
 			}
 		]
 	},

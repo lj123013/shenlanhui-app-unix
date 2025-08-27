@@ -446,6 +446,19 @@
 					"style": {
 						"navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "shop/address",
+					"style": {
+						"navigationBarTitleText": "收货地址",
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "shop/address-edit",
+					"style": {
+						"navigationBarTitleText": "编辑地址"
+					}
 				}
 			]
 		}
