@@ -93,7 +93,17 @@
 
 <script setup lang="ts">
 import { ref, computed, type PropType, nextTick } from "vue";
-import { isDark, isEmpty, isMp, isNull, parseClass, parsePt, parseRpx, rpx2px } from "@/cool";
+import {
+	isDark,
+	isEmpty,
+	isHarmony,
+	isMp,
+	isNull,
+	parseClass,
+	parsePt,
+	parseRpx,
+	rpx2px
+} from "@/cool";
 import type { ClSelectTriggerPassThrough } from "../cl-select-trigger/props";
 import type { ClPopupPassThrough } from "../cl-popup/props";
 import { t } from "@/locale";

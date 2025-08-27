@@ -24,6 +24,7 @@
 			@refresherabort="onRefresherAbort"
 		>
 			<!-- 下拉刷新 -->
+			<!-- #ifndef APP-HARMONY -->
 			<view
 				slot="refresher"
 				class="cl-list-view__refresher"
@@ -49,6 +50,7 @@
 					<cl-text> {{ refresherText }} </cl-text>
 				</slot>
 			</view>
+			<!-- #endif -->
 
 			<!-- 列表 -->
 			<view
