@@ -429,6 +429,12 @@
 					"style": {
 						"navigationBarTitleText": "SVG 图标"
 					}
+				},
+				{
+					"path": "other/slide-verify",
+					"style": {
+						"navigationBarTitleText": "SlideVerify 滑动验证"
+					}
 				}
 			]
 		},

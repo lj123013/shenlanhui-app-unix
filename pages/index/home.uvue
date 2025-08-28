@@ -438,6 +438,11 @@ const data = computed<Item[]>(() => {
 					label: "SVG",
 					icon: "bubble-chart-line",
 					path: "/pages/demo/other/svg"
+				},
+				{
+					label: "SlideVerify",
+					icon: "contract-right-fill",
+					path: "/pages/demo/other/slide-verify"
 				}
 			]
 		}

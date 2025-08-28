@@ -55,6 +55,7 @@ import type { ClSelectTimeProps, ClSelectTimePassThrough } from "./components/cl
 import type { ClSelectTriggerProps, ClSelectTriggerPassThrough } from "./components/cl-select-trigger/props";
 import type { ClSignProps, ClSignPassThrough } from "./components/cl-sign/props";
 import type { ClSkeletonProps, ClSkeletonPassThrough } from "./components/cl-skeleton/props";
+import type { ClSlideVerifyProps, ClSlideVerifyPassThrough } from "./components/cl-slide-verify/props";
 import type { ClSliderProps, ClSliderPassThrough } from "./components/cl-slider/props";
 import type { ClStickyProps } from "./components/cl-sticky/props";
 import type { ClSwitchProps, ClSwitchPassThrough } from "./components/cl-switch/props";
@@ -127,6 +128,7 @@ declare module "vue" {
 		"cl-select-trigger": (typeof import('./components/cl-select-trigger/cl-select-trigger.uvue')['default']) & import('vue').DefineComponent<ClSelectTriggerProps>;
 		"cl-sign": (typeof import('./components/cl-sign/cl-sign.uvue')['default']) & import('vue').DefineComponent<ClSignProps>;
 		"cl-skeleton": (typeof import('./components/cl-skeleton/cl-skeleton.uvue')['default']) & import('vue').DefineComponent<ClSkeletonProps>;
+		"cl-slide-verify": (typeof import('./components/cl-slide-verify/cl-slide-verify.uvue')['default']) & import('vue').DefineComponent<ClSlideVerifyProps>;
 		"cl-slider": (typeof import('./components/cl-slider/cl-slider.uvue')['default']) & import('vue').DefineComponent<ClSliderProps>;
 		"cl-sticky": (typeof import('./components/cl-sticky/cl-sticky.uvue')['default']) & import('vue').DefineComponent<ClStickyProps>;
 		"cl-switch": (typeof import('./components/cl-switch/cl-switch.uvue')['default']) & import('vue').DefineComponent<ClSwitchProps>;
