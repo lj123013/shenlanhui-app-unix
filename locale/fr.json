@@ -1,35 +1,55 @@
 [
   [
+    "Popup 弹窗",
+    "Popup fenêtre pop - up"
+  ],
+  [
+    "Confirm 确认框",
+    "Confirm boîte de confirmation"
+  ],
+  [
+    "Toast 提示框",
+    "Toast message d'information"
+  ],
+  [
+    "QRCode 二维码",
+    "QRCode code QR"
+  ],
+  [
     "Sign 签名",
-    "Signature"
+    "Sign signature"
   ],
   [
     "DayUts 日期",
-    "Date"
+    "DayUts date"
   ],
   [
     "Vibrate 震动",
-    "Vibration"
+    "Vibrate vibration"
   ],
   [
     "Cropper 图片裁剪",
-    "Redimensionnement d'image"
+    "Cropper découpe d'image"
   ],
   [
     "Canvas 画布",
-    "Toile"
+    "Canvas toile"
   ],
   [
     "SVG 图标",
-    "Icône SVG"
+    "SVG icône SVG"
+  ],
+  [
+    "SlideVerify 滑动验证",
+    "SlideVerify vérification par glissement"
   ],
   [
     "编辑地址",
-    "Adresse d'édition"
+    "Modifier l'adresse"
   ],
   [
     "cool-unix",
-    "cool-unix"
+    "cool - unix"
   ],
   [
     "首页",
@@ -38,86 +58,6 @@
   [
     "我的",
     "Moi"
-  ],
-  [
-    "指定小时",
-    "Heure spécifiée"
-  ],
-  [
-    "指定分钟",
-    "Minute spécifiée"
-  ],
-  [
-    "指定秒",
-    "Seconde spécifiée"
-  ],
-  [
-    "完成后提示",
-    "Avertissement après l'achèvement"
-  ],
-  [
-    "结合按钮",
-    "Combinaison de boutons"
-  ],
-  [
-    "购买",
-    "Achat"
-  ],
-  [
-    "消息",
-    "Message"
-  ],
-  [
-    "结合图片",
-    "Combinaison d'images"
-  ],
-  [
-    "结合图标",
-    "Combinaison d'icônes"
-  ],
-  [
-    "点击触发",
-    "Démarrage par clic"
-  ],
-  [
-    "不同大小",
-    "Tailles différentes"
-  ],
-  [
-    "不同颜色",
-    "Couleurs différentes"
-  ],
-  [
-    "使用base64",
-    "Utilisation de base64"
-  ],
-  [
-    "操作",
-    "Opération"
-  ],
-  [
-    "清空",
-    "Vider"
-  ],
-  [
-    "预览",
-    "Aperçu"
-  ],
-  [
-    "设置高度",
-    "Définition de la hauteur"
-  ],
-  [
-    "毛笔效果",
-    "Effet de pinceau"
-  ],
-  [
-    "添加LOGO",
-    "Ajout de LOGO"
-  ],
-  [
-    "圆角定位点",
-    "Points de repère arrondis"
   ],
   [
     "基础组件",
@@ -157,7 +97,7 @@
   ],
   [
     "文本域",
-    "Zone de texte longue"
+    "Zone de texte multi-lignes"
   ],
   [
     "计数器",
@@ -165,7 +105,7 @@
   ],
   [
     "口令输入",
-    "Entrée de mot de passe"
+    "Champ de mot de passe"
   ],
   [
     "键盘",
@@ -200,404 +140,20 @@
     "Sélecteur de date"
   ],
   [
-    "筛选栏",
-    "Barre de filtrage"
+    "邮箱",
+    "Boîte e-mail"
   ],
   [
-    "状态组件",
-    "Composant d'état"
+    "请输入邮箱地址",
+    "Veuillez entrer l'adresse e-mail"
   ],
   [
-    "角标",
-    "Badge"
+    "动态验证",
+    "Authentification dynamique"
   ],
   [
-    "通知栏",
-    "Barre de notification"
-  ],
-  [
-    "倒计时",
-    "Compte à rebours"
-  ],
-  [
-    "数字滚动",
-    "Roulage numérique"
-  ],
-  [
-    "进度条",
-    "Barre de progression"
-  ],
-  [
-    "圆形进度条",
-    "Barre de progression circulaire"
-  ],
-  [
-    "骨架图",
-    "Schéma en squelette"
-  ],
-  [
-    "加载更多",
-    "Charger plus"
-  ],
-  [
-    "反馈组件",
-    "Composant de feedback"
-  ],
-  [
-    "操作菜单",
-    "Menu d'opérations"
-  ],
-  [
-    "弹窗",
-    "Pop-up"
-  ],
-  [
-    "确认框",
-    "Boîte de confirmation"
-  ],
-  [
-    "提示框",
-    "Boîte de message"
-  ],
-  [
-    "签名",
-    "Signature"
-  ],
-  [
-    "图片裁剪",
-    "Découpe d'image"
-  ],
-  [
-    "Canvas",
-    "Canvas"
-  ],
-  [
-    "富文本",
-    "Texte riche"
-  ],
-  [
-    "该功能正在开发中",
-    "Cette fonction est en développement"
-  ],
-  [
-    "关于{name}",
-    "À propos de {name}"
-  ],
-  [
-    "联系客服",
-    "Contactez le service client"
-  ],
-  [
-    "退出登录",
-    "Déconnexion"
-  ],
-  [
-    "确定退出登录吗？",
-    "Êtes-vous sûr de vouloir vous déconnecter?"
-  ],
-  [
-    "深色模式",
-    "Mode sombre"
-  ],
-  [
-    "多语言",
-    "Plusieurs langues"
-  ],
-  [
-    "访问官网",
-    "Accéder au site web officiel"
-  ],
-  [
-    "商城",
-    "Magasin"
-  ],
-  [
-    "商品分类",
-    "Catégies de produits"
-  ],
-  [
-    "商品详情",
-    "Détails des produits"
-  ],
-  [
-    "商品列表、筛选",
-    "Liste et filtrage des produits"
-  ],
-  [
-    "购物车",
-    "Panier d'achat"
-  ],
-  [
-    "订单列表、详情",
-    "Liste et détails des commandes"
-  ],
-  [
-    "收货地址",
-    "Adresse de livraison"
-  ],
-  [
-    "聊天",
-    "Chat"
-  ],
-  [
-    "对话列表、历史记录",
-    "Liste et historique des conversations"
-  ],
-  [
-    "流式回复",
-    "Réponse en flux"
-  ],
-  [
-    "语言合成",
-    "Synthese vocale"
-  ],
-  [
-    "语音识别",
-    "Reconnaissance vocale"
-  ],
-  [
-    "其他",
-    "Autres"
-  ],
-  [
-    "首次充值",
-    "Premier recharge"
-  ],
-  [
-    "充值1000元",
-    "Recharge de 1000 yuans"
-  ],
-  [
-    "完成首笔交易",
-    "Effectuer la première transaction"
-  ],
-  [
-    "优选灵活配置混合A",
-    "Hybride A de configuration flexible optimisée"
-  ],
-  [
-    "1000元起",
-    "À partir de 1000 yuans"
-  ],
-  [
-    "多页数",
-    "Plusieurs pages"
-  ],
-  [
-    "上一页",
-    "Page précédente"
-  ],
-  [
-    "下一页",
-    "Page suivante"
-  ],
-  [
-    "内容靠左",
-    "Contenu à gauche"
-  ],
-  [
-    "QQ",
-    "QQ"
-  ],
-  [
-    "带箭头",
-    "Avec flèche"
-  ],
-  [
-    "余额",
-    "Solde"
-  ],
-  [
-    "折叠",
-    "Déplier"
-  ],
-  [
-    "可滑动",
-    "Déplaçable"
-  ],
-  [
-    "左滑编辑",
-    "Glisser vers la gauche pour éditer"
-  ],
-  [
-    "编辑",
-    "Éditer"
-  ],
-  [
-    "右滑删除",
-    "Glisser vers la droite pour supprimer"
-  ],
-  [
-    "账号",
-    "Compte"
-  ],
-  [
-    "我的订单",
-    "Mes commandes"
-  ],
-  [
-    "我的收藏",
-    "Mes favoris"
-  ],
-  [
-    "圆形",
-    "Cercle"
-  ],
-  [
-    "组合",
-    "Combinaison"
-  ],
-  [
-    "基础用法",
-    "Utilisation de base"
-  ],
-  [
-    "自定义",
-    "Personnalisation"
-  ],
-  [
-    "加快滚动速度",
-    "Accélérer la vitesse de défilement"
-  ],
-  [
-    "显示小数位数",
-    "Nombre de chiffres après la virgule"
-  ],
-  [
-    "自定义样式",
-    "Style personnalisé"
-  ],
-  [
-    "自定义颜色",
-    "Couleur personnalisée"
-  ],
-  [
-    "自定义宽度",
-    "Largeur personnalisée"
-  ],
-  [
-    "不显示文本",
-    "Ne pas afficher le texte"
-  ],
-  [
-    "改个颜色",
-    "Changer de couleur"
-  ],
-  [
-    "显示文本",
-    "Afficher le texte"
-  ],
-  [
-    "快一些",
-    "Plus rapide"
-  ],
-  [
-    "带图标",
-    "Avec icône"
-  ],
-  [
-    "设置速度",
-    "Définir la vitesse"
-  ],
-  [
-    "垂直方向",
-    "Direction verticale"
-  ],
-  [
-    "3秒后加载完成",
-    "Chargement terminé après 3 secondes"
-  ],
-  [
-    "隐藏为 00 的值",
-    "Masquer les valeurs égales à 00"
-  ],
-  [
-    "指定天数",
-    "Nombre de jours spécifié"
-  ],
-  [
-    "自定义模板",
-    "Modèle personnalisé"
-  ],
-  [
-    "筛选",
-    "Filtrer"
-  ],
-  [
-    "单列排序",
-    "Trier par colonne unique"
-  ],
-  [
-    "结合列表使用",
-    "Utiliser avec une liste"
-  ],
-  [
-    "多列排序",
-    "Trier par plusieurs colonnes"
-  ],
-  [
-    "结合图片使用",
-    "Utiliser avec une image"
-  ],
-  [
-    "禁用手势",
-    "Désactiver les gestes"
-  ],
-  [
-    "自定义样式2",
-    "Style personnalisé 2"
-  ],
-  [
-    "无图片",
-    "Sans image"
-  ],
-  [
-    "圆角",
-    "Bords arrondis"
-  ],
-  [
-    "自定义大小",
-    "Taille personnalisée"
-  ],
-  [
-    "手机号脱敏",
-    "Masquage du numéro de téléphone mobile"
-  ],
-  [
-    "姓名脱敏",
-    "Masquage du nom"
-  ],
-  [
-    "邮箱脱敏",
-    "Masquage de l'adresse e-mail"
-  ],
-  [
-    "银行卡脱敏",
-    "Masquage de la carte bancaire"
-  ],
-  [
-    "金额",
-    "Montant"
-  ],
-  [
-    "自定义脱敏字符",
-    "Caractère de masquage personnalisé"
-  ],
-  [
-    "省略号",
-    "Ellipsis"
-  ],
-  [
-    "主要",
-    "Principal"
-  ],
-  [
-    "危险",
-    "Dangereux"
-  ],
-  [
-    "信息",
-    "Information"
+    "联系人",
+    "Contact"
   ],
   [
     "添加联系人",
@@ -664,260 +220,164 @@
     "Natation"
   ],
   [
-    "用户名不能为空",
-    "Le nom d'utilisateur ne peut pas être vide"
+    "顶部",
+    "Haut"
   ],
   [
-    "用户名长度在3-20个字符之间",
-    "La longueur du nom d'utilisateur doit être comprise entre 3 et 20 caractères"
+    "中间",
+    "Milieu"
   ],
   [
-    "邮箱不能为空",
-    "L'adresse e-mail ne peut pas être vide"
+    "底部",
+    "Bas"
   ],
   [
-    "邮箱格式不正确",
-    "Le format de l'adresse e-mail est incorrect"
+    "不同类型",
+    "Différents types"
   ],
   [
-    "内间距",
-    "Espace intérieur"
+    "成功",
+    "Succès"
   ],
   [
-    "导出图片",
-    "Exporter une image"
+    "失败",
+    "Failure"
   ],
   [
-    "矩形",
-    "Rectangle"
+    "警告",
+    "Avertissement"
   ],
   [
-    "点",
-    "Point"
+    "问题",
+    "Problème"
   ],
   [
-    "线性",
-    "Linéaire"
+    "停止",
+    "Arrêt"
   ],
   [
-    "小方格",
-    "Petit carré"
+    "自定义图标",
+    "Icône personnalisée"
   ],
   [
-    "格式化",
-    "Formatage"
+    "只存在一个",
+    "Il n'y a qu'un seul"
   ],
   [
-    "添加",
-    "Ajouter"
+    "不同位置提示",
+    "Indications à différents emplacements"
   ],
   [
-    "减去",
-    "Soustraire"
+    "不同类型提示",
+    "Indications de différents types"
   ],
   [
-    "获取某个单位的开始时间",
-    "Obtenir l'heure de début d'une unité"
+    "带图标提示",
+    "Indications avec icône"
   ],
   [
-    "获取某个单位的结束时间",
-    "Obtenir l'heure de fin d'une unité"
+    "移除其他已存在的提示",
+    "Supprimer les autres indications déjà existantes"
   ],
   [
-    "是否同一天",
-    "Est-ce le même jour"
+    "打开弹窗",
+    "Ouvrir une fenêtre modale"
   ],
   [
-    "是否早于",
-    "Est-ce avant"
+    "设置宽度 80%",
+    "Définir la largeur à 80%"
   ],
   [
-    "是否晚于",
-    "Est-ce après"
+    "无头",
+    "Headless"
   ],
   [
-    "差值",
-    "Différence"
+    "左侧",
+    "Gauche"
   ],
   [
-    "差值（单位）",
-    "Différence (unité)"
+    "右侧",
+    "Droite"
   ],
   [
-    "选择图片",
-    "Sélectionner une image"
+    "筛选栏",
+    "Barre de filtrage"
   ],
   [
-    "可调节裁剪框大小",
-    "Taille de la zone de découpe réglable"
+    "状态组件",
+    "Composant d'état"
   ],
   [
-    "预览图片",
-    "Aperçu de l'image"
+    "角标",
+    "Badge"
   ],
   [
-    "保存图片",
-    "Enregistrer l'image"
+    "通知栏",
+    "Barre de notification"
   ],
   [
-    "请填写验证码",
-    "Veuillez remplir le code de vérification"
+    "倒计时",
+    "Compte à rebours"
   ],
   [
-    "请填写正确的手机号格式",
-    "Veuillez entrer un numéro de téléphone au format correct"
+    "数字滚动",
+    "Roulage numérique"
   ],
   [
-    "全局字号",
-    "Taille de police globale"
+    "进度条",
+    "Barre de progression"
   ],
   [
-    "这是一段示例文字，用于预览不同字号的效果。",
-    "Voici un texte d'exemple pour prévisualiser l'effet de différentes tailles de police."
+    "圆形进度条",
+    "Barre de progression circulaire"
   ],
   [
-    "默认 1.0",
-    "Par défaut 1,0"
+    "骨架图",
+    "Squelette"
   ],
   [
-    "切换语言",
-    "Changer de langue"
+    "加载更多",
+    "Charger plus"
   ],
   [
-    "切换中",
-    "En cours de changement"
+    "反馈组件",
+    "Composant de feedback"
   ],
   [
-    "模板",
-    "Modèle"
+    "操作菜单",
+    "Menu d'opérations"
   ],
   [
-    "编辑资料",
-    "Modifier les informations"
+    "弹窗",
+    "Pop-up"
   ],
   [
-    "Text 文本",
-    "Texte"
+    "确认框",
+    "Boîte de confirmation"
   ],
   [
-    "Button 按钮",
-    "Bouton"
+    "提示框",
+    "Boîte d'information"
   ],
   [
-    "Image 图片",
-    "Image"
+    "签名",
+    "Signature"
   ],
   [
-    "Icon 图标",
-    "Icône"
+    "图片裁剪",
+    "Découpe d'image"
   ],
   [
-    "Tag 标签",
-    "Étiquette"
+    "Canvas",
+    "Canvas"
   ],
   [
-    "Form 表单验证",
-    "Validation de formulaire"
+    "富文本",
+    "Texte riche"
   ],
   [
-    "Input 输入框",
-    "Zone de saisie"
-  ],
-  [
-    "Textarea 文本域",
-    "Zone de texte"
-  ],
-  [
-    "InputNumber 计数器",
-    "Compteur"
-  ],
-  [
-    "InputOtp 口令输入",
-    "Zone de saisie d'OTP"
-  ],
-  [
-    "Keyboard 键盘",
-    "Clavier"
-  ],
-  [
-    "时间选择器",
-    "Sélecteur de date"
-  ],
-  [
-    "级联选择器",
-    "Sélecteur en cascade"
-  ],
-  [
-    "文件上传",
-    "Téléchargement de fichiers"
-  ],
-  [
-    "布局组件",
-    "Composant de mise en page"
-  ],
-  [
-    "弹性布局",
-    "Mise en page flexible"
-  ],
-  [
-    "标签页",
-    "Onglets"
-  ],
-  [
-    "折叠面板",
-    "Panneau pliable"
-  ],
-  [
-    "吸顶",
-    "Fixation en haut"
-  ],
-  [
-    "导航栏",
-    "Barre de navigation"
-  ],
-  [
-    "底部视图",
-    "Vue de bas de page"
-  ],
-  [
-    "悬浮视图",
-    "Vue flottante"
-  ],
-  [
-    "数据展示",
-    "Affichage de données"
-  ],
-  [
-    "列表",
-    "Liste"
-  ],
-  [
-    "列表视图",
-    "Vue de liste"
-  ],
-  [
-    "列表刷新",
-    "Actualisation de liste"
-  ],
-  [
-    "瀑布流",
-    "Mouvement de rubans"
-  ],
-  [
-    "轮播图",
-    "Diaporama"
-  ],
-  [
-    "分页",
-    "Pagination"
-  ],
-  [
-    "时间轴",
-    "Axe temporel"
-  ],
-  [
-    "拖拽",
-    "Drag and Drop"
+    "该功能正在开发中",
+    "Cette fonction est en développement"
   ],
   [
     "文件管理",
@@ -997,155 +457,171 @@
   ],
   [
     "开发中，敬请期待",
-    "En développement, veuillez patienter"
+    "En développement, merci de patienter"
   ],
   [
-    "不吸附边缘，任意位置可拖拽",
-    "Ne pas adsorber le bord, peut être déplacé à n'importe quel endroit"
+    "右滑删除",
+    "Swipe right to delete"
   ],
   [
-    "这是一个提示",
-    "C'est un message d'avertissement"
+    "账号",
+    "Compte"
   ],
   [
-    "左间隔",
-    "Espacement gauche"
+    "我的订单",
+    "Mes commandes"
   ],
   [
-    "右移动",
-    "Déplacement vers la droite"
+    "我的收藏",
+    "Mes favoris"
   ],
   [
-    "左移动",
-    "Déplacement vers la gauche"
+    "筛选",
+    "Filtrer"
   ],
   [
-    "多个数据",
-    "Plusieurs données"
+    "单列排序",
+    "Tri par colonne unique"
   ],
   [
-    "点击收起",
-    "Cliquez pour réduire"
+    "结合列表使用",
+    "Utiliser avec une liste"
   ],
   [
-    "点击展开",
-    "Cliquez pour déplier"
+    "多列排序",
+    "Tri par plusieurs colonnes"
   ],
   [
-    "ref 方式调用",
-    "Appel par la méthode ref"
+    "结合图片使用",
+    "Utiliser avec une image"
   ],
   [
-    "自定义图标、文字、大小",
-    "Icône personnalisée, texte, taille"
+    "禁用手势",
+    "Désactiver les gestes"
   ],
   [
-    "上传证件照",
-    "Télécharger une photo d'identité"
+    "自定义样式2",
+    "Style personnalisé 2"
   ],
   [
-    "多选",
-    "Sélection multiple"
+    "无图片",
+    "Sans image"
   ],
   [
-    "限制 3 个",
-    "Limité à 3"
+    "圆角",
+    "Angles arrondis"
   ],
   [
-    "边框",
-    "Bordure"
+    "自定义大小",
+    "Taille personnalisée"
   ],
   [
-    "显示字数",
-    "Nombre de caractères affichés"
+    "手机号脱敏",
+    "Masquage du numéro de téléphone"
   ],
   [
-    "自动增高",
-    "Augmentation automatique"
+    "姓名脱敏",
+    "Masquage du nom"
   ],
   [
-    "其他颜色",
-    "Autres couleurs"
+    "邮箱脱敏",
+    "Masquage de l'adresse e-mail"
   ],
   [
-    "大一点",
-    "Un peu plus grand"
+    "银行卡脱敏",
+    "Masquage de la carte bancaire"
   ],
   [
-    "正方形",
-    "Carré"
+    "金额",
+    "Montant"
   ],
   [
-    "范围选择",
-    "Sélection de plage"
+    "自定义脱敏字符",
+    "Caractère de masquage personnalisé"
   ],
   [
-    "显示值",
-    "Valeur affichée"
+    "设置高度",
+    "Réglage de la hauteur"
   ],
   [
-    "步长10",
-    "Pas de 10"
+    "毛笔效果",
+    "Effet de pinceau"
   ],
   [
-    "滑块大点",
-    "Puce plus grande"
+    "添加LOGO",
+    "Ajout de LOGO"
   ],
   [
-    "换个颜色",
-    "Changer de couleur"
+    "圆角定位点",
+    "Point d'ancrage arrondi"
   ],
   [
-    "最大50",
-    "Maximum 50"
+    "内间距",
+    "Espacement intérieur"
   ],
   [
-    "自定义触发器",
-    "Déclencheur personnalisé"
+    "导出图片",
+    "Exportation d'image"
   ],
   [
-    "打开选择器",
-    "Ouvrir le sélecteur"
+    "矩形",
+    "Rectangle"
   ],
   [
-    "多列",
-    "Plusieurs colonnes"
+    "点",
+    "Point"
   ],
   [
-    "通过 children 配置多级数据，并使用 column-count 参数指定显示的列数",
-    "Configurer des données hiérarchiques via children et utiliser le paramètre column-count pour spécifier le nombre de colonnes affichées"
+    "线性",
+    "Linéaire"
   ],
   [
-    "弹窗中使用",
-    "Utiliser dans une fenêtre modale"
+    "小方格",
+    "Petits carrés"
   ],
   [
-    "打开",
-    "Ouvrir"
+    "格式化",
+    "Formatage"
   ],
   [
-    "选择地区",
-    "Sélectionner une région"
+    "添加",
+    "Ajouter"
   ],
   [
-    "绑定值",
-    "Lier une valeur"
+    "减去",
+    "Soustraire"
   ],
   [
-    "下一步",
-    "Suivant"
+    "获取某个单位的开始时间",
+    "Obtenir l'heure de début d'une unité donnée"
   ],
   [
-    "确定",
-    "OK"
+    "获取某个单位的结束时间",
+    "Obtenir l'heure de fin d'une unité donnée"
   ],
   [
-    "关闭",
-    "Fermer"
+    "是否同一天",
+    "Est-ce le même jour?"
+  ],
+  [
+    "是否早于",
+    "Est-ce avant?"
+  ],
+  [
+    "是否晚于",
+    "Est-ce après?"
+  ],
+  [
+    "差值",
+    "Différence"
+  ],
+  [
+    "差值（单位）",
+    "Différence (unité)"
   ],
   [
     "显示取消按钮",
-    "Afficher le bouton Annuler"
+    "Afficher le bouton d'annulation"
   ],
   [
     "修改按钮文案",
@@ -1157,91 +633,171 @@
   ],
   [
     "时",
-    "Lorsque"
+    "heure"
   ],
   [
-    "成功",
-    "Succès"
+    "时:分",
+    "heure:minute"
   ],
   [
-    "失败",
-    "Failure"
+    "时:分:秒",
+    "heure:minute:seconde"
   ],
   [
-    "警告",
-    "Avertissement"
+    "标签格式化",
+    "Formatage d'étiquette"
   ],
   [
-    "问题",
-    "Problème"
+    "固定开始、结束日期",
+    "Date de début et de fin fixes"
   ],
   [
-    "停止",
-    "Arrêt"
+    "自定义快捷选项",
+    "Options rapides personnalisées"
   ],
   [
-    "自定义图标",
-    "Icône personnalisée"
+    "只读",
+    "Lecture seule"
   ],
   [
-    "只存在一个",
-    "Il n'y a qu'un seul"
+    "显示分数",
+    "Afficher les fractions"
   ],
   [
-    "不同位置提示",
-    "Indication de position différente"
+    "允许半星",
+    "Autoriser la demi-étoile"
   ],
   [
-    "不同类型提示",
-    "Indication de type différent"
+    "换个图标",
+    "Changer d'icône"
   ],
   [
-    "带图标提示",
-    "Indication avec icône"
+    "纵向排列",
+    "Alignement vertical"
   ],
   [
-    "移除其他已存在的提示",
-    "Supprimer les autres indications existantes"
+    "换个样式",
+    "Changer de style"
   ],
   [
-    "打开弹窗",
-    "Ouvrir une fenêtre modale"
+    "不显示图标",
+    "Ne pas afficher d'icône"
   ],
   [
-    "设置宽度 80%",
-    "Définir la largeur à 80%"
+    "其他样式",
+    "Autres styles"
   ],
   [
-    "无头",
-    "Sans tête"
+    "数字键盘",
+    "Clavier numérique"
   ],
   [
-    "左侧",
-    "Gauche"
+    "打开键盘",
+    "Ouvrir le clavier"
   ],
   [
-    "右侧",
-    "Droite"
+    "是否显示输入值",
+    "Afficher ou non la valeur d'entrée"
   ],
   [
-    "隐藏取消按钮",
-    "Masquer le bouton Annuler"
+    "Footer 底部视图",
+    "Pied de page Vue du bas"
   ],
   [
-    "自定义文本",
-    "Texte personnalisé"
+    "List 列表",
+    "Liste"
   ],
   [
-    "关闭前钩子",
-    "Hook avant la fermeture"
+    "ListView 列表视图",
+    "Vue de liste"
   ],
   [
-    "显示时长",
-    "Durée d'affichage"
+    "ListViewRefresh 列表刷新",
+    "Actualisation de la liste"
+  ],
+  [
+    "Waterfall 瀑布流",
+    "Flux en cascade"
+  ],
+  [
+    "Banner 轮播图",
+    "Bannière"
+  ],
+  [
+    "Pagination 分页",
+    "Pagination"
+  ],
+  [
+    "Timeline 时间轴",
+    "Feuille de temps"
+  ],
+  [
+    "Avatar 头像",
+    "Avatar"
+  ],
+  [
+    "Draggable 拖拽",
+    "Déplacement"
+  ],
+  [
+    "FilterBar 筛选栏",
+    "Barre de filtrage"
+  ],
+  [
+    "Badge 角标",
+    "Badge"
+  ],
+  [
+    "NoticeBar 通知栏",
+    "Barre d'alerte"
+  ],
+  [
+    "Countdown 倒计时",
+    "Compte à rebours"
+  ],
+  [
+    "Progress 进度条",
+    "Barre de progression"
+  ],
+  [
+    "ProgressCircle 圆形进度条",
+    "Barre de progression circulaire"
+  ],
+  [
+    "Skeleton 骨架图",
+    "Schéma d'ossature"
+  ],
+  [
+    "LoadMore 加载更多",
+    "Chargement supplémentaire"
+  ],
+  [
+    "RollingNumber 数字滚动",
+    "Nombre roulant"
+  ],
+  [
+    "ActionSheet 操作菜单",
+    "Menu d'actions"
+  ],
+  [
+    "输入即绑定",
+    "L'entrée est liée"
+  ],
+  [
+    "身份证键盘",
+    "Clavier d'identité"
+  ],
+  [
+    "密码键盘",
+    "Clavier de mot de passe"
+  ],
+  [
+    "是否加密",
+    "Est-il chiffré?"
   ],
   [
     "车牌号键盘",
-    "Clavier de plaque d'immatriculation"
+    "Clavier de numéro d'immatriculation"
   ],
   [
     "数字输入",
@@ -1253,7 +809,7 @@
   ],
   [
     "可清除",
-    "可清除"
+    "Peut être effacé"
   ],
   [
     "左右插槽",
@@ -1289,7 +845,7 @@
   ],
   [
     "可以小数",
-    "Avec décimales"
+    "Peut être décimal"
   ],
   [
     "可以输入",
@@ -1304,100 +860,324 @@
     "Veuillez entrer votre nom d'utilisateur"
   ],
   [
-    "邮箱",
-    "Courriel"
+    "时间选择器",
+    "Sélecteur de date"
   ],
   [
-    "请输入邮箱地址",
-    "Veuillez entrer votre adresse de messagerie électronique"
+    "级联选择器",
+    "Sélecteur en cascade"
   ],
   [
-    "动态验证",
-    "Authentification dynamique"
+    "文件上传",
+    "Téléchargement de fichiers"
   ],
   [
-    "联系人",
-    "Contact"
+    "布局组件",
+    "Composant de mise en page"
   ],
   [
-    "Waterfall 瀑布流",
-    "Waterfall Cascade de flux"
+    "弹性布局",
+    "Mise en page flexible"
   ],
   [
-    "Banner 轮播图",
-    "Banner diapositive"
+    "标签页",
+    "Onglets"
   ],
   [
-    "Pagination 分页",
-    "Pagination pagination"
+    "折叠面板",
+    "Panneau pliable"
   ],
   [
-    "Timeline 时间轴",
-    "Timeline axe temporel"
+    "吸顶",
+    "Fixation au sommet"
   ],
   [
-    "Avatar 头像",
-    "Avatar avatar"
+    "导航栏",
+    "Barre de navigation"
   ],
   [
-    "Draggable 拖拽",
-    "Draggable Dragable"
+    "底部视图",
+    "Vue de bas de page"
   ],
   [
-    "FilterBar 筛选栏",
-    "FilterBar Barre de filtrage"
+    "悬浮视图",
+    "Vue flottante"
   ],
   [
-    "Badge 角标",
-    "Badge Badge"
+    "数据展示",
+    "Affichage de données"
   ],
   [
-    "NoticeBar 通知栏",
-    "NoticeBar Barre de notification"
+    "列表",
+    "Liste"
   ],
   [
-    "Countdown 倒计时",
-    "Countdown Compte à rebours"
+    "列表视图",
+    "Vue de liste"
   ],
   [
-    "Progress 进度条",
-    "Progress Barre de progression"
+    "列表刷新",
+    "Actualisation de liste"
   ],
   [
-    "ProgressCircle 圆形进度条",
-    "ProgressCircle Cercle de progression"
+    "瀑布流",
+    "Mouvement de rubans"
   ],
   [
-    "Skeleton 骨架图",
-    "Skeleton Schéma d'ossature"
+    "轮播图",
+    "Diaporama"
   ],
   [
-    "LoadMore 加载更多",
-    "LoadMore Charger plus"
+    "分页",
+    "Pagination"
   ],
   [
-    "RollingNumber 数字滚动",
-    "RollingNumber Nombre roulant"
+    "时间轴",
+    "Axe temporel"
   ],
   [
-    "ActionSheet 操作菜单",
-    "ActionSheet Menu d'actions"
+    "拖拽",
+    "Drag and Drop"
   ],
   [
-    "Popup 弹窗",
-    "Popup Popup"
+    "圆形",
+    "Rond"
   ],
   [
-    "Confirm 确认框",
-    "Confirm Boîte de confirmation"
+    "组合",
+    "Combinaison"
   ],
   [
-    "Toast 提示框",
-    "Toast Boîte de message"
+    "基础用法",
+    "Utilisation de base"
   ],
   [
-    "QRCode 二维码",
-    "QRCode Code QR"
+    "自定义",
+    "Personnalisation"
+  ],
+  [
+    "加快滚动速度",
+    "Accélérer la vitesse de défilement"
+  ],
+  [
+    "显示小数位数",
+    "Nombre de chiffres après la virgule"
+  ],
+  [
+    "自定义样式",
+    "Style personnalisé"
+  ],
+  [
+    "自定义颜色",
+    "Couleur personnalisée"
+  ],
+  [
+    "自定义宽度",
+    "Largeur personnalisée"
+  ],
+  [
+    "不显示文本",
+    "Ne pas afficher le texte"
+  ],
+  [
+    "改个颜色",
+    "Changer de couleur"
+  ],
+  [
+    "显示文本",
+    "Afficher le texte"
+  ],
+  [
+    "快一些",
+    "Plus rapide"
+  ],
+  [
+    "带图标",
+    "Avec icône"
+  ],
+  [
+    "设置速度",
+    "Définir la vitesse"
+  ],
+  [
+    "垂直方向",
+    "Dans la direction verticale"
+  ],
+  [
+    "3秒后加载完成",
+    "Chargement terminé après 3 secondes"
+  ],
+  [
+    "隐藏为 00 的值",
+    "Masquer les valeurs égales à 00"
+  ],
+  [
+    "指定天数",
+    "Nombre de jours spécifié"
+  ],
+  [
+    "自定义模板",
+    "Modèle personnalisé"
+  ],
+  [
+    "普通",
+    "Ordinaire"
+  ],
+  [
+    "浅色",
+    "Clair"
+  ],
+  [
+    "深色",
+    "Foncé"
+  ],
+  [
+    "只显示图标",
+    "Afficher seulement l'icône"
+  ],
+  [
+    "文本模式",
+    "Mode texte"
+  ],
+  [
+    "带边框",
+    "Avec bordure"
+  ],
+  [
+    "圆角按钮",
+    "Bouton à coins arrondis"
+  ],
+  [
+    "带左侧图标",
+    "Avec icône à gauche"
+  ],
+  [
+    "小",
+    "Petit"
+  ],
+  [
+    "默认",
+    "Par défaut"
+  ],
+  [
+    "大",
+    "Grand"
+  ],
+  [
+    "无权限",
+    "Pas autorisé"
+  ],
+  [
+    "服务异常",
+    "Service en anomalie"
+  ],
+  [
+    "请在微信浏览器中打开",
+    "Veuillez ouvrir dans le navigateur WeChat"
+  ],
+  [
+    "已取消支付",
+    "Paiement annulé"
+  ],
+  [
+    "支付失败",
+    "Paiement échoué"
+  ],
+  [
+    "授权信息仅用于用户登录",
+    "Les informations d'autorisation sont uniquement utilisées pour la connexion de l'utilisateur"
+  ],
+  [
+    "登录授权失败",
+    "Erreur d'autorisation de connexion"
+  ],
+  [
+    "获取短信验证码",
+    "Obtenir le code de vérification par SMS"
+  ],
+  [
+    "验证码",
+    "Code de vérification"
+  ],
+  [
+    "指定小时",
+    "Heure spécifiée"
+  ],
+  [
+    "指定分钟",
+    "Minute spécifiée"
+  ],
+  [
+    "指定秒",
+    "Seconde spécifiée"
+  ],
+  [
+    "完成后提示",
+    "Avertissement après l'achèvement"
+  ],
+  [
+    "结合按钮",
+    "Combinaison de boutons"
+  ],
+  [
+    "购买",
+    "Achat"
+  ],
+  [
+    "消息",
+    "Message"
+  ],
+  [
+    "结合图片",
+    "Combinaison d'images"
+  ],
+  [
+    "结合图标",
+    "Combinaison d'icônes"
+  ],
+  [
+    "点击触发",
+    "Démarrage par clic"
+  ],
+  [
+    "不同大小",
+    "Tailles différentes"
+  ],
+  [
+    "不同颜色",
+    "Couleurs différentes"
+  ],
+  [
+    "使用base64",
+    "Utilisation de base64"
+  ],
+  [
+    "没有错误提示",
+    "Aucun message d'erreur"
+  ],
+  [
+    "转动图片",
+    "Rotation de l'image"
+  ],
+  [
+    "验证通过",
+    "Validation réussie"
+  ],
+  [
+    "验证失败",
+    "Validation échouée"
+  ],
+  [
+    "操作",
+    "Opération"
+  ],
+  [
+    "清空",
+    "Effacer"
+  ],
+  [
+    "预览",
+    "Aperçu"
   ],
   [
     "已阅读并同意",
@@ -1457,7 +1237,7 @@
   ],
   [
     "保密",
-    "Confidentiel"
+    "Confidentialité"
   ],
   [
     "男",
@@ -1469,167 +1249,23 @@
   ],
   [
     "性别设置成功",
-    "Le genre a été configuré avec succès"
+    "Configuration du genre réussie"
   ],
   [
     "生日设置成功",
-    "La date de naissance a été configurée avec succès"
+    "Configuration de la date de naissance réussie"
   ],
   [
     "地区设置成功",
-    "La région a été configurée avec succès"
-  ],
-  [
-    "邮件",
-    "Courrier"
-  ],
-  [
-    "日历",
-    "Calendrier"
-  ],
-  [
-    "文件",
-    "Fichiers"
-  ],
-  [
-    "可关闭",
-    "Fermable"
-  ],
-  [
-    "镂空",
-    "Perforé"
-  ],
-  [
-    "自定义无圆角",
-    "Sans coins arrondis personnalisés"
-  ],
-  [
-    "不同裁剪",
-    "Découpe différente"
-  ],
-  [
-    "点击可预览",
-    "Cliquez pour prévisualiser"
-  ],
-  [
-    "失败时显示",
-    "Afficher en cas d'erreur"
-  ],
-  [
-    "自定义圆角",
-    "Coins arrondis personnalisés"
-  ],
-  [
-    "设置颜色",
-    "Définir la couleur"
-  ],
-  [
-    "设置大小",
-    "Définir la taille"
-  ],
-  [
-    "集成 iconfont 与 remixicon 图标库，展示部分示例",
-    "Intégrer les bibliothèques d'icônes iconfont et remixicon et afficher quelques exemples"
-  ],
-  [
-    "iconfont",
-    "iconfont"
-  ],
-  [
-    "remixicon",
-    "remixicon"
-  ],
-  [
-    "复制成功",
-    "Copie réussie"
-  ],
-  [
-    "普通",
-    "Normal"
-  ],
-  [
-    "浅色",
-    "Clair"
-  ],
-  [
-    "深色",
-    "Sombre"
-  ],
-  [
-    "只显示图标",
-    "Afficher seulement l'icône"
-  ],
-  [
-    "文本模式",
-    "Mode texte"
-  ],
-  [
-    "带边框",
-    "Avec bordure"
-  ],
-  [
-    "圆角按钮",
-    "Bouton à coins arrondis"
-  ],
-  [
-    "带左侧图标",
-    "Avec icône à gauche"
-  ],
-  [
-    "小",
-    "Petit"
-  ],
-  [
-    "默认",
-    "Par défaut"
-  ],
-  [
-    "大",
-    "Grand"
-  ],
-  [
-    "无权限",
-    "Pas autorisé"
-  ],
-  [
-    "服务异常",
-    "Problème de service"
-  ],
-  [
-    "请在微信浏览器中打开",
-    "Veuillez ouvrir dans le navigateur WeChat"
-  ],
-  [
-    "已取消支付",
-    "Paiement annulé"
-  ],
-  [
-    "支付失败",
-    "Paiement échoué"
-  ],
-  [
-    "授权信息仅用于用户登录",
-    "Les informations d'autorisation sont uniquement utilisées pour la connexion de l'utilisateur"
-  ],
-  [
-    "登录授权失败",
-    "Erreur d'autorisation de connexion"
-  ],
-  [
-    "获取短信验证码",
-    "Obtenir un code de vérification par SMS"
-  ],
-  [
-    "验证码",
-    "Code de vérification"
+    "Configuration de la région réussie"
   ],
   [
     "发送短信",
-    "Envoyer un SMS"
+    "Envoyer un message texte"
   ],
   [
     "{n}s后重新获取",
-    "{n} s pour obtenir à nouveau"
+    "Réessayer après {n} s"
   ],
   [
     "获取验证码",
@@ -1637,167 +1273,151 @@
   ],
   [
     "短信已发送，请查收",
-    "Le SMS a été envoyé, veuillez vérifier"
+    "Le message a été envoyé, veuillez vérifier"
   ],
   [
-    "时:分",
-    "Heure:Minute"
+    "请填写验证码",
+    "Veuillez entrer le code de vérification"
   ],
   [
-    "时:分:秒",
-    "Heure:Minute:Seconde"
+    "请填写正确的手机号格式",
+    "Veuillez entrer un numéro de téléphone valide"
   ],
   [
-    "标签格式化",
-    "Formatage d'étiquette"
+    "全局字号",
+    "Taille de police globale"
   ],
   [
-    "固定开始、结束日期",
-    "Date de début et de fin fixes"
+    "这是一段示例文字，用于预览不同字号的效果。",
+    "Ceci est un texte d'exemple pour prévisualiser les effets de différentes tailles de police."
   ],
   [
-    "自定义快捷选项",
-    "Options rapides personnalisées"
+    "默认 1.0",
+    "Par défaut 1,0"
   ],
   [
-    "只读",
-    "Lecture seule"
+    "切换语言",
+    "Changer de langue"
   ],
   [
-    "显示分数",
-    "Afficher les fractions"
+    "切换中",
+    "En cours de changement"
   ],
   [
-    "允许半星",
-    "Autoriser la demi-étoile"
+    "模板",
+    "Modèle"
   ],
   [
-    "换个图标",
-    "Changer d'icône"
+    "编辑资料",
+    "Modifier les informations"
   ],
   [
-    "纵向排列",
-    "Alignement vertical"
+    "Text 文本",
+    "Texte"
   ],
   [
-    "换个样式",
-    "Changer de style"
+    "Button 按钮",
+    "Bouton"
   ],
   [
-    "不显示图标",
-    "Ne pas afficher d'icône"
+    "Image 图片",
+    "Image"
   ],
   [
-    "其他样式",
-    "Autres styles"
+    "Icon 图标",
+    "Icône"
   ],
   [
-    "数字键盘",
-    "Clavier numérique"
+    "Tag 标签",
+    "Étiquette"
   ],
   [
-    "打开键盘",
-    "Ouvrir le clavier"
+    "Form 表单验证",
+    "Validation de formulaire"
   ],
   [
-    "是否显示输入值",
-    "Afficher ou non la valeur d'entrée"
+    "Input 输入框",
+    "Zone de saisie"
   ],
   [
-    "输入即绑定",
-    "Lier à l'entrée "
+    "Textarea 文本域",
+    "Zone de texte"
   ],
   [
-    "身份证键盘",
-    "Clavier d'identité"
+    "InputNumber 计数器",
+    "Compteur"
   ],
   [
-    "密码键盘",
-    "Clavier de mot de passe"
+    "InputOtp 口令输入",
+    "Entrée de code à une seule utilisation"
   ],
   [
-    "是否加密",
-    "Chiffrer ou non"
+    "Keyboard 键盘",
+    "Clavier"
   ],
   [
     "Radio 单选框",
-    "Radio Case à cocher unique"
+    "Case à cocher unique"
   ],
   [
     "Checkbox 多选框",
-    "Checkbox Cases à cocher multiples"
+    "Cases à cocher multiples"
   ],
   [
     "Switch 开关",
-    "Switch Commutateur"
+    "Commutateur"
   ],
   [
     "Rate 评分",
-    "Rate Évaluation"
+    "Évaluation"
   ],
   [
     "Slider 滑块",
-    "Slider Curseur"
+    "Curseur"
   ],
   [
     "Select 选择器",
-    "Select Sélecteur"
+    "Sélecteur"
   ],
   [
     "SelectDate 日期选择器",
-    "SelectDate Sélecteur de date"
+    "Sélecteur de date"
   ],
   [
     "SelectTime 时间选择器",
-    "SelectTime Sélecteur d'heure"
+    "Sélecteur d'heure"
   ],
   [
     "Cascader 级联选择器",
-    "Cascader Sélecteur en cascade"
+    "Sélecteur en cascade"
   ],
   [
     "Upload 文件上传",
-    "Upload Téléchargement de fichier"
+    "Téléchargement de fichiers"
   ],
   [
     "Flex 弹性布局",
-    "Flex Mise en page flexible"
+    "Mise en page flexible"
   ],
   [
     "Tabs 标签页",
-    "Tabs Onglets"
+    "Onglets"
   ],
   [
     "Collapse 折叠面板",
-    "Collapse Panneau de repliement"
+    "Panneau de repliement"
   ],
   [
     "Sticky 吸顶",
-    "Sticky Fixation en haut"
+    "Fixation en haut"
   ],
   [
     "TopBar 导航栏",
-    "TopBar Barre de navigation"
+    "Barre de navigation"
   ],
   [
     "FloatView 悬浮视图",
-    "FloatView Vue flottante"
-  ],
-  [
-    "Footer 底部视图",
-    "Footer Vue de bas de page"
-  ],
-  [
-    "List 列表",
-    "List Liste"
-  ],
-  [
-    "ListView 列表视图",
-    "ListView Vue de liste"
-  ],
-  [
-    "ListViewRefresh 列表刷新",
-    "ListViewRefresh Actualisation de la liste"
+    "Vue flottante"
   ],
   [
     "请输入验证码",
@@ -1849,7 +1469,7 @@
   ],
   [
     "请先选择商品",
-    "Veuillez sélectionner d'abord un article"
+    "Veuillez sélectionner un article d'abord"
   ],
   [
     "确定删除选中的商品吗？",
@@ -1857,7 +1477,7 @@
   ],
   [
     "您需支付 {price} 元，请确认支付",
-    "Vous devez payer {price} yuan. Confirmez-vous le paiement?"
+    "Vous devez payer {price} yuan, veuillez confirmer le paiement"
   ],
   [
     "支付成功",
@@ -1865,11 +1485,11 @@
   ],
   [
     "已设为默认",
-    "Défini comme défaut"
+    "Défini comme valeur par défaut"
   ],
   [
     "设为默认",
-    "Définir comme défaut"
+    "Définir comme valeur par défaut"
   ],
   [
     "修改",
@@ -1878,6 +1498,422 @@
   [
     "添加地址",
     "Ajouter une adresse"
+  ],
+  [
+    "关于{name}",
+    "Sur {name}"
+  ],
+  [
+    "联系客服",
+    "Contacter le service client"
+  ],
+  [
+    "退出登录",
+    "Déconnexion"
+  ],
+  [
+    "确定退出登录吗？",
+    "Êtes-vous sûr de vouloir vous déconnecter ?"
+  ],
+  [
+    "深色模式",
+    "Mode sombre"
+  ],
+  [
+    "多语言",
+    "Plusieurs langues"
+  ],
+  [
+    "访问官网",
+    "Accéder au site web officiel"
+  ],
+  [
+    "商城",
+    "Magasin"
+  ],
+  [
+    "商品分类",
+    "Catégies de produits"
+  ],
+  [
+    "商品详情",
+    "Détails des produits"
+  ],
+  [
+    "商品列表、筛选",
+    "Liste et filtrage des produits"
+  ],
+  [
+    "购物车",
+    "Panier"
+  ],
+  [
+    "订单列表、详情",
+    "Liste et détails des commandes"
+  ],
+  [
+    "收货地址",
+    "Adresse de livraison"
+  ],
+  [
+    "聊天",
+    "Chat"
+  ],
+  [
+    "对话列表、历史记录",
+    "Liste et historique des conversations"
+  ],
+  [
+    "流式回复",
+    "Réponse en flux"
+  ],
+  [
+    "语言合成",
+    "Synthese vocale"
+  ],
+  [
+    "语音识别",
+    "Reconnaissance vocale"
+  ],
+  [
+    "其他",
+    "Autres"
+  ],
+  [
+    "完成实名认证",
+    "Compléter l'authentification en ligne"
+  ],
+  [
+    "通过身份证认证",
+    "Vérifier l'identité via la carte d'identité"
+  ],
+  [
+    "绑定银行卡",
+    "Lier une carte bancaire"
+  ],
+  [
+    "绑定招商银行储蓄卡",
+    "Lier une carte de débit de la Banque de Chine Merchants"
+  ],
+  [
+    "首次充值",
+    "Premier recharge"
+  ],
+  [
+    "充值1000元",
+    "Recharger 1000 yuans"
+  ],
+  [
+    "完成首笔交易",
+    "Effectuer la première transaction"
+  ],
+  [
+    "优选灵活配置混合A",
+    "Hybride A de configuration flexible de premier choix"
+  ],
+  [
+    "1000元起",
+    "À partir de 1000 yuans"
+  ],
+  [
+    "多页数",
+    "Plusieurs pages"
+  ],
+  [
+    "上一页",
+    "Page précédente"
+  ],
+  [
+    "下一页",
+    "Page suivante"
+  ],
+  [
+    "内容靠左",
+    "Contenu à gauche"
+  ],
+  [
+    "QQ",
+    "QQ"
+  ],
+  [
+    "带箭头",
+    "Avec flèche"
+  ],
+  [
+    "余额",
+    "Solde"
+  ],
+  [
+    "折叠",
+    "Déplier"
+  ],
+  [
+    "可滑动",
+    "Déplaçable"
+  ],
+  [
+    "左滑编辑",
+    "Glisser vers la gauche pour éditer"
+  ],
+  [
+    "编辑",
+    "Éditer"
+  ],
+  [
+    "省略号",
+    "Point d'interrogation"
+  ],
+  [
+    "主要",
+    "Principal"
+  ],
+  [
+    "危险",
+    "Danger"
+  ],
+  [
+    "信息",
+    "Information"
+  ],
+  [
+    "邮件",
+    "Courrier"
+  ],
+  [
+    "日历",
+    "Calendrier"
+  ],
+  [
+    "文件",
+    "Fichier"
+  ],
+  [
+    "可关闭",
+    "Peut être fermé"
+  ],
+  [
+    "镂空",
+    "Perforé"
+  ],
+  [
+    "自定义无圆角",
+    "Personnalisé sans coins arrondis"
+  ],
+  [
+    "不同裁剪",
+    "Différentes découpes"
+  ],
+  [
+    "点击可预览",
+    "Cliquez pour prévisualiser"
+  ],
+  [
+    "失败时显示",
+    "Afficher en cas d'erreur"
+  ],
+  [
+    "自定义圆角",
+    "Personnalisé avec coins arrondis"
+  ],
+  [
+    "设置颜色",
+    "Définir la couleur"
+  ],
+  [
+    "设置大小",
+    "Définir la taille"
+  ],
+  [
+    "集成 iconfont 与 remixicon 图标库，展示部分示例",
+    "Intégrer les bibliothèques d'icônes iconfont et remixicon, afficher quelques exemples"
+  ],
+  [
+    "iconfont",
+    "iconfont"
+  ],
+  [
+    "remixicon",
+    "remixicon"
+  ],
+  [
+    "复制成功",
+    "Copie réussie"
+  ],
+  [
+    "立即购买",
+    "Acheter immédiatement"
+  ],
+  [
+    "确认收货",
+    "Confirmer la réception"
+  ],
+  [
+    "评价",
+    "Évaluer"
+  ],
+  [
+    "禁用状态，无法拖拽",
+    "Statut désactivé, impossible de draguer"
+  ],
+  [
+    "不吸附边缘，任意位置可拖拽",
+    "Ne s'attache pas au bord, peut être dragué à n'importe quel endroit"
+  ],
+  [
+    "这是一个提示",
+    "Ceci est une indication"
+  ],
+  [
+    "左间隔",
+    "Espacement gauche"
+  ],
+  [
+    "右移动",
+    "Déplacement vers la droite"
+  ],
+  [
+    "左移动",
+    "Déplacement vers la gauche"
+  ],
+  [
+    "多个数据",
+    "Plusieurs données"
+  ],
+  [
+    "点击收起",
+    "Cliquez pour réduire"
+  ],
+  [
+    "点击展开",
+    "Cliquez pour déplier"
+  ],
+  [
+    "ref 方式调用",
+    "Appel par la méthode ref"
+  ],
+  [
+    "自定义图标、文字、大小",
+    "Icône personnalisée, texte, taille"
+  ],
+  [
+    "上传证件照",
+    "Télécharger une photo d'identité"
+  ],
+  [
+    "多选",
+    "Sélection multiple"
+  ],
+  [
+    "限制 3 个",
+    "Limité à 3"
+  ],
+  [
+    "边框",
+    "Cadre"
+  ],
+  [
+    "显示字数",
+    "Nombre de caractères affichés"
+  ],
+  [
+    "自动增高",
+    "Augmentation automatique"
+  ],
+  [
+    "其他颜色",
+    "Autres couleurs"
+  ],
+  [
+    "大一点",
+    "Plus grand"
+  ],
+  [
+    "正方形",
+    "Carré"
+  ],
+  [
+    "范围选择",
+    "Sélection de plage"
+  ],
+  [
+    "显示值",
+    "Valeur affichée"
+  ],
+  [
+    "步长10",
+    "Pas de 10"
+  ],
+  [
+    "滑块大点",
+    "Bouton de curseur plus grand"
+  ],
+  [
+    "换个颜色",
+    "Changer de couleur"
+  ],
+  [
+    "最大50",
+    "Maximum 50"
+  ],
+  [
+    "自定义触发器",
+    "Déclencheur personnalisé"
+  ],
+  [
+    "打开选择器",
+    "Ouvrir le sélecteur"
+  ],
+  [
+    "多列",
+    "Plusieurs colonnes"
+  ],
+  [
+    "通过 children 配置多级数据，并使用 column-count 参数指定显示的列数",
+    "Configurer des données multi-niveaux via children et utiliser le paramètre column-count pour spécifier le nombre de colonnes affichées"
+  ],
+  [
+    "弹窗中使用",
+    "Utiliser dans la fenêtre pop-up"
+  ],
+  [
+    "打开",
+    "Ouvrir"
+  ],
+  [
+    "选择地区",
+    "Sélectionner la région"
+  ],
+  [
+    "绑定值",
+    "Lier la valeur"
+  ],
+  [
+    "下一步",
+    "Suivant"
+  ],
+  [
+    "确定",
+    "OK"
+  ],
+  [
+    "关闭",
+    "Fermer"
+  ],
+  [
+    "用户名不能为空",
+    "Le nom d'utilisateur ne peut pas être vide"
+  ],
+  [
+    "用户名长度在3-20个字符之间",
+    "La longueur du nom d'utilisateur est comprise entre 3 et 20 caractères"
+  ],
+  [
+    "邮箱不能为空",
+    "L'adresse e-mail ne peut pas être vide"
+  ],
+  [
+    "邮箱格式不正确",
+    "Le format de l'adresse e-mail est incorrect"
   ],
   [
     "身高不能为空",
@@ -1944,20 +1980,260 @@
     "Différentes positions"
   ],
   [
-    "顶部",
-    "Haut"
+    "选择图片",
+    "Choisir une image"
   ],
   [
-    "中间",
-    "Milieu"
+    "可调节裁剪框大小",
+    "Redimensionner la zone de découpe"
   ],
   [
-    "底部",
-    "Bas"
+    "预览图片",
+    "Aperçu de l'image"
   ],
   [
-    "不同类型",
-    "Différents types"
+    "保存图片",
+    "Enregistrer l'image"
+  ],
+  [
+    "本页面内容由 canvas 渲染生成，是否立即预览图片效果？",
+    "Le contenu de cette page est généré par le rendu canvas. Voulez-vous immédiatement visualiser l'effet de l'image?"
+  ],
+  [
+    "标题",
+    "Titre"
+  ],
+  [
+    "插槽",
+    "Emplacement"
+  ],
+  [
+    "使用 PT 自定义颜色",
+    "Utiliser PT pour personnaliser la couleur"
+  ],
+  [
+    "自定义返回图标",
+    "Personnaliser l'icône de retour"
+  ],
+  [
+    "自定义返回路径",
+    "Personnaliser le chemin de retour"
+  ],
+  [
+    "自定义标题内容",
+    "Personnaliser le contenu du titre"
+  ],
+  [
+    "显示滑块",
+    "Afficher la barre de progression"
+  ],
+  [
+    "添加间距",
+    "Ajouter de l'espacement"
+  ],
+  [
+    "横向填充",
+    "Remplissage horizontal"
+  ],
+  [
+    "适用于标签数量不多的情况",
+    "S'applique aux cas où le nombre d'étiquettes est faible"
+  ],
+  [
+    "居中",
+    "Centrer"
+  ],
+  [
+    "单个禁用",
+    "Désactiver individuellement"
+  ],
+  [
+    "显示下划线",
+    "Afficher le soulignement"
+  ],
+  [
+    "禁用",
+    "Désactiver"
+  ],
+  [
+    "取消订单",
+    "Annuler la commande"
+  ],
+  [
+    "删除地址后无法恢复，确认要删除该地址吗？",
+    "Impossible de restaurer l'adresse après la suppression. Êtes-vous sûr de vouloir supprimer cette adresse ?"
+  ],
+  [
+    "加载中",
+    "Chargement..."
+  ],
+  [
+    "收货人",
+    "Destinataire"
+  ],
+  [
+    "请输入收货人姓名",
+    "Veuillez entrer le nom du destinataire"
+  ],
+  [
+    "手机号",
+    "Numéro de téléphone"
+  ],
+  [
+    "选择省市区",
+    "Choisir la province, la ville et le district"
+  ],
+  [
+    "详细地址",
+    "Adresse détaillée"
+  ],
+  [
+    "小区楼栋、门牌号、村等",
+    "Immeuble, numéro de porte, village, etc."
+  ],
+  [
+    "默认地址",
+    "Adresse par défaut"
+  ],
+  [
+    "保存",
+    "Enregistrer"
+  ],
+  [
+    "收货人不能为空",
+    "Le destinataire ne peut pas être vide"
+  ],
+  [
+    "手机号不能为空",
+    "Le numéro de téléphone ne peut pas être vide"
+  ],
+  [
+    "手机号格式不正确",
+    "Le format du numéro de téléphone est incorrect"
+  ],
+  [
+    "详细地址不能为空",
+    "L'adresse détaillée ne peut pas être vide"
+  ],
+  [
+    "所在地区不能为空",
+    "La région ne peut pas être vide"
+  ],
+  [
+    "保存中",
+    "Enregistrement en cours"
+  ],
+  [
+    "开启通知",
+    "Activer les notifications"
+  ],
+  [
+    "通用设置",
+    "Paramètres généraux"
+  ],
+  [
+    "通知设置",
+    "Paramètres de notification"
+  ],
+  [
+    "隐私设置",
+    "Paramètres de confidentialité"
+  ],
+  [
+    "头像上传成功",
+    "L'avatar a été téléchargé avec succès"
+  ],
+  [
+    "编辑昵称",
+    "Modifier le pseudo"
+  ],
+  [
+    "请输入昵称",
+    "Veuillez entrer un pseudo"
+  ],
+  [
+    "请设置2-20个字符，不包括@<>/等无效字符",
+    "Veuillez définir 2 à 20 caractères, sans compter les caractères invalides tels que @<>/"
+  ],
+  [
+    "确认",
+    "Confirmer"
+  ],
+  [
+    "昵称长度需在2-20个字符之间",
+    "La longueur du pseudo doit être comprise entre 2 et 20 caractères"
+  ],
+  [
+    "昵称不能包含@<>/等特殊字符",
+    "Le pseudo ne peut pas contenir de caractères spéciaux tels que @<>/"
+  ],
+  [
+    "编辑简介",
+    "Modifier la bio"
+  ],
+  [
+    "简介不能为空",
+    "La bio ne peut pas être vide"
+  ],
+  [
+    "提示",
+    "Avertissement"
+  ],
+  [
+    "为提供更好的服务，我们邀请您填写昵称、头像等公开信息",
+    "Pour offrir un meilleur service, nous vous invitons à compléter vos informations publiques telles que le pseudo, l'avatar, etc."
+  ],
+  [
+    "头像",
+    "Avatar"
+  ],
+  [
+    "昵称",
+    "Pseudo"
+  ],
+  [
+    "点击输入昵称",
+    "Cliquez pour entrer un pseudo"
+  ],
+  [
+    "取消",
+    "Annuler"
+  ],
+  [
+    "请上传头像",
+    "Veuillez télécharger un avatar"
+  ],
+  [
+    "登录中",
+    "Connexion en cours"
+  ],
+  [
+    "手机登录",
+    "Connexion mobile"
+  ],
+  [
+    "未注册的手机号登录成功后将自动注册",
+    "Un numéro de téléphone non enregistré sera automatiquement enregistré après une connexion réussie"
+  ],
+  [
+    "请输入手机号",
+    "Veuillez entrer un numéro de téléphone"
+  ],
+  [
+    "隐藏取消按钮",
+    "Masquer le bouton d'annulation"
+  ],
+  [
+    "自定义文本",
+    "Texte personnalisé"
+  ],
+  [
+    "关闭前钩子",
+    "Hook avant la fermeture"
+  ],
+  [
+    "显示时长",
+    "Durée d'affichage"
   ],
   [
     "确定要删除吗？",
@@ -1965,7 +2241,7 @@
   ],
   [
     "确定要删除吗？3秒后自动关闭",
-    "Voulez-vous vraiment supprimer ? La fenêtre se fermera automatiquement dans 3 secondes."
+    "Voulez-vous vraiment supprimer ? La fenêtre se fermera automatiquement dans 3 secondes"
   ],
   [
     "带标题、描述",
@@ -1985,11 +2261,11 @@
   ],
   [
     "反馈",
-    "Retour"
+    "Feedback"
   ],
   [
     "删除好友会同时删除所有聊天记录",
-    "Supprimer un ami supprimera également toutes les conversations"
+    "Supprimer un ami supprimera également tous les enregistrements de conversation"
   ],
   [
     "删除好友",
@@ -2022,261 +2298,5 @@
   [
     "赠送500元",
     "Offrir 500 yuans"
-  ],
-  [
-    "完成实名认证",
-    "Compléter l'authentification en ligne"
-  ],
-  [
-    "通过身份证认证",
-    "Authentification via la carte d'identité"
-  ],
-  [
-    "绑定银行卡",
-    "Lier une carte bancaire"
-  ],
-  [
-    "绑定招商银行储蓄卡",
-    "Lier une carte de débit de la China Merchants Bank"
-  ],
-  [
-    "本页面内容由 canvas 渲染生成，是否立即预览图片效果？",
-    "Le contenu de cette page est généré par le rendu du canvas. Voulez-vous prévisualiser immédiatement l'effet de l'image?"
-  ],
-  [
-    "标题",
-    "Titre"
-  ],
-  [
-    "插槽",
-    "Emplacement"
-  ],
-  [
-    "使用 PT 自定义颜色",
-    "Utiliser PT pour personnaliser la couleur"
-  ],
-  [
-    "自定义返回图标",
-    "Personnaliser l'icône de retour"
-  ],
-  [
-    "自定义返回路径",
-    "Personnaliser le chemin de retour"
-  ],
-  [
-    "自定义标题内容",
-    "Personnaliser le contenu du titre"
-  ],
-  [
-    "显示滑块",
-    "Afficher le curseur"
-  ],
-  [
-    "添加间距",
-    "Ajouter un espacement"
-  ],
-  [
-    "横向填充",
-    "Remplissage horizontal"
-  ],
-  [
-    "适用于标签数量不多的情况",
-    "S'applique aux cas où le nombre d'étiquettes est peu nombreux"
-  ],
-  [
-    "居中",
-    "Centrer"
-  ],
-  [
-    "单个禁用",
-    "Désactivation individuelle"
-  ],
-  [
-    "显示下划线",
-    "Afficher le soulignement"
-  ],
-  [
-    "禁用",
-    "Désactiver"
-  ],
-  [
-    "取消订单",
-    "Annuler la commande"
-  ],
-  [
-    "立即购买",
-    "Acheter immédiatement"
-  ],
-  [
-    "确认收货",
-    "Confirmer la réception des marchandises"
-  ],
-  [
-    "评价",
-    "Évaluer"
-  ],
-  [
-    "禁用状态，无法拖拽",
-    "État désactivé, impossible de draguer"
-  ],
-  [
-    "删除地址后无法恢复，确认要删除该地址吗？",
-    "Impossible de restaurer l'adresse après la suppression. Êtes-vous sûr de vouloir supprimer cette adresse ?"
-  ],
-  [
-    "加载中",
-    "Chargement en cours"
-  ],
-  [
-    "收货人",
-    "Destinataire"
-  ],
-  [
-    "请输入收货人姓名",
-    "Veuillez entrer le nom du destinataire"
-  ],
-  [
-    "手机号",
-    "Numéro de téléphone mobile"
-  ],
-  [
-    "选择省市区",
-    "Choisir la province, la municipalité et le district"
-  ],
-  [
-    "详细地址",
-    "Adresse détaillée"
-  ],
-  [
-    "小区楼栋、门牌号、村等",
-    "Immeuble, numéro de porte, village, etc."
-  ],
-  [
-    "默认地址",
-    "Adresse par défaut"
-  ],
-  [
-    "保存",
-    "Enregistrer"
-  ],
-  [
-    "收货人不能为空",
-    "Le destinataire ne peut pas être vide"
-  ],
-  [
-    "手机号不能为空",
-    "Le numéro de téléphone mobile ne peut pas être vide"
-  ],
-  [
-    "手机号格式不正确",
-    "Le format du numéro de téléphone mobile est incorrect"
-  ],
-  [
-    "详细地址不能为空",
-    "L'adresse détaillée ne peut pas être vide"
-  ],
-  [
-    "所在地区不能为空",
-    "La région géographique ne peut pas être vide"
-  ],
-  [
-    "保存中",
-    "Enregistrement en cours"
-  ],
-  [
-    "开启通知",
-    "Activer les notifications"
-  ],
-  [
-    "通用设置",
-    "Paramètres généraux"
-  ],
-  [
-    "通知设置",
-    "Paramètres de notification"
-  ],
-  [
-    "隐私设置",
-    "Paramètres de confidentialité"
-  ],
-  [
-    "头像上传成功",
-    "Votre avatar a été téléchargé avec succès"
-  ],
-  [
-    "编辑昵称",
-    "Modifier le pseudo"
-  ],
-  [
-    "请输入昵称",
-    "Veuillez entrer votre pseudo"
-  ],
-  [
-    "请设置2-20个字符，不包括@<>/等无效字符",
-    "Veuillez entrer entre 2 et 20 caractères, sans compter les caractères invalides tels que @<>/"
-  ],
-  [
-    "确认",
-    "Confirmer"
-  ],
-  [
-    "昵称长度需在2-20个字符之间",
-    "La longueur du pseudo doit être comprise entre 2 et 20 caractères"
-  ],
-  [
-    "昵称不能包含@<>/等特殊字符",
-    "Le pseudo ne peut pas contenir de caractères spéciaux tels que @<>/"
-  ],
-  [
-    "编辑简介",
-    "Modifier la bio"
-  ],
-  [
-    "简介不能为空",
-    "La bio ne peut pas être vide"
-  ],
-  [
-    "提示",
-    "Avertissement"
-  ],
-  [
-    "为提供更好的服务，我们邀请您填写昵称、头像等公开信息",
-    "Pour vous offrir un meilleur service, nous vous invitons à compléter vos informations publiques telles que votre pseudo et votre avatar"
-  ],
-  [
-    "头像",
-    "Avatar"
-  ],
-  [
-    "昵称",
-    "Pseudo"
-  ],
-  [
-    "点击输入昵称",
-    "Cliquez pour entrer votre pseudo"
-  ],
-  [
-    "取消",
-    "Annuler"
-  ],
-  [
-    "请上传头像",
-    "Veuillez télécharger un avatar"
-  ],
-  [
-    "登录中",
-    "Connexion en cours"
-  ],
-  [
-    "手机登录",
-    "Connexion mobile"
-  ],
-  [
-    "未注册的手机号登录成功后将自动注册",
-    "Un numéro de téléphone non enregistré sera automatiquement enregistré après une connexion réussie"
-  ],
-  [
-    "请输入手机号",
-    "Veuillez entrer votre numéro de téléphone"
   ]
 ]
