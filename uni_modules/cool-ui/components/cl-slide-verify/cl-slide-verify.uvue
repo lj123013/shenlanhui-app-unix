@@ -413,8 +413,8 @@ watch(
 	}
 );
 
-// 暴露方法
 defineExpose({
+	init,
 	reset
 });
 </script>

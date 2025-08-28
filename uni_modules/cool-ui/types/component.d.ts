@@ -201,3 +201,8 @@ declare type ClPageComponentPublicInstance = {
 	scrollTo: (top: number) => void;
 	scrollToTop: () => void;
 };
+
+declare type ClSlideVerifyComponentPublicInstance = {
+	init: () => void;
+	reset: () => void;
+};
