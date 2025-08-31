@@ -1,4 +1,4 @@
-import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps, Type, ClButtonType, Size, ClListViewItem, ClFilterItemType, ClSelectOption, ClFormLabelPosition, ClFormRule, ClFormValidateError, ClInputType, ClListItem, Justify, ClListViewGroup, ClListViewVirtualItem, ClListViewRefresherStatus, ClConfirmAction, ClConfirmOptions, ClToastOptions, ClPopupDirection, ClQrcodeMode, ClSelectDateShortcut, ClTabsItem, ClTextType, ClUploadItem } from "./types";
+import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps, Type, ClButtonType, Size, ClListViewItem, ClFilterItemType, ClSelectOption, ClFormLabelPosition, ClFormRule, ClFormValidateError, ClInputType, ClListItem, Justify, ClListViewGroup, ClListViewVirtualItem, ClListViewRefresherStatus, ClConfirmAction, ClConfirmOptions, ClToastOptions, ClPopupDirection, ClQrcodeMode, ClSelectDateShortcut, ClTabsItem, ClTextType, ClTreeItem, ClTreeNodeInfo, ClUploadItem } from "./types";
 import { type UiInstance } from "./hooks";
 import { type QrcodeOptions } from "./draw";
 
@@ -67,6 +67,8 @@ import type { ClTimelineProps, ClTimelinePassThrough } from "./components/cl-tim
 import type { ClTimelineItemProps, ClTimelineItemPassThrough } from "./components/cl-timeline-item/props";
 import type { ClToastProps } from "./components/cl-toast/props";
 import type { ClTopbarProps, ClTopbarPassThrough } from "./components/cl-topbar/props";
+import type { ClTreeProps } from "./components/cl-tree/props";
+import type { ClTreeItemProps, ClTreeItemPassThrough } from "./components/cl-tree-item/props";
 import type { ClUploadProps, ClUploadPassThrough } from "./components/cl-upload/props";
 import type { ClWaterfallProps, ClWaterfallPassThrough } from "./components/cl-waterfall/props";
 
@@ -140,6 +142,8 @@ declare module "vue" {
 		"cl-timeline-item": (typeof import('./components/cl-timeline-item/cl-timeline-item.uvue')['default']) & import('vue').DefineComponent<ClTimelineItemProps>;
 		"cl-toast": (typeof import('./components/cl-toast/cl-toast.uvue')['default']) & import('vue').DefineComponent<ClToastProps>;
 		"cl-topbar": (typeof import('./components/cl-topbar/cl-topbar.uvue')['default']) & import('vue').DefineComponent<ClTopbarProps>;
+		"cl-tree": (typeof import('./components/cl-tree/cl-tree.uvue')['default']) & import('vue').DefineComponent<ClTreeProps>;
+		"cl-tree-item": (typeof import('./components/cl-tree-item/cl-tree-item.uvue')['default']) & import('vue').DefineComponent<ClTreeItemProps>;
 		"cl-upload": (typeof import('./components/cl-upload/cl-upload.uvue')['default']) & import('vue').DefineComponent<ClUploadProps>;
 		"cl-waterfall": (typeof import('./components/cl-waterfall/cl-waterfall.uvue')['default']) & import('vue').DefineComponent<ClWaterfallProps>;
 	}

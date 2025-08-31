@@ -317,6 +317,12 @@
 					}
 				},
 				{
+					"path": "data/tree",
+					"style": {
+						"navigationBarTitleText": "Tree 树形结构"
+					}
+				},
+				{
 					"path": "status/badge",
 					"style": {
 						"navigationBarTitleText": "Badge 角标"

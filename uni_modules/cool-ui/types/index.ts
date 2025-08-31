@@ -181,3 +181,20 @@ export type ClFilterItem = {
 	type: ClFilterItemType;
 	options?: ClSelectOption[];
 };
+
+export type ClTreeItem = {
+	id: string | number;
+	label: string;
+	disabled?: boolean;
+	children?: ClTreeItem[];
+	value?: UTSJSONObject;
+	isExpand?: boolean;
+	isChecked?: boolean;
+	isHalfChecked?: boolean;
+};
+
+export type ClTreeNodeInfo = {
+	node: ClTreeItem;
+	parent?: ClTreeItem;
+	index: number;
+};

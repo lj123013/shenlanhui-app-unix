@@ -322,6 +322,11 @@ const data = computed<Item[]>(() => {
 					label: t("筛选栏"),
 					icon: "filter-line",
 					path: "/pages/demo/data/filter-bar"
+				},
+				{
+					label: t("树形结构"),
+					icon: "node-tree",
+					path: "/pages/demo/data/tree"
 				}
 			]
 		},

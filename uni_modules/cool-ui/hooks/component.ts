@@ -1,5 +1,5 @@
 import { parse } from "@/cool";
-import type { ClCascaderOption, ClListViewItem } from "../types";
+import type { ClCascaderOption, ClListViewItem, ClTreeItem } from "../types";
 
 export function useListView(data: UTSJSONObject[]) {
 	return data.map((e) => {
@@ -12,4 +12,13 @@ export function useListView(data: UTSJSONObject[]) {
 
 export function useCascader(data: UTSJSONObject[]) {
 	return data.map((e) => parse<ClCascaderOption>(e)!);
+}
+
+export function useTree(data: UTSJSONObject[]) {
+	return data.map((e) => {
+		return parse<ClTreeItem>({
+			...e,
+			value: e
+		})!;
+	});
 }
