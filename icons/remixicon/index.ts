@@ -714,5 +714,6 @@ export const remixicon = {
 	"input-method-fill": "ee5f",
 	"font-size": "ed8d",
 	"font-size-2": "ed8c",
-	"font-color": "ed8b"
+	"font-color": "ed8b",
+	"node-tree": "ef90"
 };
