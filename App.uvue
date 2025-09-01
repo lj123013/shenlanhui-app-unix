@@ -31,7 +31,7 @@ export default {
 
 <style lang="scss">
 @import url("static/index.scss");
-@import url("uni_modules/cool-ui/index.scss");
+@import url("icons/index.scss");
 
 .safe-area-top {
 	margin-top: env(safe-area-inset-top);
