@@ -107,7 +107,7 @@ const props = defineProps({
 		type: String,
 		default: () => t("请选择")
 	},
-	// 选项数据,支持树形结构
+	// 选项数据
 	options: {
 		type: Array as PropType<ClSelectOption[]>,
 		default: () => []
