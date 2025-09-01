@@ -210,9 +210,9 @@ declare type ClSlideVerifyComponentPublicInstance = {
 declare type ClTreeComponentPublicInstance = {
 	icon: string;
 	expandIcon: string;
-	showCheckbox: boolean;
+	checkable: boolean;
+	multiple: boolean;
 	checkStrictly: boolean;
-	accordion: boolean;
 	clearChecked: () => void;
 	setChecked: (key: string | number, flag: boolean) => void;
 	setCheckedKeys: (keys: (string | number)[]) => void;

@@ -1,14 +1,22 @@
 <template>
-	<view class="cl-tree-item__wrapper" :class="[`cl-tree-item--level-${level}`, pt.className]">
+	<view class="cl-tree-item-wrapper" :class="[pt.itemWrapper?.className]">
 		<view
 			class="cl-tree-item"
 			:class="[
 				{
 					'is-expand': hover,
-					'is-dark': isDark
+					'is-dark': isDark,
+					'is-checked': item.isChecked == true && ClTree?.checkable == true,
+					'is-half-checked': item.isHalfChecked,
+					'is-disabled': item.disabled,
+					'is-multiple': ClTree?.multiple
 				},
-				pt.className
+				pt.item?.className,
+				item.isChecked == true ? pt.itemChecked?.className : ''
 			]"
+			:style="{
+				paddingLeft: `${level * 50 + 16}rpx`
+			}"
 			@touchstart="onTouchStart"
 			@touchend="onTouchEnd"
 			@touchcancel="onTouchEnd"
@@ -16,7 +24,7 @@
 			<view class="cl-tree-item__expand" :class="[pt.expand?.className]">
 				<cl-icon
 					:name="icon"
-					:size="pt.expandIcon?.size ?? 36"
+					:size="pt.expandIcon?.size ?? 34"
 					:color="pt.expandIcon?.color"
 					:pt="{
 						className: pt.expandIcon?.className
@@ -32,7 +40,7 @@
 				>{{ item.label }}</cl-text
 			>
 
-			<template v-if="ClTree?.showCheckbox">
+			<template v-if="showCheckbox">
 				<view
 					class="cl-tree-item__checkbox"
 					:class="[pt.checkbox?.className]"
@@ -99,8 +107,9 @@ const props = defineProps({
 
 // 透传属性类型定义，支持自定义各部分样式和图标
 type PassThrough = {
-	className?: string; // 外层自定义类名
-	wrapper?: PassThroughProps; // 外层包裹属性
+	item?: PassThroughProps; // 自定义类名
+	itemChecked?: PassThroughProps; // 选中状态属性
+	itemWrapper?: PassThroughProps; // 外层包裹属性
 	expand?: PassThroughProps; // 展开区域属性
 	expandIcon?: ClIconProps; // 展开图标属性
 	checkbox?: PassThroughProps; // 复选框区域属性
@@ -119,6 +128,11 @@ const ClTree = useParent<ClTreeComponentPublicInstance>("cl-tree");
 // 判断当前节点是否有子节点
 const hasChildren = computed(() => props.item.children != null && props.item.children.length > 0);
 
+// 判断当前节点是否显示复选框
+const showCheckbox = computed(() => {
+	return ClTree?.checkable == true && ClTree?.multiple == true;
+});
+
 // 计算当前节点应显示的图标（展开/收起）
 const icon = computed(() => {
 	if (ClTree == null) {
@@ -134,6 +148,10 @@ function toExpand() {
 
 // 切换当前节点的选中状态
 function toChecked() {
+	if (props.item.disabled == true) {
+		return;
+	}
+
 	ClTree!.setChecked(props.item.id, !(props.item.isChecked ?? false));
 }
 
@@ -144,6 +162,10 @@ const hover = ref(false);
 function onTouchStart() {
 	hover.value = true;
 	toExpand();
+
+	if (ClTree?.checkable == true && ClTree?.multiple != true && props.item.disabled != true) {
+		toChecked();
+	}
 }
 
 // 触摸结束时触发，取消hover
@@ -153,12 +175,9 @@ function onTouchEnd() {
 </script>
 
 <style lang="scss" scoped>
-.cl-tree-item__wrapper {
-	@apply pl-8;
-}
-
 .cl-tree-item {
-	@apply flex flex-row items-center w-full p-2 rounded-lg;
+	@apply flex flex-row items-center w-full rounded-lg;
+	padding: 16rpx;
 
 	&__expand {
 		@apply w-6 flex items-center justify-center;
@@ -172,8 +191,20 @@ function onTouchEnd() {
 		}
 	}
 
-	&--level-0 {
-		@apply pl-0;
+	&.is-disabled {
+		@apply opacity-50;
+	}
+
+	&.is-checked {
+		@apply bg-primary-100;
+
+		&.is-multiple {
+			@apply bg-transparent;
+		}
+
+		&.is-dark {
+			@apply bg-primary-500;
+		}
 	}
 }
 </style>
