@@ -102,16 +102,7 @@ const icon = computed<Icon>(() => {
 			}
 		});
 
-		// Android平台特殊处理
-		// #ifdef APP-ANDROID
-		// @ts-ignore
-		text = new String(Character.toChars(parseInt(code, 16).toInt()));
-		// #endif
-
-		// 其他平台处理
-		// #ifndef APP-ANDROID
 		text = String.fromCharCode(parseInt(code, 16));
-		// #endif
 	} catch (e) {
 		console.error(`图标 ${props.name} 不存在`, e);
 	}
