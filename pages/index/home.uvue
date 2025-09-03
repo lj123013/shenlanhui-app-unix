@@ -56,7 +56,7 @@
 							<view
 								class="item dark:!bg-surface-800"
 								hover-class="opacity-80"
-								:hover-stay-time="50"
+								:hover-stay-time="250"
 								@tap="toPath(child)"
 							>
 								<cl-icon :name="child.icon" :size="36"></cl-icon>
