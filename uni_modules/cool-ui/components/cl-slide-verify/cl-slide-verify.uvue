@@ -384,7 +384,7 @@ function onTouchEnd() {
 			angle: currentAngle.value
 		});
 	}
-	vibrate(2); // 震动反馈
+	vibrate(1); // 震动反馈
 }
 
 // 监听模式变化，重新初始化

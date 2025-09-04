@@ -10,6 +10,7 @@
 	>
 		<!-- 图片容器 - 可拖拽和缩放的图片区域 -->
 		<view class="cl-cropper__image">
+			<!-- @vue-ignore -->
 			<image
 				class="cl-cropper__image-inner"
 				:class="[
