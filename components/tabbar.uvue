@@ -23,8 +23,8 @@
 					v-if="item.text != null"
 					:pt="{
 						className: parseClass([
-							'!text-xs mt-1',
-							[path == item.pagePath, '!text-primary-500', '!text-surface-400']
+							'text-xs mt-1',
+							[path == item.pagePath, 'text-primary-500', 'text-surface-400']
 						])
 					}"
 					>{{ t(item.text!) }}</cl-text
