@@ -264,37 +264,8 @@ function resetSwipe() {
  * 使用requestAnimationFrame实现平滑滑动动画
  */
 function swipeTo(num: number) {
-	// #ifdef APP
-	function next() {
-		requestAnimationFrame(() => {
-			if (swipe.offsetX != num) {
-				// 计算每次移动的距离
-				const step = 2;
-				const direction = swipe.offsetX < num ? 1 : -1;
-
-				// 更新偏移量
-				swipe.offsetX += step * direction;
-
-				// 防止过度滑动
-				if (direction > 0 ? swipe.offsetX > num : swipe.offsetX < num) {
-					swipe.offsetX = num;
-				}
-
-				next();
-			} else {
-				// 动画结束,更新结束位置
-				swipe.endX = swipe.offsetX;
-			}
-		});
-	}
-
-	next();
-	// #endif
-
-	// #ifdef H5 || MP
 	swipe.offsetX = num;
 	swipe.endX = num;
-	// #endif
 }
 
 // 点击态状态 - 用于显示点击效果
@@ -424,14 +395,12 @@ defineExpose({
 	@apply flex flex-col w-full relative;
 
 	&__wrapper {
-		@apply w-full;
+		@apply w-full transition-none;
 		overflow: visible;
 
 		&.is-transition {
-			// #ifdef H5 || MP
+			@apply duration-200;
 			transition-property: transform;
-			transition-duration: 0.2s;
-			// #endif
 		}
 	}
 
@@ -450,7 +419,6 @@ defineExpose({
 
 		&-left {
 			@apply left-full;
-			transform: translateX(1rpx);
 		}
 
 		&-right {
