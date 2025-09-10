@@ -1,5 +1,4 @@
 <template>
-	<!-- 日历组件主容器 -->
 	<view class="cl-calendar" :class="[pt.className]">
 		<!-- 年月选择器弹窗 -->
 		<calendar-picker
@@ -49,7 +48,7 @@
 		<!-- 日期网格容器 -->
 		<view
 			class="cl-calendar__view"
-			ref="calendarViewRef"
+			ref="viewRef"
 			:style="{ height: `${viewHeight}px`, gap: `${cellGap}px` }"
 			@tap="onTap"
 		>
@@ -116,7 +115,7 @@
 
 <script lang="ts" setup>
 import { computed, nextTick, onMounted, ref, watch, type PropType } from "vue";
-import { ctx, dayUts, first, isDark, parsePt, useRefs } from "@/cool";
+import { ctx, dayUts, first, isDark, isEmpty, isHarmony, parsePt, useRefs } from "@/cool";
 import CalendarPicker from "./picker.uvue";
 import { $t, t } from "@/locale";
 import type { ClCalendarDateConfig, ClCalendarMode } from "../../types";
@@ -234,13 +233,13 @@ const textSelectedColor = ref("#ffffff");
 // 选中日期背景颜色
 const bgSelectedColor = ref(color.value);
 // 范围选择背景颜色
-const bgRangeColor = ref(color.value + "11");
+const bgRangeColor = ref(isHarmony() ? (ctx.color["primary-50"] as string) : color.value + "11");
 
 // 组件引用管理器
 const refs = useRefs();
 
 // 日历视图DOM元素引用
-const calendarViewRef = ref<UniElement | null>(null);
+const viewRef = ref<UniElement | null>(null);
 
 // 当前显示的年份
 const currentYear = ref(0);
@@ -271,7 +270,7 @@ const selectedDates = ref<string[]>([]);
  * 获取日历视图元素的位置信息
  */
 async function getViewRect(): Promise<DOMRect | null> {
-	return calendarViewRef.value!.getBoundingClientRectAsync();
+	return viewRef.value!.getBoundingClientRectAsync();
 }
 
 /**
@@ -435,15 +434,15 @@ function calculateDateMatrix() {
  * 使用Canvas绘制日历（仅APP端）
  * Web端使用DOM渲染，APP端使用Canvas提升性能
  */
-async function renderCalendarCanvas() {
+async function renderCalendar() {
 	// #ifdef APP
 	await nextTick(); // 等待DOM更新完成
 
-	const canvasContext = calendarViewRef.value!.getDrawableContext();
+	const ctx = viewRef.value!.getDrawableContext();
 
-	if (canvasContext == null) return;
+	if (ctx == null) return;
 
-	canvasContext!.reset(); // 清空画布
+	ctx!.reset(); // 清空画布
 
 	/**
 	 * 绘制单个日期单元格
@@ -468,39 +467,39 @@ async function renderCalendarCanvas() {
 
 			// 设置背景颜色
 			if (dateCell.isSelected) {
-				canvasContext!.fillStyle = bgSelectedColor.value;
+				ctx!.fillStyle = bgSelectedColor.value;
 			}
 			if (dateCell.isRange) {
-				canvasContext!.fillStyle = bgRangeColor.value;
+				ctx!.fillStyle = bgRangeColor.value;
 			}
 
-			canvasContext!.fillRect(bgX, bgY, bgWidth, bgHeight); // 绘制背景矩形
+			ctx!.fillRect(bgX, bgY, bgWidth, bgHeight); // 绘制背景矩形
 		}
 
 		// 获取单元格文字颜色
 		const cellTextColor = getCellTextColor(dateCell);
-		canvasContext!.textAlign = "center";
+		ctx!.textAlign = "center";
 
 		// 绘制顶部文本
 		if (dateCell.topText != "") {
-			canvasContext!.font = `${Math.floor(fontSize.value * 0.75)}px sans-serif`;
-			canvasContext!.fillStyle = cellTextColor;
+			ctx!.font = `${Math.floor(fontSize.value * 0.75)}px sans-serif`;
+			ctx!.fillStyle = cellTextColor;
 			const topY = cellY + 16; // 距离顶部
-			canvasContext!.fillText(dateCell.topText, centerX, topY);
+			ctx!.fillText(dateCell.topText, centerX, topY);
 		}
 
 		// 绘制主日期数字
-		canvasContext!.font = `${fontSize.value}px sans-serif`;
-		canvasContext!.fillStyle = cellTextColor;
+		ctx!.font = `${fontSize.value}px sans-serif`;
+		ctx!.fillStyle = cellTextColor;
 		const textOffsetY = (fontSize.value / 2) * 0.7;
-		canvasContext!.fillText(dateCell.date.toString(), centerX, centerY + textOffsetY);
+		ctx!.fillText(dateCell.date.toString(), centerX, centerY + textOffsetY);
 
 		// 绘制底部文本
 		if (dateCell.bottomText != "") {
-			canvasContext!.font = `${Math.floor(fontSize.value * 0.75)}px sans-serif`;
-			canvasContext!.fillStyle = cellTextColor;
+			ctx!.font = `${Math.floor(fontSize.value * 0.75)}px sans-serif`;
+			ctx!.fillStyle = cellTextColor;
 			const bottomY = cellY + cellHeight.value - 8; // 距离底部
-			canvasContext!.fillText(dateCell.bottomText, centerX, bottomY);
+			ctx!.fillText(dateCell.bottomText, centerX, bottomY);
 		}
 	}
 
@@ -529,7 +528,7 @@ async function renderCalendarCanvas() {
 		}
 	}
 
-	canvasContext!.update(); // 更新画布显示
+	ctx!.update(); // 更新画布显示
 	// #endif
 }
 
@@ -586,7 +585,7 @@ function selectDateCell(dateCell: DateCell) {
 
 	// 重新计算日历数据并重绘
 	calculateDateMatrix();
-	renderCalendarCanvas();
+	renderCalendar();
 }
 
 /**
@@ -597,13 +596,15 @@ function onYearMonthChange(yearMonthArray: number[]) {
 	currentYear.value = yearMonthArray[0];
 	currentMonth.value = yearMonthArray[1];
 
+	console.log(yearMonthArray);
+
 	// 重新计算日历数据并重绘
 	calculateDateMatrix();
-	renderCalendarCanvas();
+	renderCalendar();
 }
 
 /**
- * 处理点击事件（APP端Canvas点击检测）
+ * 处理点击事件（APP端点击检测）
  */
 async function onTap(e: UniPointerEvent) {
 	// 获取容器位置信息
@@ -648,7 +649,7 @@ function gotoPrevMonth() {
 
 	// 重新计算并渲染日历
 	calculateDateMatrix();
-	renderCalendarCanvas();
+	renderCalendar();
 }
 
 /**
@@ -664,13 +665,13 @@ function gotoNextMonth() {
 
 	// 重新计算并渲染日历
 	calculateDateMatrix();
-	renderCalendarCanvas();
+	renderCalendar();
 }
 
 /**
  * 解析选中日期
  */
-function parseDate() {
+function parseDate(flag: boolean | null = null) {
 	// 根据选择模式初始化选中日期
 	if (props.mode == "single") {
 		selectedDates.value = props.modelValue != null ? [props.modelValue] : [];
@@ -679,30 +680,34 @@ function parseDate() {
 	}
 
 	// 获取初始显示日期（优先使用选中日期，否则使用当前日期）
-	const initialDate = first(selectedDates.value);
-	const [initialYear, initialMonth] = dayUts(initialDate).toArray();
+	let [year, month] = dayUts(first(selectedDates.value)).toArray();
 
-	currentYear.value = props.year ?? initialYear;
-	currentMonth.value = props.month ?? initialMonth;
+	if (flag == true) {
+		year = props.year ?? year;
+		month = props.month ?? month;
+	}
+
+	currentYear.value = year;
+	currentMonth.value = month;
 
 	// 计算初始日历数据
 	calculateDateMatrix();
 
 	// 渲染日历视图
-	renderCalendarCanvas();
+	renderCalendar();
 }
 
 // 组件挂载时的初始化逻辑
 onMounted(() => {
+	// 解析日期
+	parseDate(true);
+
 	// 监听单选模式的值变化
 	watch(
 		computed(() => props.modelValue ?? ""),
 		(newValue: string) => {
 			selectedDates.value = [newValue];
 			parseDate();
-		},
-		{
-			immediate: true
 		}
 	);
 
@@ -712,9 +717,6 @@ onMounted(() => {
 		(newDateArray: string[]) => {
 			selectedDates.value = [...newDateArray];
 			parseDate();
-		},
-		{
-			immediate: true
 		}
 	);
 
@@ -723,7 +725,7 @@ onMounted(() => {
 		computed(() => [props.dateConfig, props.showOtherMonth]),
 		() => {
 			calculateDateMatrix();
-			renderCalendarCanvas();
+			renderCalendar();
 		},
 		{
 			deep: true

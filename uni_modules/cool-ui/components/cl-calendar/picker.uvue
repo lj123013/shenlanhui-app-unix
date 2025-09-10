@@ -267,7 +267,7 @@ defineExpose({
 	}
 
 	&.is-dark {
-		@apply bg-surface-800;
+		@apply bg-surface-800 rounded-2xl;
 	}
 }
 </style>
