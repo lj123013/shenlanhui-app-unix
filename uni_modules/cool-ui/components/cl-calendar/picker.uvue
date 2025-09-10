@@ -140,7 +140,7 @@ const list = computed(() => {
 // - 年份模式下显示“起始年 - 结束年”
 const title = computed(() => {
 	return mode.value == "month"
-		? `${year.value}年`
+		? `${year.value}`
 		: `${first(list.value)?.label} - ${last(list.value)?.label}`;
 });
 
