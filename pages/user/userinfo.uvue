@@ -1,0 +1,558 @@
+<template>
+	<cl-page :backTop="true"  safe-area>
+		<!-- 固定导航栏（滚动后显示） -->
+		<view class="fixed-navbar" :class="{ show: showNavbar }">
+			<cl-topbar safe-area-top color='black' background-color="white" :pt="{
+				back: {
+					size: 48,
+				},
+			}">
+				<template #title>
+					<view class="flex items-center">
+						<cl-avatar :src="UserInfo.avatarUrl" size="60rpx" :pt="{ className: 'mr-2' }"></cl-avatar>
+						<cl-text color="black" :pt="{ className: 'text-base font-medium' }">{{ UserInfo.username
+						}}</cl-text>
+					</view>
+				</template>
+				<template #append>
+					<cl-icon name="zhuanfa1" color="black" :size="30" :pt="{ className: 'mr-3' }"
+						@tap="share"></cl-icon>
+				</template>
+			</cl-topbar>
+		</view>
+		<view class="flex flex-col">
+			<view class="container">
+				<!-- 背景图片 -->
+				<cl-image class="background-image" width="100%" height="462rpx" src="../../static/image/user-banner.png"
+					mode="aspectFill"></cl-image>
+				<!-- 页面内容 -->
+				<view class="navabar">
+					<cl-topbar safe-area-top color='white' background-color="transparent" :pt="{
+						back: {
+							size: 48,
+						},
+					}">
+						<template #append>
+							<cl-icon name="zhuanfa1" color="white" :size="30" :pt="{ className: 'mr-3' }"
+								@tap="share"></cl-icon>
+						</template>
+					</cl-topbar>
+					<view class="user-info px-5">
+						<view class="flex flex-row items-center justify-between  mt-5">
+							<view class="flex items-center flex-row">
+								<cl-avatar :src="UserInfo.avatarUrl"></cl-avatar>
+								<cl-text color="white" :pt="{ className: '!text-xl mx-1' }">{{ UserInfo.username
+								}}</cl-text>
+
+								<view class="bg-white rounded-3xl p-[4rpx] flex items-center justify-center"
+									v-if="UserInfo?.is_auth == 1">
+									<cl-icon name="renzheng2" color="#FE0000" :size="16"></cl-icon>
+								</view>
+								<view class="bg-white rounded-3xl p-[4rpx] flex items-center justify-center"
+									v-else-if="UserInfo?.is_auth == 2">
+									<cl-icon name="a-renzheng21" color="primary" :size="16"></cl-icon>
+								</view>
+							</view>
+							<!-- isFollow==true已关注 isFollow==false未关注 -->
+							<view
+								class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
+								:class="UserInfo?.isFollow == true ? 'bg8b' : 'bg-white'">
+								<cl-text v-if="UserInfo?.isFollow == false" color="primary" :pt="{
+									className: '!text-xs'
+								}">关注</cl-text>
+								<cl-text v-else color="primary" :pt="{
+									className: '!text-xs'
+								}">已关注</cl-text>
+							</view>
+						</view>
+						<view class="flex flex-row items-center justify-between mt-5" @tap="userRenzheng=true">
+							<!-- 认证信息 -->
+							<view>
+								<!-- 个人认证 -->
+								<view class="flex flex-row items-center " v-if="UserInfo?.is_auth == 1">
+									<cl-icon name="huiyuan" color="white" :size="20"
+										:pt="{ className: 'mr-1' }"></cl-icon>
+									<cl-text color="white" :pt="{ className: '!text-sm' }">媒体-</cl-text>
+									<cl-text color="white" :pt="{ className: '!text-sm' }">主持人</cl-text>
+								</view>
+								<!-- 企业认证 -->
+								<view v-else>
+									<view class="flex flex-row items-center ">
+										<cl-icon name="huiyuan" color="white" :size="20"
+											:pt="{ className: 'mr-1' }"></cl-icon>
+										<cl-text color="white" :pt="{ className: '!text-sm' }">传媒见闻官方账号</cl-text>
+
+									</view>
+									<view class="flex flex-row items-center ">
+										<cl-icon name="tishi" color="white" :size="20"
+											:pt="{ className: 'mr-1' }"></cl-icon>
+										<cl-text color="white"
+											:pt="{ className: '!text-sm' }">关注媒体、媒体人最新动向。全心全意为媒体人服务</cl-text>
+
+									</view>
+								</view>
+
+							</view>
+							<cl-icon name="arrow-right-s-line" color="white" ></cl-icon>
+						</view>
+
+					</view>
+				</view>
+
+			</view>
+			<view class="flex-1 flex flex-col">
+				<view class="flex flex-row">
+					<cl-tabs v-model="val" class="fontBold" :showLine="false" :list="tabbar"
+						:color="isColor ? '#2854F2' : ''" un-color="#6a6a6a"></cl-tabs>
+				</view>
+				<view class="flex-1 ">
+					<!-- 这里可以添加对应tab的内容 -->
+					<view v-if="val == '1'" class="">
+						<view v-for="(item, index) in allList" :key="item.time" class="flex flex-col p-4" :class="{
+							'borderh10 pt-3': index != 0
+						}">
+							<view class="flex flex-row items-center justify-between w-full mb-2">
+								<view class="flex flex-row items-center ">
+									<cl-avatar :src="item.image" size="60rpx"></cl-avatar>
+									<cl-col class="ml-2">
+										<cl-text color="#131313" :pt="{ className: '!text-xs flex-1' }">{{ item.username
+										}}</cl-text>
+										<cl-text color="#909090" :pt="{ className: '!text-xs' }">{{ item.time
+										}}</cl-text>
+									</cl-col>
+								</view>
+								<view class="w-[60rpx] flex flex-col items-end justify-items-end" @tap="open">
+									<cl-icon name="arrow-down-s-line" color="#131313"></cl-icon>
+								</view>
+							</view>
+							<cl-text color="black" :pt="{ className: '!text-lg' }">{{ item.title }}</cl-text>
+							<cl-text color="#505050" :pt="{ className: '!text-base' }">{{ item.content }}</cl-text>
+							<view v-if="Array.isArray(item.imageList) && item.imageList.length > 0"
+								class="mt-2 flex flex-row flex-wrap">
+								<cl-image v-for="(child, childindex) in item.imageList!.slice(0, 3)" :key="childindex"
+									:src="child.url" :width="getImageWidth(item.imageList!.length)" height="236rpx"
+									:class="['rounded-xl', getImageClass(item.imageList!.length, childindex)]"
+									mode="aspectFill"></cl-image>
+							</view>
+							<view class="flex flex-row items-center justify-between px-3 pt-3">
+								<view v-for="item in operationList" class="flex flex-row items-center" :key="item.text">
+									<cl-icon :name="item.icon" :pt="{ className: 'operationColor' }"
+										:size="24"></cl-icon>
+									<cl-text :pt="{ className: 'operationColor !text-sm ml-1' }">{{ item.text
+									}}</cl-text>
+								</view>
+							</view>
+						</view>
+
+					</view>
+					<view v-else-if="val == '2'" class="p-4">
+						<cl-text>长文</cl-text>
+					</view>
+					<view v-else-if="val == '3'" class="p-4">
+						<cl-text>讨论内容</cl-text>
+					</view>
+					<view v-else-if="val == '4'" class="p-4">
+						<cl-text>图库内容</cl-text>
+					</view>
+				</view>
+			</view>
+		</view>
+		<!-- 显示用户认证信息弹框 -->
+		<cl-popup v-model="userRenzheng" :show-header="false">
+			<view class="p-4">
+				<view class="flex flex-row items-center justify-between  mt-5">
+					<view class="flex items-center flex-row">
+						<cl-avatar :src="UserInfo.avatarUrl"></cl-avatar>
+						<cl-text color="black" :pt="{ className: '!text-xl mx-1' }">{{ UserInfo.username
+						}}</cl-text>
+						<cl-icon v-if="UserInfo?.is_auth == 1" name="renzheng2" color="#FE0000" :size="16"></cl-icon>
+						<cl-icon v-else-if="UserInfo?.is_auth == 2" name="a-renzheng21" color="primary"
+							:size="16"></cl-icon>
+
+					</view>
+					<!-- isFollow==true已关注 isFollow==false未关注 -->
+					<cl-icon name="cuo" color="#131313" :size="26" @tap="userRenzheng = false"></cl-icon>
+				</view>
+				<view class="flex flex-row items-center justify-between mt-5">
+					<!-- 认证信息 -->
+					<view>
+						<!-- 个人认证 -->
+						<view class="flex flex-row items-center " v-if="UserInfo?.is_auth == 1">
+							<cl-icon name="huiyuan" size="18rpx" :pt="{ className: 'mr-1 color2c' }"></cl-icon>
+							<cl-text :pt="{ className: '!text-sm color2c' }">媒体-</cl-text>
+							<cl-text :pt="{ className: '!text-sm color2c' }">主持人</cl-text>
+						</view>
+						<!-- 企业认证 -->
+						<view v-else>
+							<view class="flex flex-row items-center ">
+								<cl-icon name="huiyuan" :size="20" :pt="{ className: 'mr-1 color2c' }"></cl-icon>
+								<cl-text :pt="{ className: '!text-sm color2c' }">传媒见闻官方账号</cl-text>
+
+							</view>
+							<view class="flex flex-row items-center mt-1">
+								<cl-icon name="tishi" :size="20" :pt="{ className: 'mr-1 color2c' }"></cl-icon>
+								<cl-text :pt="{ className: '!text-sm color2c' }">关注媒体、媒体人最新动向。全心全意为媒体人服务</cl-text>
+
+							</view>
+						</view>
+						<!-- 描述 -->
+						<view class="mt-4">
+							<view class="flex flex-row items-center ">
+								<cl-icon name="shijian" :size="20" :pt="{ className: 'mr-1 color2c' }"></cl-icon>
+								<cl-text :pt="{ className: '!text-sm color2c' }">入驻时间：2025-09-01</cl-text>
+
+							</view>
+							<view class="flex flex-row items-center mt-1">
+								<cl-icon name="dingwei" :size="20" :pt="{ className: 'mr-1 color2c' }"></cl-icon>
+								<cl-text :pt="{ className: '!text-sm color2c' }">常住地址：成都</cl-text>
+
+							</view>
+						</view>
+						<!-- 擅长领域 -->
+						<view class="mt-4">
+							<cl-text :pt="{ className: '!text-lg fontBold color2c mb-3' }">擅长领域</cl-text>
+							<cl-row :gutter="12">
+								<cl-col :span="6" v-for="item in areaList" :key="item">
+									<view
+										class="item mb-2 bg-neutral-100 rounded-[10rpx] py-2 flex flex-col items-center justify-center">
+										<cl-text :pt="{ className: '!text-sm color5e' }">{{item}}</cl-text>
+									</view>
+								</cl-col>
+							</cl-row>
+						</view>
+					</view>
+				</view>
+			</view>
+		</cl-popup>
+		<!-- swipeClose关闭拖拽 列表用户操作-->
+		<cl-popup v-model="visible" :show-header="false" title="" :mask-closable="true"
+			:pt="{ className: 'rounded-t-2xl' }">
+			<view class="p-4">
+				<view class="py-4 flex flex-row items-center" v-for="value in popupList">
+				<cl-icon :name="value.icon" color="#AEAEAE" :size="36" :pt="{ className: 'mr-2' }"></cl-icon>
+				<cl-text color="#636363" :pt="{ className: '!text-base' }">{{ value.text }}</cl-text>
+			</view>
+			<view class="borderh10 pt-4" @tap="close">
+				<cl-text color="#6D6D6D" :pt="{ className: 'text-center' }">取消</cl-text>
+			</view>
+			</view>
+		</cl-popup>
+	</cl-page>
+</template>
+
+<script setup lang="ts">
+import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { useUi, usePage } from "@/uni_modules/cool-ui";
+import { t } from "@/locale";
+import type { ClTabsItem } from "@/uni_modules/cool-ui";
+const ui = useUi();
+const { onScroll } = usePage();
+const val = ref("1");
+const isColor = ref(true);
+const showNavbar = ref(false);
+const userRenzheng = ref(false)//用户认证信息
+const visible = ref(false);//列表弹出框
+// 打开弹框
+function open() {
+	visible.value = true;
+}
+// 关闭弹框
+function close() {
+	visible.value = false;
+}
+// 弹出层数据
+type popupItem = {
+	icon: string;
+	text: string;
+};
+const popupList = ref<popupItem[]>([
+	{
+		icon: 'shibai',
+		text: '不感兴趣此条内容'
+	},
+	{
+		icon: 'jubao',
+		text: '屏蔽此用户'
+	},
+	{
+		icon: 'a-zu2541',
+		text: '投诉内容'
+	}
+]);
+type UserInfoType = {
+	username: string;
+	avatarUrl: string;
+	is_auth: number;
+	isFollow: boolean,
+};
+
+// 创建响应式的用户信息数据
+const UserInfo = ref<UserInfoType>({
+	username: 'steven',
+	avatarUrl: '../../static/image/head-img.png',
+	is_auth: 2,
+	isFollow: false
+});
+
+const tabbar = ref<ClTabsItem[]>([
+	{
+		label: "全部",
+		value: "1",
+	},
+	{
+		label: "长文",
+		value: "2",
+	},
+	{
+		label: "讨论",
+		value: "3",
+	},
+	{
+		label: "图库",
+		value: "4",
+	},
+]);
+type ImageItem = {
+	url: string,
+}
+
+type ListItem = {
+	image: string,
+	title?: string,
+	username: string,
+	content: string,
+	time: string,
+	like: number,
+	comment: number,
+	isLike: boolean,
+	imageList?: ImageItem[],
+}
+const allList = computed<ListItem[]>(() => [
+	{
+		image: t('../../static/image/head-img.png'),
+		username: t('传媒见闻'),
+		title: t(""),
+		content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+		time: t("05-09-01"),
+		like: 2,
+		comment: 1,
+		isLike: true,
+		imageList: [],
+	},
+	{
+		image: t('../../static/image/head-img.png'),
+		username: t('传媒见闻'),
+		title: t('造谣阿里采购寒武纪 15 万片 GPU,背后的深科技号称中国人工智能主媒体，证监会应该出手了！'),
+		content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+		time: t("05-09-01"),
+		like: 2,
+		comment: 1,
+		isLike: false,
+		imageList: [],
+	},
+	{
+		image: t('../../static/image/head-img.png'),
+		username: t('传媒见闻'),
+		title: t(""),
+		content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+		time: t("05-09-01"),
+		like: 2,
+		comment: 1,
+		isLike: false,
+		imageList: [{
+			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+		}],
+	},
+	{
+		image: t('../../static/image/head-img.png'),
+		username: t('传媒见闻'),
+		title: t(""),
+		content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+		time: t("05-09-01"),
+		like: 2,
+		comment: 1,
+		isLike: false,
+		imageList: [{
+			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+		},
+		{
+			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+		}],
+	},
+	{
+		image: t('../../static/image/head-img.png'),
+		username: t('传媒见闻'),
+		title: t(""),
+		content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+		time: t("05-09-01"),
+		like: 2,
+		comment: 1,
+		isLike: false,
+		imageList: [{
+			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+		},
+		{
+			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+		},
+		{
+			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+		}],
+	},
+	// 测试四张图片（应该只显示前三张）
+	{
+		image: t('../../static/image/head-img.png'),
+		username: t('传媒见闻'),
+		title: t('测试四张图片显示'),
+		content: t('这里有四张图片，但只会显示前三张，并且每张图片的宽度为210rpx。'),
+		time: t("05-09-02"),
+		like: 5,
+		comment: 3,
+		isLike: true,
+		imageList: [{
+			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+		},
+		{
+			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+		},
+		{
+			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+		},
+		{
+			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+		}],
+	},
+])
+type iconitem = {
+	icon: string,
+	text: string
+}
+const operationList = ref<iconitem[]>([
+	{
+		icon: 'zhuanfa',
+		text: '分享'
+	},
+	{
+		icon: 'a-pinglun1',
+		text: '评论'
+	},
+	{
+		icon: 'dianzan',
+		text: '点赞'
+	}
+])
+// 行业类型定义
+const areaList = ref<string[]>([
+	'环保行业', '金融行业', '科技行业', '教育行业', '医疗行业', '汽车行业', '房地产', '文化传媒', '旅游行业', '餐饮行业', '体育行业', '其他'
+]);
+function share() {
+	ui.showToast({
+		message: t("该功能正在开发中")
+	});
+}
+
+
+// 根据图片数量获取图片宽度
+function getImageWidth(imageCount: number): string {
+	// 限制最多显示3张图片
+	const count = Math.min(imageCount, 3);
+
+	if (count === 1) {
+		return '384rpx';
+	} else if (count === 2) {
+		return '268rpx';
+	} else {
+		return '210rpx';
+	}
+}
+
+// 根据图片数量和索引获取图片样式类
+function getImageClass(imageCount: number, index: number): string {
+	const count = Math.min(imageCount, 3);
+	let classes = ['mb-2'];
+
+	// 根据图片数量添加右边距
+	if (count === 2) {
+		// 两张图片时，第一张添加右边距
+		if (index === 0) {
+			classes.push('mr-2');
+		}
+	} else if (count === 3) {
+		// 三张图片时，前两张添加右边距
+		if (index < 2) {
+			classes.push('mr-2');
+		}
+	}
+
+	return classes.join(' ');
+}
+
+// 监听页面滚动，控制导航栏显示
+onMounted(() => {
+	onScroll((scrollTop: number) => {
+		// 调试信息
+		console.log('页面滚动距离:', scrollTop);
+		// 当滚动距离大于50时显示导航栏
+		showNavbar.value = scrollTop > 50;
+	});
+});
+</script>
+
+<style>
+.fixed-navbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
+	transform: translateY(-100%);
+	transition: transform 0.3s ease;
+}
+
+.fixed-navbar.show {
+	transform: translateY(0);
+}
+
+.container {
+	position: relative;
+	width: 100%;
+	height: 462rpx;
+}
+
+.background-image {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	/* 背景图片在底层 */
+}
+
+.navabar {
+	position: relative;
+	z-index: 2;
+	/* 确保导航栏在背景图片之上 */
+}
+
+.bg8b {
+	background-color: #8BA5FF;
+}
+
+:deep(.content-item) {
+	flex-direction: column !important;
+}
+
+.operationColor {
+	color: #9B9B9B;
+}
+
+.borderh10 {
+	border-top: 10rpx solid #F8F8F8;
+}
+
+.colo2c {
+	color: #2c2c2c;
+}
+
+.color5e {
+	color: #5E5E5E;
+}
+</style>

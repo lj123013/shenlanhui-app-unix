@@ -1,0 +1,57 @@
+<template>
+	<view class="px-5">
+		<view class="w-full flex flex-row items-start justify-between " :class="index == 0 ? '' : 'border py-4'">
+			<view class="w-3 h-3 rounded-full bg-red-200 flex flex-col items-center justify-center mr-1 mt-2">
+				<view class="bg-red w-1 h-1 rounded-full"></view>
+			</view>
+			<view class="flex-1">
+				<cl-text class="" color="#1a1a1a" :pt="{
+					className: '!text-lg mb-1'
+				}">
+					{{ item?.title }}</cl-text>
+				<cl-text color="#444444" :pt="{
+					className: '!text-base'
+				}">{{ item?.content }}</cl-text>
+				<view class="flex flex-row items-center justify-between">
+					<cl-text color="#cbcbcb" :pt="{ className: '!text-sm' }">15:30</cl-text>
+					<cl-image width="90rpx" height="18rpx" src="/static/image/ai_icon.png"></cl-image>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { isMp, router, useRefs } from "@/cool";
+import { computed } from "vue";
+import { parse } from "@/cool";
+
+defineOptions({
+	name: "dispath-item"
+});
+
+// 定义数据类型（注释形式）
+type dispathItem = {
+	id: number;
+	title: string;
+	content: string;
+	time: string;
+	is_top: boolean;
+};
+
+const props = defineProps({
+	value: {
+		type: Object,
+		default: () => ({})
+	},
+	index: {
+		type: Number,
+		default: 0
+	}
+});
+
+const item = computed(() => parse < dispathItem > (props.value));
+function clickuser() {
+	router.to('/pages/user/userinfo');
+}
+</script>

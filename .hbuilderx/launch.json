@@ -7,8 +7,12 @@
         },
         {
             "customPlaygroundType" : "local",
-            "playground" : "custom",
+            "playground" : "standard",
             "type" : "uni-app:app-android"
+        },
+        {
+            "playground" : "custom",
+            "type" : "uni-app:app-ios"
         }
     ]
 }

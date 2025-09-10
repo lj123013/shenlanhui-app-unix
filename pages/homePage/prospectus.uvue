@@ -1,0 +1,113 @@
+<template>
+	<cl-page>
+		<cl-list-view
+			ref="listViewRef"
+			:data="listView"
+			:virtual="false"
+			:pt="{
+				refresher: {
+					className: 'pt-3'
+				}
+			}"
+			:refresher-enabled="true"
+			@pull="onPull"
+			@bottom="loadMore"
+		>
+			<template #item="{ value ,index}">
+				<prospectus-item :value="value" :index="index"></prospectus-item>
+			</template>
+
+			<template #bottom>
+				<view class="py-3">
+					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+				</view>
+			</template>
+		</cl-list-view>
+	</cl-page>
+</template>
+
+<script lang="ts" setup>
+import { useUi } from "@/uni_modules/cool-ui";
+import { ref } from "vue";
+import { usePager } from "@/cool";
+import prospectusItem from "../homePage/components/prospectusItem.uvue";
+import { t } from "@/locale";
+
+const ui = useUi();
+
+const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
+
+let id = 0;
+
+const { refresh, list, listView, loading, loadMore } = usePager((params) => {
+	return new Promise((resolve) => {
+		// 模拟请求
+		setTimeout(() => {
+			resolve({
+				list: [
+					{
+						id: id++,
+						company: "厦门优迅芯片股份有限公司",
+						content:"厦门优迅芯片股份有限公司科创板首次公开发行股票招股说明书（申报稿）",
+						time: "2025-08-31",
+						
+					},
+					{
+						id: id++,
+						company: "厦门恒坤新材料科技股份有限公司",
+						content:"厦门恒坤新材料科技股份有限公司科创板首次公开发行股票招股说明书（注册稿）",
+						time: "2025-08-31",
+						
+					},
+					{
+						id: id++,
+						company: "武汉长进光子技术股份有限公司",
+						content:"江苏锡华新能源科技股份有限公司主板首次公开发行股票招股说明书（上会稿",
+						time: "2025-08-31",
+						
+					},
+					{
+						id: id++,
+						company: "宁波健信超导科技股份有限公司",
+						content:"宁波健信超导科技股份有限公司科创板首次公开发行股票招股说明书（申报稿）",
+						time: "2025-08-31",
+						
+					},
+					{
+						id: id++,
+						company: "宁波健信超导科技股份有限公司",
+						content:"宁波健信超导科技股份有限公司科创板首次公开发行股票招股说明书（申报稿）",
+						time: "2025-08-31",
+						
+					},
+					{
+						id: id++,
+						company: "江苏锡华新能源科技股份有限公司",
+						content:"江苏锡华新能源科技股份有限公司主板首次公开发行股票招股说明书（上会稿）",
+						time: "2025-08-31",
+						
+					},
+				],
+				pagination: {
+					page: params["page"],
+					size: params["size"],
+					total: 6
+				}
+			});
+
+			ui.hideLoading();
+		}, 1000);
+	});
+});
+
+async function onPull() {
+	await refresh({ page: 1 });
+	listViewRef.value!.stopRefresh();
+}
+
+onReady(() => {
+	ui.showLoading(t("加载中"));
+	// 默认请求
+	refresh({});
+});
+</script>

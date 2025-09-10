@@ -1,0 +1,60 @@
+<template>
+	<view class="">
+		<view class="w-full flex flex-row items-start justify-between py-4" :class="index == 0 ? '' : 'border'" @click="onItemClick">
+			<view class="flex-1 mr-2">
+				<cl-text color="black" :pt="{
+					className: 'istopItem mb-2'
+				}">{{ item?.title }}</cl-text>
+				<view class="flex flex-row items-center">
+					<cl-text color="" :pt="{
+						className: '!text-xs font-bold mr-1 text-gray-300'
+					}">{{ item?.author }}</cl-text>
+					<cl-text :pt="{
+						className: '!text-xs text-gray-300'
+					}">{{ item?.acreat_time }}</cl-text>
+				</view>
+			</view>
+			<cl-image width="226rpx" height="136rpx" :pt="{className:'rounded-xl'}" :src="item?.cover_url"></cl-image>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { isMp, router, useRefs } from "@/cool";
+import { computed } from "vue";
+import { parse } from "@/cool";
+
+defineOptions({
+	name: "article-item"
+});
+
+// 定义数据类型（注释形式）
+type articleItem = {
+	id: number;
+	title: string;
+	author: string;
+	cover_url: string;
+	acreat_time: string;
+
+};
+
+const props = defineProps({
+	value: {
+		type: Object,
+		default: () => ({})
+	},
+	index: {
+		type: Number,
+		default: 0
+	}
+});
+
+const emit = defineEmits(["item-click"]);
+
+const item = computed(() => parse < articleItem > (props.value));
+
+// 处理点击事件
+const onItemClick = () => {
+	emit("item-click", props.value);
+};
+</script>

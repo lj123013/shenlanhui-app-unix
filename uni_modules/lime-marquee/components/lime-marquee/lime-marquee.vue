@@ -1,0 +1,115 @@
+<template>
+	<view class="demo-block">
+		<text class="demo-block__title-text ultra">Marquee 跑马灯</text>
+		<text class="demo-block__desc-text">让文字无缝循环滚动。</text>	
+		<view class="demo-block__body">
+			<view class="demo-block card">
+				<text class="demo-block__title-text">基础用法</text>
+				<view class="demo-block__body">
+					 <l-marquee style="height: 200rpx">
+					    <view
+							v-for="(item, i) in data"
+							:key="i"
+							style="
+								display: flex;
+								flex-direction: row;
+								justify-content: space-between;
+								margin-bottom: 16rpx;">
+							<view>{{ item }}</view>
+							<text style="color: #999;">02-15</text>
+					    </view>
+					  </l-marquee>
+				</view>	
+			</view>	
+			<view class="demo-block card">
+				<text class="demo-block__title-text">水平方向</text>
+				<view class="demo-block__body">
+					 <l-marquee direction="horizontal" :speed="520">
+					    <view
+							v-for="(item, i) in data"
+							:key="i"
+							style="flex-direction: row; display: flex; margin-right: 60rpx">
+							<view style="display: flex;">{{ item }}</view>
+							<text style="color: #999;">02-15</text>
+					    </view>
+					  </l-marquee>
+				</view>	
+			</view>	
+		</view>	
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			const kungFuManuals = ['九阳真经', '九阴真经', '易筋经', '神照经', '北冥神功', '吸星大法', '独孤九剑', '降龙十八掌'];
+			const genDataWithRandomManual = ()=> {
+				return '郭靖 黄蓉 杨过 小龙女 令狐冲 任盈盈 张无忌 赵敏'.split(' ').map((item) => {
+					const randomIndex = Math.floor(Math.random() * kungFuManuals.length);
+					return `恭喜${item}获得《${kungFuManuals[randomIndex]}》`;
+			  });
+			}
+			const manual = genDataWithRandomManual()
+			return {
+				data: [...manual, ...manual]
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+	
+	.demo-block {
+		margin: 32px 0 0;
+		
+		// overflow: visible;
+		&.card{
+			background-color: white;
+			padding: 30rpx;
+			margin-bottom: 20rpx;
+			margin: 12px !important;
+		}
+		&__title {
+			margin: 0;
+			margin-top: 8px;
+			&-text {
+				color: rgba(0, 0, 0, 0.6);
+				font-weight: 400;
+				font-size: 14px;
+				line-height: 16px;
+				display: flex;
+				// margin-left: 20px;
+				&.large {
+					color: rgba(0, 0, 0, 0.9);
+					font-size: 18px;
+					font-weight: 700;
+					line-height: 26px;
+					margin-left: 20px;
+				}
+				&.ultra {
+					color: rgba(0, 0, 0, 0.9);
+					font-size: 24px;
+					font-weight: 700;
+					line-height: 32px;
+					margin-left: 20px;
+				}
+			}
+		}
+		&__desc-text {
+			color: rgba(0, 0, 0, 0.6);
+			margin: 8px 16px 0 0;
+			font-size: 14px;
+			line-height: 22px;
+			margin-left: 20px;
+		}
+		&__body {
+			margin: 16px 0;
+			overflow: visible;
+			.demo-block {
+				// margin-top: 0px;
+				margin: 0;
+				overflow: visible;
+			}
+		}
+	}
+</style>

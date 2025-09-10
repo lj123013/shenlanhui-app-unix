@@ -1,0 +1,44 @@
+.l-resize {
+	&__container {
+		/* #ifndef APP-NVUE */
+		position: absolute;
+		min-width: 1px;
+		min-height: 1px;
+		/* #endif */
+		/* #ifdef APP-NVUE */
+		// flex: 1;
+		display: inline-flex;
+		/* #endif */
+	}
+	&-target, &__wrapper {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: -9999;
+		overflow: hidden;
+		/* #ifndef APP-NVUE */
+		visibility: hidden;
+		/* #endif */
+	}
+	&-target {
+		.l-resize__container {
+			/* #ifndef APP-NVUE*/
+			width: 100%;
+			height: 100%;
+			/* #endif */
+			/* #ifdef APP-NVUE*/
+			flex: 1;
+			/* #endif */
+		}
+	}
+	&__wrapper {
+		&--placeholder {
+			/* #ifndef APP-NVUE */
+			transition: 0s;
+			/* #endif */
+			animation: none;
+		}
+	}
+}

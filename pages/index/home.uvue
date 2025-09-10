@@ -1,495 +1,785 @@
 <template>
 	<cl-page>
-		<cl-topbar fixed :show-back="false" safe-area-top :height="isMp() ? null : 100">
-			<view
-				class="flex flex-row items-center p-3 flex-1 w-full"
-				:class="{
+		<cl-topbar fixed :show-back="false" safe-area-top :height="isMp() ? null : 88">
+			<view class="flex flex-row flex-1 items-center justify-between px-5 flex-1 w-full" :class="{
 					'pt-0': isMp()
-				}"
-			>
-				<view class="bg-primary-500 rounded-lg p-[12rpx]">
-					<cl-image
-						src="/static/logo.png"
-						:width="32"
-						:height="32"
-						:show-loading="false"
-					></cl-image>
+				}">
+				<view class="flex flex-row items-center">
+					<view class="bg-primary-500 rounded-3xl p-[20rpx]" @click="userinfo">
+						<cl-icon name="a-zu254" color="white"></cl-icon>
+					</view>
+					<view class="flex flex-row items-center">
+						<cl-text class="ml-2 fontBold" :pt="{
+							className: '!text-xl text-gray-900 '
+						}">深蓝汇</cl-text>
+						<text class="text-lg text-gray-800 fontBold">·</text>
+						<text class="text-lg text-gray-800 fontBold">财经AI社区</text>
+					</view>
 				</view>
 
-				<cl-text
-					color="primary"
-					:pt="{
-						className: '!text-xl mr-auto ml-2 flex-1'
-					}"
-				>
-					{{ config.name }}
-				</cl-text>
-
-				<view
-					class="bg-surface-500 h-8 w-8 rounded-full flex flex-row items-center justify-center mr-3"
-					@tap="setSize"
-				>
-					<cl-icon name="font-size" color="white"></cl-icon>
-				</view>
-
-				<view
-					class="bg-primary-500 h-8 w-8 rounded-full flex flex-row items-center justify-center"
-					:class="{
-						'mr-24': isMp()
-					}"
-					@tap="setLocale"
-				>
-					<cl-icon name="translate" color="white"></cl-icon>
+				<view class="rounded-xl hot py-1 px-2 border-gray-200 flex flex-row items-center justify-center"
+					@click="clickhotPage">
+					<cl-icon name="yushouhuore" color="#E82A2A" :size="24"></cl-icon>
+					<cl-text class="text-black ml-1">热榜</cl-text>
 				</view>
 			</view>
 		</cl-topbar>
+		<view class="px-5">
+			<!-- 搜索 -->
+			<view class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center">
+				<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>
+				<cl-text class="text-neutral-300 ml-2">请输入你要搜索的内容</cl-text>
+			</view>
+			<!-- 头条 -->
+			<view class="headlines mt-4">
+				<view class="pt-1  w-full" v-for="item in data" :key="item.id">
+					<view v-if="item.is_top" class="flex flex-row items-center">
+						<cl-text color='white' class="bg-red  px-1 rounded-[6rpx]" :pt="{
+							className: '!text-xs'
+						}">头条</cl-text>
 
-		<view class="p-3">
-			<view class="group" v-for="item in data" :key="item.label">
-				<cl-text :pt="{ className: '!text-sm !text-surface-400 mb-2 ml-2' }">{{
-					item.label
-				}}</cl-text>
-
-				<view class="list">
-					<cl-row :gutter="10">
-						<cl-col :span="6" v-for="child in item.children" :key="child.label">
-							<view
-								class="item dark:!bg-surface-800"
-								hover-class="opacity-80"
-								:hover-stay-time="250"
-								@tap="toPath(child)"
-							>
-								<cl-icon :name="child.icon" :size="36"></cl-icon>
-								<cl-text
-									:pt="{
-										className: 'mt-1 !text-xs text-center'
-									}"
-									>{{ child.label }}</cl-text
-								>
-							</view>
-						</cl-col>
-					</cl-row>
+						<cl-text color="black" class="elipsis ml-1" :pt="{
+						className:'!text-lg'
+					}">{{ item.content }}</cl-text>
+					</view>
+					<view v-else class="flex flex-row items-center">
+						<cl-icon name="wenjian_2" color="#666" :size="28"></cl-icon>
+						<cl-text color="#666" class="elipsis ml-1" :pt="{
+						className:'!text-base'
+					}">{{ item.content }}</cl-text>
+					</view>
 				</view>
 			</view>
+			<!-- 雷达 -->
+			<view class="radar mt-4">
+				<view class="flex flex-row items-center justify-between mb-1">
+					<image style="height: 20px; width: 90px;" src="../../static/image/leida.png"></image>
+					<!-- <view class="flex flex-row items-center">
+						<cl-text color="primary" :pt="{
+								className: '!text-xl fontBold fontitalic font-serif mr-1'
+							}">雷</cl-text>
+						<cl-text color="black" :pt="{
+								className: '!text-2xl fontBold fontitalic'
+							}">达</cl-text>
+					</view> -->
+					<view class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl">
+						<cl-text :pt="{
+								className: '!text-xs textred-600'
+							}">更多</cl-text>
+						<cl-icon name="arrow-right-s-line" :size="20" color="#E82A2A"></cl-icon>
+					</view>
+				</view>
+				<!-- 雷达列表 -->
+				<view v-for="item in data2" :key="item.id" class="flex flex-row items-center">
+					<cl-icon name="wenjian_2" color="#666" :size="28" v-if="!item.is_new && item.title == ''"
+						class="mr-1"></cl-icon>
+					<cl-text v-if="item.title" color="black" class="istopItem" :pt="{ className: '!text-lg' }">{{
+						item.title
+					}}</cl-text>
+					<cl-text v-else class="truncate elipsis" color="#666" :pt="{ className: '!text-base' }">{{
+						item.content
+					}}</cl-text>
+
+				</view>
+				<!-- 雷达概览 :class="index == 3 || index == 7 ? '' : 'mr-10'"-->
+				<view class="flex flex-row w-full items-center flex-wrap justify-center ">
+					<view class="w-3/12 pt-5 flex flex-col items-center justify-center relative"
+						v-for="(item, index) in data3" :key="index" @tap="toPath(item)">
+						<view class="bg-bule-slh w-14 h-14 rounded-full flex flex-col items-center justify-center">
+							<cl-icon color="primary" :name="item.icon" :size="50"></cl-icon>
+						</view>
+						<cl-text color="text-gray-900" :pt="{ className: '!text-sm mt-1' }">{{ item.title }}</cl-text>
+						<view class="bottom-16 right-px absolute bg-red p-1 rounded-full" v-if="isEmptyPath(item)">
+							<cl-text color='white' :pt="{
+							className: '!text-[14rpx] leading-none '
+						}">敬请期待</cl-text>
+						</view>
+
+					</view>
+				</view>
+			</view>
+			<!-- 快讯 -->
+			<view class="radar mt-4">
+				<view class="flex flex-row items-center justify-between">
+					<view class="flex flex-row items-center">
+						<cl-text color="primary" :pt="{
+								className: 'text-xl fontBold fontitalic'
+							}">7×24</cl-text>
+						<cl-text color="black" :pt="{
+								className: '!text-xl fontBold fontitalic'
+							}">快讯</cl-text>
+					</view>
+					<view class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl" @tap="jump">
+						<cl-text class="textred-600" :pt="{
+								className: '!text-xs'
+							}">更多</cl-text>
+						<cl-icon name="arrow-right-s-line" :size="20" color="#E82A2A"></cl-icon>
+					</view>
+				</view>
+
+				<!-- 快讯列表 -->
+				<view class="dispath flex flex-row items-start justify-between pt-3"
+					v-for="(item, index) in daspathList" :key="item.id">
+					<!-- <l-text-ellipsis class="flex-1" :rows="2"  :content="item.content" ></l-text-ellipsis> -->
+					<view class="flex flex-row items-center dispath-left mr-2">
+						<view class="w-3 h-3 rounded-full bg-red-200 flex flex-col items-center justify-center mr-1">
+							<view class="bg-red w-1 h-1 rounded-full"></view>
+						</view>
+						<cl-text color="#cbcbcb">15:30</cl-text>
+					</view>
+					<cl-text ellipsis
+						:lines="2" class=" flex-1" color="#313131" :pt="{
+							className: '!text-base'
+						}">{{item.content}}</cl-text>
+				</view>
+				<!-- 大家都在看 -->
+				<view class="reading mt-4">
+					<view class="flex flex-row items-center">
+						<cl-text color="primary" :pt="{
+								className: '!text-xl fontBold fontitalic'
+							}">大家</cl-text>
+						<cl-text color="black" :pt="{
+								className: '!text-xl fontBold fontitalic'
+							}">都在看</cl-text>
+					</view>
+					<scroll-view class="scroll-view_H pt-3" direction="horizontal" :show-scrollbar="false">
+						<view class="scroll-view-item_H  mr-3" v-for="(item, index) in hotList" :key="item.id"
+							:class="index==0 ?'card-bg-1':'card-bg-2'">
+							<view class="card-header flex flex-row  justify-between">
+								<cl-text color="#464646" :pt="{
+											className: '!text-base fontBold'
+										}">{{ item.title }}</cl-text>
+								<view class="flex flex-row items-center py-1 rounded-xl bg-white py-1 px-2">
+									<cl-text :color="index==0?'primary':'#E82A2A'" :pt="{
+											className: '!text-xs'
+										}">更多</cl-text>
+									<cl-icon name="arrow-right-s-line" :size="20"
+										:color="index==0?'primary':'#E82A2A'"></cl-icon>
+								</view>
+							</view>
+							<view class="card-content">
+								<view class="article-item" v-for="(child, childindex) in item.children" :key="child.id">
+									<cl-text class="article-number" :style="{ color: getNumberColor(childindex) }">
+										{{ childindex + 1 }}.
+									</cl-text>
+									<cl-text color="#707070" :pt="{
+										className:'!text-base'
+									}" class="elipsis">{{
+											child.content
+										}}</cl-text>
+								</view>
+							</view>
+						</view>
+					</scroll-view>
+				</view>
+				<view class="active-users mt-4 ">
+					<cl-image width="100%" height="226rpx" class="active-users-bg "
+						src="../../static/image/home-userbg.png"></cl-image>
+					<view class="active-users-content py-5">
+						<view class="active-users-title flex flex-row items-center justify-between px-2">
+							<cl-text color="#923D0A" :pt="{ className: ' !text-lg fontBold fontitalic' }">活跃用户</cl-text>
+							<view class="flex flex-row items-center py-1 px-2 rounded-xl bg-white">
+								<cl-text color="#FF7700" class="textred-600" :pt="{
+									className: '!text-xs'
+								}">更多</cl-text>
+								<cl-icon name="arrow-right-s-line" :size="20" color="#FF7700"></cl-icon>
+							</view>
+						</view>
+						<scroll-view class="scroll-view_H pt-3" direction="horizontal" :show-scrollbar="false">
+							<view v-for="item in activeUsersList"
+								class="scroll-user-item flex flex-col items-center justify-center">
+								<cl-image :width="60" :height="60" :pt="{
+							inner: {
+								className: '!rounded-2xl'
+							}
+						}" :src="item.head_img"></cl-image>
+								<cl-text :pt="{ className: '!text-xs' }">{{
+								item.username
+							}}</cl-text>
+							</view>
+						</scroll-view>
+					</view>
+				</view>
+				<!-- 推荐阅读 -->
+				<view class="recommended mt-4">
+					<view class="flex flex-row items-center">
+						<cl-text color="primary" :pt="{
+								className: '!text-xl fontBold fontitalic'
+							}">推荐</cl-text>
+						<cl-text color="black" :pt="{
+								className: '!text-xl fontBold fontitalic'
+							}">阅读</cl-text>
+					</view>
+					<view class="flex flex-row items-center justify-between pt-5" v-for="item in recommenList"
+						:key="item.id">
+						<view class="flex-1 mr-2">
+							<cl-text color="black" :pt="{
+									className: 'istopItem mb-2'
+								}">{{ item.title }}</cl-text>
+							<view class="flex flex-row items-center">
+								<cl-text color="" :pt="{
+										className: '!text-xs font-bold mr-1 text-gray-300'
+									}">{{ item.author }}</cl-text>
+								<cl-text :pt="{
+										className: '!text-xs text-gray-300'
+									}">{{ item.acreat_time }}1111</cl-text>
+							</view>
+						</view>
+
+						<cl-image class="tuijinimg" :src="item.cover_url"></cl-image>
+					</view>
+				</view>
+			</view>
+
 		</view>
-
 		<!-- 自定义底部导航栏 -->
-		<custom-tabbar></custom-tabbar>
-
-		<!-- 主题设置 -->
-		<locale-set :ref="refs.set('localeSet')"></locale-set>
-
-		<!-- 字体大小设置 -->
-		<size-set :ref="refs.set('sizeSet')"></size-set>
+		<tabbar></tabbar>
 	</cl-page>
 </template>
 
 <script lang="ts" setup>
-import { isMp, router, useRefs } from "@/cool";
-import { t } from "@/locale";
-import { computed } from "vue";
-import { useUi } from "@/uni_modules/cool-ui";
-import { config } from "@/config";
-import LocaleSet from "@/components/locale-set.uvue";
-import SizeSet from "@/components/size-set.uvue";
-import CustomTabbar from "@/components/tabbar.uvue";
-
-const ui = useUi();
-const refs = useRefs();
-
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32" fill="none">
-<path d="M6.31 4.32001L25.69 4.32001C27.5154 4.32001 29 5.80466 29 7.63001L29 20.85C29 22.6754 27.5154 24.15 25.69 24.15L16.66 24.15L16.66 26.35L22.17 26.35C22.5351 26.35 22.83 26.6449 22.83 27.01C22.83 27.3751 22.5351 27.68 22.17 27.68L9.83 27.68C9.46493 27.68 9.17 27.3751 9.17 27.01C9.17 26.6449 9.46493 26.35 9.83 26.35L15.34 26.35L15.34 24.15L6.31 24.15C4.48465 24.15 3 22.6754 3 20.85L3 7.63001C3 5.80466 4.48465 4.32001 6.31 4.32001ZM7.69411 10.7451L6.1817 10.7451L8.57634 18.605L10.0544 18.605L12.449 10.7451L11.0168 10.7451L9.38984 16.3708L9.34401 16.3708L7.69411 10.7451ZM16.6883 10.7451L14.9812 10.7451L12.449 18.605L13.8698 18.605L14.3395 17.0583L17.2383 17.0583L17.7195 18.605L19.2205 18.605L16.6883 10.7451ZM23.2077 10.7451L19.9194 10.7451L19.9194 18.605L21.386 18.605L21.386 15.3282L22.9098 15.3282L24.216 18.605L25.8086 18.605L24.2962 15.0073C24.2962 15.0073 24.9149 14.7553 25.2644 14.2282C25.2644 14.2282 25.6138 13.7012 25.6138 12.9908C25.6138 12.9908 25.6138 11.9825 24.9894 11.3638C24.9894 11.3638 24.365 10.7451 23.2077 10.7451ZM23.7749 13.7642C23.7749 13.7642 23.5171 14.0334 23.0015 14.0334L21.386 14.0334L21.386 12.0513L23.0588 12.0513C23.0588 12.0513 23.5515 12.0513 23.7921 12.2976C23.7921 12.2976 24.0327 12.544 24.0327 12.9908C24.0327 12.9908 24.0327 13.4949 23.7749 13.7642ZM16.0467 13.1283L16.8373 15.7521L14.7405 15.7521L15.5426 13.1283C15.5426 13.1283 15.6572 12.7846 15.7717 12.0627L15.8176 12.0627C15.8176 12.0627 15.9321 12.7387 16.0467 13.1283Z" fill-rule="evenodd"  fill="#15273C" >
-</path>
-</svg>`;
-
-const svg1 = "/static/svg/upload.svg";
-
-type Item = {
-	label: string;
-	icon?: string;
-	path?: string;
-	disabled?: boolean;
-	children?: Item[];
-};
-
-const data = computed<Item[]>(() => {
-	return [
+	import { isNull } from "@/cool";
+	import { isMp, router, useRefs } from "@/cool";
+	import { t } from "@/locale";
+	import { useUi } from "@/uni_modules/cool-ui";
+	import { ref, computed } from "vue";
+	import Tabbar from "@/components/tabbar.uvue";
+	const ui = useUi();
+	const refs = useRefs();
+	// 头条列表
+	type headlinesList = {
+		content : string;
+		is_top : boolean;
+		id : number;
+	};
+	const data = computed<headlinesList[]>(() => {
+		return [
+			{
+				content: t("上半年多线突围，汤臣倍健用创新新品重塑品类和渠道价值链"),
+				is_top: true,
+				id: 1
+			},
+			{
+				content: t("营收利润双下滑，研发占比0.9%，汤臣倍健三十而立陷增汤臣倍健三十而立陷增"),
+				is_top: false,
+				id: 2
+			},
+			{
+				content: t("突破3700点后，红利还能投吗？"),
+				is_top: false,
+				id: 3
+			},
+			{
+				content: t("钟睒睒豪捐5座工厂，农夫山泉还要“向上卷”"),
+				is_top: true,
+				id: 4
+			},
+			{
+				content: t("从量化大神到AI先锋：年轻人应该从梁文锋身上年轻人应该从梁文锋身上学些啥"),
+				is_top: false,
+				id: 5
+			},
+			{
+				content: t("避开这些误区，你的信用卡才能真正'赚'起来"),
+				is_top: false,
+				id: 6
+			},
+			{
+				content: t("中国科技大爆发，深圳低调的背后"),
+				is_top: true,
+				id: 7
+			},
+			{
+				content: t("银诺医药首日暴涨285%，4亿肥胖人群背后的千亿富豪厮..."),
+				is_top: false,
+				id: 8
+			},
+			{
+				content: t("39岁房产中介，去美国IPO，一夜暴赚34亿"),
+				is_top: false,
+				id: 9
+			}
+		];
+	});
+	// 雷达列表
+	type radarList = {
+		content : string;
+		title ?: string;
+		is_new : boolean;
+		id : number;
+	};
+	const data2 = computed<radarList[]>(() => {
+		return [
+			{
+				title: t("光伏行业向高质量发展突围"),
+				content: t(""),
+				is_new: true,
+				id: 0
+			},
+			{
+				title: t(""),
+				content: t("双良节能：8月20日融资买入8082.56万元，融资融券余额"),
+				is_new: false,
+				id: 0
+			},
+			{
+				title: t("激光雷达厂商涌入机器人赛道 业内预计今年出货量将"),
+				content: t(""),
+				is_new: false,
+				id: 0
+			},
+			{
+				title: t(""),
+				content: t("新能源汽车中概股大涨，小鹏汽车涨超13%，蔚来涨超10"),
+				is_new: false,
+				id: 0
+			}
+		];
+	});
+	// 雷达菜单
+	type radarMenu = {
+		icon : string;
+		title : string;
+		path ?: string;
+		disabled ?: boolean;
+	};
+	const data3 = computed<radarMenu[]>(() => {
+		return [
+			{
+				icon: t("a-lujing65"),
+				title: t("公告"),
+				path: "/pages/homePage/notice"
+			},
+			{
+				icon: t("a-lujing72"),
+				title: t("招股书"),
+				// path: "/pages/homePage/prospectus"
+				path: ""
+			},
+			{
+				icon: t("a-zu31"),
+				title: t("财报"),
+				path: ""
+			},
+			{
+				icon: t("a-zu29"),
+				title: t("AI写作"),
+				path: ""
+			},
+			{
+				icon: t("AItuku"),
+				title: t("深蓝号"),
+				path: "/pages/homePage/slhNum"
+			},
+			{
+				icon: t("AItuku"),
+				title: t("AI图库"),
+				path: ""
+			},
+			{
+				icon: t("a-lujing93"),
+				title: t("新闻稿库"),
+				path: ""
+			},
+			{
+				icon: t("a-lujing60"),
+				title: t("专家库"),
+				path: ""
+			}
+		];
+	});
+	// 快讯列表
+	type FlashNews = {
+		content : string;
+		id : number;
+		create_time : number;
+	};
+	const daspathList = computed<FlashNews[]>(() => {
+		return [
+			{
+				content: t(
+					"鑫源智造公告，2025年上半年营业收入3.29亿元，同比增长388.33%。净利润978.7万元，同比增长"
+				),
+				id: 1,
+				create_time: 1756281064
+			},
+			{
+				content: t("英国2年期国债收益率触及6月9日以来最高水平，报3.999%，日内上涨约3个基点。"),
+				id: 2,
+				create_time: 1756281064
+			},
+			{
+				content: t("匈牙利和斯洛伐克呼吁欧盟委员会确保能源供应安全。"),
+				id: 3,
+				create_time: 1756281064
+			}
+		];
+	});
+	// 热门文章列表
+	type hotArticle = {
+		title : string;
+		id : number;
+		children : hotArticleItem[];
+	};
+	type hotArticleItem = {
+		id : number;
+		title : string;
+		content : string;
+	};
+	const hotList = computed<hotArticle[]>(() => {
+		return [
+			{
+				title: t("热门文章"),
+				id: 1,
+				children: [
+					{ id: 1, title: t("腾讯控股"), content: t("游戏业务增长强劲，云服务持续扩张") },
+					{ id: 2, title: t("阿里巴巴"), content: t("电商平台稳定增长，AI技术投入加大") },
+					{ id: 3, title: t("比亚迪"), content: t("新能源汽车销量创新高，海外市场拓展") },
+					{ id: 4, title: t("宁德时代"), content: t("动力电池技术突破，产能持续释放") },
+					{ id: 5, title: t("美团"), content: t("本地生活服务持续增长，新业务布局") }
+				]
+			},
+			{
+				title: t("热门公司"),
+				id: 2,
+				children: [
+					{ id: 1, title: t("腾讯控股"), content: t("游戏业务增长强劲，云服务持续扩张") },
+					{ id: 2, title: t("阿里巴巴"), content: t("电商平台稳定增长，AI技术投入加大") },
+					{ id: 3, title: t("比亚迪"), content: t("新能源汽车销量创新高，海外市场拓展") },
+					{ id: 4, title: t("宁德时代"), content: t("动力电池技术突破，产能持续释放") },
+					{ id: 5, title: t("美团"), content: t("本地生活服务持续增长，新业务布局") }
+				]
+			}
+		];
+	});
+	// 活跃用户列表
+	type userList = {
+		head_img : string;
+		username : string;
+		id : number;
+	};
+	const activeUsersList = ref<userList[]>([
 		{
-			label: t("基础组件"),
-			children: [
-				{
-					label: t("文本"),
-					icon: "text",
-					path: "/pages/demo/basic/text"
-				},
-				{
-					label: t("按钮"),
-					icon: "mouse-line",
-					path: "/pages/demo/basic/button"
-				},
-				{
-					label: t("图片"),
-					icon: "image-line",
-					path: "/pages/demo/basic/image"
-				},
-				{
-					label: t("图标"),
-					icon: "puzzle-2-line",
-					path: "/pages/demo/basic/icon"
-				},
-				{
-					label: t("标签"),
-					icon: "price-tag-3-line",
-					path: "/pages/demo/basic/tag"
-				}
-			]
+			head_img: t(
+				"https://cdn.caitongnews.com/images/2020-02-25/5e54df5ae75a1.png?imageMogr2/auto-orient/thumbnail/100x100"
+			),
+			username: t("易简财经"),
+			id: 1
 		},
 		{
-			label: t("表单组件"),
-			children: [
-				{
-					label: t("表单验证"),
-					icon: "draft-line",
-					path: "/pages/demo/form/form"
-				},
-				{
-					label: t("输入框"),
-					icon: "input-field",
-					path: "/pages/demo/form/input"
-				},
-				{
-					label: t("文本域"),
-					icon: "text-block",
-					path: "/pages/demo/form/textarea"
-				},
-				{
-					label: t("计数器"),
-					icon: "increase-decrease-line",
-					path: "/pages/demo/form/input-number"
-				},
-				{
-					label: t("口令输入"),
-					icon: "input-method-line",
-					path: "/pages/demo/form/input-otp"
-				},
-				{
-					label: t("键盘"),
-					icon: "keyboard-box-line",
-					path: "/pages/demo/form/keyboard"
-				},
-				{
-					label: t("单选框"),
-					icon: "radio-button-line",
-					path: "/pages/demo/form/radio"
-				},
-				{
-					label: t("多选框"),
-					icon: "checkbox-line",
-					path: "/pages/demo/form/checkbox"
-				},
-				{
-					label: t("开关"),
-					icon: "toggle-line",
-					path: "/pages/demo/form/switch"
-				},
-				{
-					label: t("评分"),
-					icon: "star-line",
-					path: "/pages/demo/form/rate"
-				},
-				{
-					label: t("滑块"),
-					icon: "equalizer-2-line",
-					path: "/pages/demo/form/slider"
-				},
-				{
-					label: t("选择器"),
-					icon: "dropdown-list",
-					path: "/pages/demo/form/select"
-				},
-				{
-					label: t("日期选择器"),
-					icon: "calendar-line",
-					path: "/pages/demo/form/select-date"
-				},
-				{
-					label: t("时间选择器"),
-					icon: "time-line",
-					path: "/pages/demo/form/select-time"
-				},
-				{
-					label: t("级联选择器"),
-					icon: "stacked-view",
-					path: "/pages/demo/form/cascader"
-				},
-				{
-					label: t("文件上传"),
-					icon: "file-upload-line",
-					path: "/pages/demo/form/upload"
-				}
-			]
+			head_img: t(
+				"https://cdn.caitongnews.com/images/2022/02/18/620fbb36b20b5.jpeg?imageMogr2/auto-orient/thumbnail/100x100"
+			),
+			username: t("金角财经"),
+			id: 2
 		},
 		{
-			label: t("布局组件"),
-			children: [
-				{
-					label: t("弹性布局"),
-					icon: "layout-2-line",
-					path: "/pages/demo/layout/flex"
-				},
-				{
-					label: t("标签页"),
-					icon: "function-add-line",
-					path: "/pages/demo/layout/tabs"
-				},
-				{
-					label: t("折叠面板"),
-					icon: "collapse-vertical-line",
-					path: "/pages/demo/layout/collapse"
-				},
-				{
-					label: t("吸顶"),
-					icon: "align-top",
-					path: "/pages/demo/layout/sticky"
-				},
-				{
-					label: t("导航栏"),
-					icon: "layout-top-line",
-					path: "/pages/demo/layout/topbar"
-				},
-				{
-					label: t("底部视图"),
-					icon: "layout-bottom-line",
-					path: "/pages/demo/layout/footer"
-				},
-				{
-					label: t("悬浮视图"),
-					icon: "picture-in-picture-line",
-					path: "/pages/demo/layout/float-view"
-				}
-			]
+			head_img: t(
+				"https://cdn.caitongnews.com/images/2020-02-27/5e576233be005.jpg?imageMogr2/auto-orient/thumbnail/100x100"
+			),
+			username: t("面包财经"),
+			id: 1
 		},
 		{
-			label: t("数据展示"),
-			children: [
-				{
-					label: t("头像"),
-					icon: "account-circle-line",
-					path: "/pages/demo/data/avatar"
-				},
-				{
-					label: t("列表"),
-					icon: "list-check",
-					path: "/pages/demo/data/list"
-				},
-				{
-					label: t("列表视图"),
-					icon: "list-view",
-					path: "/pages/demo/data/list-view"
-				},
-				{
-					label: t("列表刷新"),
-					icon: "refresh-line",
-					path: "/pages/demo/data/list-view-refresh",
-					disabled: false
-				},
-				{
-					label: t("瀑布流"),
-					icon: "layout-column-line",
-					path: "/pages/demo/data/waterfall"
-				},
-				{
-					label: t("轮播图"),
-					icon: "carousel-view",
-					path: "/pages/demo/data/banner"
-				},
-				{
-					label: t("分页"),
-					icon: "page-separator",
-					path: "/pages/demo/data/pagination"
-				},
-				{
-					label: t("时间轴"),
-					icon: "timeline-view",
-					path: "/pages/demo/data/timeline"
-				},
-				{
-					label: t("拖拽"),
-					icon: "drag-move-line",
-					path: "/pages/demo/data/draggable"
-				},
-				{
-					label: t("筛选栏"),
-					icon: "filter-line",
-					path: "/pages/demo/data/filter-bar"
-				},
-				{
-					label: t("树形结构"),
-					icon: "node-tree",
-					path: "/pages/demo/data/tree"
-				}
-			]
+			head_img: t(
+				"https://cdn.caitongnews.com/images/2020-02-27/5e577c0bce342.jpg?imageMogr2/auto-orient/thumbnail/100x100"
+			),
+			username: t("看财经"),
+			id: 1
 		},
 		{
-			label: t("状态组件"),
-			children: [
-				{
-					label: t("角标"),
-					icon: "notification-badge-line",
-					path: "/pages/demo/status/badge"
-				},
-				{
-					label: t("通知栏"),
-					icon: "error-warning-line",
-					path: "/pages/demo/status/noticebar"
-				},
-				{
-					label: t("倒计时"),
-					icon: "timer-line",
-					path: "/pages/demo/status/countdown"
-				},
-				{
-					label: t("数字滚动"),
-					icon: "arrow-up-box-line",
-					path: "/pages/demo/status/rolling-number"
-				},
-				{
-					label: t("进度条"),
-					icon: "subtract-line",
-					path: "/pages/demo/status/progress"
-				},
-				{
-					label: t("圆形进度条"),
-					icon: "circle-line",
-					path: "/pages/demo/status/progress-circle"
-				},
-				{
-					label: t("骨架图"),
-					icon: "shadow-line",
-					path: "/pages/demo/status/skeleton"
-				},
-				{
-					label: t("加载更多"),
-					icon: "loader-4-line",
-					path: "/pages/demo/status/loadmore"
-				}
-			]
+			head_img: t(
+				"https://cdn.caitongnews.com/images/2020-02-27/5e578d45f04e8.jpg?imageMogr2/auto-orient/thumbnail/100x100"
+			),
+			username: t("基岩资本"),
+			id: 1
 		},
 		{
-			label: t("反馈组件"),
-			children: [
-				{
-					label: t("操作菜单"),
-					icon: "menu-line",
-					path: "/pages/demo/feedback/action-sheet"
-				},
-				{
-					label: t("弹窗"),
-					icon: "chat-4-line",
-					path: "/pages/demo/feedback/popup"
-				},
-				{
-					label: t("确认框"),
-					icon: "chat-check-line",
-					path: "/pages/demo/feedback/confirm"
-				},
-				{
-					label: t("提示框"),
-					icon: "message-2-line",
-					path: "/pages/demo/feedback/toast"
-				}
-			]
+			head_img: t(
+				"https://img.shenlanhui.com/app/2024/202409/23/202409231727070389.7228362220936.jpg?imageMogr2/auto-orient/thumbnail/100x100"
+			),
+			username: t("愉见财经"),
+			id: 1
 		},
 		{
-			label: "其他",
-			children: [
-				{
-					label: "QRCode",
-					icon: "qr-code-line",
-					path: "/pages/demo/other/qrcode"
-				},
-				{
-					label: t("签名"),
-					icon: "sketching",
-					path: "/pages/demo/other/sign"
-				},
-				{
-					label: t("图片裁剪"),
-					icon: "crop-line",
-					path: "/pages/demo/other/cropper"
-				},
-				{
-					label: t("Canvas"),
-					icon: "markup-line",
-					path: "/pages/demo/other/canvas"
-				},
-				{
-					label: t("富文本"),
-					icon: "text-snippet",
-					path: "/pages/demo/other/rict-text",
-					disabled: true
-				},
-				{
-					label: "DayUts",
-					icon: "timer-2-line",
-					path: "/pages/demo/other/day-uts"
-				},
-				{
-					label: "Vibrate",
-					icon: "volume-vibrate-line",
-					path: "/pages/demo/other/vibrate"
-				},
-				{
-					label: "SVG",
-					icon: "bubble-chart-line",
-					path: "/pages/demo/other/svg"
-				},
-				{
-					label: "SlideVerify",
-					icon: "contract-right-fill",
-					path: "/pages/demo/other/slide-verify"
-				},
-				{
-					label: "Animate",
-					icon: "instance-line",
-					path: "/pages/demo/other/animate"
-				}
-			]
+			head_img: t(
+				"https://cdn.caitongnews.com/images/2020-02-28/5e590bc85370c.jpg?imageMogr2/auto-orient/thumbnail/100x100"
+			),
+			username: t("富凯财经"),
+			id: 1
+		},
+		{
+			head_img: t(
+				"https://cdn.caitongnews.com/images/2020-02-25/5e54df5ae75a1.png?imageMogr2/auto-orient/thumbnail/100x100"
+			),
+			username: t("易简财经"),
+			id: 1
 		}
-	];
-});
+	]);
+	type recom = {
+		title : string;
+		author : string;
+		cover_url : string;
+		acreat_time : number;
+		id : number;
+	};
+	const recommenList = ref<recom[]>([
+		{
+			title: t("产品筑底、数智驱动，泸州老窖构建穿越周期护城河"),
+			author: t("深蓝财经"),
+			cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
+			acreat_time: 175523522,
+			id: 1
+		},
+		{
+			title: t("渤海银行承载全国首批科技创新债券奋力书写“科技金融大文章”"),
+			author: t("深蓝财经"),
+			cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
+			acreat_time: 175523522,
+			id: 1
+		}
+	]);
 
-function toPath(item: Item) {
-	if (item.disabled == true) {
-		return ui.showToast({
-			message: t("该功能正在开发中")
-		});
+	// 跳转页面
+	//热榜点击事件
+	const clickhotPage = () => {
+		uni.navigateTo({
+			url: "/pages/homePage/hotPage"
+		})
+	}
+	// 进入用户主页
+	const userinfo = () => {
+		router.to('/pages/user/userinfo')
+	}
+	// 快讯列表
+	const jump = () => {
+		router.to('/pages/homePage/flasNews')
+	}
+	// 雷达概况
+	function toPath(item : radarMenu) {
+		if (item.path == null) {
+			return ui.showToast({
+				message: t("该模板正在开发中")
+			});
+		}
+
+		router.to(item.path!);
+	}
+	function isEmptyPath(item : radarMenu) : boolean {
+		return isNull(item.path) || item.path === "";
 	}
 
-	router.to(item.path!);
-}
+	// 获取数字颜色
+	function getNumberColor(index : number) : string {
+		switch (index) {
+			case 0:
+				return "#EB0707"; // 索引为1（index为0）
+			case 1:
+				return "#FF8800"; // 索引为2（index为1）
+			case 2:
+				return "#0066FF"; // 索引为3（index为2）
+			default:
+				return "#ACACAC"; // 其他
+		}
+	}
 
-function setLocale() {
-	refs.open("localeSet");
-}
+	function setLocale() {
+		refs.open("localeSet");
+	}
 
-function setSize() {
-	refs.open("sizeSet");
-}
+	function setSize() {
+		refs.open("sizeSet");
+	}
 </script>
 
 <style lang="scss" scoped>
-.group {
-	@apply mb-10;
+	.group {
+		@apply mb-10;
 
-	.list {
-		.item {
-			@apply flex flex-col items-center;
-			@apply rounded-xl bg-white px-2;
-			height: 140rpx;
-			margin-bottom: 10rpx;
-			padding-top: 36rpx;
+		.list {
+			.item {
+				@apply flex flex-col items-center;
+				@apply rounded-xl bg-white px-2;
+				height: 140rpx;
+				margin-bottom: 10rpx;
+				padding-top: 36rpx;
+			}
 		}
 	}
-}
+
+	.hot {
+		border: 2rpx solid #d5d5d5;
+	}
+
+	.istopItem {
+		color: #000;
+		font-size: 32rpx;
+	}
+
+	.notopItem {
+		color: #666;
+		font-size: 28rpx;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.border {
+		border-left: solid 2rpx #d5d5d5;
+	}
+
+	/* 横向滑动样式 */
+	.horizontal-scroll {
+		width: 100%;
+		height: auto;
+		white-space: nowrap;
+		// overflow-x: auto;
+		// overflow-y: hidden;
+	}
+
+	/* 第一个卡片渐变背景 */
+	.card-bg-1 {
+		background-image: linear-gradient(to bottom, #D5DFFF, #FFFFFF);
+	}
+
+	/* 第二个卡片渐变背景 */
+	.card-bg-2 {
+		background-image: linear-gradient(to bottom, #FFD5D8, #FFFFFF)
+	}
+
+	.card-header {
+		margin-bottom: 24rpx;
+		padding-bottom: 16rpx;
+		border-bottom: 1rpx solid #f0f0f0;
+	}
+
+	.card-content {
+		display: flex;
+		flex-direction: column;
+		/* gap: 16rpx; uni-app x 不支持gap，使用margin替代 */
+	}
+
+	.card-content .article-item {
+		margin-bottom: 16rpx;
+	}
+
+	.card-content .article-item:last-child {
+		margin-bottom: 0;
+	}
+
+	.article-item {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		/* gap: 16rpx; uni-app x 不支持gap，使用margin替代 */
+	}
+
+	.article-item .article-number {
+		margin-right: 16rpx;
+	}
+
+	.article-number {
+		min-width: 40rpx;
+		height: 40rpx;
+		// border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 24rpx;
+		font-weight: bold;
+		flex-shrink: 0;
+	}
+
+	.elipsis {
+		flex: 1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		/* max-width: 100%; uni-app x 不支持百分比值 */
+		width: 100%;
+	}
+
+	.elipsis2 {
+		flex: 1;
+		/* line-clamp: 2; uni-app x 不支持line-clamp */
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		/* max-width: 100%; uni-app x 不支持百分比值 */
+		width: 100%;
+	}
+
+	.active-users {
+		width: 100%;
+		/* uni-app x 不支持url()背景图片，使用相对路径或删除此样式 */
+		/* background-image: url("../../static/image/home-userbg.png"); */
+		/* background-size: 100% 100%; */
+		position: relative;
+	}
+
+	/* 背景图片样式 */
+	.active-users-bg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+	}
+
+	/* 内容区域 */
+	.active-users-content {
+		position: relative;
+		z-index: 2;
+		width: 100%;
+		height: 100%;
+	}
+
+	.tuijinimg {
+		width: 200rpx !important;
+		height: 130rpx !important;
+		border-radius: 20rpx;
+	}
+
+	/* 横向滚动测试样式 */
+	.horizontal-scroll-test {
+		width: 100%;
+		height: 80rpx;
+		white-space: nowrap;
+	}
+
+	.scroll-Y {
+		height: 150px;
+	}
+
+	.scroll-view_H {
+		width: 100%;
+		flex-direction: row;
+	}
+
+	.scroll-view-item {
+		height: 150px;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.scroll-user-item {
+		width: 120rpx;
+
+	}
+
+	.scroll-view-item_H {
+		width: 498rpx;
+		border-radius: 24rpx;
+		padding: 22rpx;
+		border: 1rpx solid #EBEBEB;
+	}
+
+	.text {
+		font-size: 18px;
+		color: #ffffff;
+	}
+
+	.button {
+		margin-top: 15px;
+	}
 </style>

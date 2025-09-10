@@ -176,7 +176,7 @@ export const PRIMARY_COLOR_PALETTES = [
 			200: "#bfdbfe",
 			300: "#93c5fd",
 			400: "#60a5fa",
-			500: "#3b82f6",
+			500: "#2854F2",
 			600: "#2563eb",
 			700: "#1d4ed8",
 			800: "#1e40af",
@@ -413,10 +413,10 @@ export const SURFACE_PALETTES = [
  * @param name 主色名称
  * @returns 以 primary-开头的色值对象
  */
-function getPrimary(name: primaryColor): Record<string, string> {
+function getPrimary(name : primaryColor) : Record<string, string> {
 	const color = PRIMARY_COLOR_PALETTES.find((c) => c.name == name);
 	if (!color) return {};
-	const result: Record<string, string> = {};
+	const result : Record<string, string> = {};
 	Object.entries(color.palette).forEach(([key, value]) => {
 		result[`primary-${key}`] = value;
 	});
@@ -428,10 +428,10 @@ function getPrimary(name: primaryColor): Record<string, string> {
  * @param name 表面色名称
  * @returns 以 surface-开头的色值对象，0为 surface
  */
-function getSurface(name: surfaceColor): Record<string, string> {
+function getSurface(name : surfaceColor) : Record<string, string> {
 	const color = SURFACE_PALETTES.find((c) => c.name == name);
 	if (!color) return {};
-	const result: Record<string, string> = {};
+	const result : Record<string, string> = {};
 	Object.entries(color.palette).forEach(([key, value]) => {
 		result[key == "0" ? "surface" : `surface-${key}`] = value;
 	});
@@ -439,7 +439,7 @@ function getSurface(name: surfaceColor): Record<string, string> {
 }
 
 // 获取项目根目录
-const resolve = (dir: string) => join(__dirname, dir);
+const resolve = (dir : string) => join(__dirname, dir);
 
 export default {
 	content: [resolve("./**/*.{uvue,vue}"), "!**/node_modules/**", "!**/dist/**"],
@@ -447,8 +447,8 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				...getPrimary("teal"),
-				...getSurface("zinc")
+				...getPrimary("blue"),
+				...getSurface("neutral")
 			},
 			fontSize: {
 				md: ["1rem", "1.5rem"]

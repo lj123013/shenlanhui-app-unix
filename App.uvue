@@ -51,4 +51,31 @@ export default {
 	border-radius: 32rpx;
 	background-color: rgba(0, 0, 0, 0.8) !important;
 }
+.bg-red {
+	background-color: #E82A2A;
+}
+
+.textred-600 {
+	color: #E82A2A;
+}
+
+.bg-prink {
+	background-color: #FFF3F3;
+}
+
+.bg-bule-slh {
+	background-color: #E9F4FF
+}
+
+.border {
+	border-top: 2rpx solid #ECECEC;
+}
+
+.fontBold {
+	font-weight: bold;
+}
+
+.fontitalic {
+	font-style: italic;
+}
 </style>

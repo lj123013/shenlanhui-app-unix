@@ -1,0 +1,420 @@
+<template>
+	<cl-page safe-area>
+		<cl-topbar fixed safe-area-top color='black' :pt="{
+			back: {
+				size: 48,
+			},
+		}">
+			<template #append>
+				<cl-icon name="zhuanfa1" color="black" :size="30" :pt="{ className: 'mr-3' }" @tap="share"></cl-icon>
+			</template>
+		</cl-topbar>
+		<view class="content px-4">
+			<cl-text color="#2B2B2B" :pt="{ className: '!text-xl fontBold' }">美团Q1：告别低质“内卷式”竞争，行业生态共赢才是新方向</cl-text>
+			<view class="flex flex-row items-center justify-between">
+				<view :span="13">
+					<view class="flex flex-row items-center mt-2">
+						<cl-avatar :src="'https://unix.cool-js.com/images/demo/avatar.jpg'" :size="50"
+							:pt="{ className: 'mr-2 rounded-[10rpx]' }"></cl-avatar>
+						<view>
+							<view class="flex flex-row items-center">
+								<cl-text :pt="{ className: '!text-sm mr-1 text-contrast-800' }">深蓝财经</cl-text>
+								<cl-icon name="renzheng2" color="#FE0000" :size="16"></cl-icon>
+							</view>
+
+							<view class="flex flex-row items-center">
+								<cl-text color="#9C9C9C" :pt="{ className: '!text-xs mr-1' }">2024-06-15
+									10:00</cl-text>
+								<cl-text color="#9C9C9C" :pt="{ className: '!text-xs' }">发布于四川</cl-text>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view :span="8" :push="7">
+					<view
+						class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
+						:class="isFollow == true ? 'bg-primary-500' : 'bg-primary-500'">
+						<cl-text v-if="isFollow == false" color="white" :pt="{
+							className: '!text-xs'
+						}">关注</cl-text>
+						<cl-text v-else color="primary" :pt="{
+							className: '!text-xs'
+						}">已关注</cl-text>
+					</view>
+				</view>
+			</view>
+			<!-- 文章内容 -->
+			<view>
+				<cl-image src="/static/image/articleimg.png" :width="'100%'" :height="'384rpx'"
+					:pt="{ className: 'my-4 rounded-lg' }"></cl-image>
+				<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4">
+					<view class="flex flex-row items-center">
+						<view class="ai-img rounded-full flex flex-col items-center justify-center">
+							<view class="img-box rounded-full flex flex-col items-center justify-center">
+								<cl-image src="/static/image/aiIcon.png" :width="'33rpx'" :height="'33rpx'"
+									:pt="{ className: 'mx-auto my-auto' }"></cl-image>
+							</view>
+						</view>
+						<view class="ml-2">
+							<cl-text color="white" :pt="{ className: '!text-lg fontBold' }">使用深蓝AI进行分析</cl-text>
+							<cl-text color="white" :pt="{ className: '!text-base' }">智能摘要·深度解读</cl-text>
+						</view>
+					</view>
+					<cl-icon name="arrow-right-line" color="white" :size="50"></cl-icon>
+				</view>
+				<view class="article-Ai my-3 p-4">
+					<view class="borderBottom">
+						<view class="flex flex-row items-center">
+							<cl-image src="/static/image/aiIcon.png" :width="'33rpx'" :height="'33rpx'"></cl-image>
+							<cl-text color="white" :pt="{ className: ' !text-lg fontBold ml-2' }">AI总结</cl-text>
+						</view>
+
+						<!-- 文字摘要内容 -->
+						<view class="text-content">
+							<!-- 始终显示的简短内容 -->
+							<cl-text color="white" :pt="{ className: '!text-base mt-2 leading-6' }">
+								{{ shortContent }}
+							</cl-text>
+
+							<!-- 可展开的详细内容 -->
+							<cl-collapse v-model="visible">
+								<cl-text color="white" :pt="{ className: '!text-base leading-6' }">
+									{{ expandedContent }}
+								</cl-text>
+							</cl-collapse>
+						</view>
+						<!-- 展开/收起按钮 -->
+						<view @click="toggle" class="expand-btn flex flex-row items-center justify-center mt-3 py-2">
+							<cl-text color="white" :pt="{ className: 'text-center !text-sm mr-1' }">
+								{{ visible ? '收起' : '展开' }}
+							</cl-text>
+							<cl-icon :name="visible ? 'arrow-up-s-fill' : 'arrow-down-s-fill'" color="white"
+								:size="20"></cl-icon>
+						</view>
+					</view>
+					<view class="py-3">
+						<cl-text color="white" :pt="{ className: 'text-lg fontBold ' }">你还可以</cl-text>
+						<view v-for="value in aiMwnu" class="flex flex-row items-center justify-between p-4 rounded-lg"
+							:class="value.isFinish ? 'aiItemoption' : 'aiItem'">
+							<view class="flex flex-row items-center">
+								<cl-image width="72rpx" height="72rpx" :pt="{ className: 'mr-2' }"
+									:src="value.icon"></cl-image>
+								<view>
+									<cl-text color="white" :pt="{ className: 'text-base fontBold' }">{{ value.title
+									}}</cl-text>
+									<cl-text color="white" :pt="{ className: '!text-sm' }">{{ value.content }}</cl-text>
+								</view>
+							</view>
+							<view
+								class="bg-green-500 w-[38rpx] h-[38rpx] rounded-full flex flex-col items-center justify-center"
+								v-if="value?.isFinish">
+								<cl-icon name="dui" color="white" :size="20"></cl-icon>
+								<!-- <cl-text>√</cl-text> -->
+							</view>
+						</view>
+					</view>
+
+				</view>
+				<!-- 富文本 -->
+				<view class="article-content-wrapper">
+					<rich-text :nodes="testNodes" :selectable="true" class="rich-text-content">
+					</rich-text>
+				</view>
+				<!-- 评论 -->
+				<view class="py-5">
+					<cl-text color="black" :pt="{ className: '!text-lg' }">评论</cl-text>
+					<view>
+						<view v-for="(value, index) in commonList"
+							class="flex flex-row items-start justify-between py-3" :class="{
+								'border pt-3': index != 0
+							}">
+							<cl-avatar :src="value?.head_img" :size="50"
+								:pt="{ className: 'rounded-[10rpx]' }"></cl-avatar>
+							<view class="flex-1 ml-1">
+								<view class="flex flex-row items-center justify-between">
+									<cl-text color="#959595 " :pt="{ className: '!text-sm mr-1' }">{{
+										value?.nickname
+									}}</cl-text>
+									<cl-text color="#B1B1B1 " :pt="{ className: '!text-xs' }">{{ value?.time
+									}}</cl-text>
+
+								</view>
+								<cl-text color="black" :pt="{ className: '!text-sm' }">{{
+									value?.content
+								}}</cl-text>
+							</view>
+						</view>
+						<cl-empty v-if="commonList.length == 0" :fixed="false" text="暂无评论"></cl-empty>
+					</view>
+
+				</view>
+
+				<!-- 遮罩层 -->
+				<view style="height: 0" v-if="isPubComment">
+					<view class="mask" @touchmove.stop.prevent :class="isPubComment ? 'on' : ''" @click="closePopup">
+					</view>
+				</view>
+
+				<view class="footer-container" :style="{bottom:inputBottom+'px'}">
+					<view class="input-section">
+						<cl-input v-model="input" :adjustPosition="false" :clearable='true' :border="false" :pt="{
+							className:'!bg-neutral-100 rounded-full pl-3'
+						}" placeholder="写评论"></cl-input>
+						<!-- <view class="bg-neutral-100 rounded-full flex-1 py-2 pl-4 mr-4"><cl-text :pt="{className:'!text-sm text-gray-400'}">写评论</cl-text></view> -->
+
+					</view>
+					<view class="actions-section" v-if='!isPubComment'>
+						<view class="action-item">
+							<cl-icon name="aixin-1" :size="28" color="#464646"></cl-icon>
+							<cl-text color="#464646" :pt="{ className: 'action-text' }">点赞</cl-text>
+						</view>
+						<view class="action-item">
+							<cl-icon name="a-shoucangdianji" :size="28" color="#464646"></cl-icon>
+							<cl-text color="#464646" :pt="{ className: 'action-text' }">收藏</cl-text>
+						</view>
+						<view class="action-item">
+							<cl-icon name="zhuanfa1" :size="28" color="#464646"></cl-icon>
+							<cl-text color="#464646" :pt="{ className: 'action-text' }">分享</cl-text>
+						</view>
+					</view>
+					<cl-text v-else :pt="{ className: 'action-text text-primary-500' }">发送</cl-text>
+				</view>
+			</view>
+		</view>
+	</cl-page>
+</template>
+
+<script setup>
+	import { ref, reactive, onMounted } from "vue";
+	import { router, isNull } from "@/cool";
+	// 定义文章数据类型（注释形式）
+	type ArticleData = {
+		id : number;
+		title : string;
+		author : string;
+		cover_url : string;
+		acreat_time : string;
+	};
+	const content = ref('')
+	const isFollow = ref(false);
+	const visible = ref(false);
+	const input = ref("");
+	const user = reactive({ uid: 1 }); // 假设有用户信息，实际请替换为你的登录逻辑
+	const commentContent = ref('')
+	// 文本内容管理
+	const shortContent = ref('本文《上半年多线突围，汤臣倍健用创新新品重塑品类和渠道价值链》主要内容：2025年上半年膳食营养补充剂(VDS)行业的日子并不好过。中康数据显示，1-5月全国零售药店VDS销售额同比下滑，欧容数据则显示线上渠道同样面临挑战...');
+
+	const expandedContent = ref('汤臣倍健通过产品创新、渠道优化和品牌升级等多维度策略，在行业低迷期实现逆势增长。公司不仅推出了多款针对性强的新产品，还通过数字化转型提升了渠道效率，同时加强与消费者的互动，建立了更加稳固的品牌认知。这些举措不仅帮助汤臣倍健在竞争激烈的市场中脱颖而出，也为整个VDS行业的发展提供了有益的借鉴。未来，随着消费者健康意识的不断提升和产品品质的持续改善，VDS行业有望迎来新的发展机遇。');
+	// rich-text 数据管理 - 使用节点数组格式
+	const testNodes = ref('<p>面对外界的疑问，美团CEO王兴在财报电话会上回应，“将采取一切必要措施来赢得比赛。”同时也表示，市场竞争有助于促进行业发展，目前行业中存在非理性的补贴和内卷，认为低质低价的“内卷式”竞争长期来看不可持续。王兴表示，中国外卖行业已经发展到新阶段，美团会积极提倡反对行业内卷，进一步帮助商家简化营销，降低经营负担，推动行业健康发展。美团有自己的节奏在京东强势入局外卖、饿了么也随之加入这场补贴大战后，美团很淡定，让人一下子摸不着头脑了。随着美团Q1财报的发布，大家总算知道：美团一直有自己的节奏。美团的淡定</p>'
+	);
+	function toggle() {
+		visible.value = !visible.value;
+	}
+	// 响应式文章数据
+	const articleData = reactive<ArticleData>({
+		id: 0,
+		title: '',
+		author: '',
+		cover_url: '',
+		acreat_time: ''
+	});
+	const share = () => {
+		// 分享功能实现
+		console.log("分享文章:", articleData.title);
+	};
+	type aiList = {
+		title : string;
+		content : string;
+		icon : string;
+		isFinish : Boolean;
+	};
+	const aiMwnu = reactive<aiList[]>([
+		{
+			title: 'AI提纲摘要',
+			content: '提取文章基本要素，简明结构化总结',
+			icon: '/static/image/aiIcon1.png',
+			isFinish: false
+		},
+		{
+			title: '市场趋势分析',
+			content: '分析行业发展趋势与市场前景',
+			icon: '/static/image/aiIcon2.png',
+			isFinish: true
+		},
+		{
+			title: '背景知识补充',
+			content: '提供相关概念解释与背景资料',
+			icon: '/static/image/aiIcon3.png',
+			isFinish: false
+		},
+		{
+			title: '投资参考建议',
+			content: '生成相关投资思路与风险提示',
+			icon: '/static/image/aiIcon4.png',
+			isFinish: false
+		}
+	])
+	type common = {
+		head_img : string;
+		nickname : string;
+		content : string;
+		time : string;
+	}
+	const commonList = ref<common[]>([
+		{
+			head_img: '/static/image/head-img.png',
+			nickname: '张三',
+			content: '怕高确实挣不到大钱，关键是有几个人知道高和低呢？',
+			time: '2023-05-01'
+		},
+		{
+			head_img: '/static/image/head-img.png',
+			nickname: '张三',
+			content: '怕高本质上就是怕回调，怕把已经到手的利润回吐出去，这里一方面是人性和心态上的问题，另一方面就是对标的价值理解不透。＂，解释得很透彻！',
+			time: '2023-05-01'
+		}
+	])
+	function pubComment() {
+		if (!isNull(user)) {
+			uni.showToast({ title: "请先登录", icon: "none" });
+			return;
+		}
+		if (!isNull(input)) {
+			uni.showToast({ title: "请输入评论内容", icon: "none" });
+			return;
+		}
+		input.value = "";
+		uni.showToast({ title: "评论成功", icon: "success" });
+	}
+
+	// 处理键盘事件
+	const inputBottom = ref(0)
+	const isPubComment = ref(false)
+	const closePopup = () => {
+		uni.hideKeyboard()
+		isPubComment.value = false
+		inputBottom.value = 0
+	}
+	// 页面加载时获取路由参数
+	onMounted(() => {
+		const params = router.params();
+		console.log('接收到的参数:', params);
+		if (!isNull(params)) {
+			articleData.id = params.articleId as number;
+		}
+		uni.onKeyboardHeightChange((res) => {
+			console.log(res)
+			if (res.height > 0) {
+				inputBottom.value = res.height
+				isPubComment.value = true
+			} else {
+				closePopup()
+			}
+		})
+	});
+</script>
+
+<style scoped>
+	.article-Ai {
+		background-image: linear-gradient(to right, #6779E2, #7352AC);
+		border-radius: 10rpx;
+	}
+
+	.ai-img {
+		width: 85rpx;
+		height: 85rpx;
+		border: 4rpx solid #727FE1;
+	}
+
+	.img-box {
+		width: 64rpx;
+		height: 64rpx;
+		border: 2rpx solid #AAB1ED;
+		background-color: #8692E5;
+
+	}
+
+	.borderBottom {
+		border-bottom: 2rpx solid #727FE1;
+	}
+
+	.aiItem {
+		background-image: linear-gradient(to right, #7883DF, #8067B9);
+	}
+
+	.aiItemoption {
+		background-image: linear-gradient(to right, #6370D3, #6C50A6);
+	}
+
+	/* 文章内容样式 - 整合且遵循uni-app x规范 */
+	.rich-text-content {
+		width: 100%;
+		text-align: left;
+		color: #434343;
+		font-size: 28rpx;
+		line-height: 1.8;
+		/* 使用统一的行高 */
+		padding-bottom: 40rpx;
+		/* 移除background-color调试样式 */
+	}
+
+	/* Footer 底部区域样式 */
+	.footer-container {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		box-sizing: border-box;
+		position: fixed;
+		left: 0rpx;
+		background: #fff;
+		padding: 30rpx;
+		padding-bottom: 50rpx;
+		z-index: 1000;
+	}
+
+	.input-section {
+		flex: 1;
+		margin-right: 20rpx;
+		min-width: 0;
+		/* 防止flex子项溢出 */
+	}
+
+	.actions-section {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		flex-shrink: 0;
+		/* 防止被压缩 */
+		width: 240rpx;
+		/* 固定宽度确保显示完整 */
+	}
+
+	.action-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.mask {
+		width: 100%;
+		height: 100%;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 999;
+		background-color: rgba(50, 50, 50, 0.7);
+		/* 	transition: all 0.5s ease-in-out 0s; */
+		visibility: hidden;
+		overflow: hidden;
+	}
+
+	.mask.on {
+		visibility: visible;
+		background-color: rgba(50, 50, 50, 0.3);
+	}
+</style>

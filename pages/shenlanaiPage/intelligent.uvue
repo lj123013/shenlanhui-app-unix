@@ -1,0 +1,110 @@
+<template>
+	<cl-page>
+		<cl-list-view
+			ref="listViewRef"
+			:data="listView"
+			:virtual="false"
+			:pt="{
+				refresher: {
+					className: 'pt-3'
+				}
+			}"
+			:refresher-enabled="true"
+			@pull="onPull"
+			@bottom="loadMore"
+		>
+			<template #item="{ value, index }">
+				<userlist :value="value" :index="index" type="AI智能体"></userlist>
+			</template>
+
+			<template #bottom>
+				<view class="py-3">
+					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+				</view>
+			</template>
+		</cl-list-view>
+	</cl-page>
+</template>
+
+<script lang="ts" setup>
+import { useUi } from "@/uni_modules/cool-ui";
+import { ref } from "vue";
+import { usePager } from "@/cool";
+import userlist from "../homePage/components/userlist.uvue";
+import { t } from "@/locale";
+
+const ui = useUi();
+
+const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
+
+let id = 0;
+
+const { refresh, list, listView, loading, loadMore } = usePager((params) => {
+	return new Promise((resolve) => {
+		// 模拟请求
+		setTimeout(() => {
+			const mockData = {
+				list: [
+					{
+						id: 1,
+						username: "首席财报官",
+						descrtion: "确保财务信息透明、可靠，支持决策和投资者信任",
+						head_img:t("https://cdn.caitongnews.com/images/2020-02-25/5e54df5ae75a1.png?imageMogr2/auto-orient/thumbnail/100x100"),
+						isFloow: true
+					},
+					{
+						id: 2,
+						username: "IPO挖掘机",
+						descrtion: "专业的金融资讯平台，提供深度财经分析",
+						head_img:
+							"https://cdn.caitongnews.com/images/2022/02/18/620fbb36b20b5.jpeg?imageMogr2/auto-orient/thumbnail/100x100",
+						isFloow: false
+					},
+					{
+						id: 3,
+						username: "图片大师",
+						descrtion: "精通图像处理与创意设计且能将视觉元素完美转化",
+						head_img:
+							"https://cdn.caitongnews.com/images/2020-02-27/5e576233be005.jpg?imageMogr2/auto-orient/thumbnail/100x100",
+						isFloow: true
+					},
+					{
+						id: 4,
+						username: "英文翻译官",
+						descrtion: "精通图像处理与创意设计且能将视觉元素完美转化",
+						head_img:
+							"https://unix.cool-js.com/images/demo/avatar.jpg",
+						isFloow: false
+					},
+					
+				],
+				pagination: {
+					page: params["page"],
+					size: params["size"],
+					total: 100
+				}
+			};
+
+			// console.log('模拟请求返回的数据:', mockData);
+			// console.log('模拟请求的list数组:', mockData.list);
+
+			resolve(mockData);
+
+			ui.hideLoading();
+		}, 1000);
+	});
+});
+
+async function onPull() {
+	await refresh({ page: 1 });
+	listViewRef.value!.stopRefresh();
+}
+
+onReady(() => {
+	// console.log('listView:', listView.value);
+	// console.log('list数组:', list.value);
+	ui.showLoading(t("加载中"));
+	// 默认请求
+	refresh({});
+});
+</script>

@@ -1,0 +1,81 @@
+<template>
+	<view class="l-marquee" :class="'l-marquee--' + direction">
+		<view ref="marqueeRef" class="l-marquee-wrap" :class="'l-marquee-wrap--' + direction">
+			<slot></slot>
+			<!-- #ifndef APP || WEB -->
+			<l-resize @resize="update"></l-resize>
+			<!-- #endif -->
+		</view>
+	</view>
+</template>
+<script lang="uts" setup>
+	import { MarqueeProps } from './type';
+	const props = withDefaults(defineProps<MarqueeProps>(), {
+		direction: 'vertical',
+		speed: 50,
+		delay: 1000
+	})
+
+	const marqueeRef = ref<UniElement | null>(null)
+	let uniAnimation : UniAnimation | null = null
+	const update = (rect : DOMRect) => {
+		const { width, height } = rect
+		const size = props.direction === "vertical" ? height : width;
+		// 安卓必须为整数
+		const duration = Math.floor(size / props.speed * 1e3);
+
+		// #ifndef APP
+		marqueeRef.value!.style.setProperty('animation-duration', `${duration}ms`)
+		marqueeRef.value!.style.setProperty('animation-delay', `${props.delay}ms`)
+		marqueeRef.value!.style.setProperty('animation-play-state', duration != 0 ? "running" : "paused")
+		// #endif
+
+		// #ifdef APP
+		const keyframes = props.direction === "vertical" ? [
+			{
+				transform: `translate(0px, ${0}px)`,
+			},
+			{
+				transform: `translate(0px, ${-size / 2}px)`,
+			},
+
+		] : [
+			{
+				transform: `translate(0px, 0px)`,
+			},
+			{
+				transform: `translate(${-size / 2}px, 0px)`,
+			},
+		];
+		uniAnimation = marqueeRef.value!.animate(keyframes, {
+			duration: duration,
+			easing: 'linear',
+			iterations: Infinity
+		})
+		uniAnimation?.play()
+		// #endif
+
+	}
+	// #ifdef WEB || APP
+	const resizeObserver = new UniResizeObserver((entries : Array<UniResizeObserverEntry>) => {
+		update(entries[0].target.getBoundingClientRect())
+	})
+
+	watchEffect(() => {
+		if (marqueeRef.value == null) return
+		resizeObserver.observe(marqueeRef.value!)
+		// #ifdef APP-IOS
+		update(marqueeRef.value.getBoundingClientRect())
+		// #endif
+	})
+
+
+	onUnmounted(() => {
+		resizeObserver.disconnect()
+		uniAnimation?.cancel()
+	})
+	// #endif
+</script>
+<style lang="scss">
+	@import './index';
+</style>

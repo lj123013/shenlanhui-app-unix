@@ -1,0 +1,119 @@
+<template>
+	<cl-page>
+		<cl-tabs v-model="current" class="fontBold" :showLine="false" :list="tabbar" :color="isColor ? '#2854F2' : ''"
+			un-color="#6a6a6a"></cl-tabs>
+		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
+					refresher: {
+						className: 'pt-3'
+					}
+				}" :refresher-enabled="true" @pull="onPull" @bottom="loadMore">
+			<template #item="{ value ,index}">
+				<notice-item :value="value" :index="index"></notice-item>
+			</template>
+
+			<template #bottom>
+				<view class="py-3">
+					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+				</view>
+			</template>
+		</cl-list-view>
+	</cl-page>
+</template>
+
+<script lang="ts" setup>
+	import { ref } from "vue";
+	import type { ClTabsItem,useUi } from "@/uni_modules/cool-ui";
+	import { usePager } from "@/cool";
+	import noticeItem from "../homePage/components/noticeItem.uvue";
+	import { t } from "@/locale";
+	const ui = useUi();
+	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
+	let id = 0;
+	const isColor = ref(true)
+	const current = ref("1")
+	const tabbar = ref<ClTabsItem[]>([
+		{
+			label: "公告快讯",
+			value: "1",
+		},
+		{
+			label: "A股公告精选",
+			value: "2",
+		},
+		{
+			label: "港股公告精选",
+			value: "3",
+		},
+	]);
+	const { refresh, list, listView, loading, loadMore } = usePager((params) => {
+		return new Promise((resolve) => {
+			// 模拟请求
+			setTimeout(() => {
+				resolve({
+					list: [
+						{
+							id: id++,
+							company: "关于开能转债即将停止转股暨赎回前最后半个交易日的重要提示性公告关于开能转债即将停止转股暨赎回前最后半个交易日的重要提示性公告关于开能转债即将停止转股暨赎回前最后半个交易日的重要提示性公告",
+							content: "开能健康（300272）",
+							time: "2025-08-31",
+
+						},
+						{
+							id: id++,
+							company: "关于提前赎回“交建转债”的第二次提示性公告",
+							content: "新疆交建（002941）",
+							time: "2025-08-31",
+
+						},
+						{
+							id: id++,
+							company: "公司关于控股股东、实际控制人部分股份解除质押的公告",
+							content: "新利民股份（002734）",
+							time: "2025-08-31",
+
+						},
+						{
+							id: id++,
+							company: "关于开能转债即将停止转股暨赎回前最后一个交易日的重要提示性公告",
+							content: "新利民股份（002734）",
+							time: "2025-08-31",
+
+						},
+						{
+							id: id++,
+							company: "关于开能转债即将停止转股暨赎回前最后一个交易日的重要提示性公告",
+							content: "新利民股份（002734）",
+							time: "2025-08-31",
+						
+						},
+						{
+							id: id++,
+							company: "关于开能转债即将停止转股暨赎回前最后一个交易日的重要提示性公告",
+							content: "新利民股份（002734）",
+							time: "2025-08-31",
+						
+						},
+					],
+					pagination: {
+						page: params["page"],
+						size: params["size"],
+						total: 6
+					}
+				});
+
+				ui.hideLoading();
+			}, 1000);
+		});
+	});
+
+	async function onPull() {
+		await refresh({ page: 1 });
+		listViewRef.value!.stopRefresh();
+	}
+
+	onReady(() => {
+		ui.showLoading(t("加载中"));
+		// 默认请求
+		refresh({});
+	});
+</script>

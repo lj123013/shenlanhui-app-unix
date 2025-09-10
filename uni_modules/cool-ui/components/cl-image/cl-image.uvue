@@ -205,7 +205,7 @@ function onTap() {
 	@apply relative flex flex-row items-center justify-center;
 
 	&__inner {
-		@apply w-full h-full rounded-xl;
+		@apply w-full h-full;
 	}
 
 	&__loading,

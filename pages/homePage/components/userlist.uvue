@@ -1,0 +1,64 @@
+<template>
+	<view class="px-5">
+		<view class="w-full flex flex-row items-center justify-between py-4"  :class="index==0?'':'border'">
+			<view @tap="clickuser" class="flex flex-row items-center">
+				<cl-image :src="item?.head_img" mode="aspectFill" width="88rpx" height="88rpx"></cl-image>
+			<view class="flex-1 ml-3">
+				<cl-text class="" :pt="{
+					className: '!text-base font-medium text-gray-800 leading-5 mb-1'
+				}">
+					{{ item?.username }}
+				</cl-text>
+
+				<cl-text class="title-text" :pt="{
+					className: '!text-xs text-gray-500'
+				}">
+					{{ item?.descrtion }}
+				</cl-text>
+			</view>
+			</view>
+			<view class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
+				:class="item?.isFloow == true ? 'bg-gray-200' : 'bg-primary-500'">
+				<cl-text color="white" :pt="{
+					className: '!text-xs'
+				}">{{ item?.isFloow == true ? '已关注' : '关注' }}</cl-text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+import { isMp, router, useRefs } from "@/cool";
+import { computed } from "vue";
+import { parse } from "@/cool";
+
+defineOptions({
+	name: "goods-item"
+});
+
+// 定义数据类型（注释形式）
+type GoodsItem = {
+	id: number;
+	username: string;
+	descrtion: string;
+	head_img: string;
+	isFloow: boolean;
+};
+
+const props = defineProps({
+	value: {
+		type: Object,
+		default: () => ({})
+	},
+	index: {
+		type: Number,
+		default: 0
+	}
+});
+
+const item = computed(() => parse<GoodsItem>(props.value));
+// const item = computed(() => props.value);
+function clickuser() {
+	router.to('/pages/user/userinfo');
+}
+</script>

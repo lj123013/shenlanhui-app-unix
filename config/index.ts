@@ -21,7 +21,7 @@ type Config = {
 	website: string; // 官网地址
 	host: string; // 主机地址
 	baseUrl: string; // 基础路径
-	showDarkButton: boolean; // 是否显示暗色模式切换按钮
+	// showDarkButton: boolean; // 是否显示暗色模式切换按钮
 	isCustomTabBar: boolean; // 是否自定义 tabBar
 	backTop: boolean; // 是否显示回到顶部按钮
 	wx: WxConfig; // 微信配置
@@ -33,7 +33,7 @@ export const config = {
 	version: "1.0.0",
 	locale: "zh",
 	website: "https://cool-js.com",
-	showDarkButton: isMp() ? false : true,
+	// showDarkButton: isMp() ? false : true,
 	isCustomTabBar: true,
 	backTop: true,
 	wx: {

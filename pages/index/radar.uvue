@@ -1,0 +1,17 @@
+<template>
+	<cl-page>
+		<cl-text ellipsis :lines="2"
+			>云想衣裳花想容，春风拂槛露华浓。若非群玉山头见，会向瑶台月下逢。天阶夜色凉如水，卧看牵牛织女星。人生若只如初见，何事秋风悲画扇。山有木兮木有枝，心悦君兮君不知。</cl-text
+		>
+		<!-- 自定义底部导航栏 -->
+		<tabbar></tabbar>
+	</cl-page>
+</template>
+
+<script setup lang="ts">
+import Tabbar from "@/components/tabbar.uvue";
+</script>
+
+<style>
+
+</style>

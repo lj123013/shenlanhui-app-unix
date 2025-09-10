@@ -1,0 +1,14 @@
+<template>
+	<cl-page>
+		<!-- 自定义底部导航栏 -->
+		<tabbar></tabbar>
+	</cl-page>
+</template>
+
+<script setup lang="ts">
+import Tabbar from "@/components/tabbar.uvue";
+</script>
+
+<style>
+
+</style>

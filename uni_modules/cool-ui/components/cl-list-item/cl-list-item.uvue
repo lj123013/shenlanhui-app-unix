@@ -395,7 +395,8 @@ defineExpose({
 	@apply flex flex-col w-full relative;
 
 	&__wrapper {
-		@apply w-full transition-none;
+		@apply w-full;
+		transition: none;
 		overflow: visible;
 
 		&.is-transition {

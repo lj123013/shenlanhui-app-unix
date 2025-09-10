@@ -1,0 +1,272 @@
+<template>
+	<cl-page>
+		<view class="page-container">
+			<!-- 顶部区域 -->
+			<view class="top-section">
+				<cl-image class="background-image" width="100%" height="800rpx" src="../../static/image/aiBanner.png"
+					mode="aspectFill"></cl-image>
+				<cl-topbar fixed :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
+					<template #prepend>
+						<view
+							class="bg-primary-500 rounded-full w-[52rpx] h-[52rpx] flex flex-col items-center justify-center"
+							@click="userinfo">
+							<cl-icon name="a-zu254" color="white" size="20rpx"></cl-icon>
+						</view>
+					</template>
+					<cl-text color="black" :pt="{ className: '!text-xl fontBold' }">深蓝AI</cl-text>
+					<template #append>
+						<cl-icon name="faxian" color="black" :size="30"></cl-icon>
+						<cl-text :pt="{ className: '!text-sm' }">发现</cl-text>
+					</template>
+				</cl-topbar>
+				<view class="content-overlay">
+					<view class="ai-intro">
+						<cl-image src="/static/image/ailogo.png" width="200rpx" height="200rpx"></cl-image>
+						<cl-text color="black" :pt="{ className: ' !text-lg' }">我可以帮您写稿、翻译、制图、提建议等</cl-text>
+						<cl-text color="black" :pt="{ className: '!text-lg ' }">请把任务全部交给我吧!</cl-text>
+					</view>
+					<view class="marquee-container">
+						<l-marquee direction="horizontal" :speed="100" v-for="father in 2" class="mb-4">
+							<view v-for="(item, i) in data" :key="i" style="backgroundColor: #F2F2F2 "
+								class="flex flex-row items-center justify-center px-3 py-2 rounded-[10rpx] mr-5">
+								<!-- 动态图标容器 -->
+								<view v-if="item.type=='财经智能写作'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+									style="background:#3AD6A7">
+									<cl-icon name="nav_1" color="white" :size="16">
+									</cl-icon>
+								</view>
+								<view v-else-if="item.type=='AI翻译'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+									style="background:#FF24CC">
+									<cl-icon name="a-zu39" color="white" :size="16">
+									</cl-icon>
+								</view>
+								<view v-else-if="item.type=='改写快讯'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+									style="background:#5127FF">
+									<cl-icon name="a-zu372" color="white" :size="16">
+									</cl-icon>
+								</view>
+								<view v-else-if="item.type=='AI生图'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+									style="background:#3AA1D6">
+									<cl-icon name="a-zu41" color="white" :size="16">
+									</cl-icon>
+								</view>
+								<view v-else-if="item.type=='新闻通稿改写'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+									style="background:#0008FF">
+									<cl-icon name="a-zu48" color="white" :size="16">
+									</cl-icon>
+								</view>
+								<view v-else-if="item.type=='录音转文字'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+									style="background:#65CC0C">
+									<cl-icon name="yuyin" color="white" :size="16">
+									</cl-icon>
+								</view>
+								<view v-else-if="item.type=='生成口播文案'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+									style="background:#FF8000">
+									<cl-icon name="a-zu367" color="white" :size="16">
+									</cl-icon>
+								</view>
+
+								<cl-text color="black" :pt="{ className: '!text-base' }">{{ item.title }}</cl-text>
+							</view>
+						</l-marquee>
+					</view>
+				</view>
+			</view>
+
+			<!-- 底部区域 -->
+			<view class="bottom-section ">
+				<!-- 轮播图 -->
+				<view class="swiper-container px-5">
+					<swiper class="h-[194rpx]" :autoplay="true" :circular="true" :indicator-dots='true'
+						indicator-color='rgba(255,255,255,0.5)' indicator-active-color="#007AFF">
+						<swiper-item v-for="(item, index) in list" :key="index" class="w-full h-[194rpx]">
+							<image class='w-full h-full rounded-[20rpx] object-cover' :src="item"></image>
+						</swiper-item>
+					</swiper>
+				</view>
+
+				<view class="input-section">
+
+					<tag-list class="px-5"></tag-list>
+					<view class="input-wrapper px-5">
+						<cl-input placeholder="请输入任何问题" :border="false">
+							<template #append>
+								<cl-image width="60rpx" height="60rpx" src="/static/image/sendicon.png"></cl-image>
+							</template>
+						</cl-input>
+					</view>
+					<!-- 底部安全区适配 -->
+					<!-- <cl-safe-area type="bottom"></cl-safe-area> -->
+				</view>
+			</view>
+		</view>
+		<!-- 自定义底部导航栏 -->
+		<tabbar></tabbar>
+	</cl-page>
+</template>
+
+<script setup lang="ts">
+	import Tabbar from "@/components/tabbar.uvue";
+	import tagList from "../shenlanaiPage/components/tag-list.uvue"
+	import { t } from "@/locale";
+	import { router } from "@/cool";
+	import { onMounted } from "vue";
+	const autoplayForDefault = ref(false)
+	type scrollItem = {
+		title : string
+		type : string
+	}
+	const kungFuManuals = [{
+		title: t('IPO相关稿件应该如何写'),
+		type: '财经智能写作',
+	},
+	{
+		title: '生成一张关于采访的图',
+		type: 'AI生图',
+	},
+	{
+		title: '翻译以下文章',
+		type: 'AI翻译',
+	},
+	{
+		title: '党报风格写一篇文章',
+		type: '改写快讯',
+	},
+	{
+		title: 'IPO相关稿件应该如何写',
+		type: '录音转文字',
+	},
+	{
+		title: 'IPO相关稿件应该如何写',
+		type: '生成口播文案',
+	},
+	{
+		title: '涛涛车业9月2日在互动平',
+		type: '新闻通稿改写',
+	},];
+	const data = ref([...kungFuManuals]);
+	const list = ref<string[]>([
+		"https://uni-docs.cool-js.com/demo/pages/demo/static/bg1.png",
+		"https://uni-docs.cool-js.com/demo/pages/demo/static/bg2.png",
+		"https://uni-docs.cool-js.com/demo/pages/demo/static/bg3.png",
+	]);
+	// 进入用户主页
+	const userinfo = () => {
+		router.to("/pages/user/userinfo");
+	};
+
+
+	// 获取类型样式的函数 - 改进后
+	onMounted(() => {
+		console.log(data.value);
+
+	});
+</script>
+
+<style>
+	/* 页面容器使用 flex 布局 */
+	.page-container {
+		display: flex;
+		flex-direction: column;
+	}
+
+	/* 顶部区域 */
+	.top-section {
+		position: relative;
+		/* flex: 1; */
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+
+	.background-image {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 1;
+		width: 100%;
+		height: 100%;
+	}
+
+	/* 内容覆盖层 */
+	.content-overlay {
+		position: relative;
+		z-index: 2;
+		/* flex: 1; */
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+		align-items: center;
+		padding-top: 60rpx;
+	}
+
+	/* AI 介绍区域 */
+	.ai-intro {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		margin-bottom: 80rpx;
+	}
+
+	/* 跑马灯容器 */
+	.marquee-container {
+		width: 100%;
+	}
+
+	/* 底部区域 */
+	.bottom-section {
+		/* padding-top: 30rpx;
+	padding-bottom: 30rpx; */
+		height: 50vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+		/* padding-top: 40rpx; */
+	}
+
+	/* 轮播图容器 */
+	.swiper-container {
+		margin: 60rpx 0 80rpx 0;
+	}
+
+	/* 输入框区域 */
+	.input-section {}
+
+	.input-wrapper {
+		padding: 50rpx;
+	}
+
+	/* 输入框样式 */
+	.cl-input {
+		height: 120rpx !important;
+		box-shadow: 0rpx 0rpx 20rpx #D8D8D8;
+		border-radius: 20rpx;
+	}
+
+	/* 响应式适配 */
+	@media screen and (max-height: 640px) {
+		.ai-intro {
+			margin-bottom: 40rpx;
+		}
+
+		.content-overlay {
+			padding-top: 40rpx;
+			padding-bottom: 20rpx;
+		}
+	}
+
+	/* 确保在小屏幕设备上的适配 */
+	@media screen and (max-height: 568px) {
+		.background-image {
+			height: 600rpx;
+		}
+
+		.top-section {
+			min-height: 600rpx;
+		}
+	}
+</style>

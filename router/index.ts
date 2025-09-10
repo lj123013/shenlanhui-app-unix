@@ -1,16 +1,18 @@
 import { router, useStore } from "@/cool";
-
+//需要判断token是否登录的将不需要token的加入到下面数组中
 const ignoreToken = [
 	"/pages/index/home",
+	'/pages/homePage/slhNum',
+	"/pages/index/shenlanai",
+	"/pages/index/radar",
+	"/pages/index/information",
+	"/pages/index/socialcircle",
 	"/pages/index/my",
-	"/pages/index/template",
-	"/pages/user/login",
-	"/pages/user/doc"
+	"/pages/user/login"
 ];
 
 router.beforeEach((to, next) => {
 	const { user } = useStore();
-
 	if (
 		ignoreToken.includes(to.path) ||
 		to.path.startsWith("/pages/demo") ||
@@ -18,9 +20,13 @@ router.beforeEach((to, next) => {
 	) {
 		next();
 	} else {
+		next();
+		return
 		if (!user.isNull()) {
 			next();
 		} else {
+		console.log("未登录");
+		
 			router.login();
 		}
 	}

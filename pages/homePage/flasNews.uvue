@@ -1,0 +1,99 @@
+<template>
+	<cl-page>
+		<cl-list-view
+			ref="listViewRef"
+			:data="listView"
+			:virtual="false"
+			:pt="{
+				refresher: {
+					className: 'pt-3'
+				}
+			}"
+			:refresher-enabled="true"
+			@pull="onPull"
+			@bottom="loadMore"
+		>
+			<template #item="{ value, index }">
+				<dispath-item :value="value" :index="index"></dispath-item>
+			</template>
+
+			<template #bottom>
+				<view class="py-3">
+					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+				</view>
+			</template>
+		</cl-list-view>
+	</cl-page>
+</template>
+
+<script lang="ts" setup>
+import { useUi } from "@/uni_modules/cool-ui";
+import { ref } from "vue";
+import { usePager } from "@/cool";
+import dispathItem from "../homePage/components/dispath.uvue";
+import { t } from "@/locale";
+
+const ui = useUi();
+
+const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
+
+let id = 0;
+
+const { refresh, list, listView, loading, loadMore } = usePager((params) => {
+	return new Promise((resolve) => {
+		// 模拟请求
+		setTimeout(() => {
+			resolve({
+				list: [
+					{
+						id: id++,
+						title: "",
+						content:"伊朗外交部：国际原子能机构总干事格罗西对“破坏国际原子能机构的公信力”负有直接责任。",
+						time: "17:39",
+						is_top:false,
+					},
+					{
+						id: id++,
+						title: "黑芝麻：收到广西证监局警示函",
+						content:"伊朗外交部：国际原子能机构总干事格罗西对“破坏国际原子能机构的公信力”负有直接责任。",
+						time: "17:39",
+						is_top:false,
+					},
+					{
+						id: id++,
+						title: "6月17日全国共发行15支地方政府债，共计672.66亿元",
+						content:"2025年6月17日全国共发行15支地方政府债，共计672.6593亿元。其中，政府一般专项债发行6支，共276.2876亿元；地方政府专项债发行9支，共396.3717亿元。（21财经）",
+						time: "17:39",
+						is_top:true,
+					},
+					{
+						id: id++,
+						title: "黑芝麻：收到广西证监局警示函",
+						content:"伊朗外交部：国际原子能机构总干事格罗西对“破坏国际原子能机构的公信力”负有直接责任。",
+						time: "17:39",
+						is_top:false,
+					},
+				],
+				pagination: {
+					page: params["page"],
+					size: params["size"],
+					total: 4
+				}
+			});
+
+			ui.hideLoading();
+		}, 1000);
+	});
+});
+
+async function onPull() {
+	await refresh({ page: 1 });
+	listViewRef.value!.stopRefresh();
+}
+
+onReady(() => {
+	ui.showLoading(t("加载中"));
+	// 默认请求
+	refresh({});
+});
+</script>

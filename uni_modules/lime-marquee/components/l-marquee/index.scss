@@ -1,0 +1,69 @@
+@import '~@/uni_modules/lime-style/index.scss';
+$prefix: l !default;
+$marquee: #{$prefix}-marquee;
+
+/* #ifndef APP-ANDROID || APP-IOS || WEB */
+:host {
+	display: block;
+	overflow: hidden;
+}
+/* #endif */
+
+
+.#{$marquee} {
+	overflow: hidden;
+	display: flex;
+	flex-direction: row;
+	&--vertical {
+		flex-direction: column;
+	}
+	&--horizontal {
+		flex-direction: row;
+	}
+	&--vertical {
+		.#{$marquee}-wrap{
+			flex-direction: column;
+			/* #ifndef APP-ANDROID || APP-IOS */
+			animation-name: marquee--vertical;
+			/* #endif */
+		}
+	}
+	&--horizontal {
+		.#{$marquee}-wrap{
+			flex-direction: row;
+			overflow: visible;
+			flex-wrap: nowrap;
+			align-self: flex-start;
+			/* #ifndef APP-ANDROID || APP-IOS */
+			animation-name: marquee--horizontal;
+			/* #endif */
+		}
+	}
+	&-wrap {
+		position: relative;
+		box-sizing: border-box;
+		display: flex;
+		flex: 0 0 auto;
+		/* #ifndef APP-ANDROID || APP-IOS */
+		animation-timing-function: linear;
+		animation-iteration-count: infinite;
+		animation-play-state: paused;
+		will-change: transform;
+		backface-visibility: hidden;
+		/* #endif */
+	}
+	
+	/* #ifndef APP-ANDROID || APP-IOS */
+	@keyframes marquee--vertical {
+	  100% {
+	    transform: translate3d(0, -50%, 0);
+	  }
+	}
+	
+	@keyframes marquee--horizontal {
+	  100% {
+	    transform: translate3d(-50%, 0, 0);
+	  }
+	}
+	/* #endif */
+}

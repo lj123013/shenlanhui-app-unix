@@ -1,0 +1,81 @@
+<template>
+	<cl-page>
+		<cl-topbar title="文章详情" fixed safe-area-top></cl-topbar>
+		<view class="content px-5 pt-4">
+			<!-- 文章标题 -->
+			<cl-text class="text-xl font-bold mb-4">{{ articleData.title }}</cl-text>
+			
+			<!-- 文章信息 -->
+			<view class="flex flex-row items-center mb-4">
+				<cl-text class="text-sm text-gray-500 mr-4">作者：{{ articleData.author }}</cl-text>
+				<cl-text class="text-sm text-gray-500">发布时间：{{ articleData.acreat_time }}</cl-text>
+			</view>
+			
+			<!-- 文章封面图 -->
+			<view class="mb-4" v-if="articleData.cover_url">
+				<cl-image width="100%" height="400rpx" :pt="{className:'rounded-xl'}" :src="articleData.cover_url"></cl-image>
+			</view>
+			
+			<!-- 文章内容 -->
+			<view class="article-content">
+				<cl-text class="text-base leading-6">这里是文章的详细内容区域...</cl-text>
+			</view>
+		</view>
+	</cl-page>
+</template>
+
+<script setup>
+import { ref, reactive, onMounted } from "vue";
+import { router } from "@/cool";
+
+// 定义文章数据类型（注释形式）
+type ArticleData = {
+	id: number;
+	title: string;
+	author: string;
+	cover_url: string;
+	acreat_time: string;
+};
+
+// 响应式文章数据
+const articleData = reactive({
+	id: 0,
+	title: '',
+	author: '',
+	cover_url: '',
+	acreat_time: ''
+});
+
+// 页面加载时获取路由参数
+onMounted(() => {
+	const params = router.params();
+	console.log('接收到的参数:', params);
+	
+	// 将路由参数赋值给文章数据
+	if (params.articleId) {
+		articleData.id = params.articleId as number;
+	}
+	if (params.title) {
+		articleData.title = params.title as string;
+	}
+	if (params.author) {
+		articleData.author = params.author as string;
+	}
+	if (params.cover_url) {
+		articleData.cover_url = params.cover_url as string;
+	}
+	if (params.acreat_time) {
+		articleData.acreat_time = params.acreat_time as string;
+	}
+});
+</script>
+
+<style scoped>
+.content {
+	padding-top: calc(var(--safe-area-inset-top) + 100rpx);
+}
+
+.article-content {
+	line-height: 1.6;
+}
+</style>
