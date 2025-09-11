@@ -460,9 +460,9 @@ const data = computed<Item[]>(() => {
 					path: "/pages/demo/other/slide-verify"
 				},
 				{
-					label: "Animate",
+					label: "Animation",
 					icon: "instance-line",
-					path: "/pages/demo/other/animate"
+					path: "/pages/demo/other/animation"
 				}
 			]
 		}

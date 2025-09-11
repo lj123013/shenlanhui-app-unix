@@ -449,9 +449,9 @@
 					}
 				},
 				{
-					"path": "other/animate",
+					"path": "other/animation",
 					"style": {
-						"navigationBarTitleText": "Animate 动画"
+						"navigationBarTitleText": "Animation 动画"
 					}
 				}
 			]
