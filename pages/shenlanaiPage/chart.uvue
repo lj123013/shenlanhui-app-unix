@@ -1,159 +1,257 @@
 <template>
 	<cl-page>
-		<view class="px-5">
-			<tagList delet='深蓝智能体' class="mb-4"></tagList>
-			<view v-for="(item, index) in tlabel" :key="index" >
-				<view v-if="item?.type == title">
-					<cl-text color="#777777">{{ item?.title }}:</cl-text>
-					<view class="flex flex-wrap flex-row mt-4 borderf pb-4 mb-4">
-						<cl-tag v-for="(child, childindex) in item?.list" :key="childindex" class="mb-2 mr-4 backgrou4a"
-							@click="setMaxlength(item,child.text)"
-							:pt="{
-								text: {
-									className: '!text-gray-700'
-								}
-							}">{{t(child['text'] as string)  }}</cl-tag>
+		<view class="px-5 flex flex-col h-full">
+			<tagList delet='深蓝智能体' mode='select' class="mb-4"></tagList>
+			<!-- AI翻译 -->
+			<view class="flex-1 relative">
+				<view v-if="title == 'AI翻译'">
+					<cl-row :gutter="12">
+						<cl-col :span="8">
+							<view class="item frist-item" @click="showLangListBtn1">
+								<cl-text>{{ menu1default }}</cl-text>
+								<cl-icon name="arrow-down-s-line" size="26rpx" color="#414141"></cl-icon>
+							</view>
+						</cl-col>
+						<cl-col :span="8">
+							<view class="item">
+								<view class="bg-white p-2 rounded-full">
+									<cl-icon name="qiehuan" size="26rpx" color="#414141"></cl-icon>
+								</view>
+							</view>
+						</cl-col>
+						<cl-col :span="8">
+							<view class="item last-item" @click="showLangListBtn2">
+								<cl-text>{{ menu1default2 }}</cl-text>
+								<cl-icon name="arrow-down-s-line" size="26rpx" color="#414141"></cl-icon>
+							</view>
+						</cl-col>
+					</cl-row>
+				</view>
+				<!-- 录音转文字 -->
+				<view v-else-if="title == '录音转文字'"
+					class="backgrou4a w-full h-[238rpx] rounded-lg flex flex-col items-center justify-center">
+					<view class="flex flex-col items-center justify-center" v-if="!Uploading">
+						<cl-icon name="KHCFDC_yinpinwenjian" color="primary" size="60rpx"></cl-icon>
+						<cl-text color="#bcbcbc" :pt="{ className: 'text-base mt-2' }">点击上传本地音频文件</cl-text>
+					</view>
+
+					<view class="flex flex-col items-center justify-center" v-if="Uploading">
+						<view class="flex flex-row items-center">
+							<cl-icon name="KHCFDC_yinpinwenjian" color="primary" size="60rpx"></cl-icon>
+							<cl-text color="#bcbcbc"
+								:pt="{ className: 'text-base mt-2 ml-2' }">Littlerascal2025.mp3</cl-text>
+						</view>
+						<view class="w-[400rpx] mt-4">
+							<cl-progress :value="60" :stroke-width="20" color="#2854F2" un-color="#DEE5FF"
+								:show-text="false"></cl-progress>
+						</view>
+					</view>
+				</view>
+				<view v-else>
+					<view v-for="(item, index) in tlabel" :key="index">
+						<view v-if="item?.type == title">
+							<cl-text color="#777777">{{ item?.title }}:</cl-text>
+							<view class="flex flex-wrap flex-row mt-4 borderf pb-4 mb-4">
+								<!-- :class="child.choiced==true?'bg-primary-500':'backgrou4a'" -->
+								<view v-for="(child, childindex) in item?.list" :key="childindex"
+									class="mb-2 mr-4 py-1 px-2 rounded-[10rpx]"
+									@click="setMaxlength(item,index, child.text,childindex)"
+									:class="child.choiced ? 'bg-primary-500' : 'backgrou4a'">
+									<cl-text :pt="{className:'text-base'}"
+										:color="child.choiced ? '#fff' : '#4A4A4A'">{{ t(child['text'] as string) }}</cl-text>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view class="">
+					<cl-textarea v-if="title != '录音转文字'" :adjustPosition="false" :autofocus="true" height="245rpx"
+						show-word-limit :border="false" :maxlength="maxlength" :placeholder="placeholder"
+						class="backgrou4a" :pt="{
+							inner: {
+								className: '!text-sky-700'
+							}
+						}"></cl-textarea>
+					<cl-button @tap="submit" size="large" rounded :pt="{ className: 'mt-5' }">{{
+						submitBtnText
+					}}</cl-button>
+				</view>
+				<!-- 语言下拉列表1 -->
+				<view
+					class="p-3 rounded-lg w-[238rpx] menuList borderf3f3f3 bg-white absolute  top-[80rpx] left-[30rpx]"
+					v-if="showLangList1">
+					<view v-for="(value, index) in languageList" @click="selected(value, index)"
+						class="flex flex-row justify-between items-center py-2" :class="index != 0 ? 'border' : ''">
+						<cl-text color="#949494" :pt="{ className: 'text-base' }">{{ value.label }}</cl-text>
+						<view v-show="value.choiced"
+							class="choiceIcon flex flex-row items-center justify-center  rounded-full w-[22rpx] h-[22rpx]">
+							<view class="w-[14rpx] h-[14rpx] rounded-full bg-primary-500"></view>
+						</view>
+					</view>
+				</view>
+				<!-- 语言下拉列表1 -->
+				<view class="p-3 rounded-lg w-[238rpx] menuList borderf3f3f3 bg-white absolute top-[80rpx] right-0"
+					v-if="showLangList2">
+					<view v-for="(value, index) in languageList2" @click="selected2(value, index)"
+						class="flex flex-row justify-between items-center py-2" :class="index != 0 ? 'border' : ''">
+						<cl-text color="#949494" :pt="{ className: 'text-base' }">{{ value.label }}</cl-text>
+						<view v-show="value.choiced"
+							class="choiceIcon flex flex-row items-center justify-center  rounded-full w-[22rpx] h-[22rpx]">
+							<view class="w-[14rpx] h-[14rpx] rounded-full bg-primary-500"></view>
+						</view>
 					</view>
 				</view>
 			</view>
-			<cl-textarea
-				:autofocus="true"
-				height="245rpx"
-				show-word-limit
-				:border="false"
-				:maxlength="maxlength"
-				placeholder="请输入您的需求"
-				class="backgrou4a"
-				:pt="{
-					inner: {
-						className: '!text-sky-700'
-					}
-				}"
-			></cl-textarea>
-			<cl-button @tap="submit" size="large" rounded :pt="{ className: 'mt-5' }">{{
-				t("开始写作")
-			}}</cl-button>
 		</view>
 	</cl-page>
 </template>
 
 <script setup>
-	import { onMounted, ref,computed } from "vue";
+	import { onMounted, ref, computed, watchEffect } from "vue";
 	import { t } from "@/locale";
-	import { isMp, router, useRefs, isNull, useStore } from "@/cool";
+	import { isMp, router, useRefs, isNull, useStore, parse, isArray } from "@/cool";
 	import { useUi, } from "@/uni_modules/cool-ui";
+	import { storage } from "@/cool/utils";
 	import tagList from "../shenlanaiPage/components/tag-list.uvue"
 	const title = ref<string>("")
 	const { app } = useStore();
 	const maxlength = ref(500);
-	
-	type child={
-		text:string
+	const submitBtnText = ref("开始写作")
+	const placeholder = ref("请输入写作的描述")
+	const Uploading = ref(false);
+	type child = {
+		text : string
+		choiced : boolean
 	}
 	type tagItem = {
 		title : string
 		type : string
-		list ?: child[];
+		choiceType : string
+		list : child[];
 	}
-	
+
 	const tlabel = ref<tagItem[]>([
 		{
 			title: '风格选取',
 			type: '财经智能写作',
+			choiceType: 'single',
 			list: [
-				{ text: "党报" },
-				{ text: "彭博社" },
-				{ text: "华尔街日报" },
-				{ text: "每日经济新闻" },
-				{ text: "智谷趋势" },
-				{ text: "深蓝财经" }
+				{ text: "党报", choiced: false },
+				{ text: "彭博社", choiced: false },
+				{ text: "华尔街日报", choiced: false },
+				{ text: "每日经济新闻", choiced: false },
+				{ text: "智谷趋势", choiced: false },
+				{ text: "深蓝财经", choiced: false }
 			]
 		},
 		{
 			title: '最大字数',
 			type: '财经智能写作',
+			choiceType: 'single',
 			list: [
-				{ text: "不限制" },
-				{ text: "150" },
-				{ text: "300" },
-				{ text: "400" },
-				{ text: "450" },
-				{ text: "500" },
-				{ text: "600" },
+				{ text: "不限制", choiced: false },
+				{ text: "150", choiced: false },
+				{ text: "300", choiced: false },
+				{ text: "400", choiced: false },
+				{ text: "450", choiced: false },
+				{ text: "500", choiced: false },
+				{ text: "600", choiced: false },
 			]
 		},
 		{
-			title: '正面标签',
-			type: 'AI生图',
+			title: '最大字数',
+			type: '改写快讯',
+			choiceType: 'single',
 			list: [
-				{ text: "高清" },
-				{ text: "写实风格" },
-				{ text: "自然光线" },
-				{ text: "细节丰富" },
-				{ text: "动态构图" },
-				{ text: "柔和颜色" },
-				{ text: "明亮" },
-				{ text: "唯美" },
+				{ text: "不限制", choiced: false },
+				{ text: "150", choiced: false },
+				{ text: "300", choiced: false },
+				{ text: "400", choiced: false },
+				{ text: "450", choiced: false },
+				{ text: "500", choiced: false },
+				{ text: "600", choiced: false },
 			]
 		},
 		{
-			title: '负面标签',
+			title: '正面标签(多选)',
 			type: 'AI生图',
+			choiceType: 'multiple',
 			list: [
-				{ text: "模糊" },
-				{ text: "畸形" },
-				{ text: "扭曲" },
-				{ text: "低质量" },
-				{ text: "水印" },
-				{ text: "过度曝光" },
-				{ text: "噪点" },
+				{ text: "高清", choiced: false },
+				{ text: "写实风格", choiced: false },
+				{ text: "自然光线", choiced: false },
+				{ text: "细节丰富", choiced: false },
+				{ text: "动态构图", choiced: false },
+				{ text: "柔和颜色", choiced: false },
+				{ text: "明亮", choiced: false },
+				{ text: "唯美", choiced: false },
+			]
+		},
+		{
+			title: '负面标签(多选)',
+			type: 'AI生图',
+			choiceType: 'multiple',
+			list: [
+				{ text: "模糊", choiced: false },
+				{ text: "畸形", choiced: false },
+				{ text: "扭曲", choiced: false },
+				{ text: "低质量", choiced: false },
+				{ text: "水印", choiced: false },
+				{ text: "过度曝光", choiced: false },
+				{ text: "噪点", choiced: false },
 			]
 		},
 		{
 			title: '核心目标',
 			type: '生成口播文案',
+			choiceType: 'single',
 			list: [
-				{ text: "品牌导向" },
-				{ text: "效果导向" },
-				{ text: "互动导向" },
-				{ text: "内容导向" },
+				{ text: "品牌导向", choiced: false },
+				{ text: "效果导向", choiced: false },
+				{ text: "互动导向", choiced: false },
+				{ text: "内容导向", choiced: false },
 			]
 		},
 		{
 			title: '语言风格',
 			type: '生成口播文案',
+			choiceType: 'single',
 			list: [
-				{ text: "正式感 " },
-				{ text: "随意感" },
-				{ text: "理性感" },
-				{ text: "活泼感" },
-				{ text: "沉稳感" },
+				{ text: "正式感 ", choiced: false },
+				{ text: "随意感", choiced: false },
+				{ text: "理性感", choiced: false },
+				{ text: "活泼感", choiced: false },
+				{ text: "沉稳感", choiced: false },
 			]
 		},
 		{
 			title: '角度与立意',
 			type: '新闻通稿改写',
+			choiceType: 'single',
 			list: [
-				{ text: "行业视角" },
-				{ text: "大众视角" },
-				{ text: "企业视角" },
-				{ text: "用户视角" },
-				{ text: "产品视角" },
-				{ text: "故事/人物视角" },
+				{ text: "行业视角", choiced: false },
+				{ text: "大众视角", choiced: false },
+				{ text: "企业视角", choiced: false },
+				{ text: "用户视角", choiced: false },
+				{ text: "产品视角", choiced: false },
+				{ text: "故事/人物视角", choiced: false },
 			]
 		},
 		{
 			title: '结构与逻辑',
 			type: '新闻通稿改写',
+			choiceType: 'single',
 			list: [
-				{ text: "倒金字塔结构" },
-				{ text: "黄金圈法则" },
+				{ text: "倒金字塔结构", choiced: false },
+				{ text: "黄金圈法则", choiced: false },
 			]
 		},
-	]);
-	const setMaxlength = (item : tagItem,val:string) => {
-		if(!isNull(item)){
-			if(item.title=='最大字数'){
+	]
+	);
+	// 处理标签选择，兼容鸿蒙系统
+	const setMaxlength = (item : tagItem, index : number, val : string, childindex : number) => {
+		if (!isNull(item)) {
+			if (item.title == '最大字数') {
 				if (val == "不限制") {
 					maxlength.value = 9999;
 				} else {
@@ -161,19 +259,132 @@
 					// 检查转换结果是否有效
 					maxlength.value = isNaN(num) ? 0 : num;
 				}
+			} else {
+				// 确保item.list是可修改的数组
+				// let newList = item.list || [];
+				if (isArray(item.list) && item.list.length > 0) {
+					if (item.choiceType == 'single') {
+						item.list.forEach(check => {
+							check.choiced = check.text == val
+						})
+						console.log(item.list, 222222)
+					} else if (item.choiceType == 'multiple') {
+						item.list[childindex].choiced = !item.list[childindex].choiced
+					}
+					tlabel.value = [...tlabel.value]//鸿蒙系统需要显示触发
+				}
+
+				// 使用parse函数确保数据在各平台上的兼容性
+				// 特别是在鸿蒙平台上，确保数据类型正确转换
+
 			}
 		}
 	};
+	// AI翻译
+	// 新增响应式变量
+	const menu1default = ref('自动检测')
+	const menu1default2 = ref('英语')
+	const showLangList1 = ref(false);
+	const showLangList2 = ref(false);
+	type languageItem = {
+		label : string
+		choiced : boolean
+	}
+	const languageList = ref<languageItem[]>([
+		{ label: '自动检测', choiced: true },
+		{ label: '中文', choiced: false },
+		{ label: '英语', choiced: false },
+		{ label: '日语', choiced: false },
+		{ label: '韩语', choiced: false },
+		{ label: '法语', choiced: false },
+		{ label: '德语', choiced: false },
+		{ label: '西班牙语', choiced: false },
+		{ label: '俄语', choiced: false },
+	])
+	const languageList2 = ref<languageItem[]>([
+		{ label: '中文', choiced: false },
+		{ label: '英语', choiced: true },
+		{ label: '日语', choiced: false },
+		{ label: '韩语', choiced: false },
+		{ label: '法语', choiced: false },
+		{ label: '德语', choiced: false },
+		{ label: '西班牙语', choiced: false },
+		{ label: '俄语', choiced: false },
+	])
+	const showLangListBtn1 = () => {
+		showLangList1.value = !showLangList1.value;
+		if (showLangList2.value) {
+			showLangList2.value = false;
+		}
+	}
+	const showLangListBtn2 = () => {
+		showLangList2.value = !showLangList2.value;
+		if (showLangList1.value) {
+			showLangList1.value = false;
+		}
+	}
+	const selected = (value : languageItem, index : number) => {
+		languageList.value.forEach((check, i) => {
+			if (index == i) {
+				check.choiced = true
+				menu1default.value = value.label
+				showLangList1.value = false
+			} else {
+				check.choiced = false
+			}
+		})
+	}
+	const selected2 = (value : languageItem, index : number) => {
+		languageList2.value.forEach((check, i) => {
+			if (index == i) {
+				check.choiced = true
+				menu1default2.value = value.label
+				showLangList2.value = false
+			} else {
+				check.choiced = false
+			}
+		})
+
+	}
 	const submit = () => {
 		uni.showToast({
 			title: "功能开发中，敬请期待",
 			icon: "none"
 		});
 	};
-	onMounted(() => {
-		// 从 store 中获取选中的AI工具名称
+	// 使用 watchEffect 监听 store 中 selectedAiTool 的变化
+	watchEffect(() => {
 		title.value = app.selectedAiTool.value;
-		console.log('从 store 获取的标题:', title.value);
+		if (title.value == 'AI翻译') {
+			submitBtnText.value = "开始翻译"
+			placeholder.value = "请输入需要翻译的内容"
+		} else if (title.value == '录音转文字') {
+			submitBtnText.value = "开始转换"
+		} else if (title.value == '生成口播文案') {
+			submitBtnText.value = "开始生成"
+			placeholder.value = "请描述您想要的口播内容"
+		} else if (title.value == '新闻通稿改写') {
+			submitBtnText.value = "开始改写"
+			placeholder.value = "请输入你要改写的新闻通稿内容"
+		} else if (title.value == '改写快讯') {
+			submitBtnText.value = "开始改写"
+			placeholder.value = "请输入你要改写的快讯"
+		}
+		else if (title.value == 'AI生图') {
+			submitBtnText.value = "开始生图"
+			placeholder.value = "请描述您想要生成的图片内容"
+		} else {
+			submitBtnText.value = "开始写作"
+			placeholder.value = "请输入写作的描述"
+		}
+		console.log('监听到 store 变化，标题更新为:', title.value);
+	});
+
+	onMounted(() => {
+		console.log('组件挂载，当前标题:', title.value);
+		// 确保在组件挂载后执行
+
+
 	})
 </script>
 <style>
@@ -193,21 +404,40 @@
 		position: relative;
 	}
 
-	.menuList {
-		border: 2rpx solid #f3f3f3;
-		background-color: #fff;
-		position: absolute;
-		top: 620rpx;
-		left: 60rpx;
-		z-index: 999;
+	.choiceIcon {
+		border: 2rpx solid #B9C8FF;
 	}
 
-	.menuList2 {
+	.borderf3f3f3 {
 		border: 2rpx solid #f3f3f3;
-		background-color: #fff;
-		position: absolute;
-		top: 620rpx;
-		right: 60rpx;
-		z-index: 999;
+	}
+
+	.item {
+		@apply h-8 bg-surface-100 py-6 flex flex-row items-center justify-center;
+
+		.text {
+			@apply text-sm text-surface-700;
+		}
+
+		&.active {
+			@apply bg-primary-500;
+
+			.text {
+				@apply text-white;
+			}
+		}
+	}
+
+	.cl-col {
+		padding: 0rpx !important;
+		margin-bottom: 30rpx;
+	}
+
+	.frist-item {
+		border-radius: 20rpx 0 0 20rpx;
+	}
+
+	.last-item {
+		border-radius: 0 20rpx 20rpx 0;
 	}
 </style>

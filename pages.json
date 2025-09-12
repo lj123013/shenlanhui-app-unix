@@ -84,30 +84,38 @@
 			}]
 		},
 		{
-					"root": "pages/shenlanaiPage",
-					"pages": [{
-						"path": "intelligent",
-						"style": {
-							"navigationBarTitleText": "深蓝智能体"
-						}
-					},
-					{
-						"path" : "chart",
-						"style" : 
-						{
-							"navigationBarTitleText" : "深蓝AI"
-						}
-					}]
+			"root": "pages/shenlanaiPage",
+			"pages": [{
+					"path": "intelligent",
+					"style": {
+						"navigationBarTitleText": "深蓝智能体"
+					}
 				},
+				{
+					"path": "chart",
+					"style": {
+						"navigationBarTitleText": "深蓝AI"
+					}
+				}
+			]
+		},
 		{
 			"root": "pages/articlePage",
 			"pages": [{
-				"path": "articleDetail",
-				"style": {
-					"navigationBarTitleText": "文章详情",
-					"navigationStyle": "custom"
+					"path": "articleDetail",
+					"style": {
+						"navigationBarTitleText": "文章详情",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "dispathDetail",
+					"style": {
+						"navigationBarTitleText": "快讯详情",
+						"navigationStyle": "custom"
+					}
 				}
-			}]
+			]
 		}
 	],
 	"globalStyle": {
