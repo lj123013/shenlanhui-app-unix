@@ -1,0 +1,47 @@
+@import '@/uni_modules/lime-style/index.scss';
+
+$text-ellipsis: #{$prefix}-text-ellipsis;
+
+$text-ellipsis-line-height: create-var(text-ellipsis-line-height, 1.6);
+$text-ellipsis-action-color: create-var(text-ellipsis-action-color, $primary-color);
+
+.#{$text-ellipsis} {
+	position: relative;
+	/* #ifdef APP-ANDROID || APP-HARMONY || APP-IOS */
+	opacity: 0;
+	/* #endif */
+	transition-property: opacity;
+	transition-duration: 100ms;
+	
+	/* #ifndef APP-ANDROID || APP-HARMONY || APP-IOS */
+	&__content {
+		line-height: $text-ellipsis-line-height;
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+	
+	.cloneContainer {
+		position: absolute;
+		width: 100%;
+		// left: 9999px;
+		opacity: 0;
+	}
+	
+	&__action {
+		cursor: pointer;
+		color: $text-ellipsis-action-color;
+		display: inline;
+	
+		view {
+			display: inline;
+		}
+	}
+	/* #endif */
+	/* #ifdef APP-ANDROID || APP-HARMONY || APP-IOS */
+	&__action {
+		color: $text-ellipsis-action-color;
+	}
+	/* #endif */
+}
+
+

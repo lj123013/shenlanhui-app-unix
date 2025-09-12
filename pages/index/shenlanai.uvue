@@ -30,37 +30,44 @@
 							<view v-for="(item, i) in data" :key="i" style="backgroundColor: #F2F2F2 "
 								class="flex flex-row items-center justify-center px-3 py-2 rounded-[10rpx] mr-5">
 								<!-- 动态图标容器 -->
-								<view v-if="item.type=='财经智能写作'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+								<view v-if="item.type=='财经智能写作'"
+									class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
 									style="background:#3AD6A7">
 									<cl-icon name="nav_1" color="white" :size="16">
 									</cl-icon>
 								</view>
-								<view v-else-if="item.type=='AI翻译'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+								<view v-else-if="item.type=='AI翻译'"
+									class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
 									style="background:#FF24CC">
 									<cl-icon name="a-zu39" color="white" :size="16">
 									</cl-icon>
 								</view>
-								<view v-else-if="item.type=='改写快讯'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+								<view v-else-if="item.type=='改写快讯'"
+									class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
 									style="background:#5127FF">
 									<cl-icon name="a-zu372" color="white" :size="16">
 									</cl-icon>
 								</view>
-								<view v-else-if="item.type=='AI生图'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+								<view v-else-if="item.type=='AI生图'"
+									class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
 									style="background:#3AA1D6">
 									<cl-icon name="a-zu41" color="white" :size="16">
 									</cl-icon>
 								</view>
-								<view v-else-if="item.type=='新闻通稿改写'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+								<view v-else-if="item.type=='新闻通稿改写'"
+									class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
 									style="background:#0008FF">
 									<cl-icon name="a-zu48" color="white" :size="16">
 									</cl-icon>
 								</view>
-								<view v-else-if="item.type=='录音转文字'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+								<view v-else-if="item.type=='录音转文字'"
+									class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
 									style="background:#65CC0C">
 									<cl-icon name="yuyin" color="white" :size="16">
 									</cl-icon>
 								</view>
-								<view v-else-if="item.type=='生成口播文案'" class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
+								<view v-else-if="item.type=='生成口播文案'"
+									class="w-[28rpx] h-[28rpx] flex items-center justify-center rounded-[6rpx] mr-2"
 									style="background:#FF8000">
 									<cl-icon name="a-zu367" color="white" :size="16">
 									</cl-icon>
@@ -154,8 +161,7 @@
 	const userinfo = () => {
 		router.to("/pages/user/userinfo");
 	};
-
-
+	
 	// 获取类型样式的函数 - 改进后
 	onMounted(() => {
 		console.log(data.value);

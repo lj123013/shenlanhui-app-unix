@@ -77,7 +77,7 @@
 			"pages": [{
 				"path": "userinfo",
 				"style": {
-					"navigationBarTitleText": "热榜",
+					"navigationBarTitleText": "个人主页",
 					"titleNView": "custom",
 					"navigationStyle": "custom"
 				}
@@ -95,6 +95,15 @@
 					"path": "chart",
 					"style": {
 						"navigationBarTitleText": "深蓝AI"
+					}
+				},
+				{
+					"path" : "conversation",
+					"style" : 
+					{
+						"navigationBarTitleText" : "AI对话",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
 					}
 				}
 			]

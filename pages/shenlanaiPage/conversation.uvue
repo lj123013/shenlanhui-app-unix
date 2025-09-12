@@ -1,0 +1,52 @@
+<template>
+	<cl-page>
+		<cl-topbar fixed  safe-area-top :title="title" background-color="transparent"> </cl-topbar>
+	</cl-page>
+	<view>
+		<!-- AI对话列表 -->
+		<view></view>
+		<view class="input-wrapper px-5">
+			<cl-input placeholder="请输入任何问题" :border="false">
+				<template #append>
+					<cl-image width="60rpx" height="60rpx" src="/static/image/sendicon.png"></cl-image>
+				</template>
+			</cl-input>
+		</view>
+	</view>
+</template>
+
+<script setup>
+	import { t } from "@/locale";
+	import { ref, watchEffect } from "vue";
+	import { useStore } from "@/cool";
+	const { app } = useStore();
+	const title = ref<string>("");
+	
+	// 使用 watchEffect 监听 store 中 selectedAiTool 的变化
+	watchEffect(() => {
+		title.value = app.selectedAiTool.value;
+		console.log('监听到 store 变化，标题更新为:', title.value);
+	});
+	
+	onMounted(() => {
+		console.log('组件挂载，当前标题:', title.value);
+		// 确保在组件挂载后执行
+	
+	
+	})
+</script>
+
+<style>
+	.input-wrapper {
+		padding: 50rpx;
+	}
+
+	/* 输入框样式 */
+	.cl-input {
+		height: 120rpx !important;
+		box-shadow: 0rpx 0rpx 20rpx #D8D8D8;
+		border-radius: 20rpx;
+	}
+
+
+</style>

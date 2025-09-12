@@ -1,17 +1,309 @@
 <template>
-	<!-- #ifdef APP -->
-	<scroll-view style="flex:1">
-	<!-- #endif -->
-		
-	<!-- #ifdef APP -->
-	</scroll-view>
-	<!-- #endif -->
+	<cl-page>
+		<cl-topbar fixed safe-area-top color='black' :pt="{
+			back: {
+				size: 48,
+			},
+		}">
+			<template #append>
+				<cl-icon name="zhuanfa1" color="black" :size="30" :pt="{ className: 'mr-3' }" @click="share"></cl-icon>
+			</template>
+		</cl-topbar>
+		<!-- 主要内容 -->
+		<view class="px-5">
+			<!-- 快讯图标 -->
+			<view class="flex flex-row items-center justify-between">
+				<cl-image src="/static/image/dispath.png" :width="150" :height="42"></cl-image>
+				<cl-text>2025-09-01</cl-text>
+			</view>
+			<!-- 快讯内容 -->
+			<view class="border-bottom pb-3 mb-3">
+				<cl-text color="#2B2B2B" :pt="{ className: 'text-lg fontBold my-1' }">造纸板块盘中拉升，青山纸业、恒丰纸业涨停</cl-text>
+				<cl-text color="#5D5D5D"
+					:pt="{ className: 'text-base' }">造纸板块盘中拉升，青山纸业、恒丰纸业涨停，松炀资源、齐峰新材、安妮股份、华泰股份、恒达新材跟涨。</cl-text>
+			</view>
+			<cl-text color="#AFAFAF"
+				:pt="{ className: 'text-xs' }">风险提示：文章内容仅供参考，不构成投资建议，且与深蓝汇立场无关，投资决策需建立在思想之上。</cl-text>
+
+			<!-- 文章内容 -->
+			<view class="pt-5">
+				<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4" @click="showAi=!showAi">
+					<view class="flex flex-row items-center">
+						<view class="ai-img rounded-full flex flex-col items-center justify-center">
+							<view class="img-box rounded-full flex flex-col items-center justify-center">
+								<cl-image src="/static/image/aiIcon.png" :width="'33rpx'" :height="'33rpx'"
+									:pt="{ className: 'mx-auto my-auto' }"></cl-image>
+							</view>
+						</view>
+						<view class="ml-2" >
+							<cl-text color="white" :pt="{ className: '!text-lg fontBold' }">使用深蓝AI进行分析</cl-text>
+							<cl-text color="white" :pt="{ className: '!text-base' }">智能摘要·深度解读</cl-text>
+						</view>
+					</view>
+					<cl-icon name="arrow-right-line" color="white" :size="50"></cl-icon>
+				</view>
+				<view class="article-Ai my-3 p-4" v-if="showAi">
+					<view class="py-3">
+						<cl-text color="white" :pt="{ className: 'text-lg fontBold ' }">你还可以</cl-text>
+						<view v-for="value in aiMwnu" class="flex flex-row items-center justify-between p-4 rounded-lg"
+							:class="value.isFinish ? 'aiItemoption' : 'aiItem'">
+							<view class="flex flex-row items-center">
+								<cl-image width="72rpx" height="72rpx" :pt="{ className: 'mr-2' }"
+									:src="value.icon"></cl-image>
+								<view>
+									<cl-text color="white" :pt="{ className: 'text-base fontBold' }">{{ value.title
+									}}</cl-text>
+									<cl-text color="white" :pt="{ className: '!text-sm' }">{{ value.content }}</cl-text>
+								</view>
+							</view>
+							<view
+								class="bg-green-500 w-[38rpx] h-[38rpx] rounded-full flex flex-col items-center justify-center"
+								v-if="value?.isFinish">
+								<cl-icon name="dui" color="white" :size="20"></cl-icon>
+								<!-- <cl-text>√</cl-text> -->
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
+			<!-- 评论 -->
+			<view class="py-5">
+				<cl-text color="black" :pt="{ className:'text-lg'}">评论</cl-text>
+				<view>
+					<view v-for="(value, index) in commonList" class="flex flex-row items-start justify-between py-3"
+						:class="{
+						'border pt-3': index != 0
+					}">
+						<cl-avatar :src="value?.head_img" :size="50" :pt="{ className: 'rounded-[10rpx]' }"></cl-avatar>
+						<view class="flex-1 ml-1">
+							<view class="flex flex-row items-center justify-between">
+								<cl-text color="#959595" :pt="{ className: '!text-sm mr-1' }">{{
+								value?.nickname
+							}}</cl-text>
+								<cl-text color="#B1B1B1" :pt="{ className: '!text-xs' }">{{ value?.time
+							}}</cl-text>
+
+							</view>
+							<cl-text color="black" :pt="{ className: '!text-sm' }">{{
+							value?.content
+						}}</cl-text>
+						</view>
+					</view>
+					<cl-empty v-if="commonList.length == 0" :fixed="false" text="暂无评论"></cl-empty>
+				</view>
+			</view>
+			<!-- 遮罩层 -->
+			<view style="height: 0" v-if="isPubComment">
+				<view class="mask" @touchmove.stop.prevent :class="isPubComment ? 'on' : ''" @click="closePopup">
+				</view>
+			</view>
+			
+			<view class="footer-container" :style="{bottom:inputBottom+'px'}">
+				<view class="input-section">
+					<cl-input v-model="input" :adjustPosition="false" :clearable='true' :border="false" :pt="{
+						className:'!bg-neutral-100 rounded-full pl-3'
+					}" placeholder="写评论"></cl-input>
+					<!-- <view class="bg-neutral-100 rounded-full flex-1 py-2 pl-4 mr-4"><cl-text :pt="{className:'!text-sm text-gray-400'}">写评论</cl-text></view> -->
+			
+				</view>
+				<view class="actions-section" v-if='!isPubComment'>
+					<view class="action-item">
+						<cl-icon name="dianzan" :size="38" color="#464646"></cl-icon>
+						<cl-text color="#464646" :pt="{ className: 'text-sm' }">点赞</cl-text>
+					</view>
+					<view class="action-item">
+						<cl-icon name="a-shoucangdianji" :size="35" color="#464646"></cl-icon>
+						<cl-text color="#464646" :pt="{ className: 'text-sm' }">收藏</cl-text>
+					</view>
+					<view class="action-item">
+						<cl-icon name="zhuanfa1" :size="32" color="#464646"></cl-icon>
+						<cl-text color="#464646" :pt="{ className: ' text-sm' }">分享</cl-text>
+					</view>
+				</view>
+				<cl-text v-else :pt="{ className: 'action-text text-primary-500' }">发送</cl-text>
+			</view>
+		</view>
+	</cl-page>
 </template>
 
 <script setup>
-		
+const showAi = ref(false)
+	type aiList = {
+		title : string;
+		content : string;
+		icon : string;
+		isFinish : Boolean;
+	};
+	const aiMwnu = reactive<aiList[]>([
+		{
+			title: '市场趋势分析',
+			content: '分析行业发展趋势与市场前景',
+			icon: '/static/image/aiIcon2.png',
+			isFinish: true
+		},
+		{
+			title: '背景知识补充',
+			content: '提供相关概念解释与背景资料',
+			icon: '/static/image/aiIcon3.png',
+			isFinish: false
+		},
+		{
+			title: '投资参考建议',
+			content: '生成相关投资思路与风险提示',
+			icon: '/static/image/aiIcon4.png',
+			isFinish: false
+		}
+	])
+	type common = {
+		head_img : string;
+		nickname : string;
+		content : string;
+		time : string;
+	}
+	const commonList = ref<common[]>([
+		{
+			head_img: '/static/image/head-img.png',
+			nickname: '张三',
+			content: '怕高确实挣不到大钱，关键是有几个人知道高和低呢？',
+			time: '2023-05-01'
+		},
+		{
+			head_img: '/static/image/head-img.png',
+			nickname: '张三',
+			content: '怕高本质上就是怕回调，怕把已经到手的利润回吐出去，这里一方面是人性和心态上的问题，另一方面就是对标的价值理解不透。＂，解释得很透彻！',
+			time: '2023-05-01'
+		}
+	])
+	// 处理键盘事件
+	const input = ref("");
+	const inputBottom = ref(0)
+	const isPubComment = ref(false)
+	const closePopup = () => {
+		uni.hideKeyboard()
+		isPubComment.value = false
+		inputBottom.value = 0
+	}
+	const share = () => {
+		// 分享功能实现
+		console.log("分享文章:");
+	};
+	onMounted(() => {
+		// const params = router.params();
+		// console.log('接收到的参数:', params);
+		// if (!isNull(params)) {
+		// 	articleData.id = params.articleId as number;
+		// }
+		uni.onKeyboardHeightChange((res) => {
+			console.log(res)
+			if (res.height > 0) {
+				inputBottom.value = res.height
+				isPubComment.value = true
+			} else {
+				closePopup()
+			}
+		})
+	});
 </script>
 
-<style>
-		
+<style scoped>
+	.article-Ai {
+		background-image: linear-gradient(to right, #6779E2, #7352AC);
+		border-radius: 10rpx;
+	}
+
+	.ai-img {
+		width: 85rpx;
+		height: 85rpx;
+		border: 4rpx solid #727FE1;
+	}
+
+	.img-box {
+		width: 64rpx;
+		height: 64rpx;
+		border: 2rpx solid #AAB1ED;
+		background-color: #8692E5;
+
+	}
+
+	.borderBottom {
+		border-bottom: 2rpx solid #727FE1;
+	}
+
+	.aiItem {
+		background-image: linear-gradient(to right, #7883DF, #8067B9);
+	}
+
+	.aiItemoption {
+		background-image: linear-gradient(to right, #6370D3, #6C50A6);
+	}
+
+	/* 文章内容样式 - 整合且遵循uni-app x规范 */
+	.rich-text-content {
+		width: 100%;
+		text-align: left;
+		color: #434343;
+		font-size: 28rpx;
+		line-height: 1.8;
+		/* 使用统一的行高 */
+		padding-bottom: 40rpx;
+		/* 移除background-color调试样式 */
+	}
+
+	/* Footer 底部区域样式 */
+	.footer-container {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		box-sizing: border-box;
+		position: fixed;
+		left: 0rpx;
+		background: #fff;
+		padding: 30rpx;
+		padding-bottom: 50rpx;
+		z-index: 1000;
+	}
+
+	.input-section {
+		flex: 1;
+		margin-right: 20rpx;
+		/* 防止flex子项溢出 */
+	}
+
+	.actions-section {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		/* flex-shrink: 0; */
+		/* 防止被压缩 */
+		width: 240rpx;
+		/* 固定宽度确保显示完整 */
+	}
+
+	.action-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.mask {
+		width: 100%;
+		height: 100%;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 999;
+		background-color: rgba(50, 50, 50, 0.7);
+		/* 	transition: all 0.5s ease-in-out 0s; */
+		visibility: hidden;
+		overflow: hidden;
+	}
+
+	.mask.on {
+		visibility: visible;
+		background-color: rgba(50, 50, 50, 0.3);
+	}
 </style>

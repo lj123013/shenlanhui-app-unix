@@ -32,20 +32,26 @@
 			</view>
 			<!-- 头条 -->
 			<view class="headlines mt-4">
-				<view class="pt-1  w-full" v-for="item in data" :key="item.id">
-					<view v-if="item.is_top" class="flex flex-row items-center">
-						<cl-text color='white' class="bg-red  px-1 rounded-[6rpx]" :pt="{
-							className: '!text-xs'
-						}">头条</cl-text>
-
-						<cl-text color="black" class="elipsis ml-1" :pt="{
+				<view class="pt-1  w-full relative" v-for="item in data" :key="item.id" @click="toPathDetail(item)">
+					<view v-if="item.is_top" class="flex flex-row items-center max-h-[100rpx]">
+						<view class="bg-red  px-1 rounded-[6rpx] absolute top-[12rpx]">
+							<cl-text color='white' :pt="{
+								className: 'text-xs'
+							}">头条</cl-text>
+						</view>
+						<cl-text ellipsis :lines="2" color="black" class="ml-1 " :pt="{
+						className:'text-lg'
+					}">
+							{{ '　   ' + (item?.content) }}
+						</cl-text>
+					<!-- 	<cl-text color="black" class="elipsis ml-1" :pt="{
 						className:'!text-lg'
-					}">{{ item.content }}</cl-text>
+					}">{{ item.content }}</cl-text> -->
 					</view>
 					<view v-else class="flex flex-row items-center">
 						<cl-icon name="wenjian_2" color="#666" :size="28"></cl-icon>
-						<cl-text color="#666" class="elipsis ml-1" :pt="{
-						className:'!text-base'
+						<cl-text ellipsis :lines="1" color="#666" class="ml-1" :pt="{
+						className:'text-base'
 					}">{{ item.content }}</cl-text>
 					</view>
 				</view>
@@ -119,7 +125,7 @@
 
 				<!-- 快讯列表 -->
 				<view class="dispath flex flex-row items-start justify-between pt-3"
-					v-for="(item, index) in daspathList" :key="item.id">
+					v-for="(item, index) in daspathList" :key="item.id" @click="toPathDispath(item)">
 					<!-- <l-text-ellipsis class="flex-1" :rows="2"  :content="item.content" ></l-text-ellipsis> -->
 					<view class="flex flex-row items-center dispath-left mr-2">
 						<view class="w-3 h-3 rounded-full bg-red-200 flex flex-col items-center justify-center mr-1">
@@ -127,8 +133,7 @@
 						</view>
 						<cl-text color="#cbcbcb">15:30</cl-text>
 					</view>
-					<cl-text ellipsis
-						:lines="2" class=" flex-1" color="#313131" :pt="{
+					<cl-text ellipsis :lines="2" class=" flex-1" color="#313131" :pt="{
 							className: '!text-base'
 						}">{{item.content}}</cl-text>
 				</view>
@@ -213,7 +218,7 @@
 					<view class="flex flex-row items-center justify-between pt-5" v-for="item in recommenList"
 						:key="item.id">
 						<view class="flex-1 mr-2">
-							<cl-text color="black" :pt="{
+							<cl-text  ellipsis :lines="2" color="#313131" :pt="{
 									className: 'istopItem mb-2'
 								}">{{ item.title }}</cl-text>
 							<view class="flex flex-row items-center">
@@ -525,7 +530,7 @@
 	};
 	const recommenList = ref<recom[]>([
 		{
-			title: t("产品筑底、数智驱动，泸州老窖构建穿越周期护城河"),
+			title: t("产品筑底、数智驱动，泸州老窖构建穿越周期护城河产品筑底、数智驱动，泸州老窖构建穿越周期护城河产品筑底、数智驱动，泸州老窖构建穿越周期护城河产品筑底、数智驱动，泸州老窖构建穿越周期护城河"),
 			author: t("深蓝财经"),
 			cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
 			acreat_time: 175523522,
@@ -543,9 +548,17 @@
 	// 跳转页面
 	//热榜点击事件
 	const clickhotPage = () => {
+		router.to('/pages/homePage/hotPage')
+	}
+	// 头条带你进入详情
+	function toPathDetail(item : headlinesList) {
 		uni.navigateTo({
-			url: "/pages/homePage/hotPage"
+			url: "/pages/articlePage/articleDetail?id=" + item.id
 		})
+	}
+	// 快讯
+	function toPathDispath(item : FlashNews) {
+		router.to('/pages/articlePage/dispathDetail')
 	}
 	// 进入用户主页
 	const userinfo = () => {

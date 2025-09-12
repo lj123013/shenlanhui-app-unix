@@ -65,8 +65,8 @@
 					</view>
 				</view>
 				<view class="">
-					<cl-textarea v-if="title != '录音转文字'" :adjustPosition="false" :autofocus="true" height="245rpx"
-						show-word-limit :border="false" :maxlength="maxlength" :placeholder="placeholder"
+					<cl-textarea v-if="title != '录音转文字'" :adjustPosition="false" height="245rpx"
+						show-word-limit :border="false" :maxlength="maxlength" :placeholder="placeholder"  @focus="focus"
 						class="backgrou4a" :pt="{
 							inner: {
 								className: '!text-sky-700'
@@ -346,6 +346,11 @@
 		})
 
 	}
+	const focus = () => {
+		console.log('获取焦点')
+		router.to("/pages/shenlanaiPage/conversation");
+	}
+	
 	const submit = () => {
 		uni.showToast({
 			title: "功能开发中，敬请期待",

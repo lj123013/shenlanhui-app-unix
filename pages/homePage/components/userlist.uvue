@@ -2,7 +2,12 @@
 	<view class="px-5">
 		<view class="w-full flex flex-row items-center justify-between py-4"  :class="index==0?'':'border'">
 			<view @tap="clickuser" class="flex flex-row items-center">
-				<cl-image :src="item?.head_img" mode="aspectFill" width="88rpx" height="88rpx"></cl-image>
+				<cl-image v-if="type=='AI智能体'" :src="item?.head_img" mode="aspectFill" width="88rpx" height="88rpx" :pt="{
+							inner: {
+								className: 'rounded-full'
+							}
+						}"></cl-image>
+				<cl-image v-else :src="item?.head_img" mode="aspectFill" width="88rpx" height="88rpx"></cl-image>
 			<view class="flex-1 ml-3">
 				<cl-text class="" :pt="{
 					className: '!text-base font-medium text-gray-800 leading-5 mb-1'
@@ -17,7 +22,9 @@
 				</cl-text>
 			</view>
 			</view>
-			<view class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
+			<!-- AI智能体 -->
+			<cl-icon v-if="type=='AI智能体'" name="arrow-right-s-line" color="#B7B7B7"></cl-icon>
+			<view v-else class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
 				:class="item?.isFloow == true ? 'bg-gray-200' : 'bg-primary-500'">
 				<cl-text color="white" :pt="{
 					className: '!text-xs'
@@ -33,7 +40,7 @@ import { computed } from "vue";
 import { parse } from "@/cool";
 
 defineOptions({
-	name: "goods-item"
+	name: "userlist"
 });
 
 // 定义数据类型（注释形式）
@@ -53,6 +60,10 @@ const props = defineProps({
 	index: {
 		type: Number,
 		default: 0
+	},
+	type:{
+		type: String,
+		default: ""
 	}
 });
 

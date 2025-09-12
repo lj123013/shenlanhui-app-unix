@@ -5,18 +5,14 @@
 			<view class="flex flex-row items-center justify-between company">
 				<cl-image class="company-img" width="26rpx" height="26rpx" src="/static/image/pdficon.png"></cl-image>
 				<view class="flex-1 ml-1">
-					<!-- <cl-text class="#4A4A4A" color="" :pt="{
-					className: '!text-lg'
-				}">
-					{{ item?.company }}</cl-text> -->
-					<l-text-ellipsis :rows="2" :content="'\u00A0\u00A0\u00A0\u00A0'+item?.company"></l-text-ellipsis>
+					<cl-text ellipsis :lines="2">
+					{{ '　' + (item?.company) }}
+					</cl-text>
 				</view>
 			</view>
 
 			<view class="flex flex-row items-center justify-between mt-1">
-				<cl-text color="#A1A1A1 " :pt="{
-					className: '!text-sm'
-				}">{{ item?.content }}</cl-text>
+				<cl-text color="#A1A1A1">{{ item?.content }}</cl-text>
 				<cl-image width="90rpx" height="18rpx" src="/static/image/ai_icon.png"></cl-image>
 			</view>
 		</view>

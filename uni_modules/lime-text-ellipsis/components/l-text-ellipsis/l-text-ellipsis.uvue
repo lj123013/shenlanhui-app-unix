@@ -1,0 +1,219 @@
+<template>
+	<!-- #ifndef APP-ANDROID || APP-HARMONY-->
+	<!-- ios  -->
+	<view style="width:100%; position: relative;">
+		<text>
+	<!-- #endif -->	
+		<!-- #ifdef APP -->
+		<text class="l-text-ellipsis" ref="contentRef" v-bind="$attrs">
+			{{expanded ? content : text}}<text v-if="hasAction" class="l-text-ellipsis__action" :style="[actionStyle, actionColor!= null ? {color: actionColor}: {}]" ref="actionRef" @click="onClick">
+				{{ expanded ?  collapseText : expandText }}
+			</text>
+		</text>
+		<!-- #endif -->	
+		<!-- #ifndef APP -->
+		<text class="l-text-ellipsis" ref="contentRef">
+			{{expanded ? content : text}}<text v-if="hasAction" class="l-text-ellipsis__action" :style="[actionStyle, actionColor!= null ? {color: actionColor}: {}]" ref="actionRef" @click="onClick">
+				{{ expanded ?  collapseText : expandText }}
+			</text>
+		</text>
+		<!-- #endif -->	
+	<!-- #ifndef APP-ANDROID || APP-HARMONY -->
+	</text>
+	<!-- #endif -->	
+	<text v-if="containerShow" class="cloneContainer" ref="cloneContainerRef"
+		style="width:100%; opacity: 0; position: absolute;">{{container}}</text>
+	<!-- #ifndef APP-ANDROID || APP-HARMONY -->
+	</view>
+	<!-- #endif -->	
+</template>
+<script lang="ts" setup>
+	/**
+	 * TextEllipsis 文本省略组件
+	 * @description 用于多行文本的截断和展开/收起功能，支持自定义省略位置和操作按钮
+	 * <br>插件类型：LTextEllipsisComponentPublicInstance 
+	 * @tutorial https://ext.dcloud.net.cn/plugin?name=lime-text-ellipsis
+	 * 
+	 * @property {number} rows 最大显示行数（必填）
+	 * @property {string} content 原始文本内容（必填）
+	 * @property {string} expandText 展开按钮文案（默认："展开"）
+	 * @property {string} collapseText 收起按钮文案（默认："收起"）
+	 * @property {'top' | 'bottom' | 'both'} position 省略位置（默认："bottom"）
+	 * @value top
+	 * @value bottom
+	 * @value both
+	 * @property {string} dots 省略符号（默认："..."）
+	 * @property {string} actionColor 操作按钮颜色（支持CSS颜色值）
+	 * @property {string | Object} actionStyle 操作按钮自定义样式
+	 * @event {Function} click 点击时触发
+	 */
+	
+	// defineOptions({
+	// 	// name: 'l-text-ellipsis'
+	// 	// options: {
+	// 	// 	virtualHost: true,
+	// 	//     styleIsolation: "shared"
+	// 	// }
+	// })
+	const emits = defineEmits(['click'])
+	const props = defineProps({
+		rows: {
+			type: Number,
+			default: 1
+		},
+		content: String,
+		expandText: String,
+		collapseText: String,
+		position: String,
+		dots: {
+			type: String,
+			default: '…'
+		},
+		actionColor: String,
+		actionStyle: {
+			type: [String, UTSJSONObject]
+		}
+	})
+
+	const context = getCurrentInstance()
+	const contentRef = ref<UniElement | null>(null)
+	const actionRef = ref<UniElement | null>(null)
+	const cloneContainerRef = ref<UniElement | null>(null)
+
+	const expanded = ref(false)
+	const hasAction = ref(false)
+	const containerShow = ref(false)
+	const container = ref('')
+	const text = ref('')
+
+	const sleep = (): Promise<boolean> => new Promise((resolve) => {
+		nextTick(() => {
+			// resolve(true)
+			setTimeout(() => {
+				resolve(true)
+			}, 20)
+		})
+
+	})
+	const onClick = (_ : UniEvent) => {
+		if (!hasAction.value) return
+		expanded.value = !expanded.value;
+	}
+
+	const updateContainer = async (text : string) : Promise<number> => {
+		container.value = text;
+		await sleep()
+		const res = await cloneContainerRef.value?.getBoundingClientRectAsync() as DOMRect | null
+		return res?.height ?? 0
+	}
+	
+	const calcEllipsisText = async (maxHeight : number) : Promise<string> => {
+		const dots = props.dots
+		const content = props.content ?? ''
+		const expandText = props.expandText ?? ''
+		const position = props.position ?? 'end'
+		const end = content.length;
+		const middle = (0 + end) >> 1;
+
+		if (position == 'middle') {
+			let leftRange : number[] = [0, middle]
+			let rightRange : number[] = [middle, end]
+
+			while (leftRange[1] - leftRange[0] > 1 || rightRange[1] - rightRange[0] > 1) {
+				const leftMidIndex = Math.floor((leftRange[0] + leftRange[1]) / 2);
+				const rightMidIndex = Math.ceil((rightRange[0] + rightRange[1]) / 2);
+
+				const height = await updateContainer(
+					content.slice(0, leftMidIndex) +
+					dots +
+					content.slice(rightMidIndex, end) +
+					expandText)
+				if (height >= maxHeight) {
+					// 如果高度超出，缩小左侧范围
+					leftRange = [leftRange[0], leftMidIndex];
+					rightRange = [rightMidIndex, rightRange[1]];
+				} else {
+					// 如果高度未超出，缩小右侧范围
+					leftRange = [leftMidIndex, leftRange[1]];
+					rightRange = [rightRange[0], rightMidIndex];
+				}
+			}
+			containerShow.value = false;
+			return (
+				content.slice(0, leftRange[0]) +
+				dots +
+				content.slice(rightRange[1], end)
+			);
+		} else {
+			const isPositionStart = position == 'start';
+			let left : number = 0;
+			let right : number = end;
+			let res : number = -1;
+
+			while (left <= right) {
+				const mid : number = Math.floor((left + right) / 2);
+
+				const height = await updateContainer(
+					isPositionStart
+						? dots + content.slice(mid, end) + expandText
+						: content.slice(0, mid) + dots + expandText)
+				if (height <= maxHeight) {
+					if (isPositionStart) {
+						right = mid - 1;
+					} else {
+						left = mid + 1;
+					}
+					res = mid;
+				} else {
+					if (isPositionStart) {
+						left = mid + 1;
+					} else {
+						right = mid - 1;
+					}
+				}
+			}
+			containerShow.value = false;
+			return isPositionStart ? dots + content.slice(res) : content.slice(0, res) + dots;
+		}
+
+	}
+	const calcEllipsised = async () => {
+		if (props.content == null || props.content!.length == 0) return
+		containerShow.value = true;
+		
+		// 先获取一行的高度
+		const height = await updateContainer(props.content!.slice(0, 5))
+		const maxHeight = (props.rows + 0.5) * height
+		// 再获取总高度
+		const offsetHeight = await updateContainer(props.content!)
+		// 如果总字符的高度 > 最大行高 执行切分流程
+		if (maxHeight <= offsetHeight) {
+			hasAction.value = true;
+			text.value = await calcEllipsisText(maxHeight);
+		} else {
+			hasAction.value = false;
+			text.value = props.content!;
+		}
+		contentRef.value!.style.setProperty('opacity', 1)
+	}
+
+
+	// const stop = watch(() : any => [props.content, props.rows], () => {
+	// 	calcEllipsised()
+	// });
+	onMounted(() => {
+		nextTick(() => {
+			watchEffect(()=>{
+				if(props.content != null && props.content!.length > 0 || props.rows > 0) {
+					calcEllipsised()
+				}
+			})
+		})
+	});
+	onUnmounted(() => { 
+		// stop() 
+	})
+</script>
+<style lang="scss">
+	@import './index';
+</style>
