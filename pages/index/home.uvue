@@ -302,6 +302,11 @@ const data = computed<Item[]>(() => {
 					path: "/pages/demo/data/banner"
 				},
 				{
+					label: t("跑马灯"),
+					icon: "film-line",
+					path: "/pages/demo/data/marquee"
+				},
+				{
 					label: t("分页"),
 					icon: "page-separator",
 					path: "/pages/demo/data/pagination"

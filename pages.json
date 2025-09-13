@@ -293,6 +293,12 @@
 					}
 				},
 				{
+					"path": "data/marquee",
+					"style": {
+						"navigationBarTitleText": "Marquee 跑马灯"
+					}
+				},
+				{
 					"path": "data/pagination",
 					"style": {
 						"navigationBarTitleText": "Pagination 分页"
