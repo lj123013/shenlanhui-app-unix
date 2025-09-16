@@ -1,16 +1,8 @@
 <template>
-	<view class="flex flex-col mb-5">
-		<cl-text :pt="{ className: 'text-lg font-bold' }">{{ t("手机登录") }}</cl-text>
-		<cl-text :pt="{ className: 'text-sm mt-2' }" color="info">{{
-			t("未注册的手机号登录成功后将自动注册")
-		}}</cl-text>
-	</view>
-
 	<view class="flex flex-col">
 		<view class="mb-3 flex flex-row">
 			<cl-input
 				v-model="form.phone"
-				prefix-icon="device-fill"
 				:placeholder="t('请输入手机号')"
 				:border="false"
 				:pt="{
@@ -30,7 +22,6 @@
 				v-model="form.smsCode"
 				:clearable="false"
 				type="number"
-				prefix-icon="shield-check-fill"
 				:placeholder="t('请输入验证码')"
 				:maxlength="4"
 				:border="false"

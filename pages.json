@@ -74,14 +74,32 @@
 		},
 		{
 			"root": "pages/user",
-			"pages": [{
+			"pages": [
+				{
+					"path": "my",
+					"style": {
+						"navigationBarTitleText": "我的",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
 				"path": "userinfo",
 				"style": {
 					"navigationBarTitleText": "个人主页",
 					"titleNView": "custom",
 					"navigationStyle": "custom"
 				}
-			}]
+			},
+			{
+				"path": "login",
+				"style": {
+					"navigationBarTitleText": "登录",
+					"titleNView": "custom",
+					"navigationStyle": "custom"
+				}
+			}
+		]
 		},
 		{
 			"root": "pages/shenlanaiPage",
@@ -104,6 +122,7 @@
 						"navigationBarTitleText" : "AI对话",
 						"titleNView": "custom",
 						"navigationStyle": "custom"
+						
 					}
 				}
 			]

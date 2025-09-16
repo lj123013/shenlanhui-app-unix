@@ -1,4 +1,9 @@
 export const download = {
+	"shezhi": "e667",
+	"xitongxiaoxi": "e664",
+	"zhanghaoxinxi": "e665",
+	"yijianfankui": "e666",
+	"guanyushenlanhui": "e663",
 	"a-zu372": "e660",
 	"a-zu370": "e661",
 	"a-zu367": "e662",

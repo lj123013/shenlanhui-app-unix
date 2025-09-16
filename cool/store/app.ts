@@ -5,7 +5,7 @@ export class App {
 	/**
 	 * 当前选中的AI工具名称
 	 */
-	selectedAiTool = ref<string>("");
+	selectedAiTool = ref<string>("财经智能写作");
 
 	constructor() {
 		// 从本地存储恢复选中的AI工具

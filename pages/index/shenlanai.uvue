@@ -94,7 +94,7 @@
 
 				<view class="input-section">
 
-					<tag-list class="px-5"></tag-list>
+					<tag-list class="px-5" mode='nav'></tag-list>
 					<view class="input-wrapper px-5">
 						<cl-input placeholder="请输入任何问题" :border="false">
 							<template #append>

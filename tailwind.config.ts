@@ -448,7 +448,31 @@ export default {
 		extend: {
 			colors: {
 				...getPrimary("blue"),
-				...getSurface("neutral")
+				...getSurface("neutral"),
+					// 自定义颜色 - 替换为你设计图中的颜色
+				custom: {
+					// 单个颜色
+					primary: '#2854F2',
+					secondary: '#E8EDFF',
+					accent: '#E4773D',
+					aidefault:'#F4F4F6',
+					// 背景颜色
+					bg: {
+						default: '#FFFFFF',
+						gray: '#F9F9F9',
+						card: '#FEF8F5'
+					},
+					// 文本颜色
+					text: {
+						primary: '#191919',
+						secondary: '#666666',
+						muted: '#999999',
+						user:'#505050'
+					},
+					border:{
+						default: '#F1F1F1'
+					}
+				}
 			},
 			fontSize: {
 				md: ["1rem", "1.5rem"]

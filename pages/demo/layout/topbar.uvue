@@ -57,7 +57,7 @@
 			</demo-item>
 
 			<demo-item :label="t('自定义返回路径')">
-				<cl-topbar :title="t('标题')" back-path="/pages/user/login">
+				<cl-topbar :title="t('标题')" back-path="/">
 					<template #prepend>
 						<cl-text>{{ t("登录") }}</cl-text>
 					</template>

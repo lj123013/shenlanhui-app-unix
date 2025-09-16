@@ -1,0 +1,266 @@
+<template>
+	<cl-page>
+		<view class="flex flex-col h-full">
+			<view class="container flex flex-col h-[596rpx] box-border">
+				<cl-topbar safe-area-top color='white' background-color="transparent" :pt="{
+					back: {
+						size: 48,
+					},
+				}">
+				</cl-topbar>
+				<view class="myTop flex-1  px-5 flex flex-col justify-between pt-[50rpx]">
+					<view class="flex items-center flex-row justify-between ">
+						<view class="flex items-center flex-row">
+							<cl-avatar :src="UserInfo.avatarUrl"></cl-avatar>
+							<view class="ml-2">
+								<view class="flex items-center flex-row">
+									<cl-text color="white" :pt="{ className: '!text-xl mx-1' }">{{ UserInfo.username
+									}}</cl-text>
+
+									<view class="bg-white rounded-3xl p-[4rpx] flex items-center justify-center"
+										v-if="UserInfo?.is_auth == 1">
+										<cl-icon name="renzheng2" color="#FE0000" :size="16"></cl-icon>
+									</view>
+									<view class="bg-white rounded-3xl p-[4rpx] flex items-center justify-center"
+										v-else-if="UserInfo?.is_auth == 2">
+										<cl-icon name="a-renzheng21" color="primary" :size="16"></cl-icon>
+									</view>
+								</view>
+								<view class="flex items-center flex-row">
+									<cl-text color="white" :pt="{ className: 'text-sm mr-1' }">关注</cl-text>
+									<cl-text color="white" :pt="{ className: 'text-sm mr-3' }">6</cl-text>
+									<cl-text color="white" :pt="{ className: 'text-sm ' }">粉丝</cl-text>
+									<cl-text color="white" :pt="{ className: 'text-sm ml-1' }">4</cl-text>
+
+								</view>
+							</view>
+							<!-- 登录 -->
+							 <cl-text @click="login">登录/注册</cl-text>
+						</view>
+						<!-- 按钮 -->
+						<view class="userBtn">
+							<cl-text color="#D6D6FF" :pt="{ className: 'text-sm' }">个人主页</cl-text>
+						</view>
+					</view>
+					<view>
+						<cl-row :gutter="12">
+							<cl-col :pt="{ className: 'text-center' }" :span="6" v-for="value in menuList">
+
+								<view class="item flex flex-col items-center justify-center">
+									<cl-text color="white">{{ value.itemNum }}</cl-text>
+									<cl-text color="white">{{ value.name }}</cl-text>
+								</view>
+							</cl-col>
+						</cl-row>
+					</view>
+					
+						<cl-image class="user_renzhengbg" width="670rpx" height="88rpx"
+							src="/static//image/user-RenzhengBg.png"></cl-image>
+						<view class="user_renzheng_content flex flex-row items-center justify-between px-5 pb-3">
+							<view class="flex flex-row items-center ml-3">
+								<cl-text color="#FEDAB1" :pt="{ className: 'text-base ml-2 mr-1' }">认证会员</cl-text>
+								<cl-text color="#8E7152" size="20rpx">|</cl-text>
+								<cl-text color="#BDA286" :pt="{ className: 'text-sm ml-1' }">体验不一样的感受</cl-text>
+							</view>
+						
+						<view class="isRenzheng rounded-full py-1 px-3">
+							<cl-text color="#212227" :pt="{ className: 'text-xs' }">已认证</cl-text>
+						</view>
+						</view>
+
+				</view>
+			</view>
+
+			<view class="flex-1 bg-custom-bg-gray px-5 ">
+				<view class="bg-white  py-5 rounded-2xl my-5">
+					<cl-row :pt="{ className: 'overflow-visible' }">
+						<cl-col :span="8">
+							<view class="flex flex-row justify-center items-center">
+								<cl-image width="48rpx" height="48rpx" src="/static/image/user-menui1.png"></cl-image>
+								<cl-text color="black" :pt="{ className: 'text-base text-center ml-2' }">{{ t("我的AI")
+								}}</cl-text>
+							</view>
+						</cl-col>
+
+						<cl-col :span="8">
+							<view class="flex flex-row justify-center items-center">
+								<cl-image width="48rpx" height="48rpx" src="/static/image/user-menui2.png"></cl-image>
+								<cl-text :pt="{ className: 'text-base text-center ml-2' }" color="black">{{ t("我的互动")
+								}}</cl-text>
+							</view>
+						</cl-col>
+
+						<cl-col :span="8">
+							<view class="flex flex-row justify-center items-center relative overflow-visible px-2">
+								<cl-image width="48rpx" height="48rpx" src="/static/image/user-menui3.png"></cl-image>
+								<cl-text :pt="{ className: 'text-base text-center ml-2' }" color="black">{{ t("深蓝币")
+								}}</cl-text>
+
+								<cl-badge type="error" dot position
+									:pt="{ className: '!right-4 top-[-10rpx]' }"></cl-badge>
+							</view>
+						</cl-col>
+					</cl-row>
+				</view>
+				<view class="flex-1 ">
+					<view class="bg-white pt-3 rounded-2xl">
+						<view v-for="(item, index) in list"
+							class="flex flex-row items-center justify-between px-5 pb-4 ">
+							<cl-icon :name="item.icon" :size="30" :width="36" color="#8D8D8D" :pt="{ className:index!=0? 'mt-4':'mt-0' }"></cl-icon>
+							<view class="flex flex-row items-center justify-between flex-1 ml-3" :class="{
+								'borderTop pt-4': index != 0
+							}">
+								<cl-text color="#505050" :pt="{className:'text-base'}">{{ item.name }}</cl-text>
+								<cl-icon name="arrow-right-s-line" color="#CFCFCF"></cl-icon>
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+		<!-- 自定义底部导航栏 -->
+	</cl-page>
+</template>
+
+<script setup lang="ts">
+import { ref } from "vue"
+import { router, userInfo, useStore } from "@/cool";
+import { t } from "@/locale";
+import { useUi } from "@/uni_modules/cool-ui";
+const { user } = useStore();
+const ui = useUi();
+type menuItem = {
+	name: string
+	itemNum: number
+}
+type mtitemMune = {
+	name: string
+	icon: string
+}
+const menuList = ref<menuItem[]>([
+	{
+		name: "长文",
+		itemNum: 10
+	},
+	{
+		name: "讨论",
+		itemNum: 421
+	},
+	{
+		name: "图库",
+		itemNum: 2
+	},
+	{
+		name: "草稿",
+		itemNum: 0
+	}
+])
+const list = ref<mtitemMune[]>([
+	{
+		name: "账号信息",
+		icon: "zhanghaoxinxi"
+	},
+	{
+		name: "系统消息",
+		icon: "xitongxiaoxi"
+	},
+	{
+		name: "意见反馈",
+		icon: "yijianfankui"
+	},
+	{
+		name: "关于深蓝汇",
+		icon: "guanyushenlanhui"
+	},
+	{
+		name: "设置",
+		icon: "shezhi"
+	}
+])
+type UserInfoType = {
+	username: string;
+	avatarUrl: string;
+	is_auth: number;
+	isFollow: boolean,
+};
+
+// 创建响应式的用户信息数据
+const UserInfo = ref<UserInfoType>({
+	username: 'steven',
+	avatarUrl: '../../static/image/head-img.png',
+	is_auth: 2,
+	isFollow: false
+});
+const login=()=>{
+	router.to('/pages/user/login')
+
+}
+
+onReady(() => {
+	// user.get();
+});
+</script>
+
+<style lang="scss" scoped>
+.top-icon {
+	@apply flex items-center justify-center rounded-lg bg-white mr-3 p-2;
+}
+
+.container {
+	background-image: linear-gradient(to right, #7258FB, #4455F5);
+}
+
+.userBtn {
+	background-color: #7171FF;
+	border-radius: 30rpx;
+	padding: 10rpx 20rpx;
+}
+
+.container {
+	position: relative;
+}
+
+.user_renzhengbg {
+	position: absolute;
+	left: 30rpx;
+	bottom: 0rpx;
+	z-index: 1;
+}
+.user_renzheng_content{
+	z-index: 2;
+}
+.renzheng {
+	border-radius: 20rpx 20rpx 0 0;
+}
+
+.isRenzheng {
+	background-image: linear-gradient(to bottom, #FFF2E1, #FED5A8);
+}
+
+.iconBg {
+	background-color: #E9F4FF;
+	width: 48rpx;
+	height: 48rpx;
+	border-radius: 48rpx;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin-right: 10rpx;
+}
+
+.inner_circle {
+	background-color: #2595E8;
+	width: 27rpx;
+	height: 20rpx;
+	border-radius: 27rpx;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.borderTop {
+	border-top: 1px solid #E1E1E1;
+}
+</style>

@@ -1,52 +1,269 @@
 <template>
 	<cl-page>
-		<cl-topbar fixed  safe-area-top :title="title" background-color="transparent"> </cl-topbar>
-	</cl-page>
-	<view>
+		<cl-topbar :fixed="true" safe-area-top :title="title"> </cl-topbar>
 		<!-- AI对话列表 -->
-		<view></view>
-		<view class="input-wrapper px-5">
-			<cl-input placeholder="请输入任何问题" :border="false">
+		<scroll-view class="h-screen overflow-hidden">
+			<view :id="'item-' + index" v-for="(message, index) in messages" :key="index" class="message-item flex mb-4"
+				:class="{
+					'user-message': message.role === 'user',
+					'ai-message': message.role === 'assistant',
+					loading: message.loading
+				}">
+				<!-- 根据角色决定内容容器的宽度和对齐方式 -->
+				<view :class="{
+					'user-content': message.role === 'user',
+					'ai-content': message.role === 'assistant'
+				}">
+
+					<cl-text v-if="message.role === 'assistant'&& !message.loading">AI正在生成...</cl-text>
+					<cl-image width="500rpx" height="300rpx" :pt="{className:'rounded-lg'}" v-else-if="message.role === 'assistant'&&title=='AI生图'&&message.isSHowImg" :src="message.imageUrl"></cl-image>
+					<cl-text v-else  :color="message.role === 'user' ? 'primary' : '#191919'">{{ message.content }}</cl-text>
+					<view v-if="message.role === 'assistant'&&message.loading">
+						<view class="prompt flex flex-row items-center p-2 mt-2 w-[500rpx]">
+							<cl-icon name="tishi1" color="#E4773D" size="20rpx"></cl-icon>
+							<cl-text color="#E4773D"
+								:pt="{ className: 'text-xs ml-1 ' }">本回答由AI生成，内容仅供参考，请仔细甄别。</cl-text>
+						</view>
+						<view
+							class="flex flex-row items-center justify-between border border-solid  border-gray-100 mt-3   rounded-[10rpx]  py-2 px-2">
+							<view class="flex flex-row items-center ">
+								<view
+									class="copy-icon bg-primary-500 w-[40rpx] h-[40rpx] flex flec-col items-center justify-center  rounded-[6rpx] mr-2">
+									<cl-icon name="fuzhi1" color="white" size="26rpx"></cl-icon>
+								</view>
+								<view
+									class="refresh-icon bg-custom-aidefault w-[40rpx] h-[40rpx] flex flec-col items-center justify-center rounded-[6rpx]">
+									<cl-icon name="shuaxin1" size="20rpx" color="#BFBFBF"></cl-icon>
+								</view>
+							</view>
+							<view class="flex flex-row items-center">
+								<cl-text color="#D1D1D1" :pt="{className:'text-base mr-1'}">是否公开</cl-text>
+								<cl-switch :width="60" :height="30" :pt="{
+									track: {
+										className: '!bg-border data-[state=checked]:!bg-primart-500',
+									},
+									thumb: {
+										className: '!bg-white',
+									},
+								}"></cl-switch>
+							</view>
+						</view>
+
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+		<view class="input-wrapper w-full bg-white fixed bottom-0  px-4 pt-4"
+			:style="{ paddingBottom: (inputBottom !== 0? inputBottom+10 : getHeight()) + 'px' }">
+			<cl-input placeholder="请输入任何问题" :autofocus="true" @blur="blur" :border="false" :adjustPosition='false'
+				v-model="input">
 				<template #append>
-					<cl-image width="60rpx" height="60rpx" src="/static/image/sendicon.png"></cl-image>
+					<cl-image v-if="!isPaused" width="60rpx" height="60rpx" src="/static/image/sendicon.png"
+						@click="sendMessage"></cl-image>
+					<cl-image v-else width="60rpx" height="60rpx" src="/static/image/parse.png"
+						@click='isPaused'></cl-image>
 				</template>
 			</cl-input>
 		</view>
-	</view>
+	</cl-page>
 </template>
 
 <script setup>
 	import { t } from "@/locale";
-	import { ref, watchEffect } from "vue";
-	import { useStore } from "@/cool";
+	import { ref, watchEffect, onMounted } from "vue";
+	import { useStore, isNull, isAppIOS } from "@/cool";
+	import { useUi, type ClToastType } from "@/uni_modules/cool-ui";
+	const ui = useUi();
 	const { app } = useStore();
 	const title = ref<string>("");
-	
+	let messageIdCounter = 0
+	const inputBottom = ref(0)
+	const input = ref('')
+	const isPubComment = ref(false)
+	const isPaused : boolean = false//是否暂停
+	type aiMesage = {
+		id : number
+		role : string
+		content ?: string
+		isfinish : boolean
+		conversation_id : Number
+		imageUrl ?: string
+		switchvalue : boolean
+		loading : boolean
+		isSHowImg:boolean
+	}
+	const aiResponses = [
+		"基于您的问题，我建议您可以考虑以下几个方面：首先，确保您的项目结构清晰；其次，使用合适的算法优化性能；最后，进行充分的测试以确保质量。",
+		"这是一个很好的问题！uni-app-x 是一个跨平台开发框架，它允许开发者使用 Vue.js 语法编写应用程序，并编译到多个平台包括鸿蒙系统。",
+		"要实现流式输出，您可以使用 WebSocket 或 Server-Sent Events (SSE) 技术。这些技术允许服务器向客户端实时推送数据，从而实现逐字输出的效果。",
+		"在鸿蒙系统上开发应用需要注意兼容性问题。建议使用华为提供的开发工具和测试环境进行调试，以确保应用在鸿蒙系统上正常运行。",
+		"优化应用性能的方法有很多：减少不必要的渲染、使用虚拟列表加载长列表、压缩资源文件、使用缓存策略等。具体方法需要根据您的应用特点来选择。"
+	];
+	const messages = ref<aiMesage[]>([
+		{
+			id: messageIdCounter++,
+			role: 'user',
+			content: 'ai助手',
+			isfinish: true,
+			conversation_id: 134314,
+			imageUrl: '',
+			switchvalue: false,
+			loading: true,
+			isSHowImg:false
+		},
+		{
+			id: messageIdCounter++,
+			role: 'assistant',
+			content: '中国新茶饮品牌霸王茶姬于4月17日登陆美国纳斯达克（股票代码：CHA），上市首日股价大涨近50%，市值突破59亿美元，成为首家在美股上市的中国茶饮品牌，打破行业“上市即破发”魔咒。尽管近年来新茶饮品牌扎堆上市，但多数选择港股，而霸王茶姬逆势选择美股，面临更大市场风险。',
+			isfinish: true,
+			conversation_id: 134314,
+			imageUrl: '',
+			switchvalue: false,
+			loading: false,
+			isSHowImg:false
+		},
+		{
+			id: messageIdCounter++,
+			role: 'user',
+			content: 'ai生图',
+			isfinish: true,
+			conversation_id: 134314,
+			imageUrl: '',
+			switchvalue: false,
+			loading: false,
+			isSHowImg:false
+		},
+		{
+			id: messageIdCounter++,
+			role: 'assistant',
+			content: '',
+			isfinish: true,
+			conversation_id: 134314,
+			imageUrl:'https://unix.cool-js.com/images/demo/avatar.jpg',
+			switchvalue: false,
+			loading: true,
+			isSHowImg:true
+		},
+		{
+			id: messageIdCounter++,
+			role: 'user',
+			content: 'ai录音转文字',
+			isfinish: true,
+			conversation_id: 134314,
+			imageUrl: '',
+			switchvalue: false,
+			loading: true,
+			isSHowImg:false
+		},
+		{
+			id: messageIdCounter++,
+			role: 'assistant',
+			content: '中国新茶饮品牌霸王茶姬于4月17日登陆美国纳斯达克（股票代码：CHA），上市首日股价大涨近50%，市值突破59亿美元，成为首家在美股上市的中国茶饮品牌，打破行业“上市即破发”魔咒。尽管近年来新茶饮品牌扎堆上市，但多数选择港股，而霸王茶姬逆势选择美股，面临更大市场风险。',
+			isfinish: true,
+			conversation_id: 134314,
+			imageUrl: '',
+			switchvalue: false,
+			loading: true,
+			isSHowImg:false
+		}
+	])
+	// 发送按钮
+	const sendMessage = () => {
+		const content = input.value.trim();
+		console.log(content)
+		if (isNull(content)) {
+			ui.showToast({
+				message: t("输入框不能为空")
+			})
+		}
+		messages.value.push({
+			id: messageIdCounter++,
+			role: 'user',
+			content: content,
+			isfinish: true,
+			conversation_id: 134314,
+			imageUrl: '',
+			switchvalue: false,
+			loading: true
+
+		} as aiMesage)
+
+	}
+	// 暂停按钮
+	const isPausedBtn = () => { }
+	const blur = () => {
+		console.log('失去焦点')
+		inputBottom.value = 0
+	}
+	function getHeight() {
+		return isAppIOS() ? 50 : 30
+	}
 	// 使用 watchEffect 监听 store 中 selectedAiTool 的变化
 	watchEffect(() => {
 		title.value = app.selectedAiTool.value;
 		console.log('监听到 store 变化，标题更新为:', title.value);
 	});
-	
+
 	onMounted(() => {
+		console.log(isAppIOS())
 		console.log('组件挂载，当前标题:', title.value);
-		// 确保在组件挂载后执行
-	
-	
+		uni.onKeyboardHeightChange((res) => {
+			console.log(res)
+			if (res.height > 0) {
+				inputBottom.value = res.height
+				isPubComment.value = true
+			} else {
+				inputBottom.value = 0
+				isPubComment.value = false
+			}
+		})
 	})
 </script>
 
 <style>
-	.input-wrapper {
-		padding: 50rpx;
-	}
-
 	/* 输入框样式 */
 	.cl-input {
 		height: 120rpx !important;
-		box-shadow: 0rpx 0rpx 20rpx #D8D8D8;
+		box-shadow: 0rpx 0rpx 10rpx #D8D8D8;
 		border-radius: 20rpx;
 	}
 
+	.message-item {
+		min-height: 80rpx;
+	}
 
+	/* 用户消息样式 - 宽度自适应内容 */
+	.user-message {
+		justify-content: flex-end;
+	}
+
+	.user-content {
+		max-width: 80%;
+		/* 限制最大宽度，避免过长内容 */
+		background-color: #E8EDFF;
+		color: #2854F2;
+		border-radius: 20rpx;
+		padding: 20rpx 25rpx;
+		align-self: flex-end;
+		margin-right: 30rpx
+	}
+
+	/* AI消息样式 */
+	.ai-message {
+		justify-content: flex-start;
+		margin-left: 30rpx
+	}
+
+	.ai-content {
+		width: 90%;
+		padding: 20rpx 0;
+	}
+
+	.prompt {
+		background-color: #FEF8F5;
+		border: 2rpx solid #FBEAE2;
+		display: inline-flex;
+		border-radius: 20rpx;
+	}
+	
 </style>

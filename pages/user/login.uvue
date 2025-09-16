@@ -1,20 +1,16 @@
 <template>
 	<cl-page>
-		<cl-topbar safe-area-top background-color="transparent"></cl-topbar>
+		<cl-topbar safe-area-top background-color="transparent" backIcon="cuo"  :pt="{
+    back: {
+      size: 30,
+    },
+  }"></cl-topbar>
 
 		<view class="px-10">
 			<!-- Logo -->
-			<view class="flex flex-col items-center justify-center py-20">
-				<view class="p-3 bg-primary-500 rounded-2xl">
-					<cl-image
-						src="/static/logo.png"
-						mode="widthFix"
-						:width="80"
-						:height="80"
-					></cl-image>
-				</view>
-
-				<cl-text :pt="{ className: 'text-xl font-bold mt-3' }">{{ config.name }}</cl-text>
+			<view class="flex flex-col py-20">
+				<cl-text color="black" :pt="{ className: 'text-2xl font-bold ' }">欢迎来到{{ config.name }}</cl-text>
+				<cl-text color="#9A9A9A" :pt="{ className: 'text-sm' }">{{config.desction}}</cl-text>
 			</view>
 
 			<!-- 手机号登录 -->
@@ -86,8 +82,8 @@ const refs = useRefs();
 
 // 表单
 const form = reactive<LoginForm>({
-	phone: "18000000000",
-	smsCode: "6666"
+	phone: "",
+	smsCode: ""
 });
 
 // 是否同意

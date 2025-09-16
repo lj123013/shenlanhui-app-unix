@@ -562,7 +562,7 @@
 	}
 	// 进入用户主页
 	const userinfo = () => {
-		router.to('/pages/user/userinfo')
+		router.to('/pages/user/my')
 	}
 	// 快讯列表
 	const jump = () => {

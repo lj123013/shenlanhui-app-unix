@@ -7,7 +7,8 @@
         },
         {
             "customPlaygroundType" : "local",
-            "playground" : "standard",
+            "packageName" : "com.shenlanhui.slh",
+            "playground" : "custom",
             "type" : "uni-app:app-android"
         },
         {

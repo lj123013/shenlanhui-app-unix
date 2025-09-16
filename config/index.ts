@@ -16,6 +16,7 @@ type WxConfig = {
 // 配置类型定义
 type Config = {
 	name: string; // 应用名称
+	desction:string//应用描述
 	version: string; // 应用版本
 	locale: string; // 应用语言
 	website: string; // 官网地址
@@ -29,7 +30,8 @@ type Config = {
 
 // 根据环境导出最终配置
 export const config = {
-	name: "Cool Unix",
+	name: "深蓝汇",
+	desction:"最优秀的财经记者在这里",
 	version: "1.0.0",
 	locale: "zh",
 	website: "https://cool-js.com",
