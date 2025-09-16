@@ -1,4 +1,4 @@
-import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps, Type, ClButtonType, Size, ClListViewItem, ClFilterItemType, ClSelectOption, ClFormLabelPosition, ClFormRule, ClFormValidateError, ClInputType, ClListItem, Justify, ClListViewGroup, ClListViewVirtualItem, ClListViewRefresherStatus, ClConfirmAction, ClConfirmOptions, ClToastOptions, ClPopupDirection, ClQrcodeMode, ClSelectDateShortcut, ClTabsItem, ClTextType, ClTreeItem, ClTreeNodeInfo, ClUploadItem } from "./types";
+import type { ClActionSheetItem, ClActionSheetOptions, PassThroughProps, Type, ClButtonType, Size, ClCalendarDateConfig, ClCalendarMode, ClListViewItem, ClFilterItemType, ClSelectOption, ClFormLabelPosition, ClFormRule, ClFormValidateError, ClInputType, ClListItem, Justify, ClListViewGroup, ClListViewVirtualItem, ClListViewRefresherStatus, ClConfirmAction, ClConfirmOptions, ClToastOptions, ClPopupDirection, ClQrcodeMode, ClSelectValue, ClSelectDateShortcut, ClTabsItem, ClTextType, ClTreeItem, ClTreeNodeInfo, ClUploadItem } from "./types";
 import { type UiInstance } from "./hooks";
 import { type QrcodeOptions } from "./draw";
 
@@ -8,6 +8,9 @@ import type { ClBackTopProps } from "./components/cl-back-top/props";
 import type { ClBadgeProps, ClBadgePassThrough } from "./components/cl-badge/props";
 import type { ClBannerProps, ClBannerPassThrough } from "./components/cl-banner/props";
 import type { ClButtonProps, ClButtonPassThrough } from "./components/cl-button/props";
+import type { ClCalendarProps, ClCalendarPassThrough } from "./components/cl-calendar/props";
+import type { ClCalendarPickerProps } from "./components/cl-calendar-picker/props";
+import type { ClCalendarSelectProps, ClCalendarSelectPassThrough } from "./components/cl-calendar-select/props";
 import type { ClCascaderProps, ClCascaderPassThrough } from "./components/cl-cascader/props";
 import type { ClCheckboxProps, ClCheckboxPassThrough } from "./components/cl-checkbox/props";
 import type { ClColProps, ClColPassThrough } from "./components/cl-col/props";
@@ -35,6 +38,7 @@ import type { ClListItemProps, ClListItemPassThrough } from "./components/cl-lis
 import type { ClListViewProps, ClListViewPassThrough } from "./components/cl-list-view/props";
 import type { ClLoadingProps, ClLoadingPassThrough } from "./components/cl-loading/props";
 import type { ClLoadmoreProps, ClLoadmorePassThrough } from "./components/cl-loadmore/props";
+import type { ClMarqueeProps, ClMarqueePassThrough } from "./components/cl-marquee/props";
 import type { ClNoticebarProps, ClNoticebarPassThrough } from "./components/cl-noticebar/props";
 import type { ClPageProps } from "./components/cl-page/props";
 import type { ClPageThemeProps } from "./components/cl-page-theme/props";
@@ -47,6 +51,7 @@ import type { ClProgressCircleProps, ClProgressCirclePassThrough } from "./compo
 import type { ClQrcodeProps } from "./components/cl-qrcode/props";
 import type { ClRadioProps, ClRadioPassThrough } from "./components/cl-radio/props";
 import type { ClRateProps, ClRatePassThrough } from "./components/cl-rate/props";
+import type { ClReadMoreProps, ClReadMorePassThrough } from "./components/cl-read-more/props";
 import type { ClRowProps, ClRowPassThrough } from "./components/cl-row/props";
 import type { ClSafeAreaProps, ClSafeAreaPassThrough } from "./components/cl-safe-area/props";
 import type { ClSelectProps, ClSelectPassThrough } from "./components/cl-select/props";
@@ -67,7 +72,7 @@ import type { ClTimelineProps, ClTimelinePassThrough } from "./components/cl-tim
 import type { ClTimelineItemProps, ClTimelineItemPassThrough } from "./components/cl-timeline-item/props";
 import type { ClToastProps } from "./components/cl-toast/props";
 import type { ClTopbarProps, ClTopbarPassThrough } from "./components/cl-topbar/props";
-import type { ClTreeProps } from "./components/cl-tree/props";
+import type { ClTreeProps, ClTreePassThrough } from "./components/cl-tree/props";
 import type { ClTreeItemProps, ClTreeItemPassThrough } from "./components/cl-tree-item/props";
 import type { ClUploadProps, ClUploadPassThrough } from "./components/cl-upload/props";
 import type { ClWaterfallProps, ClWaterfallPassThrough } from "./components/cl-waterfall/props";
@@ -83,6 +88,9 @@ declare module "vue" {
 		"cl-badge": (typeof import('./components/cl-badge/cl-badge.uvue')['default']) & import('vue').DefineComponent<ClBadgeProps>;
 		"cl-banner": (typeof import('./components/cl-banner/cl-banner.uvue')['default']) & import('vue').DefineComponent<ClBannerProps>;
 		"cl-button": (typeof import('./components/cl-button/cl-button.uvue')['default']) & import('vue').DefineComponent<ClButtonProps>;
+		"cl-calendar": (typeof import('./components/cl-calendar/cl-calendar.uvue')['default']) & import('vue').DefineComponent<ClCalendarProps>;
+		"cl-calendar-picker": (typeof import('./components/cl-calendar-picker/cl-calendar-picker.uvue')['default']) & import('vue').DefineComponent<ClCalendarPickerProps>;
+		"cl-calendar-select": (typeof import('./components/cl-calendar-select/cl-calendar-select.uvue')['default']) & import('vue').DefineComponent<ClCalendarSelectProps>;
 		"cl-cascader": (typeof import('./components/cl-cascader/cl-cascader.uvue')['default']) & import('vue').DefineComponent<ClCascaderProps>;
 		"cl-checkbox": (typeof import('./components/cl-checkbox/cl-checkbox.uvue')['default']) & import('vue').DefineComponent<ClCheckboxProps>;
 		"cl-col": (typeof import('./components/cl-col/cl-col.uvue')['default']) & import('vue').DefineComponent<ClColProps>;
@@ -110,6 +118,7 @@ declare module "vue" {
 		"cl-list-view": (typeof import('./components/cl-list-view/cl-list-view.uvue')['default']) & import('vue').DefineComponent<ClListViewProps>;
 		"cl-loading": (typeof import('./components/cl-loading/cl-loading.uvue')['default']) & import('vue').DefineComponent<ClLoadingProps>;
 		"cl-loadmore": (typeof import('./components/cl-loadmore/cl-loadmore.uvue')['default']) & import('vue').DefineComponent<ClLoadmoreProps>;
+		"cl-marquee": (typeof import('./components/cl-marquee/cl-marquee.uvue')['default']) & import('vue').DefineComponent<ClMarqueeProps>;
 		"cl-noticebar": (typeof import('./components/cl-noticebar/cl-noticebar.uvue')['default']) & import('vue').DefineComponent<ClNoticebarProps>;
 		"cl-page": (typeof import('./components/cl-page/cl-page.uvue')['default']) & import('vue').DefineComponent<ClPageProps>;
 		"cl-page-theme": (typeof import('./components/cl-page-theme/cl-page-theme.uvue')['default']) & import('vue').DefineComponent<ClPageThemeProps>;
@@ -122,6 +131,7 @@ declare module "vue" {
 		"cl-qrcode": (typeof import('./components/cl-qrcode/cl-qrcode.uvue')['default']) & import('vue').DefineComponent<ClQrcodeProps>;
 		"cl-radio": (typeof import('./components/cl-radio/cl-radio.uvue')['default']) & import('vue').DefineComponent<ClRadioProps>;
 		"cl-rate": (typeof import('./components/cl-rate/cl-rate.uvue')['default']) & import('vue').DefineComponent<ClRateProps>;
+		"cl-read-more": (typeof import('./components/cl-read-more/cl-read-more.uvue')['default']) & import('vue').DefineComponent<ClReadMoreProps>;
 		"cl-row": (typeof import('./components/cl-row/cl-row.uvue')['default']) & import('vue').DefineComponent<ClRowProps>;
 		"cl-safe-area": (typeof import('./components/cl-safe-area/cl-safe-area.uvue')['default']) & import('vue').DefineComponent<ClSafeAreaProps>;
 		"cl-select": (typeof import('./components/cl-select/cl-select.uvue')['default']) & import('vue').DefineComponent<ClSelectProps>;

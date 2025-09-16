@@ -107,6 +107,7 @@ declare type ClCollapseComponentPublicInstance = {
 };
 
 declare type ClCountdownComponentPublicInstance = {
+	next: () => void;
 	start: () => void;
 	stop: () => void;
 	done: () => void;
@@ -223,4 +224,22 @@ declare type ClTreeComponentPublicInstance = {
 	getExpandedKeys: () => (string | number)[];
 	expandAll: () => void;
 	collapseAll: () => void;
+};
+
+declare type ClCalendarComponentPublicInstance = {
+	open(cb: ((value: string | string[]) => void) | null = null): void;
+	close(): void;
+};
+
+declare type ClMarqueeComponentPublicInstance = {
+	play(): void;
+	pause(): void;
+	start(): void;
+	stop(): void;
+	reset(): void;
+};
+
+declare type ClReadMoreComponentPublicInstance = {
+	toggle(): void;
+	getContentHeight(): void;
 };

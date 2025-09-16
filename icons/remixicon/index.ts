@@ -790,5 +790,9 @@ export const remixicon = {
 	"table-line": "f1de",
 	"layout-bottom-line": "ee8b",
 	"picture-in-picture-line": "eff4",
-	"picture-in-picture-fill": "eff3"
+	"picture-in-picture-fill": "eff3",
+	"arrow-down-double-line": "f2e1",
+	"arrow-down-double-fill": "f2e0",
+	"arrow-left-double-fill": "f2e2",
+	"arrow-left-double-line": "f2e3"
 };

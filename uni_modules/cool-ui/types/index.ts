@@ -33,6 +33,8 @@ export type ClCheckboxOption = {
 	disabled?: boolean;
 };
 
+export type ClSelectValue = string[] | number[] | number | string | null;
+
 export type ClSelectOption = {
 	label: string;
 	value: any;
@@ -197,4 +199,41 @@ export type ClTreeNodeInfo = {
 	node: ClTreeItem;
 	parent?: ClTreeItem;
 	index: number;
+};
+
+export type ClCalendarMode = "single" | "multiple" | "range";
+
+export type ClCalendarDateConfig = {
+	date: string;
+	topText?: string;
+	bottomText?: string;
+	disabled?: boolean;
+	color?: string;
+};
+
+export type ClMarqueeDirection = "horizontal" | "vertical";
+
+export type ClMarqueeItem = {
+	url: string;
+	originalIndex: number;
+};
+
+export type ClMarqueePassThrough = {
+	className?: string;
+	container?: PassThroughProps;
+	item?: PassThroughProps;
+	image?: PassThroughProps;
+};
+
+export type ClMarqueeProps = {
+	className?: string;
+	pt?: ClMarqueePassThrough;
+	list?: string[];
+	direction?: ClMarqueeDirection;
+	speed?: number;
+	pause?: boolean;
+	pauseOnHover?: boolean;
+	itemHeight?: number;
+	itemWidth?: number;
+	gap?: number;
 };
