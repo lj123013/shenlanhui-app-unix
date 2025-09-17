@@ -1,16 +1,120 @@
 <template>
 	<cl-page>
-		<cl-text ellipsis :lines="2"
-			>云想衣裳花想容，春风拂槛露华浓。若非群玉山头见，会向瑶台月下逢。天阶夜色凉如水，卧看牵牛织女星。人生若只如初见，何事秋风悲画扇。山有木兮木有枝，心悦君兮君不知。</cl-text
+		<cl-topbar fixed :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
+			<template #prepend>
+				<view class="bg-primary-500 rounded-full w-[52rpx] h-[52rpx] flex flex-col items-center justify-center"
+					@tap="router.to('/pages/user/my')">
+					<cl-icon name="a-zu254" color="white" size="20rpx"></cl-icon>
+				</view>
+			</template>
+			<cl-text color="black" :pt="{ className: '!text-xl fontBold' }">雷达</cl-text>
+			<template #append>
+				<cl-icon name="faxian" color="black" :size="30"></cl-icon>
+				<cl-text color="black" :pt="{ className: '!text-sm' }">关键字</cl-text>
+			</template>
+		</cl-topbar>
+		<cl-tabs v-model="current" class="fontBold" :showLine="false" :list="tableList" :color="isColor ? '#2854F2' : ''"
+			un-color="#6a6a6a"></cl-tabs>
+		<cl-list-view
+			ref="listViewRef"
+			:data="listView"
+			:virtual="false"
+			:pt="{
+				refresher: {
+					className: 'pt-3'
+				}
+			}"
+			:refresher-enabled="true"
+			@pull="onPull"
+			@bottom="loadMore"
 		>
+			<template #item="{ value, index }">
+				<radar-item :value="value" :index="index"></radar-item>
+			</template>
 		
+			<template #bottom>
+				<view class="py-3">
+					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+				</view>
+			</template>
+		</cl-list-view>
+		<!-- 没有数据时显示没有关键字 -->
+		<!-- <cl-empty  text="" iconSize="300rpx" :showBtn='true'></cl-empty> -->
 		<!-- 自定义底部导航栏 -->
 		<tabbar></tabbar>
 	</cl-page>
 </template>
 
 <script setup lang="ts">
-import Tabbar from "@/components/tabbar.uvue";
+	import {router,usePager} from "@/cool";
+	import type {ClTabsItem, useUi } from "@/uni_modules/cool-ui";
+	import { ref } from "vue";
+	import Tabbar from "@/components/tabbar.uvue";
+	import radarItem from "../radar/radar-item.uvue";
+	import { t } from "@/locale";
+	const ui = useUi();
+	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
+	let id = 0;
+	const isColor = ref(true)
+	const current = ref("1")
+	const tableList = ref<ClTabsItem[]>([
+		{
+			label: "新希望",
+			value: "1",
+		},
+		{
+			label: "腾讯+游戏",
+			value: "2",
+		},
+		{
+			label: "港股公告精选",
+			value: "3",
+		},
+	]);
+	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
+		// 模拟请求
+		setTimeout(() => {
+			render({
+				list: [
+					{
+						id: id++,
+						title: "股票行情快报：新希望（000876）9月2日主力资金净卖出583.53万元",
+						time: "17:39",
+						tag:'资讯'
+					},
+					{
+						id: id++,
+						title: "同比增长162%！新希望净利扭亏，预计下半年继续稳步改善",
+						time: "17:39",
+						tag:'快讯'
+					},
+					{
+						id: id++,
+						title: "新希望:关于归还临时补充流动资金的募集资金的公告",
+						time: "17:39",
+						tag:'公告'
+					},
+				],
+				pagination: {
+					page: params["page"],
+					size: params["size"],
+					total: 4
+				}
+			});
+			ui.hideLoading();
+		}, 1000);
+	});
+	
+	async function onPull() {
+		await refresh({ page: 1 });
+		listViewRef.value!.stopRefresh();
+	}
+	
+	onReady(() => {
+		ui.showLoading(t("加载中"));
+		// 默认请求
+		refresh({});
+	});
 </script>
 
 <style>

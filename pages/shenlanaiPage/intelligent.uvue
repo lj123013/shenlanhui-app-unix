@@ -14,7 +14,7 @@
 			@bottom="loadMore"
 		>
 			<template #item="{ value, index }">
-				<userlist :value="value" :index="index" type="AI智能体"></userlist>
+				<user-item :value="value" :index="index" type="AI智能体"></user-item>
 			</template>
 
 			<template #bottom>
@@ -30,7 +30,7 @@
 import { useUi } from "@/uni_modules/cool-ui";
 import { ref } from "vue";
 import { usePager } from "@/cool";
-import userlist from "../homePage/components/userlist.uvue";
+import userItem from "../homePage/components/user-item.uvue";
 import { t } from "@/locale";
 
 const ui = useUi();
@@ -39,11 +39,10 @@ const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
 
 let id = 0;
 
-const { refresh, list, listView, loading, loadMore } = usePager((params) => {
-	return new Promise((resolve) => {
-		// 模拟请求
-		setTimeout(() => {
-			const mockData = {
+const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
+	// 模拟请求
+	setTimeout(() => {
+		render({
 				list: [
 					{
 						id: 1,
@@ -83,16 +82,9 @@ const { refresh, list, listView, loading, loadMore } = usePager((params) => {
 					size: params["size"],
 					total: 100
 				}
-			};
-
-			// console.log('模拟请求返回的数据:', mockData);
-			// console.log('模拟请求的list数组:', mockData.list);
-
-			resolve(mockData);
-
-			ui.hideLoading();
-		}, 1000);
-	});
+			});
+		ui.hideLoading();
+	}, 1000);
 });
 
 async function onPull() {

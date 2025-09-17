@@ -1,6 +1,6 @@
 <template>
 	<cl-page>
-		<cl-topbar safe-area-top :title="t('编辑昵称')" background-color="transparent"> </cl-topbar>
+		<!-- <cl-topbar safe-area-top :title="t('编辑昵称')" background-color="transparent"> </cl-topbar> -->
 
 		<view class="p-3">
 			<cl-input

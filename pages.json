@@ -15,7 +15,9 @@
 		{
 			"path": "pages/index/radar",
 			"style": {
-				"navigationBarTitleText": "雷达"
+				"navigationBarTitleText": "雷达",
+				"titleNView": "custom",
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -67,15 +69,71 @@
 					"style": {
 						"navigationBarTitleText": "公告"
 					}
+				},
+				{
+					"path": "news",
+					"style": {
+						"navigationBarTitleText": "新闻稿"
+					}
+				},
+				{
+					"path": "AIPicture",
+					"style": {
+						"navigationBarTitleText": "AI图库"
+					}
 				}
 
 			]
 
 		},
 		{
-			"root": "pages/user",
-			"pages": [
+			"root": "pages/set",
+			"pages": [{
+				"path": "index",
+				"style": {
+					"navigationBarTitleText": "设置"
+				}
+			},
+			{
+				"path": "about",
+				"style": {
+					"navigationBarTitleText": "关于深蓝汇"
+				}
+			},
+			{
+				"path" : "bindaccount",
+				"style" : 
 				{
+					"navigationBarTitleText" : "绑定账号"
+				}
+			},
+			{
+				"path" : "privacy",
+				"style" : 
+				{
+					"navigationBarTitleText" : "隐私政策"
+				}
+			},
+			{
+				"path" : "agreement",
+				"style" : 
+				{
+					"navigationBarTitleText" : "用户协议"
+				}
+			},
+			{
+				"path" : "deleteAccount",
+				"style" : 
+				{
+					"navigationBarTitleText" : "注销账号",
+					"titleNView": "custom",
+					"navigationStyle": "custom"
+				}
+			}]
+		},
+		{
+			"root": "pages/user",
+			"pages": [{
 					"path": "my",
 					"style": {
 						"navigationBarTitleText": "我的",
@@ -84,22 +142,68 @@
 					}
 				},
 				{
-				"path": "userinfo",
-				"style": {
-					"navigationBarTitleText": "个人主页",
-					"titleNView": "custom",
-					"navigationStyle": "custom"
+					"path": "fansList",
+					"style": {
+						"navigationBarTitleText": "我的粉丝"
+					}
+				},
+				{
+					"path": "followList",
+					"style": {
+						"navigationBarTitleText": "我的关注"
+					}
+				},
+				{
+					"path": "userinfo",
+					"style": {
+						"navigationBarTitleText": "个人主页",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "login",
+					"style": {
+						"navigationBarTitleText": "登录",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "email",
+					"style": {
+						"navigationBarTitleText": "邮箱登录",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "edit",
+					"style": {
+						"navigationBarTitleText": "账户信息"
+					}
+				},
+				{
+					"path": "edit-name",
+					"style": {
+						"navigationBarTitleText": "编辑昵称"
+
+					}
+				},
+				{
+					"path": "system",
+					"style": {
+						"navigationBarTitleText": "系统消息"
+					}
+				},
+				{
+					"path": "Feedback",
+					"style": {
+						"navigationBarTitleText": "意见反馈"
+					}
 				}
-			},
-			{
-				"path": "login",
-				"style": {
-					"navigationBarTitleText": "登录",
-					"titleNView": "custom",
-					"navigationStyle": "custom"
-				}
-			}
-		]
+
+			]
 		},
 		{
 			"root": "pages/shenlanaiPage",
@@ -116,13 +220,12 @@
 					}
 				},
 				{
-					"path" : "conversation",
-					"style" : 
-					{
-						"navigationBarTitleText" : "AI对话",
+					"path": "conversation",
+					"style": {
+						"navigationBarTitleText": "AI对话",
 						"titleNView": "custom",
 						"navigationStyle": "custom"
-						
+
 					}
 				}
 			]
@@ -140,6 +243,13 @@
 					"path": "dispathDetail",
 					"style": {
 						"navigationBarTitleText": "快讯详情",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "noticeDetail",
+					"style": {
+						"navigationBarTitleText": "公告详情",
 						"navigationStyle": "custom"
 					}
 				}

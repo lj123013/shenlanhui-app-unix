@@ -1,0 +1,56 @@
+<template>
+	<cl-page>
+		<cl-topbar safe-area-top :title="t('注销账号')" :pt="{
+							title:{
+								className: 'text-xl'
+							}
+						}" color="black" background-color="transparent"> </cl-topbar>
+		<view class="px-5 py-7">
+			<view class="border-bottom pb-3">
+				<cl-text color="black" :pt="{className:'text-lg font-bold mb-1'}">开始注销账户前请确认一下内容</cl-text>
+				<cl-text color="primary" :pt="{className:'text-xs'}">账号注销后，将不可恢复，请您谨慎操作</cl-text>
+			</view>
+			<view class="py-4">
+				<view class="flex- flex-row items-center ">
+					<cl-badge type="info" class="mr-2" dot></cl-badge>
+					<cl-text color="info" :pt="{className:'text-base font-bold'}">注销账号后，相关信息将会被删除</cl-text>
+				</view>
+				<cl-text color="#999" :pt="{className:'text-sm'}">注销后，您将无法继续使用本账号，与账号相关的任何信息都将被删除，任何途径都无法找回。</cl-text>
+			</view>
+			<view class="flex- flex-row items-center">
+				<cl-badge type="info" class="mr-2" dot></cl-badge>
+				<cl-text color="info" :pt="{className:'text-base font-bold'}">账号不存在纠纷</cl-text>
+			</view>
+			<cl-text color="#999" :pt="{className:'text-sm'}">账号不存在纠纷，涉及投诉举报等事项，同时注销本账号并不代表注销前的账号中的行为和相关责任得到豁免或减轻</cl-text>
+			<cl-button :pt="{
+				className: '!h-[90rpx] !rounded-full mt-10'
+			}" @tap="toLogout">
+				{{ t("同意以上内容，并开始注销") }}
+			</cl-button>
+		</view>
+	</cl-page>
+</template>
+
+<script setup>
+	import { $t, t } from "@/locale";
+	import { useUi } from "@/uni_modules/cool-ui";
+	const ui = useUi();
+	function toLogout() {
+	  ui.showConfirm({
+	    title: "注销确认",
+	    message: "账号注销后将无法恢复，所有数据都将无法找回，确定注销账号吗？",
+	    confirmText: "确定",
+	    cancelText: "取消",
+	    callback(action) {
+	      if (action === "confirm") {
+	        // 执行退出登录
+	      }
+	    },
+	  });
+	}
+	
+</script>
+
+<style>
+
+</style>

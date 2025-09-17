@@ -1,6 +1,6 @@
 <template>
 	<view class="px-5">
-		<view class="w-full" :class="index == 0 ? 'pb-2' : 'border py-2'" @click="clickuser">
+		<view class="w-full" :class="index == 0 ? 'pb-2' : 'border py-2'" @click="onItemClick">
 			<cl-text color="#cbcbcb" :pt="{ className: '!text-sm' }">{{ item?.time }}</cl-text>
 			<view class="flex flex-row items-center justify-between company">
 				<cl-image class="company-img" width="26rpx" height="26rpx" src="/static/image/pdficon.png"></cl-image>
@@ -25,11 +25,11 @@
 	import { parse } from "@/cool";
 
 	defineOptions({
-		name: "dispath-item"
+		name: "notice-item"
 	});
 
 	// 定义数据类型（注释形式）
-	type dispathItem = {
+	type noticeItem = {
 		id : number;
 		company : string;
 		content : string;
@@ -47,11 +47,12 @@
 		}
 	});
 
-	const item = computed(() => parse<dispathItem>(props.value));
-	function clickuser() {
-		console.log(item.value)
-		router.to('/pages/user/userinfo');
-	}
+	const item = computed(() => parse<noticeItem>(props.value));
+	// 处理点击事件
+	const emit = defineEmits(["item-click"]);
+	const onItemClick = () => {
+		emit("item-click", props.value);
+	};
 </script>
 
 <style lang="less">

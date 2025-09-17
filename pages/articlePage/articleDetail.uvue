@@ -47,7 +47,7 @@
 			<view>
 				<cl-image src="/static/image/articleimg.png" :width="'100%'" :height="'384rpx'"
 					:pt="{ className: 'my-4 rounded-lg' }"></cl-image>
-				<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4">
+				<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4 my-3" @click="showAiInterpretation=!showAiInterpretation">
 					<view class="flex flex-row items-center">
 						<view class="ai-img rounded-full flex flex-col items-center justify-center">
 							<view class="img-box rounded-full flex flex-col items-center justify-center">
@@ -55,14 +55,14 @@
 									:pt="{ className: 'mx-auto my-auto' }"></cl-image>
 							</view>
 						</view>
-						<view class="ml-2">
+						<view class="ml-2" >
 							<cl-text color="white" :pt="{ className: '!text-lg fontBold' }">使用深蓝AI进行分析</cl-text>
 							<cl-text color="white" :pt="{ className: '!text-base' }">智能摘要·深度解读</cl-text>
 						</view>
 					</view>
 					<cl-icon name="arrow-right-line" color="white" :size="50"></cl-icon>
 				</view>
-				<view class="article-Ai my-3 p-4">
+				<view class="article-Ai mb-3  p-4" v-if="showAiInterpretation">
 					<view class="borderBottom">
 						<view class="flex flex-row items-center">
 							<cl-image src="/static/image/aiIcon.png" :width="'33rpx'" :height="'33rpx'"></cl-image>
@@ -70,26 +70,16 @@
 						</view>
 
 						<!-- 文字摘要内容 -->
-						<view class="text-content">
+						<view class="text-content pb-5">
 							<!-- 始终显示的简短内容 -->
-							<cl-text color="white" :pt="{ className: '!text-base mt-2 leading-6' }">
-								{{ shortContent }}
-							</cl-text>
-
-							<!-- 可展开的详细内容 -->
-							<cl-collapse v-model="visible">
-								<cl-text color="white" :pt="{ className: '!text-base leading-6' }">
-									{{ expandedContent }}
+							<cl-read-more :showMask="false" v-model="visible" :height="120"
+								:pt="{className:'!text-white'}">
+								<cl-text color="#E4E4F7">
+									云想衣裳花想容，春风拂槛露华浓。若非群玉山头见，会向瑶台月下逢。
+									一枝红艳露凝香，云雨巫山枉断肠。借问汉宫谁得似？可怜飞燕倚新妆。
+									名花倾国两相欢，常得君王带笑看。解释春风无限恨，沉香亭北倚阑干。
 								</cl-text>
-							</cl-collapse>
-						</view>
-						<!-- 展开/收起按钮 -->
-						<view @click="toggle" class="expand-btn flex flex-row items-center justify-center mt-3 py-2">
-							<cl-text color="white" :pt="{ className: 'text-center !text-sm mr-1' }">
-								{{ visible ? '收起' : '展开' }}
-							</cl-text>
-							<cl-icon :name="visible ? 'arrow-up-s-fill' : 'arrow-down-s-fill'" color="white"
-								:size="20"></cl-icon>
+							</cl-read-more>
 						</view>
 					</view>
 					<view class="py-3">
@@ -195,16 +185,13 @@
 		cover_url : string;
 		acreat_time : string;
 	};
+	const showAiInterpretation=ref(false)
 	const content = ref('')
 	const isFollow = ref(false);
 	const visible = ref(false);
 	const input = ref("");
 	const user = reactive({ uid: 1 }); // 假设有用户信息，实际请替换为你的登录逻辑
 	const commentContent = ref('')
-	// 文本内容管理
-	const shortContent = ref('本文《上半年多线突围，汤臣倍健用创新新品重塑品类和渠道价值链》主要内容：2025年上半年膳食营养补充剂(VDS)行业的日子并不好过。中康数据显示，1-5月全国零售药店VDS销售额同比下滑，欧容数据则显示线上渠道同样面临挑战...');
-
-	const expandedContent = ref('汤臣倍健通过产品创新、渠道优化和品牌升级等多维度策略，在行业低迷期实现逆势增长。公司不仅推出了多款针对性强的新产品，还通过数字化转型提升了渠道效率，同时加强与消费者的互动，建立了更加稳固的品牌认知。这些举措不仅帮助汤臣倍健在竞争激烈的市场中脱颖而出，也为整个VDS行业的发展提供了有益的借鉴。未来，随着消费者健康意识的不断提升和产品品质的持续改善，VDS行业有望迎来新的发展机遇。');
 	// rich-text 数据管理 - 使用节点数组格式
 	const testNodes = ref('<p>面对外界的疑问，美团CEO王兴在财报电话会上回应，“将采取一切必要措施来赢得比赛。”同时也表示，市场竞争有助于促进行业发展，目前行业中存在非理性的补贴和内卷，认为低质低价的“内卷式”竞争长期来看不可持续。王兴表示，中国外卖行业已经发展到新阶段，美团会积极提倡反对行业内卷，进一步帮助商家简化营销，降低经营负担，推动行业健康发展。美团有自己的节奏在京东强势入局外卖、饿了么也随之加入这场补贴大战后，美团很淡定，让人一下子摸不着头脑了。随着美团Q1财报的发布，大家总算知道：美团一直有自己的节奏。美团的淡定</p>'
 	);

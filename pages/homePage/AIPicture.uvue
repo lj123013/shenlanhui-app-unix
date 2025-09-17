@@ -1,0 +1,153 @@
+<template>
+	<cl-page>
+		<view>
+			<view class="flex flex-row justify-between items-center pr-4">
+				<cl-tabs v-model="current" class="fontBold" :showLine="false" :list="tabbar"
+					:color="isColor ? '#2854F2' : ''" un-color="#6a6a6a"></cl-tabs>
+				<cl-tag type="primary">AI制图</cl-tag>
+			</view>
+			<view class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center mx-5">
+				<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>
+				<cl-text class="text-neutral-300 ml-2" color="#B7B7B7">请输入你想要找的图片</cl-text>
+			</view>
+		</view>
+		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
+			refresher: {
+				className: 'pt-3'
+			}
+		}" :refresher-enabled="true" @pull="onPull" @bottom="loadMore">
+			<template #item="{ value }">
+				<goods-item :value="value"></goods-item>
+			</template>
+
+			<template #bottom>
+				<view class="py-3">
+					<cl-loadmore v-if="list.length > 0" :loading="loading" safe-area-bottom></cl-loadmore>
+				</view>
+			</template>
+		</cl-list-view>
+	</cl-page>
+</template>
+
+<script lang="ts" setup>
+import { useUi, type ClTabsItem } from "@/uni_modules/cool-ui";
+import { ref } from "vue";
+import { usePager } from "@/cool";
+import GoodsItem from "../homePage/components/goods-item.uvue";
+import { t } from "@/locale";
+const current = ref("1");
+const ui = useUi();
+
+const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
+let id = 0;
+const isColor = ref(true);
+const tabbar = ref<ClTabsItem[]>([
+	{
+		label: "推荐",
+		value: "1",
+	},
+	{
+		label: "实拍",
+		value: "2",
+	},
+	{
+		label: "创意",
+		value: "3",
+	},
+	{
+		label: "AI图库",
+		value: "4",
+	},
+]);
+const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
+	// 模拟请求
+	setTimeout(() => {
+		render({
+			list: [
+				{
+					id: id++,
+					head_img: t('../../static/image/head-img.png'),
+					username: t('传媒见闻'),
+					image: "https://unix.cool-js.com/images/demo/1.jpg",
+					tag:'实拍'
+				},
+				{
+					id: id++,
+					head_img: t('../../static/image/head-img.png'),
+					username: t('传媒见闻'),
+					image: "https://unix.cool-js.com/images/demo/2.jpg",
+					tag:'创意'
+				},
+				{
+					id: id++,
+					head_img: t('../../static/image/head-img.png'),
+					username: t('传媒见闻'),
+					image: "https://unix.cool-js.com/images/demo/3.jpg",
+					tag:'实拍'
+				},
+				{
+					id: id++,
+					head_img: t('../../static/image/head-img.png'),
+					username: t('传媒见闻'),
+					image: "https://unix.cool-js.com/images/demo/5.jpg",
+					tag:'AI图库'
+				},
+				{
+					id: id++,
+					head_img: t('../../static/image/head-img.png'),
+					username: t('传媒见闻'),
+					image: "https://unix.cool-js.com/images/demo/6.jpg",
+					tag:'AI图库'	
+				},
+				{
+					id: id++,
+					head_img: t('../../static/image/head-img.png'),
+					username: t('传媒见闻'),
+					image: "https://unix.cool-js.com/images/demo/7.jpg",
+					tag:'AI图库'
+
+				},
+				{
+					id: id++,
+					head_img: t('../../static/image/head-img.png'),
+					username: t('传媒见闻'),
+					image: "https://unix.cool-js.com/images/demo/8.jpg",
+					tag:'AI图库'
+				},
+				{
+					id: id++,
+					head_img: t('../../static/image/head-img.png'),
+					username: t('传媒见闻'),
+					image: "https://unix.cool-js.com/images/demo/9.jpg",
+					tag:'AI图库'
+				},
+				{
+					id: id++,
+					head_img: t('../../static/image/head-img.png'),
+					username: t('传媒见闻'),
+					image: "https://unix.cool-js.com/images/demo/10.jpg",
+					tag:'AI图库'
+				}
+			],
+			pagination: {
+				page: params["page"],
+				size: params["size"],
+				total: 100
+			}
+		});
+
+		ui.hideLoading();
+	}, 1000);
+});
+
+async function onPull() {
+	await refresh({ page: 1 });
+	listViewRef.value!.stopRefresh();
+}
+
+onReady(() => {
+	ui.showLoading(t("加载中"));
+	// 默认请求
+	refresh({});
+});
+</script>

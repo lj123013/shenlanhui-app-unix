@@ -9,7 +9,7 @@
 					<template #prepend>
 						<view
 							class="bg-primary-500 rounded-full w-[52rpx] h-[52rpx] flex flex-col items-center justify-center"
-							@click="userinfo">
+							@tap="router.to('/pages/user/my')">
 							<cl-icon name="a-zu254" color="white" size="20rpx"></cl-icon>
 						</view>
 					</template>
@@ -157,11 +157,6 @@
 		"https://uni-docs.cool-js.com/demo/pages/demo/static/bg2.png",
 		"https://uni-docs.cool-js.com/demo/pages/demo/static/bg3.png",
 	]);
-	// 进入用户主页
-	const userinfo = () => {
-		router.to("/pages/user/userinfo");
-	};
-	
 	// 获取类型样式的函数 - 改进后
 	onMounted(() => {
 		console.log(data.value);

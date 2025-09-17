@@ -1,4 +1,5 @@
 export const download = {
+	"jia": "e600",
 	"shezhi": "e667",
 	"xitongxiaoxi": "e664",
 	"zhanghaoxinxi": "e665",
@@ -23,7 +24,7 @@ export const download = {
 	"a-renzheng21": "e655",
 	"tishi1": "e656",
 	"a-pinglun1": "e657",
-	"dianzan": "e64f",
+	"dianzan-curder": "e64f",
 	"zhuanfa1": "e650",
 	"dingwei": "e651",
 	"a-lujing72": "e64e",

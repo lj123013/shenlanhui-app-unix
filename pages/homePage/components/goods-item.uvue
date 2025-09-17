@@ -1,0 +1,100 @@
+<template>
+	<view class="p-5">
+		<cl-row :gutter="12">
+			<cl-col :span="22">
+				<view class="flex flex-row items-center">
+					<cl-avatar :src="item?.head_img" rounded></cl-avatar>
+					<view class="ml-2">
+						<cl-text color="#131313" :pt="{ className: 'text-sm' }">{{ item?.username }}</cl-text>
+						<cl-text color="#707070" :pt="{ className: 'text-xs' }">05-09-01</cl-text>
+
+					</view>
+				</view>
+			</cl-col>
+			<cl-col :span="2">
+				<cl-icon name="arrow-down-s-line"></cl-icon>
+			</cl-col>
+		</cl-row>
+		<view class="imageBox my-4" width="100%" height="314rpx">
+			<cl-image :src="item?.image" mode="aspectFill" width="100%" height="314rpx"
+				:pt="{ className: 'rounded-[20rpx]' }"></cl-image>
+			<view class="tagBox ">
+				<cl-text color="white" :pt="{ className: 'text-sm' }">{{ item?.tag }}</cl-text>
+			</view>
+		</view>
+		<cl-row :gutter="12">
+			<cl-col :span="8">
+				<view class="item flex flex-row items-center justify-center">
+					<cl-icon name="zhuanfa" color="#9B9B9B" size="26rpx" width="28rpx"></cl-icon>
+					<cl-text color="#9B9B9B" :pt="{ className: 'text-sm' }">分享</cl-text>
+				</view>
+			</cl-col>
+			<cl-col :span="8">
+				<view class="item flex flex-row items-center justify-center">
+					<cl-icon name="a-pinglun1" color="#9B9B9B" size="26rpx" width="28rpx"></cl-icon>
+					<cl-text color="#9B9B9B" :pt="{ className: 'text-sm' }">评论</cl-text>
+				</view>
+			</cl-col>
+			<cl-col :span="8">
+				<view class="item flex flex-row items-center justify-center">
+					<cl-icon name="dianzan-curder" color="#9B9B9B" size="26rpx" width="28rpx"></cl-icon>
+					<cl-text color="#9B9B9B" :pt="{ className: 'text-sm' }">点赞</cl-text>
+				</view>
+			</cl-col>
+		</cl-row>
+	</view>
+	<view class="bg-custom-bg-gray w-full h-[14rpx]"></view>
+	<!-- 悬浮图标 -->
+	<cl-float-view :left="300" :bottom="100" disabled :height="116" :width="104">
+		<view class="w-[104rpx] py-2 h-[116rpx] bg-primary-500 rounded-xl flex flex-col items-center justify-center">
+			<cl-icon name="jia" color="white" size="50rpx"></cl-icon>
+			<cl-text color="white" :pt="{ className: 'text-base' }">发图</cl-text>
+		</view>
+	</cl-float-view>
+</template>
+
+<script lang="ts" setup>
+import { computed } from "vue";
+import { parse } from "@/cool";
+
+defineOptions({
+	name: "goods-item"
+});
+
+type GoodsItem = {
+	id: number;
+	head_img: string;
+	username: string;
+	image: string;
+	tag: string
+};
+
+const props = defineProps({
+	value: {
+		type: Object,
+		default: () => ({})
+	}
+});
+
+const item = computed(() => parse<GoodsItem>(props.value));
+</script>
+<style>
+.imageBox {
+	position: relative;
+}
+
+.tagBox {
+	background-color: rgba(0, 0, 0, 0.3);
+	width: 96rpx;
+	height: 48rpx;
+	border-radius: 20rpx 0 20rpx 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	top: 0;
+	left: 0;
+
+}
+</style>

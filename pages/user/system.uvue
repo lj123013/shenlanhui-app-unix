@@ -1,0 +1,18 @@
+<template>
+<cl-page>
+	<view class="p-4">
+		<cl-text color="#7A7A7A" :pt="{className:'text-base'}">
+			你好，近日我们对《深蓝汇隐私政策》进行了修订本次修订主要是适应最新法律法规要求对部分条款和表述进行了微调，本次修订不改变我们收集、处理你的个人信息的范围目的，也没有削减你所享有的法定权利不构成对隐私政策的重大变更。
+		</cl-text>
+		<cl-text color="#7A7A7A" :pt="{className:'text-base mt-5'}">2025-09-01 14:11</cl-text>
+	</view>
+</cl-page>
+</template>
+
+<script setup>
+	
+</script>
+
+<style>
+
+</style>

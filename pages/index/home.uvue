@@ -369,7 +369,7 @@
 			{
 				icon: t("a-zu29"),
 				title: t("AI写作"),
-				path: ""
+				path: "/pages/shenlanaiPage/chart"
 			},
 			{
 				icon: t("AItuku"),
@@ -379,12 +379,12 @@
 			{
 				icon: t("AItuku"),
 				title: t("AI图库"),
-				path: ""
+				path: "/pages/homePage/AIPicture"
 			},
 			{
 				icon: t("a-lujing93"),
 				title: t("新闻稿库"),
-				path: ""
+				path: "/pages/homePage/news"
 			},
 			{
 				icon: t("a-lujing60"),

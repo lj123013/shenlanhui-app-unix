@@ -30,6 +30,10 @@
 			v-if="text"
 			>{{ text }}</cl-text
 		>
+		<view v-if="showBtn">
+			<cl-button type="primary" size="large" :pt="{className:'!rounded-full'}">添加关键字</cl-button>
+			<cl-text color="#C5C5C5" :pt="{className:'text-xs mt-2'}">最多可设置三个关键字</cl-text>
+		</view>
 	</view>
 </template>
 
@@ -58,7 +62,7 @@ const props = defineProps({
 	// 图标尺寸
 	iconSize: {
 		type: [Number, String],
-		default: 120
+		default: 300
 	},
 	// 是否显示图标
 	showIcon: {
@@ -69,6 +73,10 @@ const props = defineProps({
 	fixed: {
 		type: Boolean,
 		default: true
+	},
+	showBtn:{
+		type: Boolean,
+		default: false
 	}
 });
 

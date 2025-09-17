@@ -1,0 +1,23 @@
+<template>
+	<view class="p-4">
+		<cl-textarea height="300rpx" :border="false" placeholder="请输入你的建议或者反馈意见!" :showWordLimit="false"></cl-textarea>
+		<view class="border">
+			<cl-button :pt="{
+				className: '!h-[90rpx] !rounded-full mt-5'
+			}"  @tap="toSubmit">
+				{{ t("提交") }}
+			</cl-button>
+		</view>
+	</view>
+</template>
+
+<script setup>
+	import { t } from "@/locale";
+	const toSubmit=()=>{
+		
+	}
+</script>
+
+<style>
+		
+</style>

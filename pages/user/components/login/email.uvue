@@ -2,8 +2,8 @@
 	<view class="flex flex-col">
 		<view class="mb-3 flex flex-row  border-bottom">
 			<cl-input
-				v-model="form.phone"
-				:placeholder="t('请输入手机号')"
+				v-model="form.email as string"
+				:placeholder="t('请输入邮箱')"
 				:border="false"
 				:pt="{
 					className: parseClass([
@@ -90,7 +90,7 @@ const loading = ref(false);
 
 // 是否禁用
 const disabled = computed(() => {
-	return props.form.phone == "" || props.form.smsCode == "";
+	return props.form.email == "" || props.form.smsCode == "";
 });
 
 // 登录
@@ -99,15 +99,15 @@ async function toLogin() {
 		return;
 	}
 
-	const { phone, smsCode } = props.form;
+	const { email, smsCode } = props.form;
 
 	loading.value = true;
 
 	await request({
-		url: "/app/user/login/phone",
+		url: "/app/user/login/email",
 		method: "POST",
 		data: {
-			phone,
+			email,
 			smsCode
 		}
 	})

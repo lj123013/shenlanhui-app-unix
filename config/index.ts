@@ -32,7 +32,7 @@ type Config = {
 export const config = {
 	name: "深蓝汇",
 	desction:"最优秀的财经记者在这里",
-	version: "1.0.0",
+	version: "3.1.0",
 	locale: "zh",
 	website: "https://cool-js.com",
 	showDarkButton: false,

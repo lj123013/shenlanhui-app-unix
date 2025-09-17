@@ -40,14 +40,14 @@
 				v-if="showToggle && isHide"
 			>
 				<cl-text
-					color="primary"
+					color="white"
 					:pt="{
 						className: 'text-sm mr-1'
 					}"
 				>
 					{{ isExpanded ? collapseText : expandText }}
 				</cl-text>
-				<cl-icon :name="isExpanded ? collapseIcon : expandIcon" color="primary"></cl-icon>
+				<cl-icon :name="isExpanded ? collapseIcon : expandIcon" color="white"></cl-icon>
 			</view>
 		</slot>
 	</view>

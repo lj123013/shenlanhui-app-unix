@@ -15,11 +15,7 @@
 
 			<view class="flex-1">
 				<!-- 手机号登录 -->
-				<login-phone :form="form" @success="toLogin"></login-phone>
-
-				<!-- 微信登录 -->
-				<login-wx :ref="refs.set('loginWx')"></login-wx>
-
+				<login-email :form="form" @success="toLogin"></login-email>
 				<!-- 协议 -->
 				<view class="mt-6 flex flex-row flex-wrap items-center justify-center">
 					<cl-checkbox v-model="agree" :pt="{ icon: { size: 28 } }" active-icon="checkbox-circle-fill"
@@ -39,28 +35,8 @@
 					</cl-text>
 				</view>
 				<!-- 邮箱登录 -->
-				<view class="flex flex-col justify-center items-center pt-10" @click="emailLogin">
-					<cl-text color="#707070" :pt="{ className: 'text-sm' }">邮箱登录</cl-text>
-					<cl-text color="info" :pt="{ className: 'text-xs' }">（原深蓝记者社区用户登录）</cl-text>
-				</view>
-			</view>
-
-			<!-- 第三方登录 -->
-			<view class="flex flex-col justify-center items-center pb-20">
-				<cl-text color="info" :pt="{ className: 'text-xs' }">第三方登录</cl-text>
-				<view class="flex flex-row justify-between mt-5">
-					<view class="login-item" :class="{
-						'is-dark': isDark
-					}" @tap="refs.callMethod('loginWx', 'login')">
-						<cl-icon name="wechat-fill" :size="44" color="#00b223"></cl-icon>
-					</view>
-					<view class="login-item mx-4">
-						<cl-image width="44rpx" height="44rpx" mode="aspectFit"
-							src="/static/image/weibo.png"></cl-image>
-					</view>
-					<view v-if="isAppIOS()" class="login-item" :class="{ 'is-dark': isDark }">
-						<cl-icon name="apple-fill" :size="44"></cl-icon>
-					</view>
+				<view class="flex flex-col justify-center items-center pt-10">
+					<cl-text color="#707070" :pt="{ className: 'text-sm' }">手机登录</cl-text>
 				</view>
 			</view>
 		</view>
@@ -74,18 +50,17 @@
 	import { provide, reactive, ref } from "vue";
 	import type { LoginForm } from "./types";
 	import { useUi } from "@/uni_modules/cool-ui";
-	import LoginPhone from "./components/login/phone.uvue";
-	import LoginWx from "./components/login/wx.uvue";
-
+	import loginEmail from "./components/login/email.uvue";
 	const { user } = useStore();
 	const ui = useUi();
 	const refs = useRefs();
 
 	// 表单
 	const form = reactive<LoginForm>({
-		phone: "18127769478",
+		phone:"",
 		smsCode: "123456",
-		email:''
+		email: "1758958047@qq.com",
+		
 	});
 
 	// 是否同意
@@ -96,9 +71,7 @@
 		user.setToken(parse<Token>(res)!);
 		router.nextLogin();
 	}
-	const emailLogin = () => {
-		router.to("/pages/user/email")
-	}
+
 	// 跳转文档
 	function toDoc(name : string, path : string) { }
 
@@ -119,14 +92,4 @@
 </script>
 
 <style lang="scss" scoped>
-	.login-item {
-		width: 88rpx;
-		height: 88rpx;
-		background-color: #F9F9FB;
-		border-radius: 88rpx;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
 </style>

@@ -2,9 +2,7 @@
 	<cl-page>
 		<view class="p-3">
 			<view class="flex flex-col items-center justify-center py-10">
-				<view class="p-3 bg-primary-500 rounded-xl">
-					<cl-image src="/static/logo.png" :height="80" :width="80"></cl-image>
-				</view>
+				<cl-image src="/static/logo2.png" :height="140" :width="140" :pt="{className:'rounded-2xl'}"></cl-image>
 				<cl-text :pt="{ className: 'mt-3 mb-1' }">{{ config.name }}</cl-text>
 				<cl-text
 					color="info"
@@ -15,13 +13,20 @@
 				>
 			</view>
 
-			<cl-list>
-				<cl-list-item
-					:label="t('访问官网')"
-					arrow
-					hoverable
-					@tap="toWebSite"
-				></cl-list-item>
+			<cl-list :pt="{className:'border-bottom'}">
+				<cl-list-item :label="t('客服电话')" hoverable  justify="end">
+					<cl-text>028-52312131</cl-text>
+				</cl-list-item>
+			</cl-list>
+			<cl-list :pt="{className:'border-bottom'}">
+				<cl-list-item :label="t('客服微信')" hoverable  justify="end" >
+					<cl-text>8086843622</cl-text>
+				</cl-list-item>
+			</cl-list>
+			<cl-list :pt="{className:'border-bottom'}">
+				<cl-list-item :label="t('举报不良信息邮箱')" hoverable justify="end">
+					<cl-text>23231580@qq.com</cl-text>
+				</cl-list-item>
 			</cl-list>
 		</view>
 	</cl-page>
