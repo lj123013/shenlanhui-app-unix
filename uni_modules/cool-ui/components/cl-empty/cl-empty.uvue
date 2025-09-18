@@ -30,16 +30,13 @@
 			v-if="text"
 			>{{ text }}</cl-text
 		>
-		<view v-if="showBtn">
-			<cl-button type="primary" size="large" :pt="{className:'!rounded-full'}">添加关键字</cl-button>
-			<cl-text color="#C5C5C5" :pt="{className:'text-xs mt-2'}">最多可设置三个关键字</cl-text>
-		</view>
+		
 	</view>
 </template>
 
 <script lang="ts" setup>
 import { t } from "@/locale";
-import { isDark, parseClass, parsePt, parseRpx } from "@/cool";
+import { isDark, parseClass, parsePt, parseRpx,router } from "@/cool";
 import { computed } from "vue";
 
 // 组件属性定义
@@ -62,7 +59,7 @@ const props = defineProps({
 	// 图标尺寸
 	iconSize: {
 		type: [Number, String],
-		default: 300
+		default: 120
 	},
 	// 是否显示图标
 	showIcon: {
@@ -74,10 +71,6 @@ const props = defineProps({
 		type: Boolean,
 		default: true
 	},
-	showBtn:{
-		type: Boolean,
-		default: false
-	}
 });
 
 // 透传样式类型定义

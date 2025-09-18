@@ -15,7 +15,7 @@
 		</cl-topbar>
 		<cl-tabs v-model="current" class="fontBold" :showLine="false" :list="tableList" :color="isColor ? '#2854F2' : ''"
 			un-color="#6a6a6a"></cl-tabs>
-		<cl-list-view
+		<!-- <cl-list-view
 			ref="listViewRef"
 			:data="listView"
 			:virtual="false"
@@ -37,9 +37,15 @@
 					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
 				</view>
 			</template>
-		</cl-list-view>
+		</cl-list-view> -->
 		<!-- 没有数据时显示没有关键字 -->
-		<!-- <cl-empty  text="" iconSize="300rpx" :showBtn='true'></cl-empty> -->
+
+	<view class="flex flex-col items-center justify-center w-full flex-1">
+		<cl-image width="300rpx"  height="300rpx" src="/static/empty/comm.png"></cl-image>
+		<cl-button type="primary" :rounded="true" @tap="router.to('/pages/radar/addKeyword')">添加关键字</cl-button>
+		<cl-text color="#C5C5C5" :pt="{className:'text-xs mt-2'}">最多可设置三个关键字</cl-text>
+	</view>
+
 		<!-- 自定义底部导航栏 -->
 		<tabbar></tabbar>
 	</cl-page>

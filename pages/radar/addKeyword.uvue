@@ -1,0 +1,220 @@
+<template>
+	<cl-page>
+		<cl-topbar fixed safe-area-top :pt="{className:'pr-3'}">
+			<cl-text color="black">添加关键字</cl-text>
+			<template #append>
+				<cl-icon name="guanyushenlanhui" color="black" :size="30"></cl-icon>
+			</template>
+		</cl-topbar>
+		<view class="px-5">
+			<view class="prompt flex flex-row items-center p-2 mt-2" @click="addKeywordvisible=!addKeywordvisible">
+				<cl-icon name="tishi1" color="#E4773D" size="20rpx"></cl-icon>
+				<cl-text color="#E4773D" :pt="{ className: 'text-xs ml-1 ' }">你还可以设置三个关键字</cl-text>
+			</view>
+			<cl-form :pt="{
+				className: 'p-2 pb-0'
+			}" v-model="formData" ref="formRef" label-position="top">
+				<cl-form-item :label="t('关键字')" :pt="{className:'border-bottom'}">
+					<cl-input v-model="formData.keyword" :placeholder="t('请输入关键字')" placeholderClass="placeholderClass"
+						:border="false" clearable :pt="{className:'!p-0'}"></cl-input>
+				</cl-form-item>
+				<cl-form-item :label="t('行业(选填)')">
+					<view class="flex flex-row items-center justify-between border-bottom pb-2"
+						@click="visible=!visible">
+						<view>
+							<cl-text v-if="formData.contacts.length > 0">{{ formData.contacts.join(', ') }}</cl-text>
+							<cl-text v-else color="#a3a3a3" size="16px">请选择行业</cl-text>
+						</view>
+						<cl-icon name="arrow-down-s-line" color="#a3a3a3"></cl-icon>
+					</view>
+
+				</cl-form-item>
+				<cl-form-item :label="t('监控范围')">
+					<view class="flex flex-row items-center justify-between border-bottom pb-2"
+						@click="monitorvisible=!monitorvisible">
+						<view>
+							<cl-text v-if="formData.monitor">{{ formData.monitor }}</cl-text>
+							<cl-text v-else color="#a3a3a3" size="16px">请选择监控范围</cl-text>
+						</view>
+						<cl-icon name="arrow-down-s-line" color="#a3a3a3"></cl-icon>
+					</view>
+				</cl-form-item>
+				<cl-form-item :label="t('是否推送')">
+					<view class="flex flex-row items-center">
+						<cl-radio v-model="formData.isPublic" value="true" :pt="{icon:{
+							size:30
+						},
+						label:{
+							className:'text-lg text-black'
+						},
+						className:'mr-3'
+						}">是</cl-radio>
+						<cl-radio v-model="formData.isPublic" value="false" :pt="{icon:{
+							size:30
+						},
+						label:{
+							className:'text-lg text-black'
+						}
+						}">否</cl-radio>
+					</view>
+				</cl-form-item>
+
+			</cl-form>
+		</view>
+		<!-- 添加关键字提示 -->
+		<cl-popup v-model="addKeywordvisible" title="" direction="center" size="80%">
+			<view class="p-4">
+				<cl-text color="black" :pt="{className:'text-base text-center'}">可以根据以下维度进行添加最多三个关键词</cl-text>
+				<cl-text color="primary" :pt="{className:'text-base py-3'}">公司维度</cl-text>
+				<cl-text color="black" size="14px">支持：公司全称、简称、股票代码（A股/港股/美股）、高管姓名
+					扩展：自动识别“别名/英文名”</cl-text>
+				<cl-text color="primary" :pt="{className:'text-base py-3'}">行业维度</cl-text>
+				<cl-text color="black" size="14px">可以选择银行、互联网、新能源等行业标签</cl-text>
+				<cl-text color="primary" :pt="{className:'text-base py-3'}">主题维度</cl-text>
+				<cl-text color="black" size="14px">支持自定义，如“IPO”“减持”“财务造假”“反垄断”等</cl-text>
+				<cl-text color="primary" :pt="{className:'text-base py-3'}">组合维度</cl-text>
+				<cl-text color="black" size="14px">用户可组合关键词：
+					例：“腾讯 + 游戏” / “美联储 + 加息”</cl-text>
+			</view>
+		</cl-popup>
+		<!-- 选择行业 -->
+		<cl-popup v-model="visible" title="请选择行业">
+			<view class="p-4">
+				<view class="flex flex-row flex-wrap">
+					<view class="mr-[34rpx] mb-[34rpx]" v-for="(item,index) in concartList" :key="index"
+						@click="choiceItem(item,index)">
+						<view class="item rounded-[10rpx] p-2 flex flex-col items-center justify-center"  :class="{ 'bg-primary-500': item.selected, 'bg-neutral-100': !item.selected }">
+							<cl-text :pt="{className:item!.selected?'text-white' :  'text-gray-800'}">{{ item.name }}</cl-text>
+						</view>
+					</view>
+				</view>
+				<view class="flex flex-row items-center justify-center">
+					<cl-button type="info" :pt="{className:'mr-6'}">重置选择</cl-button>
+					<cl-button type="primary">确认选择</cl-button>
+				</view>
+			</view>
+		</cl-popup>
+		<cl-popup v-model="monitorvisible" title="请选择监控范围">
+			<view class="p-4">
+				<cl-row :gutter="12">
+					<cl-col :span="6">
+						<view class='item'>
+							<cl-text>公告</cl-text>
+						</view>
+					</cl-col>
+					<cl-col :span="6">
+						<view class='item'>
+							<cl-text>快讯</cl-text>
+						</view>
+					</cl-col>
+					<cl-col :span="6">
+						<view class='item'>
+							<cl-text>资讯</cl-text>
+						</view>
+					</cl-col>
+					<cl-col :span="6">
+						<view class='item'>
+							<cl-text>全部</cl-text>
+						</view>
+					</cl-col>
+				</cl-row>
+			</view>
+		</cl-popup>
+	</cl-page>
+</template>
+
+<script setup>
+	import {
+		useCascader,
+		useForm,
+		useUi
+	} from "@/uni_modules/cool-ui";
+	import { isArray,isNull } from "@/cool";
+	import pca from "@/data/pca.json";
+	import { t } from "@/locale";
+	const ui = useUi();
+	const { formRef, validate, clearValidate } = useForm();
+	const visible = ref(true)//选择行业弹窗
+	const addKeywordvisible = ref(false)
+	const monitorvisible = ref(false)
+	type instryItem={
+		id:number
+		name:string
+		selected:boolean
+	}
+	const concartList = ref<instryItem[]>([
+		{ id: 1, name: '政府机构', selected: false },
+		{ id: 2, name: '智能汽车', selected: false },
+		{ id: 3, name: '机器人', selected: false },
+		{ id: 4, name: '能源化工与环保', selected: false },
+		{ id: 5, name: '教育', selected: false },
+		{ id: 6, name: '体育', selected: false },
+		{ id: 7, name: '互联网与电商', selected: false },
+		{ id: 8, name: 'AI大模型', selected: false },
+		{ id: 9, name: '消费电子', selected: false },
+		{ id: 10, name: '娱乐与艺术', selected: false },
+		{ id: 11, name: '食品饮料', selected: false },
+		{ id: 12, name: '健康与医疗制药', selected: false },
+		{ id: 13, name: '时尚', selected: false },
+		{ id: 14, name: '会展', selected: false },
+		{ id: 15, name: '零售业', selected: false },
+		{ id: 16, name: '环境生态', selected: false },
+		{ id: 17, name: '农业', selected: false },
+		{ id: 18, name: '制造业', selected: false },
+		{ id: 19, name: '旅游与酒店', selected: false },
+		{ id: 20, name: '房地产建材与家居', selected: false },
+		{ id: 21, name: '上市公司', selected: false },
+		{ id: 22, name: '基金', selected: false },
+		{ id: 23, name: '银行', selected: false },
+		{ id: 24, name: '保险', selected: false },
+		{ id: 25, name: '券商', selected: false },
+		{ id: 26, name: '财经新闻', selected: false },
+		{ id: 27, name: '市场动态', selected: false },
+		{ id: 28, name: '深度分析', selected: false },
+		{ id: 29, name: '投资策略', selected: false },
+		{ id: 30, name: '行业研究', selected: false },
+		{ id: 31, name: '排序', selected: false },
+		{ id: 32, name: '最新发布', selected: false },
+		{ id: 33, name: '热门文章', selected: false },
+		{ id: 34, name: '发布时间', selected: false },
+	]);
+	// 自定义表单数据类型
+	type FormData = {
+		keyword : string;//关键字
+		contacts : Array<string>;//行业
+		monitor ?: string;//监控范围
+		isPublic : boolean;//是否推送
+	};
+	// 表单数据
+	const formData = ref({
+		keyword: "",
+		contacts: [],
+		monitor: "",
+		isPublic: false,
+	} as FormData);
+	// 处理行业选择的多选逻辑
+	const choiceItem = (item : instryItem,index:number) => {
+		
+		if (isArray(concartList.value)){
+			concartList.value[index].selected = !concartList.value[index].selected
+			concartList.value = [...concartList.value]//鸿蒙系统需要显示触发
+			}
+	};
+</script>
+
+<style>
+	.prompt {
+		background-color: #FEF8F5;
+		border: 2rpx solid #FBEAE2;
+		display: inline-flex;
+		border-radius: 20rpx;
+	}
+
+	.placeholderClass {
+		font-size: 18px !important;
+	}
+	.active {
+	  background-color: #007AFF; /* 激活时的背景色 */
+	  color: #FFFFFF; /* 激活时的文字颜色 */
+	}
+</style>

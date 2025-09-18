@@ -34,6 +34,7 @@
 			}
 		}
 
+
 	],
 	"subPackages": [{
 			"root": "pages/homePage",
@@ -89,47 +90,44 @@
 		{
 			"root": "pages/set",
 			"pages": [{
-				"path": "index",
-				"style": {
-					"navigationBarTitleText": "设置"
-				}
-			},
-			{
-				"path": "about",
-				"style": {
-					"navigationBarTitleText": "关于深蓝汇"
-				}
-			},
-			{
-				"path" : "bindaccount",
-				"style" : 
+					"path": "index",
+					"style": {
+						"navigationBarTitleText": "设置"
+					}
+				},
 				{
-					"navigationBarTitleText" : "绑定账号"
-				}
-			},
-			{
-				"path" : "privacy",
-				"style" : 
+					"path": "about",
+					"style": {
+						"navigationBarTitleText": "关于深蓝汇"
+					}
+				},
 				{
-					"navigationBarTitleText" : "隐私政策"
-				}
-			},
-			{
-				"path" : "agreement",
-				"style" : 
+					"path": "bindaccount",
+					"style": {
+						"navigationBarTitleText": "绑定账号"
+					}
+				},
 				{
-					"navigationBarTitleText" : "用户协议"
-				}
-			},
-			{
-				"path" : "deleteAccount",
-				"style" : 
+					"path": "privacy",
+					"style": {
+						"navigationBarTitleText": "隐私政策"
+					}
+				},
 				{
-					"navigationBarTitleText" : "注销账号",
-					"titleNView": "custom",
-					"navigationStyle": "custom"
+					"path": "agreement",
+					"style": {
+						"navigationBarTitleText": "用户协议"
+					}
+				},
+				{
+					"path": "deleteAccount",
+					"style": {
+						"navigationBarTitleText": "注销账号",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
 				}
-			}]
+			]
 		},
 		{
 			"root": "pages/user",
@@ -229,6 +227,16 @@
 					}
 				}
 			]
+		}, {
+			"root": "pages/radar",
+			"pages": [{
+				"path": "addKeyword",
+				"style": {
+					"navigationBarTitleText": "添加关键字",
+					"titleNView": "custom",
+					"navigationStyle": "custom"
+				}
+			}]
 		},
 		{
 			"root": "pages/articlePage",

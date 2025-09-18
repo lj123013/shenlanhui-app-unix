@@ -51,7 +51,7 @@ export type Ctx = {
 // 初始化 ctx 对象，不可修改！！
 export const ctx = parse<Ctx>({})!;
 
-console.log(ctx);
+console.log(ctx,1111);
 
 // PAGES 用于存储所有页面的路径及样式信息
 export let PAGES: Page[] = [...ctx.pages];
