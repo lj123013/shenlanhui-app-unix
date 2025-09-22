@@ -5,10 +5,11 @@ import { storage, last, isNull, isEmpty, get, isFunction, toArray, map, debounce
 // 路由信息类型
 type RouteInfo = {
 	path: string;
+	meta: UTSJSONObject;
 };
 
 // 跳转前钩子类型
-type BeforeEach = (to: RouteInfo, next: () => void) => void;
+type BeforeEach = (to: RouteInfo, from: PageInstance, next: () => void) => void;
 // 登录后回调类型
 type AfterLogin = () => void;
 
@@ -53,7 +54,9 @@ export class Router {
 				path = "/" + path;
 			}
 			// 获取页面样式
-			const style = PAGES.find((e) => e.path == path)?.style;
+			const page = PAGES.find((e) => e.path == path);
+			const style = page?.style ?? {};
+			const meta = page?.meta ?? {};
 			// 获取页面暴露的方法
 			// @ts-ignore
 			let exposed = e.vm as any;
@@ -69,6 +72,7 @@ export class Router {
 				// @ts-ignore
 				exposed,
 				style,
+				meta,
 				query,
 				isCustomNavbar: style?.navigationStyle == "custom"
 			} as PageInstance;
@@ -173,10 +177,12 @@ export class Router {
 
 		// 跳转前钩子处理
 		if (isFunction(this._events["beforeEach"])) {
+			const meta = PAGES.find((e) => e.path == path)?.meta;
+			const from = this.getPages().slice(-1)[0];
+			const to: RouteInfo = { path, meta: meta ?? {} };
 			(this._events["beforeEach"] as BeforeEach)(
-				{
-					path
-				},
+				to,
+				from,
 				next
 			);
 		} else {
@@ -193,10 +199,28 @@ export class Router {
 
 	// 返回上一页，若为首页则回首页
 	back(options: BackOptions | null = null) {
-		if (this.isFirstPage()) {
-			this.home();
+		let path = ''
+		const next = ()=>{
+			if (this.isFirstPage()) {
+				this.home();
+				path = this.defaultPath("home")
+			} else {
+				path = this.getPages().slice(-2)[0].path;
+				uni.navigateBack({ ...(options ?? {}) });
+			}
+		}
+		// 跳转前钩子处理
+		if (isFunction(this._events["beforeEach"])) {
+			const meta = PAGES.find((e) => e.path == path)?.meta;
+			const from = this.getPages().slice(-1)[0];
+			const to: RouteInfo = { path, meta: meta ?? {} };
+			(this._events["beforeEach"] as BeforeEach)(
+				to,
+				from,
+				next
+			);
 		} else {
-			uni.navigateBack({ ...(options ?? {}) });
+			next();
 		}
 	}
 

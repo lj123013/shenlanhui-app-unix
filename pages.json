@@ -27,30 +27,45 @@
 					"path": "index",
 					"style": {
 						"navigationBarTitleText": "设置"
+					},
+					"meta":{
+						"isAuth": true
 					}
 				},
 				{
 					"path": "general",
 					"style": {
 						"navigationBarTitleText": "通用设置"
+					},
+					"meta":{
+						"isAuth": true
 					}
 				},
 				{
 					"path": "notice",
 					"style": {
 						"navigationBarTitleText": "通知设置"
+					},
+					"meta":{
+						"isAuth": true
 					}
 				},
 				{
 					"path": "about",
 					"style": {
 						"navigationBarTitleText": ""
+					},
+					"meta":{
+						"isAuth": true
 					}
 				},
 				{
 					"path": "cs",
 					"style": {
 						"navigationBarTitleText": "联系客服"
+					},
+					"meta":{
+						"isAuth": true
 					}
 				}
 			]
@@ -62,18 +77,27 @@
 					"path": "edit",
 					"style": {
 						"navigationBarTitleText": "编辑资料"
+					},
+					"meta":{
+						"isAuth": true
 					}
 				},
 				{
 					"path": "edit-name",
 					"style": {
 						"navigationStyle": "custom"
+					},
+					"meta":{
+						"isAuth": true
 					}
 				},
 				{
 					"path": "edit-description",
 					"style": {
 						"navigationStyle": "custom"
+					},
+					"meta":{
+						"isAuth": true
 					}
 				},
 				{
