@@ -1,0 +1,50 @@
+<template>
+	<cl-page>
+		<view class='flex felx-col justify-center items-center pt-[180rpx]'>
+		<view   class='flex felx-col justify-center items-center'>
+			<view class="w-[160rpx] h-[160rpx] rounded-full flex felx-col justify-center items-center"
+				style="background:#49D584">
+				<cl-icon name="a-lujing120" size="30px" color='white' width="90rpx"></cl-icon>
+			</view>
+			<cl-text color="black" :pt="{className:'text-xl mt-6'}">提交成功</cl-text>
+			<cl-text color="#8D8D8D" :pt="{className:'text-base my-1'}">管理员将在12小时内审核</cl-text>
+			<cl-text color="#8D8D8D" :pt="{className:'text-base'}">请耐心等待，谢谢</cl-text>
+		</view>
+		<view   class='flex felx-col justify-center items-center'>
+			<view class="w-[160rpx] h-[160rpx] rounded-full flex felx-col justify-center items-center"
+				style="background:#EE0018">
+				<cl-icon name="cuo" size="30px" color='white' ></cl-icon>
+			</view>
+			<cl-text color="black" :pt="{className:'text-xl mt-6 mb-3'}">认证不通过</cl-text>
+			<view class="autherror rounded-xl  p-3 w-[500rpx]" style="background:#FBFBFB">
+				<cl-text color="black" :pt="{className:'text-sm my-1'}">1.你填写的工作单位不存在</cl-text>
+				<cl-text color="black" :pt="{className:'text-sm'}">2.你的账号存在异常</cl-text>
+			</view>
+		</view>
+			<cl-button type="primary" rounded :pt="{className:'my-5 w-[300rpx] h-[80rpx]'}">查看详情</cl-button>
+			<cl-button type="primary" rounded :pt="{className:'my-5 w-[300rpx] h-[80rpx]'}">重新认证</cl-button>
+			<cl-button type="light" rounded :pt="{className:'w-[300rpx] h-[80rpx]'}" color="#8D8D8D"
+				@tap="router.to('/pages/index/home')">继续逛逛</cl-button>
+				<cl-button type="light" rounded :pt="{className:'w-[300rpx] h-[80rpx]'}" color="#8D8D8D"
+					@tap="router.to('/pages/index/home')">返回</cl-button>
+		</view>
+	</cl-page>
+</template>
+
+<script setup>
+	import { router,isNull } from "@/cool";
+	const title=ref('')
+	onMounted(() => {
+		const params = router.params();
+		if(!isNull(params)){
+			title.value=params.title as string
+		}
+		console.log('接收到的参数:', params);
+	})
+</script>
+
+<style lang="scss">
+.autherror{
+	border:2rpx solid #ccc;
+}
+</style>

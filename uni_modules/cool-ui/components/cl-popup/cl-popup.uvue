@@ -608,9 +608,21 @@ defineExpose({
 		& > .cl-popup {
 			@apply left-0 bottom-0;
 			transform: translateY(100%);
+			
+			/* 修改底部弹出层样式，确保遮住底部导航栏 */
+			/* 移除 bottom-0，使用 bottom: 0 并添加 !important */
+			bottom: 0 !important;
+			
+			/* 添加额外的样式确保覆盖整个屏幕 */
+			height: 100vh !important;
+			width: 100vw !important;
+			max-height: 100vh !important;
 
 			.cl-popup__inner {
 				@apply rounded-t-2xl;
+				/* 确保内部内容也覆盖整个屏幕 */
+				height: 100vh !important;
+				max-height: 100vh !important;
 			}
 
 			&.is-open {

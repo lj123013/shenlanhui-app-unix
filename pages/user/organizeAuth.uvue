@@ -1,0 +1,210 @@
+<template>
+	<cl-page>
+		<view class="px-5">
+			<cl-form :pt="{
+			className: 'p-2 pb-0'
+		}" :model="formData" ref="formRef" :rules="rules" :disabled="saving" label-position="top">
+				<cl-form-item :label="t('组织认证类别')" prop="type" required>
+					<cl-select v-model="formData.type" :options="genderOptions"></cl-select>
+				</cl-form-item>
+				<cl-form-item :label="t('组织全称')" prop="full_name" required>
+					<cl-input v-model="formData.full_name" :placeholder="t('请输入组织全称')" clearable></cl-input>
+				</cl-form-item>
+				<cl-form-item :label="t('组织简称')" prop="abbreviation_name">
+					<cl-input v-model="formData.abbreviation_name" :placeholder="t('请输入组织简称')"></cl-input>
+				</cl-form-item>
+				<cl-form-item :label="t('账号管理员姓名')" prop="manage_name" required>
+					<cl-input v-model="formData.manage_name" :placeholder="t('请输入账号管理员姓名')" clearable></cl-input>
+				</cl-form-item>
+				<cl-form-item :label="t('账号管理员职位')" prop="manage_job" required>
+					<cl-input v-model="formData.manage_job" :placeholder="t('请输入账号管理员职位')" clearable></cl-input>
+				</cl-form-item>
+				<cl-form-item :label="t('常驻城市')" prop="city">
+					<cl-input v-model="formData.city" :placeholder="t('请输入常驻城市')"></cl-input>
+				</cl-form-item>
+				<cl-form-item :label="t('擅长领域（可多选）')" prop="city">
+					<view class='flex flex-row justify-between items-center area' @click="areasvisible=!areasvisible">
+						<cl-text color="#a3a3a3">请选择擅长领域</cl-text>
+						<cl-icon name="arrow-down-s-line" color="#a3a3a3"></cl-icon>
+					</view>
+				</cl-form-item>
+				<cl-form-item :label="t('组织简介')" prop="description" required>
+					<cl-textarea v-model="formData.description" :showWordLimit="false"
+						:placeholder="t('请输入组织简介')"></cl-textarea>
+				</cl-form-item>
+				<cl-form-item :label="t('营业执照或组织机构')" prop="organ_license" required>
+					<cl-upload v-model="formData.organ_license" icon="a-zu272" iconWidth="80rpx"  text="上传营业执照或组织机构" width="100%" height="150px"></cl-upload>
+				</cl-form-item>
+				<cl-form-item :label="t('单位授权证明')" prop="organ_author" required>
+					<cl-upload v-model="formData.organ_author" icon="a-zu272" iconWidth="80rpx" text="单位授权证明" width="100%" height="150px"></cl-upload>
+				</cl-form-item>
+				
+				<cl-form-item :label="t('账号管理员身份证')" prop="manage_idcard" required>
+					<cl-upload v-model="formData.manage_idcard" icon="a-zu272" iconWidth="80rpx" text="账号管理员身份证" width="100%" height="150px"></cl-upload>
+				</cl-form-item>
+			</cl-form>
+		</view>
+		<cl-footer :pt="{className:'pb-10'}">
+			<cl-button type="primary" :loading="saving" rounded :pt="{ className: 'flex-1 py-4' }"
+				@click="submit">{{ t("提交") }}</cl-button>
+		</cl-footer>
+		<cl-popup v-model="areasvisible" title="请选择擅长领域">
+			<view class="p-4">
+				<!-- <view class="flex flex-row flex-wrap">
+					<view class="mr-[34rpx] mb-[34rpx]" v-for="(item,index) in concartList" :key="index">
+						<view class="item rounded-[10rpx] p-2 flex flex-col items-center justify-center">
+							<cl-text>{{ item.name }}</cl-text>
+						</view>
+					</view>
+				</view> -->
+				<view class="flex flex-row p-1">
+					<cl-button
+						size="large"
+						text
+						border
+						type="light"
+						:pt="{
+							className: 'flex-1 !rounded-xl h-[80rpx]'
+						}"
+						@tap="close"
+						>取消选择</cl-button
+					>
+					<cl-button
+						size="large"
+						:pt="{
+							className: 'flex-1 !rounded-xl h-[80rpx]'
+						}"
+						@tap="confirm"
+						>确认选择</cl-button
+					>
+				</view>
+			</view>
+		</cl-popup>
+	</cl-page>
+</template>
+
+<script setup>
+	import { ref, type Ref } from "vue";
+	import {
+		useCascader,
+		useForm,
+		useUi,
+		type ClFormRule,
+		type ClSelectOption
+	} from "@/uni_modules/cool-ui";
+	import pca from "@/data/pca.json";
+	import { t } from "@/locale";
+	import { dayUts } from "@/cool";
+	const ui = useUi();
+	const { formRef, validate, clearValidate } = useForm();
+	const areasvisible = ref(false)
+	interface arearOption { 
+		label: string;
+		title: string ;
+	}	
+
+	const concartList=ref<arearOption[]>([])
+	const genderOptions = [
+		{
+			label: t("企业认证"),
+			value: 0
+		},
+		{
+			label: t("机构认证"),
+			value: 1
+		},
+		{
+			label: t("媒体认证"),
+			value: 2
+		}
+	] as ClSelectOption[];
+
+	// 自定义表单数据类型
+	type FormData = {
+		type : number;
+		full_name : string;
+		abbreviation_name : string;
+		city : string;
+		description : string;
+		organ_license : string;
+		organ_author : string;
+		manage_idcard : string;
+		manage_name : string;
+		manage_job : string;
+	};
+
+	// 表单数据
+	const formData = ref<FormData>({
+		type: 0,
+		full_name: '',
+		abbreviation_name: "",
+		city: "",
+		description: "",
+		organ_license: "",
+		organ_author: "",
+		manage_idcard: "",
+		manage_name: "",
+		manage_job: "",
+	}) as Ref<FormData>;
+
+	// 表单验证规则
+	const rules = new Map<string, ClFormRule[]>([
+		["type", [ // 每个键值对用 [key, value] 包裹
+			{ required: true, message: t("认证类别不能为空") }
+		]], // 多个键值对之间用逗号分隔
+		["full_name", [
+			{ required: true, message: t("组织全称不能为空") }
+		]],
+		["organ_license", [
+			{ required: true, message: t("营业执照不能为空") }
+		]],
+		["organ_author", [
+			{ required: true, message: t("单位授权证明不能为空") }
+		]],
+		["manage_name", [
+			{ required: true, message: t("账号管理员姓名不能为空") }
+		]],
+		["manage_job", [
+			{ required: true, message: t("账号管理员职位不能为空") }
+		]],
+		["manage_idcard", [
+			{ required: true, message: t("账号管理员身份证不能为空") }
+		]],
+		["description", [ // 补充：form 中 "description" 字段必填，需添加验证规则
+			{ required: true, message: t("组织简介不能为空") }
+		]]
+	]);
+	// 是否保存中
+	const saving = ref(false);
+	const close=()=>{}
+	const confirm=()=>{}
+	// 提交表单
+	function submit() {
+		validate((valid, errors) => {
+			if (valid) {
+				saving.value = true;
+				setTimeout(() => {
+					ui.showToast({
+						message: t("提交成功"),
+						icon: "check-line"
+					});
+
+					saving.value = false;
+					// reset();
+				}, 2000);
+			} else {
+				ui.showToast({
+					message: errors[0].message
+				});
+			}
+		});
+	}
+</script>
+
+<style lang="scss">
+	.area {
+		border: 2rpx solid #e5e5e5;
+		padding: 14rpx 16rpx;
+		border-radius: 14rpx
+	}
+</style>

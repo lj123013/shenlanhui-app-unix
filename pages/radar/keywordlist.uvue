@@ -1,0 +1,51 @@
+<template>
+	<cl-page>
+		<cl-topbar safe-area-top title="关键字管理" background-color="transparent"> </cl-topbar>
+		<cl-list>
+			<cl-list-item v-for="item in keywordlist" justify="start" @click="toPath(item)">
+				<view class="item">
+					<cl-text color="#707070">{{item?.title}}</cl-text>
+				</view>
+			</cl-list-item>
+		</cl-list>
+	</cl-page>
+
+
+</template>
+
+<script setup>
+	import {router } from "@/cool";
+	type keywordItem={
+		title:string
+		id:number
+	}
+	const keywordlist = ref<keywordItem[]>([
+		{
+			title: "新希望",
+			id:1
+		},
+		{
+			title: "腾讯+游戏",
+			id:2
+		}
+	])
+	const toPath=(val:keywordItem)=>{
+		router.push({
+			path: '/pages/radar/addKeyword',
+			params: {
+				articleId: val.id,
+				title: '编辑关键字',
+			}
+		});
+	}
+</script>
+
+<style>
+.item {
+		@apply w-full py-3 pl-5 bg-surface-100 rounded-md flex flex-col justify-center;
+
+		.text {
+			@apply text-lg;
+		}
+	}
+</style>

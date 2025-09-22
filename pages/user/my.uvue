@@ -68,7 +68,8 @@
 						</view>
 
 						<view class="isRenzheng rounded-full py-1 px-3">
-							<cl-text color="#212227" :pt="{ className: 'text-xs' }">已认证</cl-text>
+							<cl-text color="#212227" v-if="UserInfo?.is_auth == 1" :pt="{ className: 'text-xs' }">已认证</cl-text>
+							<cl-text color="#212227" v-else :pt="{ className: 'text-xs'}" @tap="router.to('/pages/user/verify')">开始认证</cl-text>
 						</view>
 					</view>
 
@@ -200,7 +201,7 @@
 	const UserInfo = ref<UserInfoType>({
 		username: 'steven',
 		avatarUrl: '../../static/image/head-img.png',
-		is_auth: 2,
+		is_auth: 0,
 		isFollow: false
 	});
 	const login = () => {

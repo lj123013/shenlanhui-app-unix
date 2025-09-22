@@ -30,7 +30,9 @@
 		{
 			"path": "pages/index/socialcircle",
 			"style": {
-				"navigationBarTitleText": "圈子"
+				"navigationBarTitleText": "圈子",
+				"navigationBarTitleText": "资讯",
+				"navigationStyle": "custom"
 			}
 		}
 
@@ -199,7 +201,32 @@
 					"style": {
 						"navigationBarTitleText": "意见反馈"
 					}
+				},
+				{
+					"path": "verify",
+					"style": {
+						"navigationBarTitleText": "认证类型"
+					}
+				},
+				{
+					"path": "organizeAuth",
+					"style": {
+						"navigationBarTitleText": "组织认证"
+					}
+				},
+				{
+					"path": "personalAuth",
+					"style": {
+						"navigationBarTitleText": "个人认证"
+					}
+				},
+				{
+					"path": "authResult",
+					"style": {
+						"navigationBarTitleText": "认证结果"
+					}
 				}
+				
 
 			]
 		},
@@ -236,7 +263,16 @@
 					"titleNView": "custom",
 					"navigationStyle": "custom"
 				}
-			}]
+			},
+			{
+				"path": "keywordlist",
+				"style": {
+					"navigationBarTitleText": "关键字管理",
+					"titleNView": "custom",
+					"navigationStyle": "custom"
+				}
+			}
+		]
 		},
 		{
 			"root": "pages/articlePage",

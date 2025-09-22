@@ -8,9 +8,9 @@
 				</view>
 			</template>
 			<cl-text color="black" :pt="{ className: '!text-xl fontBold' }">雷达</cl-text>
-			<template #append>
+			<template #append >
 				<cl-icon name="faxian" color="black" :size="30"></cl-icon>
-				<cl-text color="black" :pt="{ className: '!text-sm' }">关键字</cl-text>
+				<cl-text color="black" :pt="{ className: '!text-sm' }" @tap="router.to('/pages/radar/keywordlist')">关键字</cl-text>
 			</template>
 		</cl-topbar>
 		<cl-tabs v-model="current" class="fontBold" :showLine="false" :list="tableList" :color="isColor ? '#2854F2' : ''"
@@ -42,7 +42,7 @@
 
 	<view class="flex flex-col items-center justify-center w-full flex-1">
 		<cl-image width="300rpx"  height="300rpx" src="/static/empty/comm.png"></cl-image>
-		<cl-button type="primary" :rounded="true" @tap="router.to('/pages/radar/addKeyword')">添加关键字</cl-button>
+		<cl-button type="primary" :rounded="true" @click="toPathadd">添加关键字</cl-button>
 		<cl-text color="#C5C5C5" :pt="{className:'text-xs mt-2'}">最多可设置三个关键字</cl-text>
 	</view>
 
@@ -114,6 +114,14 @@
 	async function onPull() {
 		await refresh({ page: 1 });
 		listViewRef.value!.stopRefresh();
+	}
+	const toPathadd=()=>{
+		router.push({
+			path: '/pages/radar/addKeyword',
+			params: {
+				title: '添加关键字',
+			}
+		})
 	}
 	
 	onReady(() => {

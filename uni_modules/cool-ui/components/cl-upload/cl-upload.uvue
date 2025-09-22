@@ -56,6 +56,7 @@
 		>
 			<cl-icon
 				:name="icon"
+				:width="iconWidth"
 				:pt="{
 					className: parseClass([
 						[isDark, 'text-white', 'text-surface-400'],
@@ -105,6 +106,10 @@ const props = defineProps({
 	icon: {
 		type: String,
 		default: "camera-fill"
+	},
+	iconWidth:{
+		type: String,
+		default: "50rpx"
 	},
 	// 上传按钮显示的文本
 	text: {

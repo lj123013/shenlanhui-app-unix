@@ -1,12 +1,13 @@
 <template>
 	<cl-page>
-		<cl-topbar title="资讯" fixed :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
+		<cl-topbar fixed :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
 			<template #prepend>
 				<view class="bg-primary-500 rounded-full w-[52rpx] h-[52rpx] flex flex-col items-center justify-center"
 					@click="userinfo">
 					<cl-icon name="a-zu254" color="white" size="20rpx"></cl-icon>
 				</view>
 			</template>
+			<cl-text color="black" :pt="{ className: '!text-xl fontBold' }">资讯</cl-text>
 		</cl-topbar>
 			<view class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center mx-5">
 				<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>

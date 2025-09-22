@@ -52,7 +52,7 @@
 	},
 	"app-harmony": {
 		"distribute": {
-			"bundleName": "com.cool.unix",
+			"bundleName": "com.shenlanhui.slh",
 			"signingConfigs": {
 				"default": {
 					"certpath": "/Users/icssoa/Library/Application Support/HBuilder X/extensions/launcher/agc-certs/1749115146522.cer",

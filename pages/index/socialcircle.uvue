@@ -1,12 +1,57 @@
 <template>
 	<cl-page>
+		<cl-topbar fixed :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
+			<template #prepend>
+				<view class="bg-primary-500 rounded-full w-[52rpx] h-[52rpx] flex flex-col items-center justify-center"
+					@tap="router.to('/pages/user/my')">
+					<cl-icon name="a-zu254" color="white" size="20rpx"></cl-icon>
+				</view>
+			</template>
+			<cl-text color="black" :pt="{ className: '!text-xl fontBold' }">圈子</cl-text>
+			<template #append>
+				<view class="bg-primary-500 rounded-full w-[52rpx] h-[52rpx] flex flex-col items-center justify-center"
+					@tap="router.to('/pages/user/my')">
+					<cl-icon name="jia" color="white" size="20rpx"></cl-icon>
+				</view>
+			</template>
+		</cl-topbar>
+		<cl-popup v-model="publishVisible" :show-header="false" title="诗词欣赏">
+			<view class="">
+				<cl-row :gutter="12" :pt="{className:'py-10'}">
+					<cl-col :span="8">
+						<view class='flex flex-col justify-center items-center'>
+							<cl-image src="/static/image/publish-icon1.png"></cl-image>
+							<cl-text>发讨论</cl-text>
+						</view>
+					</cl-col>
+					<cl-col :span="8">
+						<view class='flex flex-col justify-center items-center'>
+							<cl-image src="/static/image/publish-icon2.png"></cl-image>
+							<cl-text>发长文</cl-text>
+						</view>
+					</cl-col>
+					<cl-col :span="8">
+						<view class='flex flex-col justify-center items-center'>
+							<cl-image src="/static/image/publish-icon3.png"></cl-image>
+							<cl-text>图片</cl-text>
+						</view>
+					</cl-col>
+				</cl-row>
+				<view class="bg-gray-200 h-[10rpx]"></view>
+				<view class="flex flex-col items-center justify-center" @tap="publishVisible = false">
+					<cl-text color='#6D6D6D' :pt="{className:' text-lg py-4'}">取消</cl-text>
+				</view>
+			</view>
+		</cl-popup>
 		<!-- 自定义底部导航栏 -->
 		<tabbar></tabbar>
 	</cl-page>
 </template>
 
 <script setup lang="ts">
-import Tabbar from "@/components/tabbar.uvue";
+	import { router, usePager } from "@/cool";
+	import Tabbar from "@/components/tabbar.uvue";
+	const publishVisible = ref(true)
 </script>
 
 <style>

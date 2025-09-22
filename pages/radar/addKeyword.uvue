@@ -1,7 +1,6 @@
 <template>
 	<cl-page>
-		<cl-topbar fixed safe-area-top :pt="{className:'pr-3'}">
-			<cl-text color="black">添加关键字</cl-text>
+		<cl-topbar fixed safe-area-top :title="title" color="black" :pt="{className:'pr-3'}">
 			<template #append>
 				<cl-icon name="guanyushenlanhui" color="black" :size="30"></cl-icon>
 			</template>
@@ -13,7 +12,7 @@
 			</view>
 			<cl-form :pt="{
 				className: 'p-2 pb-0'
-			}" v-model="formData" ref="formRef" label-position="top">
+			}" :model="formData" ref="formRef" label-position="top">
 				<cl-form-item :label="t('关键字')" :pt="{className:'border-bottom'}">
 					<cl-input v-model="formData.keyword" :placeholder="t('请输入关键字')" placeholderClass="placeholderClass"
 						:border="false" clearable :pt="{className:'!p-0'}"></cl-input>
@@ -22,7 +21,8 @@
 					<view class="flex flex-row items-center justify-between border-bottom pb-2"
 						@click="visible=!visible">
 						<view>
-							<cl-text v-if="formData.contacts.length > 0">{{ formData.contacts.join(', ') }}</cl-text>
+							<cl-text
+								v-if="(formData?.contacts?.length ?? 0) > 0">{{ formData!!.contacts?.join(', ') }}</cl-text>
 							<cl-text v-else color="#a3a3a3" size="16px">请选择行业</cl-text>
 						</view>
 						<cl-icon name="arrow-down-s-line" color="#a3a3a3"></cl-icon>
@@ -40,22 +40,13 @@
 					</view>
 				</cl-form-item>
 				<cl-form-item :label="t('是否推送')">
-					<view class="flex flex-row items-center">
-						<cl-radio v-model="formData.isPublic" value="true" :pt="{icon:{
-							size:30
-						},
-						label:{
-							className:'text-lg text-black'
-						},
-						className:'mr-3'
-						}">是</cl-radio>
-						<cl-radio v-model="formData.isPublic" value="false" :pt="{icon:{
-							size:30
-						},
-						label:{
-							className:'text-lg text-black'
-						}
-						}">否</cl-radio>
+					<view class="flex flex-row flex-wrap">
+						<cl-radio v-model="formData.checked" v-for="(item, index) in options" :key="index"
+							:value="item.value" :pt="{
+								className: 'mr-5'
+							}">
+							{{ item.label }}
+						</cl-radio>
 					</view>
 				</cl-form-item>
 
@@ -83,38 +74,26 @@
 				<view class="flex flex-row flex-wrap">
 					<view class="mr-[34rpx] mb-[34rpx]" v-for="(item,index) in concartList" :key="index"
 						@click="choiceItem(item,index)">
-						<view class="item rounded-[10rpx] p-2 flex flex-col items-center justify-center"  :class="{ 'bg-primary-500': item.selected, 'bg-neutral-100': !item.selected }">
-							<cl-text :pt="{className:item!.selected?'text-white' :  'text-gray-800'}">{{ item.name }}</cl-text>
+						<view class="item rounded-[10rpx] p-2 flex flex-col items-center justify-center"
+							:class="{ 'bg-primary-500': item.selected, 'bg-neutral-100': !item.selected }">
+							<cl-text
+								:pt="{className:item!.selected?'text-sm text-white' :  'text-gray-500 text-sm'}">{{ item.name }}</cl-text>
 						</view>
 					</view>
 				</view>
 				<view class="flex flex-row items-center justify-center">
-					<cl-button type="info" :pt="{className:'mr-6'}">重置选择</cl-button>
-					<cl-button type="primary">确认选择</cl-button>
+					<cl-button type="info" :pt="{className:'mr-6'}" @click=reset>重置选择</cl-button>
+					<cl-button type="primary" @click="onConfirm">确认选择</cl-button>
 				</view>
 			</view>
 		</cl-popup>
 		<cl-popup v-model="monitorvisible" title="请选择监控范围">
 			<view class="p-4">
 				<cl-row :gutter="12">
-					<cl-col :span="6">
-						<view class='item'>
-							<cl-text>公告</cl-text>
-						</view>
-					</cl-col>
-					<cl-col :span="6">
-						<view class='item'>
-							<cl-text>快讯</cl-text>
-						</view>
-					</cl-col>
-					<cl-col :span="6">
-						<view class='item'>
-							<cl-text>资讯</cl-text>
-						</view>
-					</cl-col>
-					<cl-col :span="6">
-						<view class='item'>
-							<cl-text>全部</cl-text>
+					<cl-col :span="6" v-for="(item,index) in monitorList" :key="index">
+						<view class='item' :class="item!.selected?'active':'' " @click="choiceItemMonitor(item,index)">
+							<cl-text
+								:pt="{className:item!.selected?'text-sm text-white' :  'text-gray-500 text-sm'}">{{ item.name }}</cl-text>
 						</view>
 					</cl-col>
 				</cl-row>
@@ -127,21 +106,38 @@
 	import {
 		useCascader,
 		useForm,
-		useUi
+		useUi, type ClRadioOption
 	} from "@/uni_modules/cool-ui";
-	import { isArray,isNull } from "@/cool";
+	import { isArray, isNull, router } from "@/cool";
 	import pca from "@/data/pca.json";
 	import { t } from "@/locale";
+	const title=ref('添加关键字')
 	const ui = useUi();
 	const { formRef, validate, clearValidate } = useForm();
-	const visible = ref(true)//选择行业弹窗
+	const visible = ref(false)//选择行业弹窗
 	const addKeywordvisible = ref(false)
 	const monitorvisible = ref(false)
-	type instryItem={
-		id:number
-		name:string
-		selected:boolean
+	type instryItem = {
+		id : number
+		name : string
+		selected : boolean
 	}
+	const options = ref<ClRadioOption[]>([
+		{
+			label: "是",
+			value: "1"
+		},
+		{
+			label: "否",
+			value: "2"
+		},
+	]);
+	const monitorList = ref<instryItem[]>([
+		{ id: 1, name: '公告', selected: false },
+		{ id: 2, name: '快讯', selected: false },
+		{ id: 3, name: '资讯', selected: false },
+		{ id: 4, name: '全部', selected: false },
+	])
 	const concartList = ref<instryItem[]>([
 		{ id: 1, name: '政府机构', selected: false },
 		{ id: 2, name: '智能汽车', selected: false },
@@ -181,25 +177,57 @@
 	// 自定义表单数据类型
 	type FormData = {
 		keyword : string;//关键字
-		contacts : Array<string>;//行业
+		contacts ?: Array<string>;//行业
 		monitor ?: string;//监控范围
-		isPublic : boolean;//是否推送
+		checked : string;//是否推送
 	};
 	// 表单数据
 	const formData = ref({
 		keyword: "",
 		contacts: [],
 		monitor: "",
-		isPublic: false,
+		checked: "1",
 	} as FormData);
 	// 处理行业选择的多选逻辑
-	const choiceItem = (item : instryItem,index:number) => {
-		
-		if (isArray(concartList.value)){
+	const choiceItem = (item : instryItem, index : number) => {
+		if (isArray(concartList.value)) {
 			concartList.value[index].selected = !concartList.value[index].selected
 			concartList.value = [...concartList.value]//鸿蒙系统需要显示触发
-			}
+		}
 	};
+	const choiceItemMonitor = (item : instryItem, index : number) => {
+		if (isArray(monitorList.value)) {
+			monitorList.value.forEach(check => {
+				check.selected = check.name == item.name
+				formData.value.monitor = item.name
+				monitorvisible.value = false
+			})
+			monitorList.value = [...monitorList.value]//鸿蒙系统需要显示触发
+		}
+	};
+	// 确认选择
+	function onConfirm() {
+		formData.value.contacts = concartList.value.filter(select => select.selected).map(item => item.name)
+		visible.value = false
+	}
+	// 重置行业选择
+	function reset() {
+		if (isArray(concartList.value)) {
+			concartList.value.forEach(item => {
+				item.selected = false;
+			});
+			// concartList.value = [...concartList.value]//鸿蒙系统需要显示触发
+		}
+	}
+	onMounted(() => {
+		const params = router.params();
+		console.log('接收到的参数:', params);
+		if(!isNull(params)){
+			title.value=params.title as string
+		}
+		
+
+	})
 </script>
 
 <style>
@@ -213,8 +241,27 @@
 	.placeholderClass {
 		font-size: 18px !important;
 	}
+
 	.active {
-	  background-color: #007AFF; /* 激活时的背景色 */
-	  color: #FFFFFF; /* 激活时的文字颜色 */
+		background-color: #007AFF;
+		/* 激活时的背景色 */
+		color: #FFFFFF;
+		/* 激活时的文字颜色 */
+	}
+
+	.item {
+		@apply h-8 bg-surface-100 rounded-md flex flex-row items-center justify-center;
+
+		.text {
+			@apply text-sm text-surface-700;
+		}
+
+		&.active {
+			@apply bg-primary-500;
+
+			.text {
+				@apply text-white;
+			}
+		}
 	}
 </style>
