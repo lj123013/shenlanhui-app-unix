@@ -10,12 +10,12 @@
 			<cl-text color="black" :pt="{ className: '!text-xl fontBold' }">圈子</cl-text>
 			<template #append>
 				<view class="bg-primary-500 rounded-full w-[52rpx] h-[52rpx] flex flex-col items-center justify-center"
-					@tap="router.to('/pages/user/my')">
+					@click="publishVisible=!publishVisible">
 					<cl-icon name="jia" color="white" size="20rpx"></cl-icon>
 				</view>
 			</template>
 		</cl-topbar>
-		<cl-popup v-model="publishVisible" :show-header="false" title="诗词欣赏">
+		<cl-popup v-model="publishVisible" :show-header="false" :maskClosable="true">
 			<view class="">
 				<cl-row :gutter="12" :pt="{className:'py-10'}">
 					<cl-col :span="8">
