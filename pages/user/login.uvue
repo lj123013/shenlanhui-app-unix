@@ -96,6 +96,7 @@ const agree = ref(false);
 // 登录成功
 async function toLogin(res: any) {
 	user.setToken(parse<Token>(res)!);
+	user.get();
 	router.nextLogin();
 }
 
