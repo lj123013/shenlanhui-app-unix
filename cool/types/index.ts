@@ -37,8 +37,9 @@ export type PushOptions = {
 	path: string;
 	mode?: PushMode;
 	events?: any;
-	query?: any;
-	params?: any;
+	query?: UTSJSONObject;
+	isAuth?: boolean;
+	params?: UTSJSONObject;
 	animationType?: PushAnimationType;
 	animationDuration?: number;
 	success?: (result: any) => void;

@@ -28,7 +28,7 @@
 					"style": {
 						"navigationBarTitleText": "设置"
 					},
-					"meta":{
+					"meta": {
 						"isAuth": true
 					}
 				},
@@ -37,7 +37,7 @@
 					"style": {
 						"navigationBarTitleText": "通用设置"
 					},
-					"meta":{
+					"meta": {
 						"isAuth": true
 					}
 				},
@@ -46,7 +46,7 @@
 					"style": {
 						"navigationBarTitleText": "通知设置"
 					},
-					"meta":{
+					"meta": {
 						"isAuth": true
 					}
 				},
@@ -55,7 +55,7 @@
 					"style": {
 						"navigationBarTitleText": ""
 					},
-					"meta":{
+					"meta": {
 						"isAuth": true
 					}
 				},
@@ -64,7 +64,7 @@
 					"style": {
 						"navigationBarTitleText": "联系客服"
 					},
-					"meta":{
+					"meta": {
 						"isAuth": true
 					}
 				}
@@ -78,7 +78,7 @@
 					"style": {
 						"navigationBarTitleText": "编辑资料"
 					},
-					"meta":{
+					"meta": {
 						"isAuth": true
 					}
 				},
@@ -87,7 +87,7 @@
 					"style": {
 						"navigationStyle": "custom"
 					},
-					"meta":{
+					"meta": {
 						"isAuth": true
 					}
 				},
@@ -96,7 +96,7 @@
 					"style": {
 						"navigationStyle": "custom"
 					},
-					"meta":{
+					"meta": {
 						"isAuth": true
 					}
 				},
@@ -489,6 +489,15 @@
 					"style": {
 						"navigationBarTitleText": "Animation 动画"
 					}
+				},
+				{
+					"path": "other/router/index",
+					"style": {
+						"navigationBarTitleText": "Router 路由"
+					}
+				},
+				{
+					"path": "other/router/query"
 				}
 			]
 		},
@@ -512,6 +521,9 @@
 					"style": {
 						"navigationBarTitleText": "收货地址",
 						"enablePullDownRefresh": true
+					},
+					"meta": {
+						"isAuth": true
 					}
 				},
 				{

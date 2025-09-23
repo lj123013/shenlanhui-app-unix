@@ -46,9 +46,9 @@
 
 		<view class="p-3">
 			<view class="group" v-for="item in data" :key="item.label">
-				<cl-text :pt="{ className: '!text-sm !text-surface-400 mb-2 ml-2' }">{{
-					item.label
-				}}（{{ item.children?.length ?? 0 }}）</cl-text>
+				<cl-text :pt="{ className: '!text-sm !text-surface-400 mb-2 ml-2' }"
+					>{{ item.label }}（{{ item.children?.length ?? 0 }}）</cl-text
+				>
 
 				<view class="list">
 					<cl-row :gutter="10">
@@ -461,6 +461,11 @@ const data = computed<Item[]>(() => {
 					label: "Animation",
 					icon: "instance-line",
 					path: "/pages/demo/other/animation"
+				},
+				{
+					label: "Router",
+					icon: "compass-discover-line",
+					path: "/pages/demo/other/router/index"
 				}
 			]
 		}

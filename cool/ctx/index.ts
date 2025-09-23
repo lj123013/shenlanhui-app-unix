@@ -64,7 +64,7 @@ if (isArray(ctx.subPackages)) {
 			PAGES.push({
 				path: a.root + "/" + b.path, // 拼接子包根路径和页面路径
 				style: b.style,
-				meta: b.meta ?? {},
+				meta: b.meta
 			});
 		});
 	});
