@@ -5,7 +5,7 @@ import { storage, last, isNull, isEmpty, get, isFunction, toArray, map, debounce
 // 路由信息类型
 type RouteInfo = {
 	path: string;
-	meta: UTSJSONObject;
+	meta?: UTSJSONObject;
 };
 
 // 跳转前钩子类型
@@ -55,8 +55,8 @@ export class Router {
 			}
 			// 获取页面样式
 			const page = PAGES.find((e) => e.path == path);
-			const style = page?.style ?? {};
-			const meta = page?.meta ?? {};
+			const style = page?.style;
+			const meta = page?.meta;
 			// 获取页面暴露的方法
 			// @ts-ignore
 			let exposed = e.vm as any;

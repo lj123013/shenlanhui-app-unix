@@ -53,4 +53,5 @@ export type PageInstance = {
 	query: UTSJSONObject;
 	exposed: any;
 	isCustomNavbar: boolean;
+	meta?: UTSJSONObject;
 };
