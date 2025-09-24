@@ -1,4 +1,7 @@
 export const download = {
+	"a-lujing387": "e66a",
+	"a-zu342": "e668",
+	"baocun": "e669",
 	"jia": "e600",
 	"shezhi": "e667",
 	"xitongxiaoxi": "e664",

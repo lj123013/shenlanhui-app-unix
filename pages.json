@@ -84,6 +84,14 @@
 					"style": {
 						"navigationBarTitleText": "AI图库"
 					}
+				},
+				{
+					"path": "serach",
+					"style": {
+						"navigationBarTitleText": "搜索",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
 				}
 
 			]
@@ -298,6 +306,19 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "pages/publish",
+			"pages": [{
+					"path": "disucss",
+					"style": {
+						"navigationBarTitleText": "发布",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				}
+				
+			]
 		}
 	],
 	"globalStyle": {
@@ -342,7 +363,7 @@
 				"pagePath": "pages/index/socialcircle",
 				"iconPath": "/static/icon/tabbar/socialcircle.png",
 				"selectedIconPath": "/static/icon/tabbar/socialcircle_on.png",
-				"text": "圈子1111"
+				"text": "圈子"
 			}
 		]
 	},

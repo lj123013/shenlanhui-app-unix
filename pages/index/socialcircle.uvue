@@ -11,29 +11,17 @@
 			<template #append>
 				<view class="bg-primary-500 rounded-full w-[52rpx] h-[52rpx] flex flex-col items-center justify-center"
 					@click="publishVisible=!publishVisible">
-					<cl-icon name="jia" color="white" size="20rpx"></cl-icon>
+					<cl-icon name="jia" color="white" size="30rpx"></cl-icon>
 				</view>
 			</template>
 		</cl-topbar>
 		<cl-popup v-model="publishVisible" :show-header="false" :maskClosable="true">
 			<view class="">
 				<cl-row :gutter="12" :pt="{className:'py-10'}">
-					<cl-col :span="8">
+					<cl-col :span="8" v-for="item in discuss" @click="toPath(item)">
 						<view class='flex flex-col justify-center items-center'>
-							<cl-image src="/static/image/publish-icon1.png"></cl-image>
-							<cl-text>发讨论</cl-text>
-						</view>
-					</cl-col>
-					<cl-col :span="8">
-						<view class='flex flex-col justify-center items-center'>
-							<cl-image src="/static/image/publish-icon2.png"></cl-image>
-							<cl-text>发长文</cl-text>
-						</view>
-					</cl-col>
-					<cl-col :span="8">
-						<view class='flex flex-col justify-center items-center'>
-							<cl-image src="/static/image/publish-icon3.png"></cl-image>
-							<cl-text>图片</cl-text>
+							<cl-image :src="item?.img"></cl-image>
+							<cl-text>{{item.name}}</cl-text>
 						</view>
 					</cl-col>
 				</cl-row>
@@ -44,14 +32,41 @@
 			</view>
 		</cl-popup>
 		<!-- 自定义底部导航栏 -->
-		<tabbar></tabbar>
+		<Tabbar></Tabbar>
 	</cl-page>
 </template>
-
-<script setup lang="ts">
-	import { router, usePager } from "@/cool";
+<script setup>
+	import { router } from "@/cool";
 	import Tabbar from "@/components/tabbar.uvue";
-	const publishVisible = ref(true)
+	const publishVisible = ref(false)
+	type discussItem = {
+		img : string
+		name : string
+	}
+	const discuss = ref<discussItem[]>([
+		{
+			img: '/static/image/publish-icon1.png',
+			name: '发讨论'
+		},
+		{
+			img: '/static/image/publish-icon2.png',
+			name: '发长文'
+		
+		},
+		{
+			img: '/static/image/publish-icon3.png',
+			name: '图片'
+		
+		}
+	])
+	const toPath=(item:discussItem)=>{
+		router.push({
+			path:'/pages/publish/disucss',
+			params:{
+				title:item.name
+			}
+		})
+	}
 </script>
 
 <style>

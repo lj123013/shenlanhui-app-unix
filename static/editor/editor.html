@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>编辑器</title>
+		<!-- 引入 wangEditor CSS :cite[8] -->
+		<link href="https://unpkg.com/@wangeditor/editor@latest/dist/css/style.css" rel="stylesheet">
+		<style>
+			body,
+			html {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				overflow: hidden;
+				font-family: sans-serif;
+			}
+
+			#editor-container {
+				display: flex;
+				flex-direction: column;
+				height: 50vh;
+			}
+
+			#editor-content {
+				flex: 1;
+				overflow-y: auto;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="editor-container">
+			<div id="toolbar-container"></div>
+			<div id="editor-content"></div>
+		</div>
+
+		<!-- 引入 wangEditor JS :cite[8] -->
+		<script src="https://unpkg.com/@wangeditor/editor@latest/dist/index.js"></script>
+		<script>
+			// 初始化编辑器
+			const {
+				createEditor,
+				createToolbar
+			} = window.wangEditor
+			const editorConfig = {
+				placeholder: '请输入发布的内容',
+				onChange: (editor) => {
+					// 内容变化时，通知 Uni-App-X
+					const html = editor.getHtml()
+					postMessageToUniApp({
+						type: 'contentChange',
+						html: content.html,
+						text: content.text,
+						timestamp: Date.now()
+					})
+				},
+				// 针对移动端可进行简化配置:cite[1]
+				MENU_CONF: {}
+			}
+
+			const editor = createEditor({
+				selector: '#editor-content',
+				config: editorConfig,
+				html: '<p><br></p>'
+			})
+			// 向 uni-app-x 发送消息
+			function postMessageToUniApp(message) {
+				if (window.uni && window.uni.postMessage) {
+					window.uni.postMessage({
+						data: message
+					});
+				} else {
+					console.log('uni 环境未就绪', message);
+				}
+			}
+			// 编辑器准备就绪
+			function notifyEditorReady() {
+				postMessageToUniApp({
+					type: 'editorReady',
+					timestamp: Date.now()
+				});
+				status.textContent = '编辑器已就绪';
+				isReady = true;
+			}
+			// 内容变化处理
+			function onContentChange() {
+				if (!isReady) return;
+
+				const content = editor.innerHTML;
+				postMessageToUniApp({
+					type: 'contentChange',
+					content: content,
+					textContent: editor.textContent,
+					length: editor.textContent.length
+				});
+
+				status.textContent = `已输入 ${editor.textContent.length} 个字符`;
+			}
+
+			// 保存内容
+			function saveContent() {
+				const content = editor.innerHTML;
+				postMessageToUniApp({
+					type: 'saveContent',
+					content: content,
+					timestamp: Date.now()
+				});
+				status.textContent = '内容已保存';
+			}
+
+			// 文本格式化
+			function formatText(command) {
+				document.execCommand(command, false, null);
+				editor.focus();
+				onContentChange();
+			}
+
+			// 插入HTML
+			function insertHTML(html) {
+				document.execCommand('insertHTML', false, html);
+				editor.focus();
+				onContentChange();
+			}
+
+			// 编辑器焦点事件
+			function onEditorFocus() {
+				status.textContent = '编辑中...';
+			}
+
+			function onEditorBlur() {
+				if (isReady) {
+					status.textContent = `已输入 ${editor.textContent.length} 个字符`;
+				}
+			}
+			window.getEditorContent = function() {
+				const content = editor.getHtml();
+				// 获取到内容后，仍然通过 uni.postMessage 返回
+				postMessageToUniApp({
+					type: 'contentResponse',
+					html: content,
+					text: editor.getText()
+				});
+			}
+
+			window.setEditorContent = function(content) {
+				if (editor) {
+					editor.setHtml(content);
+				}
+			}
+			// 监听来自 uni-app-x 的消息
+			document.addEventListener('UniAppJSBridgeReady', function() {
+				notifyEditorReady();
+			});
+
+			window.addEventListener('message', function(event) {
+				const message = event.data;
+				if (message && message.type) {
+					handleUniAppMessage(message);
+				}
+			});
+			// 处理来自 uni-app-x 的消息
+			function handleUniAppMessage(message) {
+				console.log('收到 uni-app-x 消息:', message);
+
+				switch (message.type) {
+					case 'getContent':
+						postMessageToUniApp({
+							type: 'contentResponse',
+							content: editor.innerHTML,
+							timestamp: Date.now()
+						});
+						break;
+
+					case 'setContent':
+						if (message.content) {
+							editor.innerHTML = message.content;
+							onContentChange();
+							status.textContent = '内容已更新';
+						}
+						break;
+				}
+			}
+
+			// 备用消息监听（部分平台）
+			window.addEventListener('message', function(event) {
+				if (event.data && event.data.type) {
+					handleUniAppMessage(event.data);
+				}
+			});
+			// 如果 UniAppJSBridge 已经就绪，直接初始化
+			// 初始化
+			window.onload = function() {
+				// 检查 uni 环境是否就绪
+				if (window.uni) {
+					notifyEditorReady();
+				} else {
+					// 如果 uni 环境未就绪，等待事件
+					document.addEventListener('UniAppJSBridgeReady', notifyEditorReady);
+				}
+			};
+		</script>
+	</body>
+</html>
