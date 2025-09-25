@@ -167,6 +167,14 @@ const props = defineProps({
 		type: Array as PropType<ClCalendarDateConfig[]>,
 		default: () => []
 	},
+	// 开始日期，可选日期的开始
+	start: {
+		type: String
+	},
+	// 结束日期，可选日期的结束
+	end: {
+		type: String
+	},
 	// 设置年份
 	year: {
 		type: Number
@@ -304,6 +312,20 @@ function isDateSelected(dateStr: string): boolean {
  * @param dateStr 日期字符串 YYYY-MM-DD
  */
 function isDateDisabled(dateStr: string): boolean {
+	// 大于开始日期
+	if (props.start != null) {
+		if (dayUts(dateStr).isBefore(dayUts(props.start))) {
+			return true;
+		}
+	}
+
+	// 小于结束日期
+	if (props.end != null) {
+		if (dayUts(dateStr).isAfter(dayUts(props.end))) {
+			return true;
+		}
+	}
+
 	return props.dateConfig.some((config) => config.date == dateStr && config.disabled == true);
 }
 
