@@ -152,12 +152,40 @@
 				notifyEditorReady();
 			});
 
+			// 在 H5 页面的 script 中添加/修改
 			window.addEventListener('message', function(event) {
-				const message = event.data;
-				if (message && message.type) {
-					handleUniAppMessage(message);
-				}
-			});
+			    if (event.data && event.data.type) {
+			        console.log('收到 Uni-App-X 消息:', event.data)
+			        
+			        if (event.data.type === 'getContent') {
+			            // 调用获取内容的函数
+			            if (window.returnEditorContent) {
+			                window.returnEditorContent()
+			            } else if (editor) {
+			                // 直接返回内容
+			                const html = editor.getHtml()
+			                const text = editor.getText()
+			                postMessageToUniApp({
+			                    type: 'contentResponse',
+			                    html: html,
+			                    text: text
+			                })
+			            }
+			        }
+			    }
+			})
+			// 确保全局函数存在
+			window.returnEditorContent = function() {
+			    if (editor) {
+			        const html = editor.getHtml()
+			        const text = editor.getText()
+			        postMessageToUniApp({
+			            type: 'contentResponse',
+			            html: html,
+			            text: text
+			        })
+			    }
+			}
 			// 处理来自 uni-app-x 的消息
 			function handleUniAppMessage(message) {
 				console.log('收到 uni-app-x 消息:', message);

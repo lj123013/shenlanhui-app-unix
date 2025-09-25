@@ -13,10 +13,11 @@
 			</view>
 		</view>
 		<view class="content bg-white">
-			<cl-tabs v-model="current" :list="list" fill :showLine="false" :color="isColor ? '#2854F2' : ''" :un-color="isColor ? '#848484' : ''"></cl-tabs>
+			<cl-tabs v-model="current" :list="list" fill :showLine="false" :color="isColor ? '#2854F2' : ''"
+				:un-color="isColor ? '#848484' : ''"></cl-tabs>
 			<scroll-view class="hot-reading-list" scroll-y="true" :show-scrollbar="false" :enable-back-to-top="true">
 				<!-- 热榜列表 -->
-				<view v-if="current=='1'" class="px-5">
+				<view v-if="current==0" class="px-5">
 					<view v-for="(item, index) in hotReadingData" :key="index"
 						class="hot-item flex flex-row items-start py-1   border-b border-gray-100">
 						<!-- 索引标识 -->
@@ -92,20 +93,20 @@
 		className ?: string;
 	};
 	// 标签滑块模块
-	const current = ref("1");
+	const current = ref(0);
 	const isColor = ref(true);
 	const list = ref<ClTabsItem[]>([
 		{
 			label: "热门阅读",
-			value: "1",
+			value: "0",
 		},
 		{
 			label: "热门公司",
-			value: "2",
+			value: "1",
 		},
 		{
 			label: "活跃用户",
-			value: "3",
+			value: "2",
 		},
 	]);
 	// 实例化接口定义热榜数据项类型
@@ -226,11 +227,13 @@
 			backgroundColor
 		};
 	}
+	onMounted(() => {
+		const params = router.params();
+		current.value=params.index as number
+	})
 </script>
 
 <style>
-	
-
 	.container {
 		position: relative;
 		width: 100%;

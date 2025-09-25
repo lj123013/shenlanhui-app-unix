@@ -1,6 +1,6 @@
 <template>
 	<cl-page>
-		<cl-tabs v-model="current" class="fontBold" :showLine="false" :list="tabbar" :color="isColor ? '#2854F2' : ''"
+		<cl-tabs v-model="current" class="fontBold" :showLine="false" :list="tabsList" :color="isColor ? '#2854F2' : ''"
 			un-color="#6a6a6a"></cl-tabs>
 		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
 					refresher: {
@@ -31,7 +31,7 @@
 	let id = 0;
 	const isColor = ref(true)
 	const current = ref("1")
-	const tabbar = ref<ClTabsItem[]>([
+	const tabsList = ref<ClTabsItem[]>([
 		{
 			label: "公告快讯",
 			value: "1",

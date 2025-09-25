@@ -48,7 +48,8 @@
 					</view>
 					<view>
 						<cl-row :gutter="12">
-							<cl-col :pt="{ className: 'text-center' }" :span="6" v-for="value in menuList">
+							<cl-col :pt="{ className: 'text-center' }" :span="6" v-for="value in menuList"
+								@click='toPathdiscuss(value)'>
 
 								<view class="item flex flex-col items-center justify-center">
 									<cl-text color="white">{{ value.itemNum }}</cl-text>
@@ -68,8 +69,10 @@
 						</view>
 
 						<view class="isRenzheng rounded-full py-1 px-3">
-							<cl-text color="#212227" v-if="UserInfo?.is_auth == 1" :pt="{ className: 'text-xs' }">已认证</cl-text>
-							<cl-text color="#212227" v-else :pt="{ className: 'text-xs'}" @tap="router.to('/pages/user/verify')">开始认证</cl-text>
+							<cl-text color="#212227" v-if="UserInfo?.is_auth == 1"
+								:pt="{ className: 'text-xs' }">已认证</cl-text>
+							<cl-text color="#212227" v-else :pt="{ className: 'text-xs'}"
+								@tap="router.to('/pages/user/verify')">开始认证</cl-text>
 						</view>
 					</view>
 
@@ -79,7 +82,7 @@
 			<view class="flex-1 bg-custom-bg-gray px-5 ">
 				<view class="bg-white  py-5 rounded-2xl my-5">
 					<cl-row :pt="{ className: 'overflow-visible' }">
-						<cl-col :span="8">
+						<cl-col :span="8" @click="router.to('/pages/user/myConverstion')">
 							<view class="flex flex-row justify-center items-center">
 								<cl-image width="48rpx" height="48rpx" src="/static/image/user-menui1.png"></cl-image>
 								<cl-text color="black" :pt="{ className: 'text-base text-center ml-2' }">{{ t("我的AI")
@@ -87,15 +90,14 @@
 							</view>
 						</cl-col>
 
-						<cl-col :span="8">
-							<view class="flex flex-row justify-center items-center">
+						<cl-col :span="8" @click="router.to('/pages/user/myinteract')">
+							<view class="flex flex-row justify-center items-center" >
 								<cl-image width="48rpx" height="48rpx" src="/static/image/user-menui2.png"></cl-image>
 								<cl-text :pt="{ className: 'text-base text-center ml-2' }" color="black">{{ t("我的互动")
 								}}</cl-text>
 							</view>
 						</cl-col>
-
-						<cl-col :span="8">
+						<cl-col :span="8" @click="router.to('/pages/user/deepMoney')">
 							<view class="flex flex-row justify-center items-center relative overflow-visible px-2">
 								<cl-image width="48rpx" height="48rpx" src="/static/image/user-menui3.png"></cl-image>
 								<cl-text :pt="{ className: 'text-base text-center ml-2' }" color="black">{{ t("深蓝币")
@@ -130,7 +132,7 @@
 
 <script setup lang="ts">
 	import { ref } from "vue"
-	import { router, userInfo, useStore,isNull } from "@/cool";
+	import { router, userInfo, useStore, isNull } from "@/cool";
 	import { t } from "@/locale";
 	import { useUi } from "@/uni_modules/cool-ui";
 	const { user } = useStore();
@@ -142,24 +144,25 @@
 	type mtitemMune = {
 		name : string
 		icon : string
-		path:string
+		path : string
 	}
 	const menuList = ref<menuItem[]>([
 		{
 			name: "长文",
-			itemNum: 10
+			itemNum: 10,
 		},
 		{
 			name: "讨论",
-			itemNum: 421
+			itemNum: 421,
 		},
 		{
 			name: "图库",
-			itemNum: 2
+			itemNum: 2,
+
 		},
 		{
 			name: "草稿",
-			itemNum: 0
+			itemNum: 0,
 		}
 	])
 
@@ -167,27 +170,27 @@
 		{
 			name: "账号信息",
 			icon: "zhanghaoxinxi",
-			path:"/pages/user/edit"
+			path: "/pages/user/edit"
 		},
 		{
 			name: "系统消息",
 			icon: "xitongxiaoxi",
-			path:"/pages/user/system"
+			path: "/pages/user/system"
 		},
 		{
 			name: "意见反馈",
 			icon: "yijianfankui",
-			path:"/pages/user/Feedback"
+			path: "/pages/user/Feedback"
 		},
 		{
 			name: "关于深蓝汇",
 			icon: "guanyushenlanhui",
-			path:"/pages/set/about"
+			path: "/pages/set/about"
 		},
 		{
 			name: "设置",
 			icon: "shezhi",
-			path:"/pages/set/index"
+			path: "/pages/set/index"
 		}
 	])
 	type UserInfoType = {
@@ -210,17 +213,23 @@
 	const clickuser = () => {
 		router.to('/pages/user/userinfo')
 	}
-	const toPath=()=>{
+	const toPath = () => {
 		router.to('/pages/user/fansList')
 	}
-	const toPathFollow=()=>{
+	const toPathFollow = () => {
 		router.to('/pages/user/followList')
 	}
-	function toTest(item:mtitemMune) {
-		if(!isNull(item)){
+	const toPathdiscuss = (item : menuItem) => {
+		router.push({
+			path: '/pages/user/mydiscuss',
+			params: { title: item.name }
+		})
+	}
+	function toTest(item : mtitemMune) {
+		if (!isNull(item)) {
 			router.to(item.path);
 		}
-		
+
 	}
 	onReady(() => {
 		// user.get();

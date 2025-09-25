@@ -5,8 +5,10 @@
 					'pt-0': isMp()
 				}">
 				<view class="flex flex-row items-center">
-					<view class="bg-primary-500 rounded-3xl p-[20rpx]" @click="userinfo">
-						<cl-icon name="a-zu254" color="white"></cl-icon>
+					<view
+						class="bg-primary-500 rounded-full w-[60rpx] h-[60rpx] flex flex-col items-center justify-center"
+						@click="router.to('/pages/user/my')">
+						<cl-icon name="a-zu254" color="white" size="28rpx"></cl-icon>
 					</view>
 					<view class="flex flex-row items-center">
 						<cl-text class="ml-2 fontBold" :pt="{
@@ -26,27 +28,32 @@
 		</cl-topbar>
 		<view class="px-5">
 			<!-- 搜索 -->
-			<view class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center" @tap="router.to('/pages/homePage/serach')">
+			<view class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center"
+				@tap="router.to('/pages/homePage/serach')">
 				<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>
-				<cl-text class="text-neutral-300 ml-2">请输入你要搜索的内容</cl-text>
+				<cl-text color="#B7B7B7" class="text-neutral-300 ml-2">请输入你要搜索的内容</cl-text>
 			</view>
 			<!-- 头条 -->
 			<view class="headlines mt-4">
 				<view class="pt-1  w-full relative" v-for="item in data" :key="item.id" @click="toPathDetail(item)">
-					<view v-if="item.is_top" class="flex flex-row items-center max-h-[100rpx]">
-						<view class="bg-red  px-1 rounded-[6rpx] absolute top-[12rpx]">
+					<view v-if="item.is_top" class="flex flex-row items-center justify-between relative">
+						<view class="bg-red  px-1 rounded-[6rpx] absolute top-[10rpx]">
 							<cl-text color='white' :pt="{
 								className: 'text-xs'
 							}">头条</cl-text>
 						</view>
-						<cl-text ellipsis :lines="2" color="black" class="ml-1 " :pt="{
-						className:'text-lg'
-					}">
-							{{ '　   ' + (item?.content) }}
-						</cl-text>
-					<!-- 	<cl-text color="black" class="elipsis ml-1" :pt="{
-						className:'!text-lg'
-					}">{{ item.content }}</cl-text> -->
+						<view class="flex-1">
+							<cl-text v-if="isAppIOS()" ellipsis :lines="2" color="black" class="" :pt="{
+									className:'text-lg'
+								}">
+								{{ '　     '+ (item?.content) }}
+							</cl-text>
+							<cl-text v-else ellipsis :lines="2" color="black" class="" :pt="{
+								className:'text-lg'
+							}">
+								{{ '　       '+'　'+ (item?.content) }}
+							</cl-text>
+						</view>
 					</view>
 					<view v-else class="flex flex-row items-center">
 						<cl-icon name="wenjian_2" color="#666" :size="28"></cl-icon>
@@ -154,7 +161,8 @@
 								<cl-text color="#464646" :pt="{
 											className: '!text-base fontBold'
 										}">{{ item.title }}</cl-text>
-								<view class="flex flex-row items-center py-1 rounded-xl bg-white py-1 px-2">
+								<view class="flex flex-row items-center py-1 rounded-xl bg-white py-1 px-2"
+									@click="showmore(index)">
 									<cl-text :color="index==0?'primary':'#E82A2A'" :pt="{
 											className: '!text-xs'
 										}">更多</cl-text>
@@ -183,7 +191,7 @@
 					<view class="active-users-content py-5">
 						<view class="active-users-title flex flex-row items-center justify-between px-2">
 							<cl-text color="#923D0A" :pt="{ className: ' !text-lg fontBold fontitalic' }">活跃用户</cl-text>
-							<view class="flex flex-row items-center py-1 px-2 rounded-xl bg-white">
+							<view class="flex flex-row items-center py-1 px-2 rounded-xl bg-white" @click="Toshowuser">
 								<cl-text color="#FF7700" class="textred-600" :pt="{
 									className: '!text-xs'
 								}">更多</cl-text>
@@ -216,9 +224,9 @@
 							}">阅读</cl-text>
 					</view>
 					<view class="flex flex-row items-center justify-between pt-5" v-for="item in recommenList"
-						:key="item.id">
+						:key="item.id" @click="toPathDetil(item)">
 						<view class="flex-1 mr-2">
-							<cl-text  ellipsis :lines="2" color="#313131" :pt="{
+							<cl-text ellipsis :lines="2" color="#313131" :pt="{
 									className: 'istopItem mb-2'
 								}">{{ item.title }}</cl-text>
 							<view class="flex flex-row items-center">
@@ -243,7 +251,7 @@
 </template>
 
 <script lang="ts" setup>
-	import { isNull } from "@/cool";
+	import { isNull, isAppIOS } from "@/cool";
 	import { isMp, router, useRefs } from "@/cool";
 	import { t } from "@/locale";
 	import { useUi } from "@/uni_modules/cool-ui";
@@ -558,11 +566,12 @@
 	}
 	// 快讯
 	function toPathDispath(item : FlashNews) {
-		router.to('/pages/articlePage/dispathDetail')
-	}
-	// 进入用户主页
-	const userinfo = () => {
-		router.to('/pages/user/my')
+		router.push({
+			path: '/pages/articlePage/dispathDetail',
+			params: {
+				dispathId: item.id,
+			}
+		});
 	}
 	// 快讯列表
 	const jump = () => {
@@ -581,7 +590,30 @@
 	function isEmptyPath(item : radarMenu) : boolean {
 		return isNull(item.path) || item.path === "";
 	}
-
+	const showmore = (index : number) => {
+		router.push({
+			path: "/pages/homePage/hotPage",
+			params: {
+				index: index
+			},
+		});
+	}
+	const Toshowuser = () => {
+		router.push({
+			path: "/pages/homePage/hotPage",
+			params: {
+				index: 2
+			},
+		});
+	}
+	const toPathDetil = (item : recom) => {
+		router.push({
+			path: '/pages/articlePage/articleDetail',
+			params: {
+				articleId: item.id,
+			}
+		});
+	}
 	// 获取数字颜色
 	function getNumberColor(index : number) : string {
 		switch (index) {

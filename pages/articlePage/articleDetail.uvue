@@ -155,11 +155,11 @@
 					</view>
 					<view class="actions-section" v-if='!isPubComment'>
 						<view class="action-item">
-							<cl-icon name="aixin-1" :size="28" color="#464646"></cl-icon>
+							<cl-icon name="aixin-1" :size="28" width="34rpx" color="#464646"></cl-icon>
 							<cl-text color="#464646" :pt="{ className: 'action-text' }">点赞</cl-text>
 						</view>
 						<view class="action-item">
-							<cl-icon name="a-shoucangdianji" :size="28" color="#464646"></cl-icon>
+							<cl-icon name="a-shoucangdianji" :size="30" width="36rpx" color="#464646"></cl-icon>
 							<cl-text color="#464646" :pt="{ className: 'action-text' }">收藏</cl-text>
 						</view>
 						<view class="action-item">

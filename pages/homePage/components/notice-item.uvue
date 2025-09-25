@@ -4,7 +4,7 @@
 			<cl-text color="#cbcbcb" :pt="{ className: '!text-sm' }">{{ item?.time }}</cl-text>
 			<view class="flex flex-row items-center justify-between company">
 				<cl-image class="company-img" width="26rpx" height="26rpx" src="/static/image/pdficon.png"></cl-image>
-				<view class="flex-1 ml-1">
+				<view class="flex-1">
 					<cl-text ellipsis :lines="2">
 					{{ '　' + (item?.company) }}
 					</cl-text>

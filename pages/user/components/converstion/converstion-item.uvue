@@ -1,0 +1,84 @@
+<template>
+	<view class="px-5">
+		<view :class="{'border ':index!=0}" class="py-3">
+			<view class="flex flex-row items-center justify-between relative">
+				<view class="answer_icon absolute top-[10rpx]">
+					<cl-image class="answer-img relative" width="16px" height="16px"
+						src="/static/image/answer.png"></cl-image>
+					<cl-text class="answer_text absolute top-[-6rpx] left-[6rpx]" color="white" size="20rpx">问</cl-text>
+				</view>
+				<view class="flex-1 ml-1">
+					<cl-text ellipsis :lines="2" :pt="{className:'text-lg'}"
+						color="#6E6E6E">{{ '　 ' + item?.user }}</cl-text>
+				</view>
+			</view>
+			<view style="background:#F9F9FB" class="p-3 rounded-xl">
+				<cl-image v-if="item?.pic" :src="item?.pic" width="100%" height="167px"
+					:pt="{className:'rounded-xl'}"></cl-image>
+				<cl-text ellipsis :lines="3" v-else color="#484848" :pt="{className:'text-base'}">{{item?.ai}}</cl-text>
+			</view>
+			<view class='flex flex-row items-center justify-between'>
+				<cl-text color="#B7B7B7" :pt="{className:'text-sm'}">2025-06-12</cl-text>
+				<view class="flex flex-row items-center py-2" @click="handleDelete">
+					<cl-icon name="a-zu259" color="#B7B7B7" size="26rpx"></cl-icon>
+					<cl-text color="#B7B7B7" :pt="{className:'text-sm ml-1'}">删除</cl-text>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+	import { isMp, router, useRefs } from "@/cool";
+	import { useUi } from "@/uni_modules/cool-ui";
+	import { computed } from "vue";
+	import { parse } from "@/cool";
+	const ui = useUi();
+	defineOptions({
+		name: "converstion-item"
+	});
+
+	// 定义数据类型（注释形式）
+	type converstionItem = {
+		id : number;
+		user : string;
+		ai : string;
+		pic ?: string;
+		time : string;
+	};
+
+	const props = defineProps({
+		value: {
+			type: Object,
+			default: () => ({})
+		},
+		index: {
+			type: Number,
+			default: 0
+		}
+	});
+
+	const item = computed(() => parse<converstionItem>(props.value));
+	// 处理点击事件
+	const emit = defineEmits(["item-click"]);
+	const onItemClick = () => {
+		emit("item-click", props.value);
+	};
+	const handleDelete = () => {
+		ui.showConfirm({
+			title: "删除对话",
+			message: "您确定要删除此条对话记录吗？",
+			confirmText: "确定",
+			cancelText: "取消",
+			callback(action) {
+				if (action === "confirm") {
+					// 执行退出登录
+				}
+			},
+		});
+	}
+</script>
+
+<style>
+
+</style>

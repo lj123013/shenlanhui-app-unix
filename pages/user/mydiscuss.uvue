@@ -1,0 +1,144 @@
+<template>
+	<cl-page>
+		<cl-topbar fixed safe-area-top :title="title" color="black" :pt="{className:'pr-3'}">
+		</cl-topbar>
+		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
+			refresher: {
+				className: 'pt-3'
+			}
+		}" :refresher-enabled="false" @pull="onPull" @bottom="loadMore">
+			<template #item="{ value, index }">
+				<!-- 图片展示 -->
+				<goods-item v-if="title=='图片'" :value="value"></goods-item>
+				<!-- 文章展示 -->
+				<news-item v-else :value="value" :index="index" :hidden="true" @item-click="onItemClick"></news-item>
+			</template>
+			<template #bottom>
+				<view class="py-3">
+					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+				</view>
+			</template>
+		</cl-list-view>
+	</cl-page>
+</template>
+
+<script setup>
+	import { isMp, isNull, router, useRefs, usePager } from "@/cool";
+	import { useUi } from "@/uni_modules/cool-ui";
+	import { t } from "@/locale";
+	import newsItem from "@/components/news-item.uvue"
+	import GoodsItem from "../homePage/components/goods-item.uvue";
+	const ui = useUi();
+	const title = ref("")
+	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
+	let id = 0;
+	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
+		// 模拟请求
+		setTimeout(() => {
+			render({
+				list: [
+					{
+						id:id++,
+						image: t('../../static/image/head-img.png'),
+						username: t('传媒见闻'),
+						title: t(""),
+						content: t('#本金10w入# @steven市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。'),
+						time: t("05-09-01"),
+						like: 2,
+						comment: 1,
+						isLike: true,
+					},
+					{
+						id:id++,
+						image: t('../../static/image/head-img.png'),
+						username: t('传媒见闻'),
+						title: t('造谣阿里采购寒武纪 15 万片 GPU,背后的深科技号称中国人工智能主媒体，证监会应该出手了！'),
+						content: t('8月31日晚间，有消息称阿里云通义千问大模型面临算力缺口，阿里紧急追加寒武纪思元370芯片订单至15万片。9月1日凌晨，阿里云相关人士回应《科创板日报》记者表示：“阿里云...'),
+						time: t("05-09-01"),
+						like: 2,
+						comment: 1,
+						isLike: false,
+					},
+					{
+						id:id++,
+						image: t('../../static/image/head-img.png'),
+						username: t('传媒见闻'),
+						title: t(""),
+						content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+						time: t("05-09-01"),
+						like: 2,
+						comment: 1,
+						isLike: false,
+					},
+					{
+						id:id++,
+						image: t('../../static/image/head-img.png'),
+						username: t('传媒见闻'),
+						title: t(""),
+						content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+						time: t("05-09-01"),
+						like: 2,
+						comment: 1,
+						isLike: false,
+					},
+					{
+						id:id++,
+						image: t('../../static/image/head-img.png'),
+						username: t('传媒见闻'),
+						title: t(""),
+						content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+						time: t("05-09-01"),
+						like: 2,
+						comment: 1,
+						isLike: false,
+					},
+					// 测试四张图片（应该只显示前三张）
+					{
+						id:id++,
+						image: t('../../static/image/head-img.png'),
+						username: t('传媒见闻'),
+						title: t('测试四张图片显示'),
+						content: t('这里有四张图片，但只会显示前三张，并且每张图片的宽度为210rpx。'),
+						time: t("05-09-02"),
+						like: 5,
+						comment: 3,
+						isLike: true,
+					},
+				],
+				pagination: {
+					page: params["page"],
+					size: params["size"],
+					total: 100
+				}
+			});
+			ui.hideLoading();
+		}, 1000);
+	});
+	async function onPull() {
+		await refresh({ page: 1 });
+		listViewRef.value!.stopRefresh();
+	}
+	const onItemClick = (item : UTSJSONObject) => {
+		console.log('点击文章项:', item);
+		router.push({
+			path: '/pages/articlePage/articleDetail',
+			params: {
+				articleId: item.id,
+			}
+		});
+	};
+	onReady(() => {
+		ui.showLoading(t("加载中"));
+
+		// 默认请求
+		refresh({});
+	});
+	onMounted(() => {
+		const params = router.params();
+		title.value = params.title as string
+	})
+</script>
+
+<style lang="scss">
+
+</style>

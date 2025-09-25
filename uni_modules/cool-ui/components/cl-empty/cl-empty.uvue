@@ -59,7 +59,7 @@ const props = defineProps({
 	// 图标尺寸
 	iconSize: {
 		type: [Number, String],
-		default: 120
+		default: 200
 	},
 	// 是否显示图标
 	showIcon: {

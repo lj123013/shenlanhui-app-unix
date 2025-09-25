@@ -2,40 +2,64 @@
 	<cl-page>
 		<cl-topbar fixed :title="title" :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
 			<template #prepend>
-				<cl-text>取消</cl-text>
+				<cl-text @click="router.to('/pages/index/home')">取消</cl-text>
 			</template>
 
 			<template #append>
-				<cl-button :pt="{className:'px-4'}" size="small" rounded type='primary'
-					@click="getContent">发布</cl-button>
+				<cl-button :pt="{className:'px-4'}" size="small" rounded type='primary'>发布</cl-button>
 			</template>
 		</cl-topbar>
-		<view class='px-2'>
-			<view class="container h-[450rpx]">
-				<web-view :src="webViewUrl" @message="onWebViewMessage" ref="webview" class="webview">
-				</web-view>
+		<view class='px-5'>
+			<view class="border-bottom py-2" v-if="title=='发长文'">
+				<cl-input placeholder="请输入标题" :border="false"></cl-input>
 			</view>
-			<cl-upload v-model="urls" multiple :limit="3" @exceed="handleExceed"></cl-upload>
+			<view v-if="title=='图片'">
+				<view class="border-bottom py-2">
+					<cl-input placeholder="请输入图片介绍（选填）" :border="false"></cl-input>
+				</view>
+				<view class="border-bottom py-2 mb-8">
+					<cl-select v-model="imageType" :border="false" ref="selectRef" :options="options"
+						placeholder="请选择图片类别"></cl-select>
+				</view>
+				<cl-upload multiple  v-model="imageList" test icon="jia" text="上传图片" width="100%" height="210px"></cl-upload>
+			</view>
+			<view v-else>
+				<cl-textarea placeholder="请输入发布内容" height="260px" :autofocus="true" :holdKeyboard="true" :border="false"
+					:showWordLimit="false"></cl-textarea>
+				<cl-upload multiple :limit="3" v-model="upload3" test></cl-upload>
+			</view>
+			
 		</view>
-		<view class="footer-container w-full h-[50px] px-5" :style="{bottom:inputBottom+'px'}">
+		<view v-if="title!='图片'" class="footer-container w-full h-[50px] px-5" :style="{bottom:inputBottom+'px'}">
 			<view class="flex flex-row items-center">
-				<cl-icon name="a-lujing387" size="30rpx" width="40rpx" height="40rpx" color="black"></cl-icon>
-				<cl-icon name="a-zu342" color="black" height="40rpx" :pt="{className:'ml-3'}"></cl-icon>
+				<!-- <cl-icon name="a-lujing387" size="30rpx" width="40rpx" height="40rpx" color="black"></cl-icon>
+				<cl-icon name="a-zu342" color="black" height="40rpx" :pt="{className:'ml-3'}"></cl-icon> -->
 			</view>
-			<cl-icon name="baocun" color="black" height="40rpx"></cl-icon>
+			<cl-icon name="baocun" color="black" height="40rpx" @click="savedraft"></cl-icon>
 		</view>
 	</cl-page>
 </template>
 
 <script setup>
 	import { router, isNull } from "@/cool";
-	import { type ClUploadItem, useUi } from "@/uni_modules/cool-ui";
-	import { t } from "@/locale";
-	const ui = useUi();
+	import type { ClUploadItem, useUi, ClSelectOption } from "@/uni_modules/cool-ui";
 	const title = ref('')
-	const urls = ref<string[]>([]);
+	const ui = useUi();
+	const imageType = ref<number | null>(null);
+	const upload3 = ref<string[]>([]);
+	const imageList=ref<string[]>([])
 	const inputBottom = ref(0)
 	const isPubComment = ref(false)
+	const options = ref<ClSelectOption[]>([
+		{
+			label: "创意",
+			value: 1,
+		},
+		{
+			label: "实拍",
+			value: 2,
+		},
+	]);
 	const closePopup = () => {
 		uni.hideKeyboard()
 		isPubComment.value = false
@@ -44,114 +68,21 @@
 	function handleExceed(list : ClUploadItem[]) {
 		console.log("超出文件数量限制", list);
 	}
-	// 编辑器
-	const webview = ref(null)
-	// 假设你的 H5 页面放在 static 目录下，名为 editor.html
-	const webViewUrl = ref('/static/editor/editor.html')
-	const loading = ref(true)
-	// 编辑器内容
-	const editorContent = ref('')
-
-
-	// 定义消息类型接口
-	interface WebViewMessage {
-		type : string;
-		html ?: string;
-		content ?: string;
-		timestamp ?: number;
-	}
-	// 保存内容函数
-	const saveContentToServer = (content : string) => {
-		console.log('保存内容到服务器:', content.substring(0, 100) + '...')
-		// 实际的上传逻辑
-		ui.showToast({
-			message: t("内容已保存"),
-			type: 'success'
+	const savedraft = () => {
+		ui.showConfirm({
+			title: "确认保存草稿",
+			message: "确定要保存此条文章为草稿吗",
+			confirmText: "保存草稿",
+			cancelText: "不保存",
+			callback(action) {
+				if (action === "confirm") {
+					console.log("用户确认删除");
+					// 执行删除操作
+				} else {
+					console.log("用户取消操作");
+				}
+			},
 		});
-	}
-
-	// 类型安全的事件处理
-	const onWebViewMessage = (event : UTSJSONObject) => {
-		console.log('原始事件对象:', JSON.stringify(event))
-		const detail = event['detail'] as UTSJSONObject
-		console.log('detail 属性:', detail)
-		// 类型安全检查
-		if (isNull(detail) || isNull(detail['data'])) {
-			console.error('Invalid WebView message structure')
-			return
-		}
-
-		const dataArray = detail['data'] as Array<UTSJSONObject>
-		if (dataArray.length === 0) {
-			console.error('Empty message data')
-			return
-		}
-
-		// 类型断言
-		const message = dataArray[0] as WebViewMessage
-
-		switch (message.type) {
-			case 'editorReady':
-				loading.value = false
-				console.log('编辑器准备就绪')
-				break
-
-			case 'contentChange':
-				if (!isNull(message.html) && message.html !== '') {
-					editorContent.value = message.html as string
-					console.log('内容已更新:', message.html as string)
-					// 可以在这里更新响应式数据
-				}
-				break
-
-			case 'saveContent':
-				if (!isNull(message.html) && message.html !== '') {
-					saveContentToServer(message.html as string)
-				}
-				break
-			case 'contentResponse':
-				if (!isNull(message.html) && message.html !== '') {
-					editorContent.value = message.html as string
-					// contentLength.value = message.text?.length || 0
-					// showContent.value = true
-
-					uni.showToast({
-						title: '内容获取成功',
-						icon: 'success'
-					})
-				}
-
-				console.log('获取到编辑器内容:', editorContent.value)
-
-			default:
-				console.log('未知消息类型:', message.type)
-		}
-	}
-
-	// 向 H5 发送消息的示例（类型安全版本）
-	const sendMessageToH5 = () => {
-		if (!isNull(webview.value)) {
-			// 注意：传递内容时需要正确的转义
-			const content = '<p>这是从 uni-app-x 设置的内容</p>'
-			const jsCode = `window.setEditorContent && window.setEditorContent('${content.replace(/'/g, "\\'")}');`
-			webview.value.evalJS(jsCode)
-		}
-	}
-	// 发布
-	const getContent = () => {
-		if (!isNull(webview.value)) {
-			console.log(webview.value,'获取postMessage方法')
-			const message = {
-				type: 'getContent'
-			}
-			// webview.value.postMessage(message)
-			console.log('发送获取内容请求')
-		} else {
-			// ui.showToast({
-			// 	title: '编辑器未就绪',
-			// 	type: 'error'
-			// })
-		}
 	}
 	onMounted(() => {
 		const params = router.params();
@@ -159,6 +90,7 @@
 			title.value = params.title as string
 		}
 		uni.onKeyboardHeightChange((res) => {
+			console.log(res)
 			if (res.height > 0) {
 				inputBottom.value = res.height
 				isPubComment.value = true
@@ -180,5 +112,9 @@
 		position: fixed;
 		left: 0rpx;
 		background: #F3F3F3
+	}
+
+	.cl-select-trigger {
+		border: none !important;
 	}
 </style>

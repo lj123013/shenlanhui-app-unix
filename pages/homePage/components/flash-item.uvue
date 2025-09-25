@@ -1,6 +1,6 @@
 <template>
 	<view class="px-5">
-		<view class="w-full flex flex-row items-start justify-between " :class="index == 0 ? '' : 'border py-4'">
+		<view class="w-full flex flex-row items-start justify-between " :class="index == 0 ? '' : 'border py-4'" @click="onItemClick">
 			<view class="w-[20rpx] h-[20rpx] rounded-full  flex flex-col items-center justify-center  mt-2" :class="item!.is_top?'bg-primary-300':'curcle'">
 				<view class="w-[10rpx] h-[10rpx] rounded-full" :class="item!.is_top?'bg-primary-500':'curicle-gray'"></view>
 			</view>
@@ -55,6 +55,11 @@ const item = computed(() => parse <FalshItem> (props.value));
 function clickuser() {
 	router.to('/pages/user/userinfo');
 }
+// 处理点击事件
+const emit = defineEmits(["item-click"]);
+const onItemClick = () => {
+	emit("item-click", props.value);
+};
 </script>
 <style>
 	.curcle{

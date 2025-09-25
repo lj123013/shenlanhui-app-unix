@@ -1,0 +1,184 @@
+<template>
+	<view class="px-5">
+		<view class="py-3" :class="{'borderh10 border': index != 0}">
+		<view class="flex flex-row items-center justify-between w-full mb-2" v-if="!hidden">
+			<view class="flex flex-row items-center ">
+				<cl-avatar :src="item?.image" size="60rpx"></cl-avatar>
+				<cl-col class="ml-2">
+					<cl-text color="#131313" :pt="{ className: '!text-xs flex-1' }">{{ item?.username
+					}}</cl-text>
+					<cl-text color="#909090" :pt="{ className: '!text-xs' }">{{ item?.time
+					}}</cl-text>
+				</cl-col>
+			</view>
+			<view class=" flex flex-row items-center" @tap="open">
+				<view class='border border-solid border-blue-500 rounded-full px-3 py-[4rpx] mr-2'>
+					<cl-text color="primary" :pt="{className:'text-sm'}">关注</cl-text>
+				</view>
+				<cl-icon name="arrow-down-s-line" color="#ACACAC"></cl-icon>
+			</view>
+		</view>
+		<view class="flex flex-row items-center justify-between" @click="personvisible=!personvisible">
+			<cl-text color="#ACACAC" :pt="{className:'text-sm'}">2025-09-01 11:11</cl-text>
+			<cl-icon name="arrow-down-s-line" color="#ACACAC" v-if="!display"></cl-icon>
+		</view>
+		<cl-text color="black" ellipsis :lines="2" :pt="{ className: '!text-lg' }">{{ item?.title }}</cl-text>
+		<cl-text color="#505050" ellipsis :lines="3" :pt="{ className: '!text-base' }">{{ item?.content }}</cl-text>
+		<view class="flex flex-row items-center justify-between py-3 pt-3 border mt-3" v-if="!hidden">
+			<view v-for="item in operationList" class="flex flex-row items-center" :key="item.text">
+				<cl-icon :name="item?.icon" :pt="{ className: 'operationColor' }" :size="24"></cl-icon>
+				<cl-text :pt="{ className: 'operationColor !text-sm ml-1' }">{{ item?.text
+				}}</cl-text>
+			</view>
+		</view>
+	</view>
+	</view>
+	<!-- swipeClose关闭拖拽 列表用户操作-->
+	<cl-popup v-model="visible" :show-header="false" title="" :mask-closable="true"
+		:pt="{ className: 'rounded-t-2xl' }">
+		<view class="p-4">
+			<view class="py-4 flex flex-row items-center" v-for="value in popupList">
+				<cl-icon :name="value.icon" color="#AEAEAE" :size="36" :pt="{ className: 'mr-2' }"></cl-icon>
+				<cl-text color="#636363" :pt="{ className: '!text-base' }">{{ value.text }}</cl-text>
+			</view>
+			<view class="borderh10 pt-4" @tap="visible=false">
+				<cl-text color="#6D6D6D" :pt="{ className: 'text-center' }">取消</cl-text>
+			</view>
+		</view>
+	</cl-popup>
+	<!-- 个人中心文章弹窗 -->
+	<cl-popup v-model="personvisible" :show-header="false" title="" :mask-closable="true"
+		:pt="{ className: 'rounded-t-2xl' }">
+		<view class="p-4">
+			<view class="py-4 flex flex-row items-center" v-for="value in personPopupList">
+				<cl-icon :name="value.icon" color="#AEAEAE" :size="36" :pt="{ className: 'mr-2' }"></cl-icon>
+				<cl-text color="#636363" :pt="{ className: '!text-base' }">{{ value.text }}</cl-text>
+			</view>
+			<view class="borderh10 pt-4" @tap="personvisible=false">
+				<cl-text color="#6D6D6D" :pt="{ className: 'text-center' }">取消</cl-text>
+			</view>
+		</view>
+	</cl-popup>
+</template>
+
+<script setup>
+	import { isMp, isNull, router, useRefs } from "@/cool";
+	import { computed } from "vue";
+	import { parse } from "@/cool";
+
+	defineOptions({
+		name: "news-item"
+	});
+	const props = defineProps({
+		value: {
+			type: Object,
+			default: () => ({})
+		},
+		index: {
+			type: Number,
+			default: 0
+		},
+		hidden: {
+			type: Boolean,//个人中心的文章不需要展示用户头像和操作
+			default: false
+		},
+		display: {
+			type: Boolean,//个人中心的互动不需要展示下拉操作
+			default: true
+		}
+
+	});
+	type iconitem = {
+		icon : string,
+		text : string
+	}
+	const operationList = ref<iconitem[]>([
+		{
+			icon: 'zhuanfa',
+			text: '分享'
+		},
+		{
+			icon: 'a-pinglun1',
+			text: '评论'
+		},
+		{
+			icon: 'dianzan',
+			text: '点赞'
+		}
+	])
+	const personPopupList = ref<iconitem[]>([
+		{
+			icon: 'a-zu250',
+			text: '编辑'
+		},
+		{
+			icon: 'a-zu259',
+			text: '删除'
+		},
+	])
+	// 定义数据类型（注释形式）
+	type newsItem = {
+		image : string,
+		title ?: string,
+		username : string,
+		content : string,
+		time : string,
+		like : number,
+		comment : number,
+		isLike : boolean,
+	}
+
+
+
+	const item = computed(() => parse<newsItem>(props.value));
+
+	// 弹出层数据
+	type popupItem = {
+		icon : string;
+		text : string;
+	};
+	const popupList = ref<popupItem[]>([
+		{
+			icon: 'shibai',
+			text: '不感兴趣此条内容'
+		},
+		{
+			icon: 'jubao',
+			text: '屏蔽此用户'
+		},
+		{
+			icon: 'a-zu2541',
+			text: '投诉内容'
+		}
+	]);
+	const visible = ref(false);//列表弹出框
+	const personvisible = ref(false)
+	// 打开弹框
+	function open() {
+		visible.value = true;
+	}
+	// 关闭弹框
+	function close() {
+		visible.value = false;
+	}
+	// 处理点击事件
+	const emit = defineEmits(["item-click"]);
+	const onItemClick = () => {
+		emit("item-click", props.value);
+	};
+</script>
+
+<style lang="less">
+	.company {
+		position: relative;
+
+		.company-img {
+			position: absolute;
+			top: 5rpx;
+		}
+	}
+
+	.borderh10 {
+		border-top: 10rpx solid #F8F8F8;
+	}
+</style>

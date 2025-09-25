@@ -49,11 +49,12 @@ const props = defineProps({
 	}
 });
 
-const emit = defineEmits(["item-click"]);
+
 
 const item = computed(() => parse < articleItem > (props.value));
 
 // 处理点击事件
+const emit = defineEmits(["item-click"]);
 const onItemClick = () => {
 	emit("item-click", props.value);
 };

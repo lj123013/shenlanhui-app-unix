@@ -27,7 +27,8 @@
 
 			<!-- 文章内容 -->
 			<view class="pt-5">
-				<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4" @click="showAi=!showAi">
+				<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4"
+					@click="showAi=!showAi">
 					<view class="flex flex-row items-center">
 						<view class="ai-img rounded-full flex flex-col items-center justify-center">
 							<view class="img-box rounded-full flex flex-col items-center justify-center">
@@ -35,7 +36,7 @@
 									:pt="{ className: 'mx-auto my-auto' }"></cl-image>
 							</view>
 						</view>
-						<view class="ml-2" >
+						<view class="ml-2">
 							<cl-text color="white" :pt="{ className: '!text-lg fontBold' }">使用深蓝AI进行分析</cl-text>
 							<cl-text color="white" :pt="{ className: '!text-base' }">智能摘要·深度解读</cl-text>
 						</view>
@@ -97,14 +98,14 @@
 				<view class="mask" @touchmove.stop.prevent :class="isPubComment ? 'on' : ''" @click="closePopup">
 				</view>
 			</view>
-			
+
 			<view class="footer-container" :style="{bottom:inputBottom+'px'}">
 				<view class="input-section">
 					<cl-input v-model="input" :adjustPosition="false" :clearable='true' :border="false" :pt="{
 						className:'!bg-neutral-100 rounded-full pl-3'
 					}" placeholder="写评论"></cl-input>
 					<!-- <view class="bg-neutral-100 rounded-full flex-1 py-2 pl-4 mr-4"><cl-text :pt="{className:'!text-sm text-gray-400'}">写评论</cl-text></view> -->
-			
+
 				</view>
 				<view class="actions-section" v-if='!isPubComment'>
 					<view class="action-item">
@@ -127,7 +128,8 @@
 </template>
 
 <script setup>
-const showAi = ref(false)
+	import { router } from "@/cool";
+	const showAi = ref(false)
 	type aiList = {
 		title : string;
 		content : string;
@@ -188,8 +190,8 @@ const showAi = ref(false)
 		console.log("分享文章:");
 	};
 	onMounted(() => {
-		// const params = router.params();
-		// console.log('接收到的参数:', params);
+		const params = router.params();
+		console.log('接收到的参数:', params);
 		// if (!isNull(params)) {
 		// 	articleData.id = params.articleId as number;
 		// }

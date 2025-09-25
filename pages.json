@@ -233,6 +233,38 @@
 					"style": {
 						"navigationBarTitleText": "认证结果"
 					}
+				},
+				{
+					"path": "mydiscuss",
+					"style": {
+						"navigationBarTitleText": "我的文章",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "myConverstion",
+					"style": {
+						"navigationBarTitleText": "我的AI",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "myinteract",
+					"style": {
+						"navigationBarTitleText": "我的互动",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "deepMoney",
+					"style": {
+						"navigationBarTitleText": "深蓝币",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
 				}
 				
 
