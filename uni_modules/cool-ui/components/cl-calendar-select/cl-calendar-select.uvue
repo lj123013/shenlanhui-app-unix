@@ -263,6 +263,13 @@ function confirm() {
 			return;
 		}
 
+		if (date.value.length != 2) {
+			ui.showToast({
+				message: t("请选择日期范围")
+			});
+			return;
+		}
+
 		emit("update:date", date.value);
 		emit("change", date.value);
 
