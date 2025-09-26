@@ -47,7 +47,8 @@
 			<view>
 				<cl-image src="/static/image/articleimg.png" :width="'100%'" :height="'384rpx'"
 					:pt="{ className: 'my-4 rounded-lg' }"></cl-image>
-				<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4 my-3" @click="showAiInterpretation=!showAiInterpretation">
+				<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4 my-3"
+					@click="showAiInterpretation = !showAiInterpretation">
 					<view class="flex flex-row items-center">
 						<view class="ai-img rounded-full flex flex-col items-center justify-center">
 							<view class="img-box rounded-full flex flex-col items-center justify-center">
@@ -55,7 +56,7 @@
 									:pt="{ className: 'mx-auto my-auto' }"></cl-image>
 							</view>
 						</view>
-						<view class="ml-2" >
+						<view class="ml-2">
 							<cl-text color="white" :pt="{ className: '!text-lg fontBold' }">使用深蓝AI进行分析</cl-text>
 							<cl-text color="white" :pt="{ className: '!text-base' }">智能摘要·深度解读</cl-text>
 						</view>
@@ -73,7 +74,7 @@
 						<view class="text-content pb-5">
 							<!-- 始终显示的简短内容 -->
 							<cl-read-more :showMask="false" v-model="visible" :height="120"
-								:pt="{className:'!text-white'}">
+								:pt="{ className: '!text-white' }">
 								<cl-text color="#E4E4F7">
 									云想衣裳花想容，春风拂槛露华浓。若非群玉山头见，会向瑶台月下逢。
 									一枝红艳露凝香，云雨巫山枉断肠。借问汉宫谁得似？可怜飞燕倚新妆。
@@ -145,10 +146,10 @@
 					</view>
 				</view>
 
-				<view class="footer-container" :style="{bottom:inputBottom+'px'}">
+				<view class="footer-container" :style="{ bottom: inputBottom + 'px' }">
 					<view class="input-section">
 						<cl-input v-model="input" :adjustPosition="false" :clearable='true' :border="false" :pt="{
-							className:'!bg-neutral-100 rounded-full pl-3'
+							className: '!bg-neutral-100 rounded-full pl-3'
 						}" placeholder="写评论"></cl-input>
 						<!-- <view class="bg-neutral-100 rounded-full flex-1 py-2 pl-4 mr-4"><cl-text :pt="{className:'!text-sm text-gray-400'}">写评论</cl-text></view> -->
 
@@ -171,12 +172,29 @@
 				</view>
 			</view>
 		</view>
+		<cl-popup v-model="sharevisible" title="分享到">
+			<view >
+				<cl-row :gutter="12" :pt="{className:'p-4'}">
+					<cl-col :span="6" v-for="item in shareList">
+						<view class="flex flex-col items-center justify-center" @click="share">
+							<cl-image :src="item.image" width="72rpx" height="72rpx"
+								:pt="{ className: 'mb-2' }"></cl-image>
+							<cl-text color="#484848" :pt="{ className: '!text-sm' }">{{ item.title }}</cl-text>
+						</view>
+					</cl-col>
+				</cl-row>
+				<view class="borderh10 pt-4" @tap="sharevisible=false">
+					<cl-text color="#6D6D6D" :pt="{ className: 'text-center' }">取消</cl-text>
+				</view>
+			</view>
+		</cl-popup>
 	</cl-page>
 </template>
 
 <script setup>
 	import { ref, reactive, onMounted } from "vue";
 	import { router, isNull } from "@/cool";
+	const sharevisible = ref(true);
 	// 定义文章数据类型（注释形式）
 	type ArticleData = {
 		id : number;
@@ -185,7 +203,57 @@
 		cover_url : string;
 		acreat_time : string;
 	};
-	const showAiInterpretation=ref(false)
+	// 定义分享配置的类型
+	type ShareConfig = {
+		provider ?: string;
+		scene ?: string;
+	};
+	type shareItem = {
+		title : string
+		image : string
+		share : string | ShareConfig
+	}
+	const shareList = ref<shareItem[]>([
+		{
+			title: '圈子',
+			image: '/static/share/nobgLogo.png',
+			share: "forward"
+		},
+		{
+			title: '微信',
+			image: '/static/share/weixin.png',
+			share: {
+				provider: "weixin",
+				scene: "WXSceneSession",
+			},
+		},
+		{
+			title: '朋友圈',
+			image: '/static/share/pengyouquan.png',
+			share: {
+				provider: "weixin",
+				scene: "WXSceneTimeline",
+			},
+		},
+		{
+			title: '微博',
+			image: '/static/share/shareweibo.png',
+			share: {
+				provider: "sinaweibo",
+			},
+		},
+		{
+			title: "生成图片",
+			image: "/static/share/uploadicon.png",
+			share: "saveImg",
+		},
+		{
+			title: "复制链接",
+			image: "/static/share/copyicon.png",
+			share: "copyLink",
+		},
+	])
+	const showAiInterpretation = ref(false)
 	const content = ref('')
 	const isFollow = ref(false);
 	const visible = ref(false);
@@ -359,7 +427,7 @@
 		background: #fff;
 		padding: 30rpx;
 		padding-bottom: 50rpx;
-		z-index: 1000;
+		z-index: 99;
 	}
 
 	.input-section {
@@ -403,5 +471,8 @@
 	.mask.on {
 		visibility: visible;
 		background-color: rgba(50, 50, 50, 0.3);
+	}
+	.borderh10 {
+		border-top: 10rpx solid #F8F8F8;
 	}
 </style>

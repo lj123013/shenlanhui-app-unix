@@ -11,8 +11,9 @@
 					}}</cl-text>
 				</cl-col>
 			</view>
-			<view class=" flex flex-row items-center" @tap="open">
-				<view class='border border-solid border-blue-500 rounded-full px-3 py-[4rpx] mr-2'>
+			<view class="h-[100rpx] flex flex-row items-center" @tap="open">
+				<!-- rounded-full px-3 py-[4rpx] mr-2 -->
+				<view class='follow rounded-[20rpx] w-[88rpx] h-[46rpx]flex flex-col items-center justify-center'>
 					<cl-text color="primary" :pt="{className:'text-sm'}">关注</cl-text>
 				</view>
 				<cl-icon name="arrow-down-s-line" color="#ACACAC"></cl-icon>
@@ -180,5 +181,8 @@
 
 	.borderh10 {
 		border-top: 10rpx solid #F8F8F8;
+	}
+	.follow{
+		border:2rpx solid #2854F2;
 	}
 </style>

@@ -17,16 +17,18 @@
 		</cl-topbar>
 		<view>
 			<!-- 搜索框吸顶 -->
-			<cl-sticky>
-				<view class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center"
-					@tap="router.to('/pages/homePage/serach')">
-					<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>
-					<cl-text color="#B7B7B7" class="text-neutral-300 ml-2">请输入你要搜索的内容</cl-text>
+			<cl-sticky :offset-top="44+statusBarHeight">
+				<view class="bg-white">
+					<view class="serach rounded-full bg-gray-50 py-3  mx-3 px-3 flex flex-row items-center"
+						@tap="router.to('/pages/homePage/serach')">
+						<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>
+						<cl-text color="#B7B7B7" class="text-neutral-300 ml-2">请输入你要搜索的内容</cl-text>
+					</view>
+					<cl-tabs :pt="{className:'bg-white'}" v-model="current" class="fontBold" :showLine="false"
+						:list="tabsList" :color="isColor ? '#2854F2' : ''" un-color="#6a6a6a"></cl-tabs>
 				</view>
 			</cl-sticky>
 			<!-- 选项卡 -->
-			<cl-tabs v-model="current" class="fontBold" :showLine="false" :list="tabsList"
-				:color="isColor ? '#2854F2' : ''" un-color="#6a6a6a"></cl-tabs>
 			<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
 						refresher: {
 							className: 'pt-3'
@@ -73,6 +75,8 @@
 	import Tabbar from "@/components/tabbar.uvue";
 	import newsItem from "@/components/news-item.uvue"
 	const ui = useUi();
+	// 获取设备屏幕信息
+	const { screenWidth, statusBarHeight, screenHeight } = uni.getWindowInfo();
 	const publishVisible = ref(false)
 	const isColor = ref(true)
 	const current = ref("1")
@@ -106,7 +110,7 @@
 
 		}
 	])
-	const onItemClick = (item: UTSJSONObject) => {
+	const onItemClick = (item : UTSJSONObject) => {
 		console.log('点击文章项:', item);
 		router.push({
 			path: '/pages/articlePage/noticeDetail',
@@ -134,6 +138,7 @@
 			render({
 				list: [
 					{
+						id:id++,
 						image: t('../../static/image/head-img.png'),
 						username: t('传媒见闻'),
 						title: t(""),
@@ -144,6 +149,7 @@
 						isLike: true,
 					},
 					{
+						id:id++,
 						image: t('../../static/image/head-img.png'),
 						username: t('传媒见闻'),
 						title: t('造谣阿里采购寒武纪 15 万片 GPU,背后的深科技号称中国人工智能主媒体，证监会应该出手了！'),
@@ -154,6 +160,7 @@
 						isLike: false,
 					},
 					{
+						id:id++,
 						image: t('../../static/image/head-img.png'),
 						username: t('传媒见闻'),
 						title: t(""),
@@ -164,6 +171,7 @@
 						isLike: false,
 					},
 					{
+						id:id++,
 						image: t('../../static/image/head-img.png'),
 						username: t('传媒见闻'),
 						title: t(""),
@@ -174,6 +182,7 @@
 						isLike: false,
 					},
 					{
+						id:id++,
 						image: t('../../static/image/head-img.png'),
 						username: t('传媒见闻'),
 						title: t(""),
@@ -185,6 +194,7 @@
 					},
 					// 测试四张图片（应该只显示前三张）
 					{
+						id:id++,
 						image: t('../../static/image/head-img.png'),
 						username: t('传媒见闻'),
 						title: t('测试四张图片显示'),
@@ -215,6 +225,7 @@
 		ui.showLoading(t("加载中"));
 		// 默认请求
 		refresh({});
+
 	});
 </script>
 

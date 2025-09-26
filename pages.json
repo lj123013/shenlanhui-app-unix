@@ -292,6 +292,14 @@
 						"navigationStyle": "custom"
 
 					}
+				},
+				{
+					"path": "discover",
+					"style": {
+						"navigationBarTitleText": "发现",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
 				}
 			]
 		}, {

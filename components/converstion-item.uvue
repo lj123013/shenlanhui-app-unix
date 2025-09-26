@@ -17,7 +17,14 @@
 					:pt="{className:'rounded-xl'}"></cl-image>
 				<cl-text ellipsis :lines="3" v-else color="#484848" :pt="{className:'text-base'}">{{item?.ai}}</cl-text>
 			</view>
-			<view class='flex flex-row items-center justify-between'>
+			<view v-if="showUser" class='flex flex-row items-center justify-between pt-2'>
+				<view class='flex flex-row items-center '>
+					<cl-avatar width="25px" height="25px" src="/static/image/head-img.png"></cl-avatar>
+					<cl-text color="#131313" :pt="{className:'text-sm ml-1'}">传媒见闻</cl-text>
+				</view>
+				<cl-text color="#B7B7B7" :pt="{className:'text-sm'}">2025-06-12</cl-text>
+			</view>
+			<view v-else class='flex flex-row items-center justify-between'>
 				<cl-text color="#B7B7B7" :pt="{className:'text-sm'}">2025-06-12</cl-text>
 				<view class="flex flex-row items-center py-2" @click="handleDelete">
 					<cl-icon name="a-zu259" color="#B7B7B7" size="26rpx"></cl-icon>
@@ -55,6 +62,10 @@
 		index: {
 			type: Number,
 			default: 0
+		},
+		showUser: {
+			type: Boolean,
+			default: false
 		}
 	});
 

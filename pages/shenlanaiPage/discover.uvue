@@ -1,7 +1,7 @@
 <template>
 	<cl-page>
-		<cl-topbar fixed  safe-area-top >
-			<cl-text color="#3A3A3A" :pt="{ className: '!text-xl' }">我的AI</cl-text>
+		<cl-topbar title="选项卡导航" fixed safe-area-top>
+			<cl-tabs v-model="type" :height="66" :list="typeList"></cl-tabs>
 		</cl-topbar>
 		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
 			refresher: {
@@ -9,7 +9,7 @@
 			}
 		}" :refresher-enabled="false" @pull="onPull" @bottom="loadMore">
 			<template #item="{ value, index }">
-				<converstion-item :value="value" :index="index"  @item-click="onItemClick"></converstion-item>
+				<converstion-item :value="value" :index="index" @item-click="onItemClick" :showUser="true"></converstion-item>
 			</template>
 			<template #bottom>
 				<view class="py-3">
@@ -21,52 +21,64 @@
 </template>
 
 <script setup>
+	import { ref } from "vue";
 	import { isMp, isNull, router, useRefs, usePager } from "@/cool";
-	import { useUi } from "@/uni_modules/cool-ui";
+	import { type ClTabsItem, useUi } from "@/uni_modules/cool-ui";
 	import { t } from "@/locale";
 	import converstionItem from "@/components/converstion-item.uvue";
 	const ui = useUi();
 	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
 	let id = 0;
+	const type = ref("fans");
+	const typeList = ref<ClTabsItem[]>([
+		{
+			label: "作品广场",
+			value: "fans",
+		},
+		{
+			label: "我的作品",
+			value: "follow",
+		},
+	]);
 	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
 		// 模拟请求
 		setTimeout(() => {
 			render({
 				list: [
 					{
-						id : id++,
-						user : "用新华社的风格写一篇关于2025年财经类的文章，字数不超过300",
+						id: id++,
+						user: "用新华社的风格写一篇关于2025年财经类的文章，字数不超过300",
 						ai: "展望2025年金融市场态势有消息称阿里云通义千问大模型面临算力缺口，阿里紧急追加寒武纪思元370芯片订单至15万片。9月1日凌晨",
-						pic:'',
-						time : "2025-06-21",
+						pic: '',
+						time: "2025-06-21",
 					},
 					{
-						id : id++,
-						user : "一座被夕阳染成金黄色的山峰，山顶有一座古老的寺庙，周围环绕着云雾，风格写实，柔和的...",
+						id: id++,
+						user: "一座被夕阳染成金黄色的山峰，山顶有一座古老的寺庙，周围环绕着云雾，风格写实，柔和的...",
 						ai: "",
-						pic:'/static/image/pic.png',
-						time : "2025-06-21",
+						pic: '/static/image/pic.png',
+						time: "2025-06-21",
 					},
 					{
-						id : id++,
-						user : "用新华社的风格写一篇关于2025年财经类的文章，字数不超过300",
+						id: id++,
+						user: "用新华社的风格写一篇关于2025年财经类的文章，字数不超过300",
 						ai: "展望2025年金融市场态势有消息称阿里云通义千问大模型面临算力缺口，阿里紧急追加寒武纪思元370芯片订单至15万片。9月1日凌晨...",
-						pic:'',
-						time : "2025-06-21",
+						pic: '',
+						time: "2025-06-21",
 					},
 					{
-						id : id++,
-						user : "用新华社的风格写一篇关于2025年财经类的文章，字数不超过300",
+						id: id++,
+						user: "用新华社的风格写一篇关于2025年财经类的文章，字数不超过300",
 						ai: "展望2025年金融市场态势有消息称阿里云通义千问大模型面临算力缺口，阿里紧急追加寒武纪思元370芯片订单至15万片。9月1日凌晨...",
-						pic:'',
-						time : "2025-06-21",
+						pic: '',
+						time: "2025-06-21",
 					},
 					{
-						id : id++,
-						user : "用新华社的风格写一篇关于2025年财经类的文章，字数不超过300",
+						id: id++,
+						user: "用新华社的风格写一篇关于2025年财经类的文章，字数不超过300",
 						ai: "展望2025年金融市场态势有消息称阿里云通义千问大模型面临算力缺口，阿里紧急追加寒武纪思元370芯片订单至15万片。9月1日凌晨...",
-						pic:'',
-						time : "2025-06-21",
+						pic: '',
+						time: "2025-06-21",
 					},
 				],
 				pagination: {

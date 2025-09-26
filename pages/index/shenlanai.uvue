@@ -13,9 +13,9 @@
 						</view>
 					</template>
 					<cl-text color="black" :pt="{ className: '!text-xl fontBold' }">深蓝AI</cl-text>
-					<template #append>
+					<template #append >
 						<cl-icon name="faxian" color="black" :size="30"></cl-icon>
-						<cl-text color="black" :pt="{ className: '!text-sm' }">发现</cl-text>
+						<cl-text color="black" :pt="{ className: '!text-sm' }" @click="router.to('/pages/shenlanaiPage/discover')">发现</cl-text>
 					</template>
 				</cl-topbar>
 				<view class="content-overlay">
