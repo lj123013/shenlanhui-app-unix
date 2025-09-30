@@ -1,0 +1,198 @@
+<template>
+	<cl-page>
+		<view class='mask'>
+			<cl-canvas v-if="width > 0" ref="canvasRef" canvas-id="test" :height="height-90" :width="width"
+				@load="onCanvasLoad"></cl-canvas>
+			<cl-footer :pt="{className:'py-6'}">
+				<!-- #ifdef H5 -->
+				<cl-button type="primary" @click="previewImage">{{ t("预览图片") }}</cl-button>
+				<!-- #endif -->
+				<!-- #ifndef H5 -->
+				<view class='flex flex-row justify-around'>
+					<cl-button type="light" :pt="{className:'!w-[300rpx] py-3'}" @tap="close">{{ t("取消") }}</cl-button>
+					<cl-button type="primary" :pt="{className:'!w-[300rpx] py-3'}"
+						@click="saveImage">{{ t("保存图片") }}</cl-button>
+				</view>
+				<!-- #endif -->
+			</cl-footer>
+		</view>
+
+	</cl-page>
+</template>
+
+<script lang="ts" setup>
+	import { t } from "@/locale";
+	import { router, isHarmony } from "@/cool";
+	import { Canvas } from "@/uni_modules/cool-canvas";
+	import { useUi } from "@/uni_modules/cool-ui";
+	import { ref } from "vue";
+
+	const ui = useUi();
+
+	const canvasRef = ref<ClCanvasComponentPublicInstance | null>(null);
+
+	// 初始化为 0，避免页面未完全渲染时 getWindowInfo 获取到的高度或宽度不准确（如已知固定高宽可直接赋值）
+	const height = ref(520);
+	const width = ref(0);
+
+	function onCanvasLoad(canvas : Canvas) {
+		canvas
+			.image({
+				x: (width.value - 327) / 2,
+				y: (height.value - 600) / 2,
+				width: 327,
+				height: 500,
+				url: "/static/image/GeneratePicture.png",
+				radius: 10
+			})
+			.image({
+				x: (width.value - 300) / 2,
+				y: (height.value - 550) / 2,
+				width: 50,
+				height: 50,
+				url: "/static/image/company.png",
+				radius: 10
+			})
+			.text({
+				x: (width.value - 190) / 2,
+				y: (height.value - 540) / 2,
+				content: "传媒见闻",
+				color: "#000",
+				fontSize: 13,
+				fontWeight: "bold"
+			})
+			.text({
+				x: (width.value - 190) / 2,
+				y: (height.value - 506) / 2,
+				width: 250,
+				content: "中国领先的商业智库——以价值研究助力商业决策中国领先的商业智库——以价值研究助力商业决策",
+				color: "#505050",
+				fontSize: 10,
+				overflow: "ellipsis",
+				lineClamp: 1
+			})
+			.text({
+				x: (width.value - 190) / 2,
+				y: (height.value - 480) / 2,
+				width: 250,
+				content: "2025-05-28 15:44",
+				color: "#AFAFAF",
+				fontSize: 8,
+			})
+			.div({
+				x: (width.value - 300) / 2,
+				y: (height.value - 430) / 2,
+				width: 300,
+				height: 2,
+				backgroundColor: "#000",
+			})
+			.div({
+				x: (width.value - 300) / 2,
+				y: (height.value - 420) / 2,
+				width: 300,
+				height: 1,
+				backgroundColor: "#767676",
+			})
+			.text({
+				x: (width.value - 300) / 2,
+				y: (height.value - 400) / 2,
+				width: 250,
+				content: "无人记得江小白",
+				fontSize: 28,
+				fontWeight: "bold",
+				color: "#000",
+			})
+			.text({
+				x: (width.value - 300) / 2,
+				y: (height.value - 300) / 2,
+				width: 300,
+				content: "从一夜爆火到乏人问津，网红品牌走出这样的下坠曲线屡见不鲜。在传统的白酒行业，就有这么一家“网红”——江小白。立志要做“年轻人的第一瓶酒”，江小白凭借走心的“鸡汤式”文案营销，在充满“老人味”的白酒江湖杀出一条路来，让外界得知就有这么一家“网红”——江小白。立志要做“年轻人的第一瓶酒”，江小白凭借走心的“鸡汤式”文案营销，在充满“老人味”的白酒江湖杀出一条路来，让外界得知，原来年轻人也喜欢喝白酒。但成也营销，败也营销，江小白在高歌猛进的同时，却忽视了白酒品质的重要性，“难喝”之声不绝于耳，擅长的营销也频频翻车，近年来已然难寻声量。",
+				fontSize: 16,
+				color: "#444",
+				lineHeight: 30,
+				overflow: "ellipsis",
+				lineClamp: 8
+			})
+			.div({
+				x: (width.value - 300) / 2,
+				y: (height.value - 320),
+				width: 300,
+				height: 2,
+				backgroundColor: "#B2B2B2",
+			})
+			.image({
+				x: (width.value - 300) / 2,
+				y: height.value - 300,
+				width: 45,
+				height: 45,
+				url: "/static/share/erweima.png"
+			})
+			.text({
+				x: (width.value - 200) / 2,
+				y: height.value - 290,
+				width: 200,
+				content: "长按识别二维码",
+				fontSize: 10,
+				color: "#444",
+			})
+			.text({
+				x: (width.value - 200) / 2,
+				y: height.value - 275,
+				width: 200,
+				content: "阅读原文",
+				fontSize: 10,
+				color: "#444",
+			})
+			.image({
+				x: (width.value - 80),
+				y: (height.value - 305),
+				width: 45,
+				height: 45,
+				url: "/static/image/ailogo.png"
+			})
+			.text({
+				x: (width.value - 78),
+				y: height.value - 265,
+				width: 200,
+				content: "深蓝汇",
+				fontSize: 12,
+				color: "#000",
+			})
+
+			.draw();
+	}
+
+	function previewImage() {
+		canvasRef.value!.previewImage();
+	}
+
+	function saveImage() {
+		canvasRef.value!.saveImage();
+	}
+
+	onReady(() => {
+		// 同上
+		height.value = uni.getWindowInfo().windowHeight;
+		width.value = uni.getWindowInfo().windowWidth;
+	});
+	const close = () => {
+		router.push({
+			path: '/pages/articlePage/articleDetail',
+			params: {
+				articleId: 123456,
+			}
+		});
+	}
+</script>
+<style>
+	.mask {
+		width: 100%;
+		height: 100%;
+		position: fixed;
+		top: 0;
+		left: 0;
+		background-color: rgba(50, 50, 50, 0.9);
+		visibility: hidden;
+		overflow: hidden;
+	}
+</style>

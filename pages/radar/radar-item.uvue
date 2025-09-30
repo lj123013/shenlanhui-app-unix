@@ -1,8 +1,8 @@
 <template>
 	<view class="px-5">
-		<view class="w-full flex flex-row items-start justify-between py-4 border-bottom">
+		<view class="w-full flex flex-row items-start justify-between py-4 border-bottom" @click="onItemClick">
 			<view class="flex-1 ml-1">
-				<cl-text color="black"  :pt="{
+				<cl-text color="black" :pt="{
 					className: '!text-lg mb-1'
 				}">
 					{{ item?.title }}</cl-text>
@@ -16,44 +16,46 @@
 </template>
 
 <script setup>
-import { isMp, router, useRefs } from "@/cool";
-import { computed,onMounted } from "vue";
-import { parse } from "@/cool";
+	import { isMp, router, useRefs } from "@/cool";
+	import { computed, onMounted } from "vue";
+	import { parse } from "@/cool";
 
-defineOptions({
-	name: "radar-item"
-});
+	defineOptions({
+		name: "radar-item"
+	});
 
-// 定义数据类型（注释形式）
-type FalshItem ={
-	id: number;
-	title: string;
-	time: string;
-	tag: string;
-}
-
-const props = defineProps({
-	value: {
-		type: Object,
-		default: () => ({})
-	},
-	index: {
-		type: Number,
-		default: 0
+	// 定义数据类型（注释形式）
+	type FalshItem = {
+		id : number;
+		title : string;
+		time : string;
+		tag : string;
 	}
-});
 
-const item = computed(() => parse <FalshItem> (props.value));
+	const props = defineProps({
+		value: {
+			type: Object,
+			default: () => ({})
+		},
+		index: {
+			type: Number,
+			default: 0
+		}
+	});
 
-function clickuser() {
-	router.to('/pages/user/userinfo');
-}
+	const item = computed(() => parse<FalshItem>(props.value));
+	// 处理点击事件
+	const emit = defineEmits(["item-click"]);
+	const onItemClick = () => {
+		emit("item-click", props.value);
+	};
 </script>
 <style>
-	.curcle{
+	.curcle {
 		background: #e9e9e9;
 	}
-	.curicle-gray{
-		background:#C2C2C2;
+
+	.curicle-gray {
+		background: #C2C2C2;
 	}
 </style>

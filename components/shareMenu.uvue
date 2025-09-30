@@ -1,0 +1,127 @@
+<template>
+	<cl-popup v-model="visible" title="分享到" @tap="handleCancel">
+		<view>
+			<cl-row :gutter="12" :pt="{className:'p-4'}">
+				<cl-col :span="6" v-for="item in shareList">
+					<view class="flex flex-col items-center justify-center" @click="clickshare(item)">
+						<cl-image :src="item.image" width="72rpx" height="72rpx" :pt="{ className: 'mb-2' }"></cl-image>
+						<cl-text color="#484848" :pt="{ className: '!text-sm' }">{{ item.title }}</cl-text>
+					</view>
+				</cl-col>
+			</cl-row>
+			<view class="borderh10 pt-4" @tap="handleCancel">
+				<cl-text color="#6D6D6D" :pt="{ className: 'text-center' }">取消</cl-text>
+			</view>
+		</view>
+	</cl-popup>
+
+</template>
+
+<script setup>
+	import { ref, watch, defineProps, defineEmits } from 'vue'
+	import { config } from "@/config";
+	import { router, isNull } from "@/cool";
+	import { useUi } from "@/uni_modules/cool-ui";
+	const ui = useUi();
+	const props = defineProps({
+		sharevisible: {
+			type: Boolean,//个人中心的文章不需要展示用户头像和操作
+			default: false
+		},
+	})
+	// 定义分享配置的类型
+	type shareItem = {
+		title : string
+		image : string
+		share : string
+	}
+	const shareList = ref<shareItem[]>([
+		{
+			title: '圈子',
+			image: '/static/share/nobgLogo.png',
+			share: "forward"
+		},
+
+		{
+			title: "生成图片",
+			image: "/static/share/uploadicon.png",
+			share: "saveImg",
+		},
+		{
+			title: "更多",
+			image: "/static/share/uploadicon.png",
+			share: "shareAll",
+		},
+		{
+			title: "复制链接",
+			image: "/static/share/copyicon.png",
+			share: "copyLink",
+		},
+	])
+	// 定义 emits 事件（用于通知父组件更新值）
+	const emit = defineEmits(['update:sharevisible'])
+	// 子组件本地变量，承接 props 的值
+	const visible = ref(props.sharevisible)
+	// 监听 props 变化，同步到本地变量（父组件修改时，子组件同步更新）
+	watch(
+		() : boolean => props.sharevisible,
+		(newVal : boolean) => {
+			visible.value = newVal
+		}
+	)
+	// 监听本地变量变化，通过 emit 通知父组件更新（子组件修改时，通知父组件）
+	watch(
+		visible,
+		(newVal : boolean) => {
+			emit('update:sharevisible', newVal)
+		}
+	)
+	// 取消按钮点击事件：修改本地 visible 为 false
+	const handleCancel = () => {
+		visible.value = false
+		emit("close", false);// 会触发上面的 watch，通知父组件
+	}
+
+	// 分享按钮点击事件（可选：如果需要点击分享后关闭弹窗）
+	const clickshare = (item : shareItem) => {
+		visible.value = false
+		emit("close", false); // 分享后关闭弹窗，同样会通知父组件
+		if (item.share == 'forward') {
+			//转发
+			router.push({
+				path: '/pages/publish/disucss',
+				params: {
+					title: `转发${config.name}`
+				}
+			})
+		} else if (item.share == 'saveImg') {
+			router.to("/pages/GeneratePicture/articlePic")
+		} else if (item.share == 'shareAll') {
+			console.log('分享')
+			uni.shareWithSystem({
+				summary: '欢迎使用深蓝汇',
+				href: 'https://uniapp.dcloud.io',
+				imageUrl: "/static/image/logo.png",
+				type: 'text',
+				success(_) {
+					console.log('Shared----------------------------success')
+					// 分享完成，请注意此时不一定是成功分享
+				},
+				fail(res) {
+					console.log('Share failed, ' + "res.errCode =" + res.errCode + '---res.errMsg= ' + res.errMsg)
+					uni.showToast({
+						icon: "error",
+						title: "errorCode=" + res.errCode
+					})
+				},
+				complete(_) {
+
+				}
+			})
+		}
+	}
+</script>
+
+<style>
+
+</style>

@@ -266,7 +266,7 @@
 						"navigationStyle": "custom"
 					}
 				}
-				
+
 
 			]
 		},
@@ -305,22 +305,30 @@
 		}, {
 			"root": "pages/radar",
 			"pages": [{
-				"path": "addKeyword",
-				"style": {
-					"navigationBarTitleText": "添加关键字",
-					"titleNView": "custom",
-					"navigationStyle": "custom"
+					"path": "addKeyword",
+					"style": {
+						"navigationBarTitleText": "添加关键字",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "keywordlist",
+					"style": {
+						"navigationBarTitleText": "关键字管理",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "radarDetail",
+					"style": {
+						"navigationBarTitleText": "雷达详情",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
 				}
-			},
-			{
-				"path": "keywordlist",
-				"style": {
-					"navigationBarTitleText": "关键字管理",
-					"titleNView": "custom",
-					"navigationStyle": "custom"
-				}
-			}
-		]
+			]
 		},
 		{
 			"root": "pages/articlePage",
@@ -331,6 +339,7 @@
 						"navigationStyle": "custom"
 					}
 				},
+
 				{
 					"path": "dispathDetail",
 					"style": {
@@ -348,6 +357,42 @@
 			]
 		},
 		{
+			"root": "pages/GeneratePicture",
+			"pages": [{
+					"path": "articlePic",
+					"style": {
+						"navigationBarTitleText": "文章生成图片1",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "article2",
+					"style": {
+						"navigationBarTitleText": "文章生成图片2",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "dispath1",
+					"style": {
+						"navigationBarTitleText": "快讯生成图片",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "dispath2",
+					"style": {
+						"navigationBarTitleText": "快讯生成图片2",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				}
+			]
+		},
+		{
 			"root": "pages/publish",
 			"pages": [{
 					"path": "disucss",
@@ -357,7 +402,7 @@
 						"navigationStyle": "custom"
 					}
 				}
-				
+
 			]
 		}
 	],

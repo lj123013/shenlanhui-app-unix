@@ -1,0 +1,112 @@
+<template>
+	<cl-page>
+		<cl-topbar fixed safe-area-top :title="title" color='black' :pt="{
+		back: {
+			size: 48,
+		},
+	}">
+		</cl-topbar>
+		<view class="px-5">
+			<view class='flex flex-row justify-between items-center mb-1'>
+				<cl-text color="#9B9B9B" :pt="{className:'text-base'}">来源:同花顺</cl-text>
+				<cl-text color="#9B9B9B" :pt="{className:'text-sm'}">2025-09-02 21:34</cl-text>
+			</view>
+			<cl-text color="black" :pt="{className:'text-xl'}">股票行情快报：新希望（000876）9月2日主力资金净卖出583.53万元</cl-text>
+			<view class='flex flex-row justify-between items-center border-bottom pb-3'>
+				<cl-text color="#9B9B9B" :pt="{className:'text-sm'}">资讯</cl-text>
+				<cl-text color="primary" :pt="{className:'text-base'}">原文链接</cl-text>
+			</view>
+			<cl-text color="black" :pt="{className:'text-xl mt-3'}">相关内容</cl-text>
+		</view>
+		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
+					refresher: {
+						className: 'pt-3'
+					}
+				}" :refresher-enabled="false" @pull="onPull" @bottom="loadMore">
+			<template #item="{ value, index }">
+				<radar-item :value="value" :index="index" @item-click="onItemClick"></radar-item>
+			</template>
+
+			<template #bottom>
+				<view class="py-3">
+					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+				</view>
+			</template>
+		</cl-list-view>
+
+	</cl-page>
+</template>
+<script setup>
+	import { router, isNull, usePager } from "@/cool";
+	import type { ClTabsItem, useUi } from "@/uni_modules/cool-ui";
+	import radarItem from "../radar/radar-item.uvue";
+	import { t } from "@/locale";
+	const ui = useUi();
+	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
+	let id = 0;
+	const title = ref('')
+	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
+		// 模拟请求
+		setTimeout(() => {
+			render({
+				list: [
+					{
+						id: id++,
+						title: "股票行情快报：新希望（000876）9月2日主力资金净卖出583.53万元",
+						time: "17:39",
+						tag: '资讯'
+					},
+					{
+						id: id++,
+						title: "同比增长162%！新希望净利扭亏，预计下半年继续稳步改善",
+						time: "17:39",
+						tag: '快讯'
+					},
+					{
+						id: id++,
+						title: "新希望:关于归还临时补充流动资金的募集资金的公告",
+						time: "17:39",
+						tag: '公告'
+					},
+				],
+				pagination: {
+					page: params["page"],
+					size: params["size"],
+					total: 4
+				}
+			});
+			ui.hideLoading();
+		}, 1000);
+	});
+
+	async function onPull() {
+		await refresh({ page: 1 });
+		listViewRef.value!.stopRefresh();
+	}
+	// 处理文章项点击事件
+	const onItemClick = (item : UTSJSONObject) => {
+		console.log('点击文章项:', item);
+		router.push({
+			path: '/pages/radar/radarDetail',
+			params: {
+				id: item.id,
+				title: '新希望'
+
+			}
+		});
+	};
+	onReady(() => {
+		ui.showLoading(t("加载中"));
+		// 默认请求
+		refresh({});
+	});
+	onMounted(() => {
+		const params = router.params();
+		console.log('接收到的参数:', params);
+		title.value = params.title as string
+	})
+</script>
+
+<style lang="scss">
+
+</style>

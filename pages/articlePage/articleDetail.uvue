@@ -1,12 +1,13 @@
 <template>
 	<cl-page safe-area>
-		<cl-topbar fixed safe-area-top color='black' :pt="{
+		<cl-topbar fixed safe-area-top color='black' back-path="/pages/index/home" :pt="{
 			back: {
 				size: 48,
 			},
 		}">
 			<template #append>
-				<cl-icon name="zhuanfa1" color="black" :size="30" :pt="{ className: 'mr-3' }" @tap="share"></cl-icon>
+				<cl-icon name="zhuanfa1" color="black" :size="30" :pt="{ className: 'mr-3' }"
+					@tap="sharevisible=true"></cl-icon>
 			</template>
 		</cl-topbar>
 		<view class="content px-4">
@@ -163,7 +164,7 @@
 							<cl-icon name="a-shoucangdianji" :size="30" width="36rpx" color="#464646"></cl-icon>
 							<cl-text color="#464646" :pt="{ className: 'action-text' }">收藏</cl-text>
 						</view>
-						<view class="action-item">
+						<view class="action-item" @tap="sharevisible=true">
 							<cl-icon name="zhuanfa1" :size="28" color="#464646"></cl-icon>
 							<cl-text color="#464646" :pt="{ className: 'action-text' }">分享</cl-text>
 						</view>
@@ -172,29 +173,16 @@
 				</view>
 			</view>
 		</view>
-		<cl-popup v-model="sharevisible" title="分享到">
-			<view >
-				<cl-row :gutter="12" :pt="{className:'p-4'}">
-					<cl-col :span="6" v-for="item in shareList">
-						<view class="flex flex-col items-center justify-center" @click="share">
-							<cl-image :src="item.image" width="72rpx" height="72rpx"
-								:pt="{ className: 'mb-2' }"></cl-image>
-							<cl-text color="#484848" :pt="{ className: '!text-sm' }">{{ item.title }}</cl-text>
-						</view>
-					</cl-col>
-				</cl-row>
-				<view class="borderh10 pt-4" @tap="sharevisible=false">
-					<cl-text color="#6D6D6D" :pt="{ className: 'text-center' }">取消</cl-text>
-				</view>
-			</view>
-		</cl-popup>
+		<shareMenu v-if="sharevisible" :sharevisible='sharevisible' @close="handelclose"></shareMenu>
+
 	</cl-page>
 </template>
-
 <script setup>
 	import { ref, reactive, onMounted } from "vue";
 	import { router, isNull } from "@/cool";
-	const sharevisible = ref(true);
+	import shareMenu from '@/components/shareMenu.uvue'
+	const sharevisible = ref(false);
+	const generateimage = ref(true)
 	// 定义文章数据类型（注释形式）
 	type ArticleData = {
 		id : number;
@@ -203,56 +191,8 @@
 		cover_url : string;
 		acreat_time : string;
 	};
-	// 定义分享配置的类型
-	type ShareConfig = {
-		provider ?: string;
-		scene ?: string;
-	};
-	type shareItem = {
-		title : string
-		image : string
-		share : string | ShareConfig
-	}
-	const shareList = ref<shareItem[]>([
-		{
-			title: '圈子',
-			image: '/static/share/nobgLogo.png',
-			share: "forward"
-		},
-		{
-			title: '微信',
-			image: '/static/share/weixin.png',
-			share: {
-				provider: "weixin",
-				scene: "WXSceneSession",
-			},
-		},
-		{
-			title: '朋友圈',
-			image: '/static/share/pengyouquan.png',
-			share: {
-				provider: "weixin",
-				scene: "WXSceneTimeline",
-			},
-		},
-		{
-			title: '微博',
-			image: '/static/share/shareweibo.png',
-			share: {
-				provider: "sinaweibo",
-			},
-		},
-		{
-			title: "生成图片",
-			image: "/static/share/uploadicon.png",
-			share: "saveImg",
-		},
-		{
-			title: "复制链接",
-			image: "/static/share/copyicon.png",
-			share: "copyLink",
-		},
-	])
+
+
 	const showAiInterpretation = ref(false)
 	const content = ref('')
 	const isFollow = ref(false);
@@ -266,6 +206,9 @@
 	function toggle() {
 		visible.value = !visible.value;
 	}
+	function handelclose(val : Boolean) {
+		sharevisible.value = val
+	}
 	// 响应式文章数据
 	const articleData = reactive<ArticleData>({
 		id: 0,
@@ -273,11 +216,8 @@
 		author: '',
 		cover_url: '',
 		acreat_time: ''
-	});
-	const share = () => {
-		// 分享功能实现
-		console.log("分享文章:", articleData.title);
-	};
+	})
+
 	type aiList = {
 		title : string;
 		content : string;
@@ -472,6 +412,7 @@
 		visibility: visible;
 		background-color: rgba(50, 50, 50, 0.3);
 	}
+
 	.borderh10 {
 		border-top: 10rpx solid #F8F8F8;
 	}
