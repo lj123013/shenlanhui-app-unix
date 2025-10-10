@@ -27,7 +27,7 @@
 
 			<template #bottom>
 				<view class="py-3">
-					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+					<cl-loadmore :loading="loading" :finish="true"  v-if="list.length > 0" :safeAreaBottom='true'></cl-loadmore>
 				</view>
 			</template>
 		</cl-list-view>
@@ -97,7 +97,7 @@
 				pagination: {
 					page: params["page"],
 					size: params["size"],
-					total: 4
+					total: 3
 				}
 			});
 			ui.hideLoading();

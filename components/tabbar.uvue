@@ -15,8 +15,8 @@
 			>
 				<cl-image
 					:src="path == item.pagePath ? item.icon2 : item.icon"
-					:height="56"
-					:width="56"
+					:height="46"
+					:width="46"
 				></cl-image>
 
 				<cl-text

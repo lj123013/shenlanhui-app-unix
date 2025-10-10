@@ -11,7 +11,7 @@
 			</template>
 		</cl-topbar>
 		<view class="content px-4">
-			<cl-text color="#2B2B2B" :pt="{ className: '!text-xl fontBold' }">美团Q1：告别低质“内卷式”竞争，行业生态共赢才是新方向</cl-text>
+			<cl-text color="#2B2B2B" :pt="{ className: '!text-2xl fontBold' }">美团Q1：告别低质“内卷式”竞争，行业生态共赢才是新方向</cl-text>
 			<view class="flex flex-row items-center justify-between">
 				<view :span="13">
 					<view class="flex flex-row items-center mt-2">
@@ -86,7 +86,7 @@
 					</view>
 					<view class="py-3">
 						<cl-text color="white" :pt="{ className: 'text-lg fontBold ' }">你还可以</cl-text>
-						<view v-for="value in aiMwnu" class="flex flex-row items-center justify-between p-4 rounded-lg"
+						<view v-for="value in aiMwnu" class="flex flex-row items-center justify-between p-4 mt-2 rounded-lg"
 							:class="value.isFinish ? 'aiItemoption' : 'aiItem'">
 							<view class="flex flex-row items-center">
 								<cl-image width="72rpx" height="72rpx" :pt="{ className: 'mr-2' }"
@@ -100,7 +100,7 @@
 							<view
 								class="bg-green-500 w-[38rpx] h-[38rpx] rounded-full flex flex-col items-center justify-center"
 								v-if="value?.isFinish">
-								<cl-icon name="dui" color="white" :size="20"></cl-icon>
+								<cl-icon name="dui" color="white" width="20rpx" height="15rpx" :size="15"></cl-icon>
 								<!-- <cl-text>√</cl-text> -->
 							</view>
 						</view>
@@ -152,24 +152,22 @@
 						<cl-input v-model="input" :adjustPosition="false" :clearable='true' :border="false" :pt="{
 							className: '!bg-neutral-100 rounded-full pl-3'
 						}" placeholder="写评论"></cl-input>
-						<!-- <view class="bg-neutral-100 rounded-full flex-1 py-2 pl-4 mr-4"><cl-text :pt="{className:'!text-sm text-gray-400'}">写评论</cl-text></view> -->
-
 					</view>
 					<view class="actions-section" v-if='!isPubComment'>
 						<view class="action-item">
 							<cl-icon name="aixin-1" :size="28" width="34rpx" color="#464646"></cl-icon>
-							<cl-text color="#464646" :pt="{ className: 'action-text' }">点赞</cl-text>
+							<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">点赞</cl-text>
 						</view>
 						<view class="action-item">
 							<cl-icon name="a-shoucangdianji" :size="30" width="36rpx" color="#464646"></cl-icon>
-							<cl-text color="#464646" :pt="{ className: 'action-text' }">收藏</cl-text>
+							<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">收藏</cl-text>
 						</view>
 						<view class="action-item" @tap="sharevisible=true">
 							<cl-icon name="zhuanfa1" :size="28" color="#464646"></cl-icon>
-							<cl-text color="#464646" :pt="{ className: 'action-text' }">分享</cl-text>
+							<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">分享</cl-text>
 						</view>
 					</view>
-					<cl-text v-else :pt="{ className: 'action-text text-primary-500' }">发送</cl-text>
+					<cl-text v-else :pt="{ className: 'z-999 action-text text-primary-500' }">发送</cl-text>
 				</view>
 			</view>
 		</view>
@@ -191,8 +189,6 @@
 		cover_url : string;
 		acreat_time : string;
 	};
-
-
 	const showAiInterpretation = ref(false)
 	const content = ref('')
 	const isFollow = ref(false);
@@ -291,15 +287,9 @@
 		isPubComment.value = false
 		inputBottom.value = 0
 	}
-	// 页面加载时获取路由参数
-	onMounted(() => {
-		const params = router.params();
-		console.log('接收到的参数:', params);
-		if (!isNull(params)) {
-			articleData.id = params.articleId as number;
-		}
+	onReady(() => {
 		uni.onKeyboardHeightChange((res) => {
-			console.log(res)
+			console.log(res,'键盘高度')
 			if (res.height > 0) {
 				inputBottom.value = res.height
 				isPubComment.value = true
@@ -307,6 +297,17 @@
 				closePopup()
 			}
 		})
+	
+	});
+	// 页面加载时获取路由参数
+	onMounted(() => {
+		const params = router.params();
+		console.log('接收到的参数:', params);
+		if (!isNull(params)) {
+			articleData.id = params.articleId as number;
+		}
+		
+		
 	});
 </script>
 
@@ -367,13 +368,14 @@
 		background: #fff;
 		padding: 30rpx;
 		padding-bottom: 50rpx;
-		z-index: 99;
+		z-index: 999;
 	}
 
 	.input-section {
 		flex: 1;
 		margin-right: 20rpx;
 		min-width: 0;
+		/* z-index:999; */
 		/* 防止flex子项溢出 */
 	}
 
@@ -384,7 +386,7 @@
 		justify-content: space-between;
 		flex-shrink: 0;
 		/* 防止被压缩 */
-		width: 240rpx;
+		width: 200rpx;
 		/* 固定宽度确保显示完整 */
 	}
 
@@ -401,7 +403,7 @@
 		position: fixed;
 		top: 0;
 		left: 0;
-		z-index: 999;
+		z-index: 99;
 		background-color: rgba(50, 50, 50, 0.7);
 		/* 	transition: all 0.5s ease-in-out 0s; */
 		visibility: hidden;

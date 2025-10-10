@@ -1,5 +1,5 @@
 <template>
-	<cl-popup v-model="visible" title="分享到" @tap="handleCancel">
+	<cl-popup v-model="visible" title="分享到" @tap="handleCancel" style="z-index:9999">
 		<view>
 			<cl-row :gutter="12" :pt="{className:'p-4'}">
 				<cl-col :span="6" v-for="item in shareList">
@@ -97,11 +97,12 @@
 		} else if (item.share == 'saveImg') {
 			router.to("/pages/GeneratePicture/articlePic")
 		} else if (item.share == 'shareAll') {
-			console.log('分享')
+			const imageSrc : string = "/static/image/logo.png";
+			let imageUrlList : string[] = new Array()
 			uni.shareWithSystem({
 				summary: '欢迎使用深蓝汇',
-				href: 'https://uniapp.dcloud.io',
-				imageUrl: "/static/image/logo.png",
+				 href: 'https://www.shenlanhui.com/?t=' + new Date().getTime(), // 添加时间戳
+				imagePaths: imageUrlList,
 				type: 'text',
 				success(_) {
 					console.log('Shared----------------------------success')

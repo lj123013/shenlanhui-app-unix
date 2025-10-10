@@ -1,7 +1,7 @@
 <template>
-	<view class="px-5">
-		<view class="py-3" :class="{'borderh10 border': index != 0}">
-		<view class="flex flex-row items-center justify-between w-full mb-2" v-if="!hidden">
+	<view class="">
+		<view class="py-3 px-5" :class="{'borderh10': index != 0}">
+		<view class="flex flex-row items-center justify-between w-full mb-2 " v-if="!hidden">
 			<view class="flex flex-row items-center ">
 				<cl-avatar :src="item?.image" size="60rpx"></cl-avatar>
 				<cl-col class="ml-2">
@@ -12,16 +12,15 @@
 				</cl-col>
 			</view>
 			<view class="h-[100rpx] flex flex-row items-center" @tap="open">
-				<!-- rounded-full px-3 py-[4rpx] mr-2 -->
 				<view class='follow rounded-[20rpx] w-[88rpx] h-[46rpx]flex flex-col items-center justify-center'>
 					<cl-text color="primary" :pt="{className:'text-sm'}">关注</cl-text>
 				</view>
 				<cl-icon name="arrow-down-s-line" color="#ACACAC"></cl-icon>
 			</view>
 		</view>
-		<view class="flex flex-row items-center justify-between" @click="personvisible=!personvisible">
+		<view v-if="hidden" class="flex flex-row items-center justify-between" @click="personvisible=!personvisible">
 			<cl-text color="#ACACAC" :pt="{className:'text-sm'}">2025-09-01 11:11</cl-text>
-			<cl-icon name="arrow-down-s-line" color="#ACACAC" v-if="!display"></cl-icon>
+			<cl-icon name="arrow-down-s-line" color="#ACACAC"></cl-icon>
 		</view>
 		<cl-text color="black" ellipsis :lines="2" :pt="{ className: '!text-lg' }">{{ item?.title }}</cl-text>
 		<cl-text color="#505050" ellipsis :lines="3" :pt="{ className: '!text-base' }">{{ item?.content }}</cl-text>

@@ -61,15 +61,14 @@
 			<!-- 雷达 -->
 			<view class="radar mt-4">
 				<view class="flex flex-row items-center justify-between mb-1">
-					<image style="height: 20px; width: 90px;" src="../../static/image/leida.png"></image>
-					<!-- <view class="flex flex-row items-center">
+					<view class="flex flex-row items-center">
 						<cl-text color="primary" :pt="{
-								className: '!text-xl fontBold fontitalic font-serif mr-1'
+								className: 'text-xl fontBold'
 							}">雷</cl-text>
 						<cl-text color="black" :pt="{
-								className: '!text-2xl fontBold fontitalic'
+								className: '!text-xl fontBold'
 							}">达</cl-text>
-					</view> -->
+					</view>
 					<view class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl">
 						<cl-text :pt="{
 								className: '!text-xs textred-600'
@@ -112,10 +111,10 @@
 				<view class="flex flex-row items-center justify-between">
 					<view class="flex flex-row items-center">
 						<cl-text color="primary" :pt="{
-								className: 'text-xl fontBold fontitalic'
+								className: 'text-xl fontBold'
 							}">7×24</cl-text>
 						<cl-text color="black" :pt="{
-								className: '!text-xl fontBold fontitalic'
+								className: '!text-xl fontBold'
 							}">快讯</cl-text>
 					</view>
 					<view class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl" @tap="jump">
@@ -144,10 +143,10 @@
 				<view class="reading mt-4">
 					<view class="flex flex-row items-center">
 						<cl-text color="primary" :pt="{
-								className: '!text-xl fontBold fontitalic'
+								className: '!text-xl fontBold'
 							}">大家</cl-text>
 						<cl-text color="black" :pt="{
-								className: '!text-xl fontBold fontitalic'
+								className: '!text-xl fontBold'
 							}">都在看</cl-text>
 					</view>
 					<scroll-view class="scroll-view_H pt-3" direction="horizontal" :show-scrollbar="false">
@@ -186,7 +185,7 @@
 						src="../../static/image/home-userbg.png"></cl-image>
 					<view class="active-users-content py-5">
 						<view class="active-users-title flex flex-row items-center justify-between px-2">
-							<cl-text color="#923D0A" :pt="{ className: ' !text-lg fontBold fontitalic' }">活跃用户</cl-text>
+							<cl-text color="#923D0A" :pt="{ className: ' !text-lg fontBold' }">活跃用户</cl-text>
 							<view class="flex flex-row items-center py-1 px-2 rounded-xl bg-white" @click="Toshowuser">
 								<cl-text color="#FF7700" class="textred-600" :pt="{
 									className: '!text-xs'
@@ -213,10 +212,10 @@
 				<view class="recommended mt-4">
 					<view class="flex flex-row items-center">
 						<cl-text color="primary" :pt="{
-								className: '!text-xl fontBold fontitalic'
+								className: '!text-xl fontBold'
 							}">推荐</cl-text>
 						<cl-text color="black" :pt="{
-								className: '!text-xl fontBold fontitalic'
+								className: '!text-xl fontBold'
 							}">阅读</cl-text>
 					</view>
 					<view class="flex flex-row items-center justify-between pt-5" v-for="item in recommenList"

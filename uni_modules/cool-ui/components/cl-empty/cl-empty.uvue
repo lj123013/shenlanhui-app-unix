@@ -84,7 +84,7 @@ const pt = computed(() => parsePt<PassThrough>(props.pt));
 
 <style lang="scss" scoped>
 .cl-empty {
-	@apply flex flex-col items-center justify-center w-full h-full;
+	@apply flex flex-col items-center justify-center w-full h-[500px];
 	pointer-events: none;
 
 	&--fixed {

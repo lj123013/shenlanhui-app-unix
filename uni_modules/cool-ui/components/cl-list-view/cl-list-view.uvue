@@ -326,7 +326,7 @@ const activeIndex = ref(0);
 const noData = computed(() => {
 	return isEmpty(props.data);
 });
-
+console.log(noData.value)
 // 是否包含索引
 const hasIndex = computed(() => {
 	return props.data.every((e) => e.index != null) && !noData.value;

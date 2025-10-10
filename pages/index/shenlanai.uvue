@@ -7,15 +7,17 @@
 					mode="aspectFill"></cl-image>
 				<cl-topbar fixed :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
 					<template #prepend>
-						<view class="bg-primary-500 rounded-full w-[60rpx] h-[60rpx] flex flex-col items-center justify-center"
+						<view
+							class="bg-primary-500 rounded-full w-[60rpx] h-[60rpx] flex flex-col items-center justify-center"
 							@click="router.to('/pages/user/my')">
 							<cl-icon name="a-zu254" color="white" size="28rpx"></cl-icon>
 						</view>
 					</template>
 					<cl-text color="black" :pt="{ className: '!text-xl fontBold' }">深蓝AI</cl-text>
-					<template #append >
+					<template #append>
 						<cl-icon name="faxian" color="black" :size="30"></cl-icon>
-						<cl-text color="black" :pt="{ className: '!text-sm' }" @click="router.to('/pages/shenlanaiPage/discover')">发现</cl-text>
+						<cl-text color="black" :pt="{ className: '!text-sm' }"
+							@click="router.to('/pages/shenlanaiPage/discover')">发现</cl-text>
 					</template>
 				</cl-topbar>
 				<view class="content-overlay">
@@ -76,6 +78,9 @@
 							</view>
 						</l-marquee>
 					</view>
+				<!-- 	<cl-marquee :list="list" direction="horizontal" :item-height="200" :item-width="360" :pt="{
+				      className: 'h-[200rpx] rounded-xl',
+				    }"></cl-marquee> -->
 				</view>
 			</view>
 
