@@ -6,13 +6,7 @@ export const dev = () => {
 
 	let baseUrl: string;
 
-	// #ifdef H5
-	baseUrl = `/${value}`;
-	// #endif
-
-	// #ifndef H5
-	baseUrl = host + "";
-	// #endif
+	baseUrl = host + "/api/v2";
 
 	return {
 		host,

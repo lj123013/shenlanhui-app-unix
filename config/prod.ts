@@ -6,14 +6,7 @@ export const prod = () => {
 
 	let baseUrl: string;
 
-	// #ifdef H5
-	baseUrl = host + "/api";
-	// #endif
-
-	// #ifndef H5
-	baseUrl = host + "/api";
-	// #endif
-
+	baseUrl = host + "/api/v2";
 	return {
 		host,
 		baseUrl

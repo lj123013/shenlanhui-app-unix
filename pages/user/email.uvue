@@ -10,11 +10,11 @@
 			<!-- Logo -->
 			<view class="flex flex-col py-20">
 				<cl-text color="black" :pt="{ className: 'text-2xl font-bold ' }">欢迎来到{{ config.name }}</cl-text>
-				<cl-text color="#9A9A9A" :pt="{ className: 'text-sm' }">{{ config.desction }}</cl-text>
+				<cl-text color="#9A9A9A" :pt="{ className: 'text-sm' }">{{ config.description }}</cl-text>
 			</view>
 
 			<view class="flex-1">
-				<!-- 手机号登录 -->
+				<!-- 邮箱登录 -->
 				<login-email :form="form" @success="toLogin"></login-email>
 				<!-- 协议 -->
 				<view class="mt-6 flex flex-row flex-wrap items-center justify-center">

@@ -1,8 +1,8 @@
 <template>
 	<view class="flex flex-col">
-		<view class="mb-3 flex flex-row  border-bottom">
+		<view class="mb-3 flex flex-row border-bottom">
 			<cl-input
-				v-model="form.email as string"
+				v-model="form.email"
 				:placeholder="t('请输入邮箱')"
 				:border="false"
 				:pt="{
@@ -40,7 +40,7 @@
 			<view class="absolute right-0">
 				<sms-btn
 					:ref="refs.set('smsBtn')"
-					:phone="form.phone"
+					:email="form.email"
 					@success="showCode = true"
 				></sms-btn>
 			</view>
@@ -98,17 +98,18 @@ async function toLogin() {
 	if (!isAgree()) {
 		return;
 	}
-
+	console.log(props.form, "验证码");
 	const { email, smsCode } = props.form;
 
 	loading.value = true;
 
 	await request({
-		url: "/app/user/login/email",
+		url: "/api/v2/users/login-with-code",
 		method: "POST",
 		data: {
-			email,
-			smsCode
+			// 修改参数名以匹配后端要求
+			email: email,
+			code: smsCode
 		}
 	})
 		.then((res) => {
@@ -123,6 +124,4 @@ async function toLogin() {
 	loading.value = false;
 }
 </script>
-<style>
-
-</style>
+<style></style>

@@ -1,7 +1,7 @@
 import { config } from "@/config";
 import { request } from "../service";
-import { basename, extname, filename, parse, parseObject, pathJoin, uuid } from "../utils";
 import { useStore } from "../store";
+import { basename, extname, filename, parse, parseObject, pathJoin, uuid } from "../utils";
 
 // 上传进度回调结果类型
 export type OnProgressUpdateResult = {

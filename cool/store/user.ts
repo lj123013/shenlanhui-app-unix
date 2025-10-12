@@ -1,14 +1,15 @@
+import type { UserInfo } from "@/types";
 import { computed, ref } from "vue";
-import { forInObject, isNull, isObject, parse, storage } from "../utils";
 import { router } from "../router";
 import { request } from "../service";
-import type { UserInfo } from "@/types";
+import { forInObject, isNull, isObject, parse, storage } from "../utils";
 
 export type Token = {
 	token: string; // 访问token
 	expire: number; // token过期时间（秒）
 	refreshToken: string; // 刷新token
 	refreshExpire: number; // 刷新token过期时间（秒）
+	user: UserInfo;
 };
 
 export class User {
@@ -42,21 +43,23 @@ export class User {
 	 * 获取用户信息（从服务端拉取最新信息并更新本地）
 	 * @returns Promise<void>
 	 */
-	async get() {
-		if (this.token != null) {
-			await request({
-				url: "/app/user/info/person"
-			})
-				.then((res) => {
-					if (res != null) {
-						this.set(res);
-					}
-				})
-				.catch(() => {
-					// this.logout();
-				});
-		}
-	}
+	// async get() {
+	// 	if (this.token != null && this.info.value != null) {
+	// 		await request({
+	// 			url: `/api/v2/users/${this.info.value.id}`,
+	// 			method: "GET",
+	// 		})
+	// 			.then((res) => {
+	// 				console.log(res, '用户信息11111')
+	// 				if (res != null) {
+	// 					this.set(res);
+	// 				}
+	// 			})
+	// 			.catch(() => {
+	// 				// this.logout();
+	// 			});
+	// 	}
+	// }
 
 	/**
 	 * 设置用户信息并存储到本地
@@ -137,11 +140,13 @@ export class User {
 	 */
 	setToken(data: Token) {
 		this.token = data.token;
-
 		// 访问token，提前5秒过期，防止边界问题
 		storage.set("token", data.token, data.expire - 5);
 		// 刷新token，提前5秒过期
 		storage.set("refreshToken", data.refreshToken, data.refreshExpire - 5);
+		// 保存用户信息
+		this.info.value = data.user; // 类型完全匹配，无冲突
+		storage.set("userInfo", data.user, 0);
 	}
 
 	/**

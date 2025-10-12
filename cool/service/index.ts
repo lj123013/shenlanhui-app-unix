@@ -5,32 +5,32 @@ import { useStore } from "../store";
 
 // 请求参数类型定义
 export type RequestOptions = {
-	url: string; // 请求地址
-	method?: RequestMethod; // 请求方法
-	data?: any; // 请求体数据
-	params?: any; // URL参数
-	header?: any; // 请求头
-	timeout?: number; // 超时时间
-	withCredentials?: boolean; // 是否携带凭证
-	firstIpv4?: boolean; // 是否优先使用IPv4
-	enableChunked?: boolean; // 是否启用分块传输
+	url : string; // 请求地址
+	method ?: RequestMethod; // 请求方法
+	data ?: any; // 请求体数据
+	params ?: any; // URL参数
+	header ?: any; // 请求头
+	timeout ?: number; // 超时时间
+	withCredentials ?: boolean; // 是否携带凭证
+	firstIpv4 ?: boolean; // 是否优先使用IPv4
+	enableChunked ?: boolean; // 是否启用分块传输
 };
 
 // 响应数据类型定义
 export type Response = {
-	code?: number;
-	message?: string;
-	data?: any;
+	code ?: number;
+	message ?: string;
+	data ?: any;
 };
 
 // 请求队列（用于等待token刷新后继续请求）
-let requests: ((token: string) => void)[] = [];
+let requests : ((token : string) => void)[] = [];
 
 // 标记token是否正在刷新
 let isRefreshing = false;
 
 // 判断当前url是否忽略token校验
-const isIgnoreToken = (url: string) => {
+const isIgnoreToken = (url : string) => {
 	return ignoreTokens.some((e) => {
 		const pattern = e.replace(/\*/g, ".*");
 		return new RegExp(pattern).test(url);
@@ -42,7 +42,7 @@ const isIgnoreToken = (url: string) => {
  * @param options 请求参数
  * @returns Promise<T>
  */
-export function request(options: RequestOptions): Promise<any | null> {
+export function request(options : RequestOptions) : Promise<any | null> {
 	let { url, method = "GET", data = {}, header = {}, timeout = 60000 } = options;
 
 	const { user } = useStore();
@@ -56,15 +56,21 @@ export function request(options: RequestOptions): Promise<any | null> {
 	if (!url.startsWith("http")) {
 		url = config.baseUrl + url;
 	}
-
+	console.log(`[${method}] ${url}`);
 	// 获取当前token
-	let Authorization: string | null = user.token;
-
+	let Authorization : string | null
+	// 检查 token 不是 null/undefined 且不是空字符串
+	if (user.token != null && user.token !== '') {
+		Authorization = "Bearer " + user.token;
+	} else {
+		Authorization = null; // 补充 else 分支，确保变量始终被赋值
+	}
+	console.log(Authorization);
 	// 如果是忽略token的接口，则不携带token
 	if (isIgnoreToken(url)) {
 		Authorization = null;
 	}
-
+	console.log(data);
 	return new Promise((resolve, reject) => {
 		// 发起请求的实际函数
 		const next = () => {
@@ -80,6 +86,7 @@ export function request(options: RequestOptions): Promise<any | null> {
 				timeout,
 
 				success(res) {
+					console.log(res)
 					// 401 无权限
 					if (res.statusCode == 401) {
 						user.logout();
@@ -102,25 +109,8 @@ export function request(options: RequestOptions): Promise<any | null> {
 
 					// 200 正常响应
 					else if (res.statusCode == 200) {
-						if (res.data == null) {
-							resolve(null);
-						} else if (!isObject(res.data as any)) {
-							resolve(res.data);
-						} else {
-							// 解析响应数据
-							const { code, message, data } = parse<Response>(
-								res.data ?? { code: 0 }
-							)!;
-
-							switch (code) {
-								case 1000:
-									resolve(data);
-									break;
-								default:
-									reject({ message, code } as Response);
-									break;
-							}
-						}
+						console.log(res,"123")
+						resolve(res.data);
 					} else {
 						reject({ message: t("服务异常") } as Response);
 					}
@@ -128,6 +118,7 @@ export function request(options: RequestOptions): Promise<any | null> {
 
 				// 网络请求失败
 				fail(err) {
+					console.log(err)
 					reject({ message: err.errMsg } as Response);
 				}
 			});
@@ -163,7 +154,7 @@ export function request(options: RequestOptions): Promise<any | null> {
 
 					// 将当前请求加入队列，等待token刷新后再执行
 					new Promise((resolve) => {
-						requests.push((token: string) => {
+						requests.push((token : string) => {
 							// 重新设置token
 							Authorization = token;
 							next();

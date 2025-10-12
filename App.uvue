@@ -18,7 +18,7 @@ export default {
 		const { user } = useStore();
 
 		// 获取用户信息，未登录不执行
-		user.get();
+		// user.get();
 	},
 	onHide: function () {
 		console.log("App Hide");
