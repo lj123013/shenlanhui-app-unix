@@ -1,22 +1,15 @@
 <template>
 	<cl-page>
-		<cl-topbar
-			safe-area-top
-			background-color="transparent"
-			backIcon="cuo"
-			:pt="{
+		<cl-topbar safe-area-top background-color="transparent" backIcon="cuo" :pt="{
 				back: {
 					size: 30
 				}
-			}"
-		></cl-topbar>
+			}"></cl-topbar>
 
 		<view class="px-10 flex flex-col justify-between flex-1">
 			<!-- Logo -->
 			<view class="flex flex-col py-20">
-				<cl-text color="black" :pt="{ className: 'text-2xl font-bold ' }"
-					>欢迎来到{{ config.name }}</cl-text
-				>
+				<cl-text color="black" :pt="{ className: 'text-2xl font-bold ' }">欢迎来到{{ config.name }}</cl-text>
 				<cl-text color="#9A9A9A" :pt="{ className: 'text-sm' }">{{
 					config.description
 				}}</cl-text>
@@ -31,38 +24,26 @@
 
 				<!-- 协议 -->
 				<view class="mt-6 flex flex-row flex-wrap items-center justify-center">
-					<cl-checkbox
-						v-model="agree"
-						:pt="{ icon: { size: 28 } }"
-						active-icon="checkbox-circle-fill"
-						inactive-icon="checkbox-blank-circle-line"
-					>
+					<cl-checkbox v-model="agree" :pt="{ icon: { size: 28 } }" active-icon="checkbox-circle-fill"
+						inactive-icon="checkbox-blank-circle-line">
 					</cl-checkbox>
 					<cl-text color="info" :pt="{ className: 'text-xs' }">{{
 						t("已阅读并同意深蓝汇")
 					}}</cl-text>
-					<cl-text
-						color="primary"
-						:pt="{ className: 'text-xs' }"
-						@tap.stop="toDoc(t('用户协议'), 'userAgreement')"
-					>
+					<cl-text color="primary" :pt="{ className: 'text-xs' }"
+						@tap.stop="toDoc(t('用户协议'), 'userAgreement')">
 						《{{ t("用户协议") }}》
 					</cl-text>
 					<cl-text color="info" :pt="{ className: 'text-xs' }">和</cl-text>
-					<cl-text
-						color="primary"
-						:pt="{ className: 'text-xs' }"
-						@tap.stop="toDoc(t('隐私政策'), 'privacyPolicy')"
-					>
+					<cl-text color="primary" :pt="{ className: 'text-xs' }"
+						@tap.stop="toDoc(t('隐私政策'), 'privacyPolicy')">
 						《{{ t("隐私政策") }}》
 					</cl-text>
 				</view>
 				<!-- 邮箱登录 -->
-				<view class="flex flex-col justify-center items-center pt-10" @click="emailLogin">
-					<cl-text color="#707070" :pt="{ className: 'text-sm' }">邮箱登录</cl-text>
-					<cl-text color="info" :pt="{ className: 'text-xs' }"
-						>（原深蓝记者社区用户登录）</cl-text
-					>
+				<view class="flex flex-col justify-center items-center pt-10">
+					<cl-text color="#707070" :pt="{ className: 'text-sm' }" @click="emailLogin">邮箱登录</cl-text>
+					<cl-text color="info" :pt="{ className: 'text-xs' }">（原深蓝记者社区用户登录）</cl-text>
 				</view>
 			</view>
 
@@ -70,22 +51,14 @@
 			<view class="flex flex-col justify-center items-center pb-20">
 				<cl-text color="info" :pt="{ className: 'text-xs' }">第三方登录</cl-text>
 				<view class="flex flex-row justify-between mt-5">
-					<view
-						class="login-item"
-						:class="{
+					<view class="login-item" :class="{
 							'is-dark': isDark
-						}"
-						@tap="refs.callMethod('loginWx', 'login')"
-					>
+						}" @tap="refs.callMethod('loginWx', 'login')">
 						<cl-icon name="wechat-fill" :size="44" color="#00b223"></cl-icon>
 					</view>
 					<view class="login-item mx-4">
-						<cl-image
-							width="44rpx"
-							height="44rpx"
-							mode="aspectFit"
-							src="/static/image/weibo.png"
-						></cl-image>
+						<cl-image width="44rpx" height="44rpx" mode="aspectFit"
+							src="/static/image/weibo.png"></cl-image>
 					</view>
 					<view v-if="isAppIOS()" class="login-item" :class="{ 'is-dark': isDark }">
 						<cl-icon name="apple-fill" :size="44"></cl-icon>
@@ -97,67 +70,76 @@
 </template>
 
 <script setup lang="ts">
-import { config } from "@/config";
-import { isDark, parse, router, useRefs, useStore, type Token, isAppIOS } from "@/cool";
-import { t } from "@/locale";
-import type { UserInfo } from "@/types";
-import { provide, reactive, ref } from "vue";
-import type { LoginForm } from "./types";
-import { useUi } from "@/uni_modules/cool-ui";
-import LoginPhone from "./components/login/phone.uvue";
-import LoginWx from "./components/login/wx.uvue";
+	import { config } from "@/config";
+	import { isDark, parse, router, useRefs, useStore, type Token, isAppIOS } from "@/cool";
+	import { t } from "@/locale";
+	import type { UserInfo } from "@/types";
+	import { provide, reactive, ref } from "vue";
+	import type { LoginForm } from "./types";
+	import { useUi } from "@/uni_modules/cool-ui";
+	import LoginPhone from "./components/login/phone.uvue";
+	import LoginWx from "./components/login/wx.uvue";
+	// 在文件顶部定义接口
+	interface LoginResponse {
+		data ?: any;
+	}
+	const { user } = useStore();
+	const ui = useUi();
+	const refs = useRefs();
 
-const { user } = useStore();
-const ui = useUi();
-const refs = useRefs();
+	// 表单
+	const form = reactive<LoginForm>({
+		phone: "18227769478",
+		smsCode: "123456",
+		email: ""
+	});
+	interface Response {
+		code : number;
+		data : any;
+		message : string;
+	}
+	// 是否同意
+	const agree = ref(false);
+	// 登录成功
+	async function toLogin(res : UTSJSONObject) {
+		if (res != null) {
+			console.log(res.data as UTSJSONObject)
+			const result = res.data as UTSJSONObject;
+			user.setToken(result);
+		}
+		router.nextLogin();
+	}
+	const emailLogin = () => {
+		router.to("/pages/user/email");
+	};
+	// 跳转文档
+	function toDoc(name : string, path : string) { }
 
-// 表单
-const form = reactive<LoginForm>({
-	phone: "18227769478",
-	smsCode: "123456",
-	email: ""
-});
+	// 是否同意
+	function isAgree() {
+		if (!agree.value) {
+			ui.showToast({
+				message: t("请先阅读并同意《用户协议》和《隐私政策》")
+			});
 
-// 是否同意
-const agree = ref(false);
+			return false;
+		}
 
-// 登录成功
-async function toLogin(res: any) {
-	user.setToken(parse<Token>(res)!);
-	// user.setLoginUserInfo(parse<UserInfo>(res)!);
-	router.nextLogin();
-}
-const emailLogin = () => {
-	router.to("/pages/user/email");
-};
-// 跳转文档
-function toDoc(name: string, path: string) {}
-
-// 是否同意
-function isAgree() {
-	if (!agree.value) {
-		ui.showToast({
-			message: t("请先阅读并同意《用户协议》和《隐私政策》")
-		});
-
-		return false;
+		return true;
 	}
 
-	return true;
-}
-
-provide("isAgree", isAgree);
+	provide("isAgree", isAgree);
 </script>
 
 <style lang="scss" scoped>
-.login-item {
-	width: 88rpx;
-	height: 88rpx;
-	background-color: #f9f9fb;
-	border-radius: 88rpx;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-}
+	.login-item {
+		width: 88rpx;
+		height: 88rpx;
+		background-color: #f9f9fb;
+		border-radius: 88rpx;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
 </style>

@@ -58,7 +58,8 @@ export function request(options : RequestOptions) : Promise<any | null> {
 	}
 	console.log(`[${method}] ${url}`);
 	// 获取当前token
-	let Authorization : string | null
+	// let Authorization : string | null
+	let Authorization: string | null = user.token;
 	// 检查 token 不是 null/undefined 且不是空字符串
 	if (user.token != null && user.token !== '') {
 		Authorization = "Bearer " + user.token;
@@ -70,7 +71,7 @@ export function request(options : RequestOptions) : Promise<any | null> {
 	if (isIgnoreToken(url)) {
 		Authorization = null;
 	}
-	console.log(data);
+	console.log(data,'请求参数');
 	return new Promise((resolve, reject) => {
 		// 发起请求的实际函数
 		const next = () => {
@@ -109,7 +110,7 @@ export function request(options : RequestOptions) : Promise<any | null> {
 
 					// 200 正常响应
 					else if (res.statusCode == 200) {
-						console.log(res,"123")
+						console.log(res.data,"123123")
 						resolve(res.data);
 					} else {
 						reject({ message: t("服务异常") } as Response);
