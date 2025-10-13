@@ -17,7 +17,7 @@ export class User {
 	 * 用户信息，响应式对象
 	 */
 	info = ref<UserInfo | null>(null);
-
+	userId : number | null = null;
 	/**
 	 * 当前token，字符串或null
 	 */
@@ -29,7 +29,9 @@ export class User {
 
 		// 获取本地token
 		const token = storage.get("token") as string | null;
-		console.log(token, '获取token')
+		const userId = storage.get("userId") as number | null;
+		console.log(token, '获取token', userId, "获取用户id")
+		this.userId = userId == null ? null : userId;
 
 		// 如果token为空字符串则置为null
 		this.token = token == "" ? null : token;
@@ -44,33 +46,39 @@ export class User {
 	 * 获取用户信息（从服务端拉取最新信息并更新本地）
 	 * @returns Promise<void>
 	 */
-	// async get() {
-	// 	if (this.token != null && this.info.value != null) {
-	// 		await request({
-	// 			url: `/api/v2/users/${this.info.value.id}`,
-	// 			method: "GET",
-	// 		})
-	// 			.then((res) => {
-	// 				console.log(res, '用户信息11111')
-	// 				if (res != null) {
-	// 					this.set(res);
-	// 				}
-	// 			})
-	// 			.catch(() => {
-	// 				// this.logout();
-	// 			});
-	// 	}
-	// }
+	async get() {
+		if (this.token != null && this.userId != null) {
+			console.log("用户接口", this.userId)
+			await request({
+				url: `/users/${this.userId}`,
+				method: "GET"
+			})
+				.then((res) => {
+					console.log(res, '用户信息11111')
+					if (res != null) {
+						return
+						this.set(res);
+					}
+				})
+				.catch(() => {
+					// this.logout();
+				});
+		}
+	}
 
 	/**
 	 * 设置用户信息并存储到本地
 	 * @param data 用户信息对象
 	 */
-	set(data : any) {
+	set(data : UTSJSONObject) {
 		if (isNull(data)) {
 			return;
 		}
-
+		console.log(data, data.id, "用户数据")
+		const userId = (data.id as number) ?? '';
+		storage.set("userId", userId, 0);
+		console.log(this.info.value, 'this.info.value')
+		return
 		// 设置
 		this.info.value = parse<UserInfo>(data)!;
 
@@ -150,11 +158,9 @@ export class User {
 		// 3. 调用storage.set，补充expires参数，且token已确保非空
 		// 访问token，提前5秒过期，防止边界问题
 		storage.set("token", token, expires);
-		if (data.user!=null) {
-			 const userInfo = data.user as UTSJSONObject;
-			this.info.value = parse<UserInfo>(userInfo!);
-			// 同时保存用户信息到本地存储
-			storage.set("userInfo", userInfo, 0);
+
+		if (data.user != null) {
+			this.set(data.user as UTSJSONObject)
 		}
 		// console.log(userInfo.value)
 

@@ -232,7 +232,8 @@
 
 	}
 	onReady(() => {
-		// user.get();
+		// console.log(storage.get("userInfo"),'获取用户信息')
+		user.get();
 	});
 </script>
 
