@@ -3,24 +3,25 @@
 		<view class="p-3">
 			<cl-list :pt="{className:'border-bottom'}">
 				<cl-list-item :label="t('头像')" hoverable justify="end">
-					<cl-avatar :src="userInfo?.avatarUrl" size="44rpx"
+					<cl-avatar :src="userInfo?.avatar" size="44rpx"
 						:pt="{ className: '!rounded-3xl', icon: { size: 20 } }" @tap="uploadAvatar">
 					</cl-avatar>
 				</cl-list-item>
 			</cl-list>
 			<cl-list :pt="{className:'border-bottom'}">
 				<cl-list-item :label="t('昵称')" hoverable arrow justify="end" @tap="router.to('/pages/user/edit-name')">
-					<cl-text>{{ userInfo?.nickName }}</cl-text>
+					<cl-text>{{ userInfo?.nickname }}</cl-text>
 				</cl-list-item>
 			</cl-list>
-			<cl-list :pt="{ className: 'border-bottom' }">
+			<!-- <cl-list :pt="{ className: 'border-bottom' }" >
 				<cl-list-item :label="t('生日')" hoverable arrow justify="end" @tap="open('birthday')">
-					<cl-text>{{ userInfo?.birthday }}</cl-text>
+					
 					<cl-text color="info" v-if="userInfo?.birthday == null">{{
 						t("请选择")
 					}}</cl-text>
+					<cl-text v-else>{{ userInfo?.birthday }}</cl-text>
 				</cl-list-item>
-			</cl-list>
+			</cl-list> -->
 			<cl-list :pt="{ className: ' border-bottom ' }">
 				<cl-list-item :label="t('性别')" hoverable arrow justify="end" @tap="open('gender')">
 					<cl-text>{{ userInfo?.gender }}</cl-text>
@@ -34,14 +35,14 @@
 			</cl-list>
 			<cl-button :pt="{
 				className: '!h-[90rpx] !rounded-full mt-5'
-			}"  @tap="toChange">
+			}" @tap="toChange">
 				{{ t("保存") }}
 			</cl-button>
 			<cl-select :title="t('选择性别')" :model-value="userInfo?.gender" :ref="refs.set('gender')"
 				:options="genderOptions" :show-trigger="false" @change="onGenderChange"></cl-select>
 
-			<cl-select-date :title="t('选择生日')" :model-value="userInfo?.birthday" :ref="refs.set('birthday')" type="date"
-				:end="today" :show-trigger="false" @change="onBirthdayChange"></cl-select-date>
+			<!-- <cl-select-date :title="t('选择生日')" :model-value="userInfo?.birthday" :ref="refs.set('birthday')" type="date"
+				:end="today" :show-trigger="false" @change="onBirthdayChange"></cl-select-date> -->
 
 		</view>
 	</cl-page>
@@ -51,7 +52,7 @@
 	import { dayUts, router, upload, useRefs, useStore, type Response, userInfo } from "@/cool";
 	import { t } from "@/locale";
 	import { useCascader, useUi, type ClSelectOption } from "@/uni_modules/cool-ui";
-	import { computed, ref ,onMounted} from "vue";
+	import { computed, ref, onMounted } from "vue";
 	import pca from "@/data/pca.json";
 
 	const { user } = useStore();
@@ -76,15 +77,25 @@
 			value: 2
 		}
 	]);
-
+	const genderTextMap = {
+		'0': t("保密"),
+		'1': t("男"),
+		'2': t("女"),
+		'unknown': t("保密"),
+		'male': t("男"),
+		'female': t("女")
+	};
 	// 性别文本
 	const genderText = computed(() => {
-		return [t("保密"), t("男"), t("女")][userInfo.value?.gender!];
+		const gender = userInfo.value?.gender;
+		const key = gender != null ? gender.toString() : 'unknown';
+		const text = genderTextMap[key];
+		return text != null ? text : t("保密");
 	});
-onMounted(()=>{
-	console.log(genderText.value);
-	
-})
+	onMounted(() => {
+		console.log(genderText.value);
+
+	})
 	// 性别改变
 	function onGenderChange(val : number) {
 		user.update({
@@ -145,7 +156,7 @@ onMounted(()=>{
 		// #endif
 	}
 	// 保存按钮
-	function toChange(){
-		
+	function toChange() {
+
 	}
 </script>

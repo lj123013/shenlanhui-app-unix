@@ -1,28 +1,27 @@
 import { request } from "@/cool/service";
 
 /**
- * 验证码登录
- * @param data 登录参数
+ * 使用验证码登录
+ * @param data 
  * @returns Promise
  */
-export function loginWithCode(data : any) : UTSPromise<Any | null | undefined> {
-	return request({
-		url: "/users/login-with-code",
-		method: "POST",
-		// 补充 data 参数（确保请求参数正确传递）
-		data
-	});
+export function loginWithCode(data: any): Promise<any> {
+  return request({
+    url: "/users/login-with-code",
+    method: "POST",
+    data
+  }) as Promise<any>;
 }
 
 /**
- * 验证码登录
- * @param data 登录参数
+ * 发送短信
+ * @param data 
  * @returns Promise
  */
-export function smsSend(data : any) : UTSPromise<Any | null | undefined> {
-	return request({
-		url: "/sms/send",
-		method: "POST",
-		data
-	});
+export function smsSend(data: any): Promise<any> {
+  return request({
+    url: "/sms/send",
+    method: "POST",
+    data
+  }) as Promise<any>;
 }
