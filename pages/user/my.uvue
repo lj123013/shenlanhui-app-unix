@@ -2,21 +2,23 @@
 	<cl-page>
 		<view class="flex flex-col h-full">
 			<view class="container flex flex-col h-[596rpx] box-border">
-				<cl-topbar safe-area-top color='white' background-color="transparent" :pt="{
-					back: {
-						size: 48,
-					},
-				}">
+				<cl-topbar safe-area-top color="white" background-color="transparent" :pt="{
+						back: {
+							size: 48
+						}
+					}">
 				</cl-topbar>
-				<view class="myTop flex-1  px-5 flex flex-col justify-between pt-[50rpx]">
-					<view class="flex items-center flex-row justify-between ">
+				<view class="myTop flex-1 px-5 flex flex-col justify-between pt-[50rpx]">
+					<view class="flex items-center flex-row justify-between">
 						<view class="flex items-center flex-row">
-							<cl-avatar :src="UserInfo.avatarUrl"></cl-avatar>
+							<cl-avatar rounded :src="userInfo.avatar"></cl-avatar>
 							<view class="ml-2">
 								<view class="flex items-center flex-row">
-									<cl-text color="white" :pt="{ className: '!text-xl mx-1' }">{{ UserInfo.username
+									<cl-text v-if="userInfo" color="white"
+										:pt="{ className: '!text-xl mx-1' }">{{ userInfo.username }}</cl-text>
+									<cl-text v-else @click="login" color="white" :pt="{ className: '!text-xl mx-1' }">{{
+										t("登录/注册")
 									}}</cl-text>
-
 									<view class="bg-white rounded-3xl p-[4rpx] flex items-center justify-center"
 										v-if="UserInfo?.is_auth == 1">
 										<cl-icon name="renzheng2" color="#FE0000" :size="16"></cl-icon>
@@ -29,17 +31,16 @@
 								<view class="flex items-center flex-row">
 									<view @click="toPathFollow" class="flex items-center flex-row">
 										<cl-text color="white" :pt="{ className: 'text-sm mr-1' }">关注</cl-text>
-										<cl-text color="white" :pt="{ className: 'text-sm mr-3' }">6</cl-text>
+										<cl-text color="white" :pt="{ className: 'text-sm mr-3' }">{{userInfo?.statistics?.following_count}}</cl-text>
 									</view>
 									<view @click="toPath" class="flex items-center flex-row">
 										<cl-text color="white" :pt="{ className: 'text-sm ' }">粉丝</cl-text>
-										<cl-text color="white" :pt="{ className: 'text-sm ml-1' }">4</cl-text>
-
+										<cl-text color="white" :pt="{ className: 'text-sm ml-1' }">{{userInfo?.statistics?.followers_count}}</cl-text>
 									</view>
 								</view>
 							</view>
 							<!-- 登录 -->
-							<cl-text @click="login">登录/注册</cl-text>
+							<!-- <cl-text @click="login">登录/注册</cl-text> -->
 						</view>
 						<!-- 按钮 -->
 						<view class="userBtn" @click="clickuser">
@@ -49,8 +50,7 @@
 					<view>
 						<cl-row :gutter="12">
 							<cl-col :pt="{ className: 'text-center' }" :span="6" v-for="value in menuList"
-								@click='toPathdiscuss(value)'>
-
+								@click="toPathdiscuss(value)">
 								<view class="item flex flex-col items-center justify-center">
 									<cl-text color="white">{{ value.itemNum }}</cl-text>
 									<cl-text color="white">{{ value.name }}</cl-text>
@@ -71,37 +71,36 @@
 						<view class="isRenzheng rounded-full py-1 px-3">
 							<cl-text color="#212227" v-if="UserInfo?.is_auth == 1"
 								:pt="{ className: 'text-xs' }">已认证</cl-text>
-							<cl-text color="#212227" v-else :pt="{ className: 'text-xs'}"
+							<cl-text color="#212227" v-else :pt="{ className: 'text-xs' }"
 								@tap="router.to('/pages/user/verify')">开始认证</cl-text>
 						</view>
 					</view>
-
 				</view>
 			</view>
 
-			<view class="flex-1 bg-custom-bg-gray px-5 ">
-				<view class="bg-white  py-5 rounded-2xl my-5">
+			<view class="flex-1 bg-custom-bg-gray px-5">
+				<view class="bg-white py-5 rounded-2xl my-5">
 					<cl-row :pt="{ className: 'overflow-visible' }">
 						<cl-col :span="8" @click="router.to('/pages/user/myConverstion')">
 							<view class="flex flex-row justify-center items-center">
 								<cl-image width="48rpx" height="48rpx" src="/static/image/user-menui1.png"></cl-image>
-								<cl-text color="black" :pt="{ className: 'text-base text-center ml-2' }">{{ t("我的AI")
-								}}</cl-text>
+								<cl-text color="black"
+									:pt="{ className: 'text-base text-center ml-2' }">{{ t("我的AI") }}</cl-text>
 							</view>
 						</cl-col>
 
 						<cl-col :span="8" @click="router.to('/pages/user/myinteract')">
-							<view class="flex flex-row justify-center items-center" >
+							<view class="flex flex-row justify-center items-center">
 								<cl-image width="48rpx" height="48rpx" src="/static/image/user-menui2.png"></cl-image>
-								<cl-text :pt="{ className: 'text-base text-center ml-2' }" color="black">{{ t("我的互动")
-								}}</cl-text>
+								<cl-text :pt="{ className: 'text-base text-center ml-2' }"
+									color="black">{{ t("我的互动") }}</cl-text>
 							</view>
 						</cl-col>
 						<cl-col :span="8" @click="router.to('/pages/user/deepMoney')">
 							<view class="flex flex-row justify-center items-center relative overflow-visible px-2">
 								<cl-image width="48rpx" height="48rpx" src="/static/image/user-menui3.png"></cl-image>
-								<cl-text :pt="{ className: 'text-base text-center ml-2' }" color="black">{{ t("深蓝币")
-								}}</cl-text>
+								<cl-text :pt="{ className: 'text-base text-center ml-2' }"
+									color="black">{{ t("深蓝币") }}</cl-text>
 
 								<cl-badge type="error" dot position
 									:pt="{ className: '!right-4 top-[-10rpx]' }"></cl-badge>
@@ -109,16 +108,18 @@
 						</cl-col>
 					</cl-row>
 				</view>
-				<view class="flex-1 ">
+				<view class="flex-1">
 					<view class="bg-white pt-3 rounded-2xl">
 						<view v-for="(item, index) in list" @tap="toTest(item)"
-							class="flex flex-row items-center justify-between px-5 pb-4 ">
+							class="flex flex-row items-center justify-between px-5 pb-4">
 							<cl-icon :name="item.icon" :size="30" :width="36" color="#8D8D8D"
-								:pt="{ className:index!=0? 'mt-4':'mt-0' }"></cl-icon>
+								:pt="{ className: index != 0 ? 'mt-4' : 'mt-0' }"></cl-icon>
 							<view class="flex flex-row items-center justify-between flex-1 ml-3" :class="{
-								'borderTop pt-4': index != 0
-							}">
-								<cl-text color="#505050" :pt="{className:'text-base'}">{{ item.name }}</cl-text>
+									'borderTop pt-4': index != 0
+								}">
+								<cl-text color="#505050" :pt="{ className: 'text-base' }">{{
+									item.name
+								}}</cl-text>
 								<cl-icon name="arrow-right-s-line" color="#CFCFCF"></cl-icon>
 							</view>
 						</view>
@@ -131,40 +132,40 @@
 </template>
 
 <script setup lang="ts">
-	import { ref } from "vue"
+	import { ref } from "vue";
 	import { router, userInfo, useStore, isNull } from "@/cool";
 	import { t } from "@/locale";
 	import { useUi } from "@/uni_modules/cool-ui";
+	import { storage } from "@/cool/utils";
 	const { user } = useStore();
 	const ui = useUi();
 	type menuItem = {
-		name : string
-		itemNum : number
-	}
+		name : string;
+		itemNum : number;
+	};
 	type mtitemMune = {
-		name : string
-		icon : string
-		path : string
-	}
+		name : string;
+		icon : string;
+		path : string;
+	};
 	const menuList = ref<menuItem[]>([
 		{
 			name: "长文",
-			itemNum: 10,
+			itemNum: 10
 		},
 		{
 			name: "讨论",
-			itemNum: 421,
+			itemNum: 421
 		},
 		{
 			name: "图库",
-			itemNum: 2,
-
+			itemNum: 2
 		},
 		{
 			name: "草稿",
-			itemNum: 0,
+			itemNum: 0
 		}
-	])
+	]);
 
 	const list = ref<mtitemMune[]>([
 		{
@@ -192,47 +193,45 @@
 			icon: "shezhi",
 			path: "/pages/set/index"
 		}
-	])
+	]);
 	type UserInfoType = {
 		username : string;
 		avatarUrl : string;
 		is_auth : number;
-		isFollow : boolean,
+		isFollow : boolean;
 	};
 
 	// 创建响应式的用户信息数据
 	const UserInfo = ref<UserInfoType>({
-		username: 'steven',
-		avatarUrl: '../../static/image/head-img.png',
+		username: "steven",
+		avatarUrl: "../../static/image/head-img.png",
 		is_auth: 0,
 		isFollow: false
 	});
 	const login = () => {
-		router.to('/pages/user/login')
-	}
+		router.to("/pages/user/login");
+	};
 	const clickuser = () => {
-		router.to('/pages/user/userinfo')
-	}
+		router.to("/pages/user/userinfo");
+	};
 	const toPath = () => {
-		router.to('/pages/user/fansList')
-	}
+		router.to("/pages/user/fansList");
+	};
 	const toPathFollow = () => {
-		router.to('/pages/user/followList')
-	}
+		router.to("/pages/user/followList");
+	};
 	const toPathdiscuss = (item : menuItem) => {
 		router.push({
-			path: '/pages/user/mydiscuss',
+			path: "/pages/user/mydiscuss",
 			params: { title: item.name }
-		})
-	}
+		});
+	};
 	function toTest(item : mtitemMune) {
 		if (!isNull(item)) {
 			router.to(item.path);
 		}
-
 	}
 	onReady(() => {
-		// console.log(storage.get("userInfo"),'获取用户信息')
 		user.get();
 	});
 </script>
@@ -243,11 +242,11 @@
 	}
 
 	.container {
-		background-image: linear-gradient(to right, #7258FB, #4455F5);
+		background-image: linear-gradient(to right, #7258fb, #4455f5);
 	}
 
 	.userBtn {
-		background-color: #7171FF;
+		background-color: #7171ff;
 		border-radius: 30rpx;
 		padding: 10rpx 20rpx;
 	}
@@ -272,11 +271,11 @@
 	}
 
 	.isRenzheng {
-		background-image: linear-gradient(to bottom, #FFF2E1, #FED5A8);
+		background-image: linear-gradient(to bottom, #fff2e1, #fed5a8);
 	}
 
 	.iconBg {
-		background-color: #E9F4FF;
+		background-color: #e9f4ff;
 		width: 48rpx;
 		height: 48rpx;
 		border-radius: 48rpx;
@@ -288,7 +287,7 @@
 	}
 
 	.inner_circle {
-		background-color: #2595E8;
+		background-color: #2595e8;
 		width: 27rpx;
 		height: 20rpx;
 		border-radius: 27rpx;

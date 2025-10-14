@@ -1,4 +1,4 @@
-import type { UserInfo } from "@/types";
+import type { UserInfo, UserLogin } from "@/types";
 import { computed, ref } from "vue";
 import { router } from "../router";
 import { request } from "../service";
@@ -6,10 +6,10 @@ import { forInObject, isNull, isObject, parse, storage } from "../utils";
 
 export type Token = {
 	token : string; // 访问token
-	expire : number; // token过期时间（秒）
-	refreshToken : string; // 刷新token
-	refreshExpire : number; // 刷新token过期时间（秒）
-	user : UserInfo;
+	// expire : number; // token过期时间（秒）
+	// refreshToken : string; // 刷新token
+	// refreshExpire : number; // 刷新token过期时间（秒）
+	user : UserLogin;
 };
 
 export class User {
@@ -38,7 +38,8 @@ export class User {
 
 		// 初始化用户信息
 		if (userInfo != null && isObject(userInfo)) {
-			// this.set(userInfo);
+			this.set(userInfo);
+			console.log(userInfo, '获取userInfo')
 		}
 	}
 
@@ -47,16 +48,14 @@ export class User {
 	 * @returns Promise<void>
 	 */
 	async get() {
-		if (this.token != null && this.userId != null) {
-			console.log("用户接口", this.userId)
+		const userId = storage.get("userId");
+		if (this.token != null && userId != null ) {
 			await request({
-				url: `/users/${this.userId}`,
-				method: "GET"
+				url: `/users/${userId}`,
+				method: "GET",
 			})
 				.then((res) => {
-					console.log(res, '用户信息11111')
 					if (res != null) {
-						return
 						this.set(res);
 					}
 				})
@@ -74,11 +73,8 @@ export class User {
 		if (isNull(data)) {
 			return;
 		}
-		console.log(data, data.id, "用户数据")
-		const userId = (data.id as number) ?? '';
-		storage.set("userId", userId, 0);
-		console.log(this.info.value, 'this.info.value')
-		return
+		console.log(data, 'data111')
+		console.log(parse<UserInfo>(data)!, 'data12222222')
 		// 设置
 		this.info.value = parse<UserInfo>(data)!;
 
@@ -147,16 +143,15 @@ export class User {
 	 * 设置token并存储到本地
 	 * @param data Token对象
 	 */
-	setToken(data : UTSJSONObject) {
-		console.log(data, '999999')
-		const token = (data.token as string) ?? '';
-		this.token = token;
+	setToken(data : Token) {
+		this.token = data.token;
 		// 2. 计算过期时间（假设原有效期从接口返回，若没有则手动设置，这里以1小时为例）
 		// 提前5秒过期 = 总有效期(毫秒) - 5000毫秒
 		const totalExpires = 3600 * 1000; // 假设原有效期1小时（3600秒），可根据实际接口返回调整
 		const expires = totalExpires - 5000; // 提前5秒
 		// 3. 调用storage.set，补充expires参数，且token已确保非空
 		// 访问token，提前5秒过期，防止边界问题
+<<<<<<< HEAD
 		storage.set("token", token, expires);
 
 		if (data.user != null) {
@@ -164,6 +159,10 @@ export class User {
 		}
 		// console.log(userInfo.value)
 
+=======
+		storage.set("token", data.token, expires);
+		storage.set("userId", data.user.id, 0);
+>>>>>>> 10d10f2f02b7fe4628420c0facebb3dc22673a42
 	}
 
 	/**

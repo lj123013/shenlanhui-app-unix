@@ -68,8 +68,8 @@
 
 	// 登录成功
 	async function toLogin(res : any) {
-		user.setToken(parse<Token>(res)!);
-		router.nextLogin();
+		// user.setToken(parse<Token>(res)!);
+		// router.nextLogin();
 	}
 
 	// 跳转文档

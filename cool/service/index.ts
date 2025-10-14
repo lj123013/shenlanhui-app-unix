@@ -21,6 +21,7 @@ export type Response = {
 	code ?: number;
 	message ?: string;
 	data ?: any;
+	success ?: Boolean;
 };
 
 // 请求队列（用于等待token刷新后继续请求）
@@ -59,19 +60,17 @@ export function request(options : RequestOptions) : Promise<any | null> {
 	console.log(`[${method}] ${url}`);
 	// 获取当前token
 	// let Authorization : string | null
-	let Authorization: string | null = user.token;
+	let Authorization : string | null = user.token;
 	// 检查 token 不是 null/undefined 且不是空字符串
 	if (user.token != null && user.token !== '') {
 		Authorization = "Bearer " + user.token;
 	} else {
 		Authorization = null; // 补充 else 分支，确保变量始终被赋值
 	}
-	console.log(Authorization);
 	// 如果是忽略token的接口，则不携带token
 	if (isIgnoreToken(url)) {
 		Authorization = null;
 	}
-	console.log(data,'请求参数');
 	return new Promise((resolve, reject) => {
 		// 发起请求的实际函数
 		const next = () => {
@@ -87,7 +86,6 @@ export function request(options : RequestOptions) : Promise<any | null> {
 				timeout,
 
 				success(res) {
-					console.log(res)
 					// 401 无权限
 					if (res.statusCode == 401) {
 						user.logout();
@@ -110,8 +108,29 @@ export function request(options : RequestOptions) : Promise<any | null> {
 
 					// 200 正常响应
 					else if (res.statusCode == 200) {
-						console.log(res.data,"123123")
-						resolve(res.data);
+						if (res.data == null) {
+							resolve(null);
+						} else if (!isObject(res.data as any)) {
+							resolve(res.data);
+						} else {
+							// 解析响应数据
+							const { code, message, data, success } = parse<Response>(
+								res.data ?? { code: 0 }
+							)!;
+							if (success == true) {
+								resolve(data);
+							} else {
+								switch (code) {
+									case 200:
+										resolve(data);
+										break;
+									default:
+										reject({ message, code } as Response);
+										break;
+								}
+							}
+
+						}
 					} else {
 						reject({ message: t("服务异常") } as Response);
 					}

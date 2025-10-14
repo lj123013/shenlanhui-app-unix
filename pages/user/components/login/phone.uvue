@@ -84,6 +84,7 @@
 			mobile: phone,
 			code: smsCode
 		}).then(res => {
+			console.log(res, "res")
 			emit("success", res);
 		}).catch((err) => {
 			ui.showToast({

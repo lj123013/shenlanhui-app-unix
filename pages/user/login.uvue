@@ -73,12 +73,12 @@
 	import { config } from "@/config";
 	import { isDark, parse, router, useRefs, useStore, type Token, isAppIOS } from "@/cool";
 	import { t } from "@/locale";
-	import type { UserInfo } from "@/types";
 	import { provide, reactive, ref } from "vue";
 	import type { LoginForm } from "./types";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import LoginPhone from "./components/login/phone.uvue";
 	import LoginWx from "./components/login/wx.uvue";
+	import { storage } from "@/cool/utils";
 	// 在文件顶部定义接口
 	interface LoginResponse {
 		data ?: any;
@@ -101,12 +101,9 @@
 	// 是否同意
 	const agree = ref(false);
 	// 登录成功
-	async function toLogin(res : UTSJSONObject) {
-		if (res != null) {
-			console.log(res.data as UTSJSONObject)
-			const result = res.data as UTSJSONObject;
-			user.setToken(result);
-		}
+	async function toLogin(res : any) {
+		user.setToken(parse<Token>(res)!);
+		user.get();
 		router.nextLogin();
 	}
 	const emailLogin = () => {
