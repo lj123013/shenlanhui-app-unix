@@ -3,12 +3,8 @@ import { computed, ref } from "vue";
 import { router } from "../router";
 import { request } from "../service";
 import { forInObject, isNull, isObject, parse, storage } from "../utils";
-
 export type Token = {
 	token : string; // 访问token
-	// expire : number; // token过期时间（秒）
-	// refreshToken : string; // 刷新token
-	// refreshExpire : number; // 刷新token过期时间（秒）
 	user : UserLogin;
 };
 
@@ -26,20 +22,17 @@ export class User {
 	constructor() {
 		// 获取本地用户信息
 		const userInfo = storage.get("userInfo");
-
 		// 获取本地token
 		const token = storage.get("token") as string | null;
 		const userId = storage.get("userId") as number | null;
-		console.log(token, '获取token', userId, "获取用户id")
+		// console.log(token, '获取token', userId, "获取用户id")
 		this.userId = userId == null ? null : userId;
-
 		// 如果token为空字符串则置为null
 		this.token = token == "" ? null : token;
-
 		// 初始化用户信息
 		if (userInfo != null && isObject(userInfo)) {
 			this.set(userInfo);
-			console.log(userInfo, '获取userInfo')
+			// console.log(userInfo, '获取userInfo')
 		}
 	}
 
@@ -48,10 +41,10 @@ export class User {
 	 * @returns Promise<void>
 	 */
 	async get() {
-		const userId = storage.get("userId");
-		if (this.token != null && userId != null ) {
+
+		if (this.token != null && this.userId != null) {
 			await request({
-				url: `/users/${userId}`,
+				url: `/users/${this.userId}`,
 				method: "GET",
 			})
 				.then((res) => {
@@ -69,12 +62,12 @@ export class User {
 	 * 设置用户信息并存储到本地
 	 * @param data 用户信息对象
 	 */
-	set(data : UTSJSONObject) {
+	set(data : any) {
 		if (isNull(data)) {
 			return;
 		}
-		console.log(data, 'data111')
-		console.log(parse<UserInfo>(data)!, 'data12222222')
+		// console.log(data, 'data111')
+		// console.log(parse<UserInfo>(data)!, 'data12222222')
 		// 设置
 		this.info.value = parse<UserInfo>(data)!;
 
@@ -84,24 +77,31 @@ export class User {
 
 	/**
 	 * 更新用户信息（本地与服务端同步）
-	 * @param data 新的用户信息
+	 * @param params 新的用户信息
 	 */
-	async update(data : any) {
+	async update(data : any) : Promise<boolean> {
+		console.log(data, '更新用户信息参数值');
 		if (isNull(data) || isNull(this.info.value)) {
-			return;
+			return false;
 		}
-
 		// 本地同步更新
 		forInObject(data, (value, key) => {
 			this.info.value![key] = value;
 		});
 
-		// 同步到服务端
-		await request({
-			url: "/app/user/info/updatePerson",
-			method: "POST",
-			data
-		});
+		try {
+			// 同步到服务端
+			await request({
+				url: `/users/${this.userId}`,
+				method: "PUT",
+				data
+			});
+
+			return true; // 请求成功
+		} catch (err) {
+			console.error('更新用户信息失败:', err);
+			return false; // 请求失败
+		}
 	}
 
 	/**
@@ -126,6 +126,7 @@ export class User {
 	clear() {
 		storage.remove("userInfo");
 		storage.remove("token");
+		storage.remove("userId");
 		storage.remove("refreshToken");
 		this.token = null;
 		this.remove();
@@ -151,18 +152,9 @@ export class User {
 		const expires = totalExpires - 5000; // 提前5秒
 		// 3. 调用storage.set，补充expires参数，且token已确保非空
 		// 访问token，提前5秒过期，防止边界问题
-<<<<<<< HEAD
-		storage.set("token", token, expires);
-
-		if (data.user != null) {
-			this.set(data.user as UTSJSONObject)
-		}
-		// console.log(userInfo.value)
-
-=======
 		storage.set("token", data.token, expires);
 		storage.set("userId", data.user.id, 0);
->>>>>>> 10d10f2f02b7fe4628420c0facebb3dc22673a42
+
 	}
 
 	/**

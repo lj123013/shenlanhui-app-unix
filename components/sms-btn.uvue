@@ -11,7 +11,7 @@
 	import { useUi } from "@/uni_modules/cool-ui";
 	import { $t, t } from "@/locale";
 	import { isDark, parse, request, type Response } from "@/cool";
-	import { smsSend } from "@/pages/user/components/login/api"
+	import { smsSend } from "@/cool/service/user"
 	const props = defineProps({
 		phone: String
 	});

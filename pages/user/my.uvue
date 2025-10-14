@@ -11,31 +11,33 @@
 				<view class="myTop flex-1 px-5 flex flex-col justify-between pt-[50rpx]">
 					<view class="flex items-center flex-row justify-between">
 						<view class="flex items-center flex-row">
-							<cl-avatar rounded :src="userInfo.avatar"></cl-avatar>
+							<cl-avatar rounded :src="userInfo?.avatar"></cl-avatar>
 							<view class="ml-2">
 								<view class="flex items-center flex-row">
 									<cl-text v-if="userInfo" color="white"
-										:pt="{ className: '!text-xl mx-1' }">{{ userInfo.username }}</cl-text>
+										:pt="{ className: '!text-xl mx-1' }">{{ userInfo?.nickname }}</cl-text>
 									<cl-text v-else @click="login" color="white" :pt="{ className: '!text-xl mx-1' }">{{
 										t("登录/注册")
 									}}</cl-text>
 									<view class="bg-white rounded-3xl p-[4rpx] flex items-center justify-center"
-										v-if="UserInfo?.is_auth == 1">
+										v-if="userInfo?.is_verified">
 										<cl-icon name="renzheng2" color="#FE0000" :size="16"></cl-icon>
 									</view>
 									<view class="bg-white rounded-3xl p-[4rpx] flex items-center justify-center"
-										v-else-if="UserInfo?.is_auth == 2">
+										v-else-if="userInfo?.is_verified">
 										<cl-icon name="a-renzheng21" color="primary" :size="16"></cl-icon>
 									</view>
 								</view>
 								<view class="flex items-center flex-row">
 									<view @click="toPathFollow" class="flex items-center flex-row">
 										<cl-text color="white" :pt="{ className: 'text-sm mr-1' }">关注</cl-text>
-										<cl-text color="white" :pt="{ className: 'text-sm mr-3' }">{{userInfo?.statistics?.following_count}}</cl-text>
+										<cl-text color="white"
+											:pt="{ className: 'text-sm mr-3' }">{{statisticsObj?.following_count??'0'}}</cl-text>
 									</view>
 									<view @click="toPath" class="flex items-center flex-row">
 										<cl-text color="white" :pt="{ className: 'text-sm ' }">粉丝</cl-text>
-										<cl-text color="white" :pt="{ className: 'text-sm ml-1' }">{{userInfo?.statistics?.followers_count}}</cl-text>
+										<cl-text color="white"
+											:pt="{ className: 'text-sm ml-1' }">{{statisticsObj?.followers_count??'0'}}</cl-text>
 									</view>
 								</view>
 							</view>
@@ -69,7 +71,7 @@
 						</view>
 
 						<view class="isRenzheng rounded-full py-1 px-3">
-							<cl-text color="#212227" v-if="UserInfo?.is_auth == 1"
+							<cl-text color="#212227" v-if="userInfo?.is_verified"
 								:pt="{ className: 'text-xs' }">已认证</cl-text>
 							<cl-text color="#212227" v-else :pt="{ className: 'text-xs' }"
 								@tap="router.to('/pages/user/verify')">开始认证</cl-text>
@@ -133,12 +135,41 @@
 
 <script setup lang="ts">
 	import { ref } from "vue";
-	import { router, userInfo, useStore, isNull } from "@/cool";
+	import { router, userInfo,parse, useStore, isNull,type Response} from "@/cool";
 	import { t } from "@/locale";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import { storage } from "@/cool/utils";
+	import { userStatistics } from "@/cool/service/user"
 	const { user } = useStore();
 	const ui = useUi();
+	type statistics = {
+		articles_count : number;
+		comments_count : number;
+		drafts_count : number;
+		followers_count : number;
+		following_count : number;
+		gold_coins : number;
+		images_count : number;
+		invite_count : number;
+		likes_count : number;
+		likes_received_count : number;
+		posts_count : number;
+		views_count : number;
+	}
+	const statisticsObj = ref<statistics>({
+		articles_count: 0,
+		comments_count: 0,
+		drafts_count: 0,
+		followers_count: 0,
+		following_count: 0,
+		gold_coins: 0,
+		images_count: 0,
+		invite_count: 0,
+		likes_count: 0,
+		likes_received_count: 0,
+		posts_count: 0,
+		views_count: 0
+	});
 	type menuItem = {
 		name : string;
 		itemNum : number;
@@ -194,20 +225,6 @@
 			path: "/pages/set/index"
 		}
 	]);
-	type UserInfoType = {
-		username : string;
-		avatarUrl : string;
-		is_auth : number;
-		isFollow : boolean;
-	};
-
-	// 创建响应式的用户信息数据
-	const UserInfo = ref<UserInfoType>({
-		username: "steven",
-		avatarUrl: "../../static/image/head-img.png",
-		is_auth: 0,
-		isFollow: false
-	});
 	const login = () => {
 		router.to("/pages/user/login");
 	};
@@ -233,6 +250,20 @@
 	}
 	onReady(() => {
 		user.get();
+		const userId = userInfo.value?.id ?? ""
+		// console.log(userId, '用户数据')
+		// 用户统计
+		userStatistics(userId, user).then(res => {
+			statisticsObj.value =parse<statistics>(res)!
+			menuList.value[0].itemNum=statisticsObj.value.articles_count//长文数量
+			menuList.value[1].itemNum=statisticsObj.value.posts_count//讨论
+			menuList.value[2].itemNum=statisticsObj.value.images_count//图库
+			menuList.value[3].itemNum=statisticsObj.value.drafts_count//草稿
+		}).catch((err) => {
+			ui.showToast({
+				message: (err as Response).message!
+			});
+		});
 	});
 </script>
 

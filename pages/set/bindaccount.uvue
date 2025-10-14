@@ -2,26 +2,26 @@
 	<cl-page>
 		<cl-list>
 			<cl-list-item :label="t('手机号')" hoverable arrow justify="end"  :pt="{className:'border-bottom py-1'}">
-				<cl-text>{{ userInfo?.phone }}</cl-text>
-				<cl-text color="info" v-if="userInfo?.phone == null">{{
+				<cl-text>{{ userInfo?.mobile }}</cl-text>
+				<cl-text color="info" v-if="userInfo?.mobile == null">{{
 					t("未绑定")
 				}}</cl-text>
 			</cl-list-item>
 			<cl-list-item :label="t('微信')" hoverable arrow justify="end"  :pt="{className:'border-bottom py-1'}">
-				<cl-text>{{ userInfo?.phone }}</cl-text>
-				<cl-text color="info" v-if="userInfo?.phone == null">{{
+				<cl-text>{{ userInfo?.mobile }}</cl-text>
+				<cl-text color="info" v-if="userInfo?.mobile == null">{{
 					t("未绑定")
 				}}</cl-text>
 			</cl-list-item>
 			<cl-list-item :label="t('新浪微博')" hoverable arrow justify="end"  :pt="{className:'border-bottom py-1'}">
-				<cl-text>{{ userInfo?.phone }}</cl-text>
-				<cl-text color="info" v-if="userInfo?.phone == null">{{
+				<cl-text>{{ userInfo?.mobile }}</cl-text>
+				<cl-text color="info" v-if="userInfo?.mobile == null">{{
 					t("未绑定")
 				}}</cl-text>
 			</cl-list-item>
 			<cl-list-item :label="t('Apple账号')" hoverable arrow justify="end"  :pt="{className:'border-bottom py-1'}">
-				<cl-text>{{ userInfo?.phone }}</cl-text>
-				<cl-text color="info" v-if="userInfo?.phone == null">{{
+				<cl-text>{{ userInfo?.mobile }}</cl-text>
+				<cl-text color="info" v-if="userInfo?.mobile == null">{{
 					t("未绑定")
 				}}</cl-text>
 			</cl-list-item>

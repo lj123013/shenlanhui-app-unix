@@ -17,13 +17,14 @@ export type UserInfo = {
 	user_type : string;
 	created_at : string;
 	verification : any | null;
-	is_verified : boolean;
+	is_verified : boolean;//是否认证
 	is_virtual : boolean;
 	is_system : boolean;
 	is_media : boolean;
 	is_active : boolean;
 	mobile : string;
 	statistics ?: UserStatistics; // 可选
+	birthday?:string;//生日
 };
 
 export type UserLogin = {

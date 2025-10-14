@@ -67,7 +67,7 @@ async function confirm() {
 
 	// 更新用户昵称
 	await user.update({
-		nickName: content.value
+		nickname: content.value
 	});
 
 	router.back();
@@ -75,6 +75,6 @@ async function confirm() {
 
 // 页面加载时，设置输入框内容
 onReady(() => {
-	content.value = userInfo.value?.nickName ?? "";
+	content.value = userInfo.value?.nickname ?? "";
 });
 </script>

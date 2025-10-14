@@ -16,7 +16,7 @@
 
 			</cl-row>
 			<cl-row :gutter="12" style="background-color: #FFF5F5;" @tap="router.to('/pages/user/personalAuth')"
-				:pt="{className:'p-3 justify-between items-center rounded-lg'}">
+				:pt="{className:'px-3 py-5 justify-between items-center rounded-lg'}">
 				<cl-col :span="4">
 					<cl-image width="48px" height="48px" src="/static/image/geren.png"></cl-image>
 				</cl-col>

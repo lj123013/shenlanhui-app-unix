@@ -125,6 +125,7 @@ export function request(options : RequestOptions) : Promise<any | null> {
 										resolve(data);
 										break;
 									default:
+									console.log("错误数据")
 										reject({ message, code } as Response);
 										break;
 								}

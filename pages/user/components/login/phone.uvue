@@ -45,7 +45,7 @@
 	import SmsBtn from "@/components/sms-btn.uvue";
 	import { isDark, parseClass, request, useRefs, type Response } from "@/cool";
 	import { useUi } from "@/uni_modules/cool-ui";
-	import { loginWithCode } from './api'
+	import { loginWithCode } from '@/cool/service/user'
 	const props = defineProps({
 		form: {
 			type: Object as PropType<LoginForm>,

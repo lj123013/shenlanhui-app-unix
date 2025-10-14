@@ -13,22 +13,21 @@
 					<cl-text>{{ userInfo?.nickname }}</cl-text>
 				</cl-list-item>
 			</cl-list>
-			<!-- <cl-list :pt="{ className: 'border-bottom' }" >
+			<cl-list :pt="{ className: 'border-bottom' }">
 				<cl-list-item :label="t('生日')" hoverable arrow justify="end" @tap="open('birthday')">
-					
+
 					<cl-text color="info" v-if="userInfo?.birthday == null">{{
 						t("请选择")
 					}}</cl-text>
 					<cl-text v-else>{{ userInfo?.birthday }}</cl-text>
 				</cl-list-item>
-			</cl-list> -->
+			</cl-list>
 			<cl-list :pt="{ className: ' border-bottom ' }">
 				<cl-list-item :label="t('性别')" hoverable arrow justify="end" @tap="open('gender')">
-					<cl-text>{{ userInfo?.gender }}</cl-text>
+					<cl-text>{{ genderText }}</cl-text>
 					<cl-text color="info" v-if="userInfo?.gender == null">{{
 						t("请选择")
 					}}</cl-text>
-					<!-- <cl-text color="info" v-if="genderText == ''">{{ t("编辑性别") }}</cl-text> -->
 				</cl-list-item>
 
 
@@ -40,9 +39,8 @@
 			</cl-button>
 			<cl-select :title="t('选择性别')" :model-value="userInfo?.gender" :ref="refs.set('gender')"
 				:options="genderOptions" :show-trigger="false" @change="onGenderChange"></cl-select>
-
-			<!-- <cl-select-date :title="t('选择生日')" :model-value="userInfo?.birthday" :ref="refs.set('birthday')" type="date"
-				:end="today" :show-trigger="false" @change="onBirthdayChange"></cl-select-date> -->
+			<cl-select-date :title="t('选择生日')" :model-value="userInfo?.birthday" :ref="refs.set('birthday')" type="date"
+				:end="today" :show-trigger="false" @change="onBirthdayChange"></cl-select-date>
 
 		</view>
 	</cl-page>
@@ -54,7 +52,7 @@
 	import { useCascader, useUi, type ClSelectOption } from "@/uni_modules/cool-ui";
 	import { computed, ref, onMounted } from "vue";
 	import pca from "@/data/pca.json";
-
+	import { userStatistics } from '@/cool/service/user'
 	const { user } = useStore();
 	const ui = useUi();
 	const refs = useRefs();
@@ -66,15 +64,15 @@
 	const genderOptions = ref<ClSelectOption[]>([
 		{
 			label: t("保密"),
-			value: 0
+			value:'unknown'
 		},
 		{
 			label: t("男"),
-			value: 1
+			value: 'male'
 		},
 		{
 			label: t("女"),
-			value: 2
+			value: 'female'
 		}
 	]);
 	const genderTextMap = {
@@ -94,28 +92,65 @@
 	});
 	onMounted(() => {
 		console.log(genderText.value);
-
 	})
 	// 性别改变
-	function onGenderChange(val : number) {
-		user.update({
-			gender: val
-		});
-
-		ui.showToast({
-			message: t("性别设置成功")
-		});
+	async function onGenderChange(val : string) {
+		try {
+		  // updateUser 并等待结果
+		  const isSuccess = await user.update({
+		    gender: val
+		  });
+			
+		  if (isSuccess) {
+		    // 只有请求成功后才显示成功提示
+		    ui.showToast({
+		      message: t("性别设置成功")
+		    });
+		  } else {
+		    // 如果 update 方法返回 false（可能是验证失败等）
+		    ui.showToast({
+		      message: t("性别设置失败，请重试"),
+		      type: 'error'
+		    });
+		  }
+		} catch (error) {
+		  // 捕获异步操作中的错误
+		  console.error('性别设置异常:', error);
+		  ui.showToast({
+		    message: t("性别设置失败，请检查网络连接"),
+		    type: 'error'
+		  });
+		}
 	}
 
 	// 生日改变
-	function onBirthdayChange(val : string) {
-		user.update({
-			birthday: val
-		});
-
-		ui.showToast({
-			message: t("生日设置成功")
-		});
+	async function onBirthdayChange(val: string) {
+	  try {
+	    // updateUser 并等待结果
+	    const isSuccess = await user.update({
+	      birthday: val
+	    });
+	
+	    if (isSuccess) {
+	      // 只有请求成功后才显示成功提示
+	      ui.showToast({
+	        message: t("生日设置成功")
+	      });
+	    } else {
+	      // 如果 update 方法返回 false（可能是验证失败等）
+	      ui.showToast({
+	        message: t("生日设置失败，请重试"),
+	        type: 'error'
+	      });
+	    }
+	  } catch (error) {
+	    // 捕获异步操作中的错误
+	    console.error('生日设置异常:', error);
+	    ui.showToast({
+	      message: t("生日设置失败，请检查网络连接"),
+	      type: 'error'
+	    });
+	  }
 	}
 	// 打开弹窗
 	function open(name : string) {

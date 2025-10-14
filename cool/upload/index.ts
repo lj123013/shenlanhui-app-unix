@@ -56,12 +56,17 @@ export type LocalUploadResponse = {
 };
 
 // 获取上传模式（本地/云端及云类型）
+// 获取上传模式（本地/云端及云类型）
 async function getUploadMode(): Promise<UploadMode> {
-	const res = await request({
-		url: "/app/base/comm/uploadMode"
-	});
+	// const res = await request({
+	// 	url: "/app/base/comm/uploadMode"
+	// });
 
-	return parse<UploadMode>(res!)!;
+	// return parse<UploadMode>(res!)!;
+	return parse<UploadMode>({
+		mode: 'cloud',
+		type: 'qiniu'
+	}!)!
 }
 
 /**
@@ -99,13 +104,14 @@ export async function uploadFile(
 
 	// 获取文件路径
 	const filePath = file.path;
-
+console.log(filePath, '文件路径')
 	// 获取文件名
 	let fileName = file.name;
 
 	// 如果文件名不存在，则使用文件路径的文件名
 	if (fileName == "" || fileName == null) {
 		fileName = basename(filePath);
+		console.log(fileName, '文件名')
 	}
 
 	// 获取文件扩展名
@@ -116,10 +122,11 @@ export async function uploadFile(
 
 	// 生成唯一key: 原文件名_uuid.扩展名
 	let key = `${filename(fileName)}_${uuid()}.${ext}`;
-
+console.log(key, '文件key')
 	// 云上传需要加上时间戳路径
 	if (isCloud) {
 		key = `app/${Date.now()}/${key}`;
+		console.log(key, '云上传key')
 	}
 
 	// 支持多种上传方式
@@ -197,13 +204,13 @@ export async function uploadFile(
 			const data = {} as UTSJSONObject;
 
 			// AWS需要提前传key
-			if (type == "aws") {
-				data.key = key;
+			if (type == "qiniu") {
+				data.avatar = "http://localhost:9900/02c387e1-39df-462f-b7a6-ca0bc64e00b2";
 			}
 
 			// 获取云上传参数
 			request({
-				url: "/app/base/comm/upload",
+				url: "/upload",
 				method: "POST",
 				data
 			})
