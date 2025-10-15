@@ -44,17 +44,53 @@
 						:placeholder="t('请输入组织简介')"></cl-textarea>
 				</cl-form-item>
 				<cl-form-item :label="t('营业执照或组织机构')" prop="business_license">
-					<cl-upload v-model="formData.business_license" icon="a-zu272" iconWidth="80rpx" text="上传营业执照或组织机构"
-						width="100%" height="150px"></cl-upload>
+					<view v-if="formData.business_license==''" @tap="uploadImg('business_license')" icon="a-zu272"
+						iconWidth="40rpx"
+						class="bg-neutral-100 rounded-xl h-[150px] flex flex-col justify-center items-center">
+						<cl-icon name="a-zu272" :size="50" width="80rpx" color="#a3a3a3"></cl-icon>
+						<cl-text color="#a3a3a3" :pt="{className:'text-sm mt-1'}">单位授权证明</cl-text>
+					</view>
+					<cl-image v-if="formData.business_license!=''" :pt="{
+							className: '',
+							inner: {
+								className: '!rounded-xl'
+							}
+						}" width="100%" height="150px" :src="formData.business_license">
+
+					</cl-image>
 				</cl-form-item>
 				<cl-form-item :label="t('单位授权证明')" prop="authorization_letter">
-					<cl-upload v-model="formData.authorization_letter" icon="a-zu272" iconWidth="80rpx" text="单位授权证明"
-						width="100%" height="150px"></cl-upload>
+					<view v-if="formData.authorization_letter==''" @tap="uploadImg('authorization_letter')"
+						icon="a-zu272" iconWidth="40rpx"
+						class="bg-neutral-100 rounded-xl h-[150px] flex flex-col justify-center items-center">
+						<cl-icon name="a-zu272" :size="50" width="80rpx" color="#a3a3a3"></cl-icon>
+						<cl-text color="#a3a3a3" :pt="{className:'text-sm mt-1'}">单位授权证明</cl-text>
+					</view>
+					<cl-image v-if="formData.authorization_letter!=''" :pt="{
+							className: '',
+							inner: {
+								className: '!rounded-xl'
+							}
+						}" width="100%" height="150px" :src="formData.authorization_letter">
+
+					</cl-image>
 				</cl-form-item>
 
 				<cl-form-item :label="t('账号管理员身份证')" prop="manager_id_card">
-					<cl-upload v-model="formData.manager_id_card" icon="a-zu272" iconWidth="80rpx" text="账号管理员身份证"
-						width="100%" height="150px"></cl-upload>
+					<view v-if="formData.manager_id_card==''" @tap="uploadImg('manager_id_card')" icon="a-zu272"
+						iconWidth="40rpx"
+						class="bg-neutral-100 rounded-xl h-[150px] flex flex-col justify-center items-center">
+						<cl-icon name="a-zu272" :size="50" width="80rpx" color="#a3a3a3"></cl-icon>
+						<cl-text color="#a3a3a3" :pt="{className:'text-sm mt-1'}">账号管理员身份证</cl-text>
+					</view>
+					<cl-image v-if="formData.manager_id_card!=''" :pt="{
+							className: '',
+							inner: {
+								className: '!rounded-xl'
+							}
+						}" width="100%" height="150px" :src="formData.manager_id_card">
+
+					</cl-image>
 				</cl-form-item>
 			</cl-form>
 		</view>
@@ -96,7 +132,7 @@
 	} from "@/uni_modules/cool-ui";
 	import pca from "@/data/pca.json";
 	import { t } from "@/locale";
-	import { type Response, parse, isArray,router } from "@/cool";
+	import { type Response, parse, isArray, router, uploadFile, isNull } from "@/cool";
 	import { getareas, verification } from '@/cool/service/user'
 	const ui = useUi();
 	const { formRef, validate, clearValidate } = useForm();
@@ -193,6 +229,60 @@
 	const saving = ref(false);
 	const close = () => { }
 	const confirm = () => { }
+	// 上传图片
+	const uploadImg = (field : string) => {
+		// 在函数体内设置默认值
+		const actualUploadType = "verification";
+		function next(path : string) {
+			const file : ChooseImageTempFile = {
+				path: path,
+				size: 0, // 如果您能获取到文件大小，可以在这里设置
+				name: "file", // 使用路径中的文件名
+				type: "image/png" // 根据实际文件类型设置，这里只是示例
+			};
+			uploadFile(file, { type: actualUploadType }, actualUploadType).then((res) => {
+				console.log('上传成功结果', res)
+				ui.showToast({
+					message: t("图片上传成功"),
+					type: "success",
+				});
+				// 根据字段名更新对应的表单字段
+				formData.value[field] = res;//营业执照或组织机构
+			})
+				.catch((err) => {
+					console.log('上传失败结果', err)
+					ui.showToast({
+						message: t("图片上传失败"),
+						type: "error",
+					});
+				});
+		}
+		// #ifndef MP-WEIXIN
+		console.log('非微信小程序环境，调用 chooseImage');
+		uni.chooseImage({
+			count: 1,
+			success(res) {
+				console.log('选择图片成功:', res);
+				if (isArray(res.tempFiles) && res.tempFiles.length > 0) {
+					if (!isNull(res.tempFiles[0].path))
+						next(res.tempFiles[0].path);
+				} else {
+					console.log('未找到临时文件路径');
+					ui.showToast({
+						message: "未找到文件路径"
+					});
+				}
+			},
+			fail(err) {
+				console.log('选择图片失败:', err);
+				ui.showToast({
+					message: "选择图片失败"
+				});
+			}
+		});
+		// #endif
+	}
+
 	// 提交表单
 	function submit() {
 		validate((valid, errors) => {
@@ -205,7 +295,7 @@
 						icon: "check-line"
 					});
 					router.push({
-						path:'/pages/user/authResult',
+						path: '/pages/user/authResult',
 						params: {
 							title: '提交',
 						}

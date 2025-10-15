@@ -160,8 +160,8 @@
 	// 上传头像
 	function uploadAvatar(e : UniEvent) {
 		function next(path : string) {
-			upload(path)
-				.then((url) => {
+			console.log(path,'上传头像地址')
+			upload(path).then((url) => {
 					ui.showToast({
 						message: t("头像上传成功")
 					});

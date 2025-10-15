@@ -1,71 +1,76 @@
 import { config } from "@/config";
 import { request } from "../service";
-import { useStore } from "../store";
 import { basename, extname, filename, parse, parseObject, pathJoin, uuid } from "../utils";
+import { useStore } from "../store";
 
 // 上传进度回调结果类型
 export type OnProgressUpdateResult = {
-	progress: number;
-	totalBytesSent: number;
-	totalBytesExpectedToSend: number;
+	progress : number;
+	totalBytesSent : number;
+	totalBytesExpectedToSend : number;
 };
 
 // 上传任务类型定义
 export type UploadTask = {
-	abort(): void;
+	abort() : void;
 };
 
 // 上传选项类型定义
 export type UploadOptions = {
-	onProgressUpdate?: (result: OnProgressUpdateResult) => void; // 上传进度回调
-	onTask?: (task: UploadTask) => void; // 上传任务回调
+	onProgressUpdate ?: (result : OnProgressUpdateResult) => void; // 上传进度回调
+	onTask ?: (task : UploadTask) => void; // 上传任务回调
+	type ?: string;
 };
 
 // 上传模式类型
 export type UploadMode = {
-	mode: "local" | "cloud"; // 上传模式：本地或云端
-	type: string; // 云服务类型
+	mode : "local" | "cloud"; // 上传模式：本地或云端
+	type : string; // 云服务类型
 };
 
 // 上传请求的参数类型
 export type UploadRequestOptions = {
-	url: string;
-	preview?: string;
-	data: any;
+	url : string;
+	preview ?: string;
+	data : any;
 };
 
 // 云上传返回数据类型
 export type CloudUploadResponse = {
-	uploadUrl?: string;
-	url?: string;
-	host?: string;
-	credentials?: any;
-	OSSAccessKeyId?: string;
-	policy?: string;
-	signature?: string;
-	publicDomain?: string;
-	token?: string;
-	fields?: any;
+	uploadUrl ?: string;
+	url ?: string;
+	host ?: string;
+	credentials ?: any;
+	OSSAccessKeyId ?: string;
+	policy ?: string;
+	signature ?: string;
+	publicDomain ?: string;
+	token ?: string;
+	fields ?: any;
 };
-
+type LocalUploadData = {
+	mime_type : string;
+	original_name : string;
+	path : string;
+	size : number;
+	url : string;
+};
 // 本地上传返回数据类型
 export type LocalUploadResponse = {
-	code: number;
-	message?: string;
-	data: string;
+	code : number;
+	message ?: string;
+	data :LocalUploadData
 };
 
 // 获取上传模式（本地/云端及云类型）
-// 获取上传模式（本地/云端及云类型）
-async function getUploadMode(): Promise<UploadMode> {
+async function getUploadMode() : Promise<UploadMode> {
 	// const res = await request({
 	// 	url: "/app/base/comm/uploadMode"
 	// });
 
-	// return parse<UploadMode>(res!)!;
 	return parse<UploadMode>({
-		mode: 'cloud',
-		type: 'qiniu'
+		mode: 'local',
+		type: 'local'
 	}!)!
 }
 
@@ -73,13 +78,13 @@ async function getUploadMode(): Promise<UploadMode> {
  * 路径上传
  * @param path 文件路径
  */
-export async function upload(path: string) {
+export async function upload(path : string, uploadType : string = "verification") {
 	return uploadFile({
 		path,
 		size: 0,
 		name: "",
 		type: "image/png"
-	});
+	}, null, uploadType);
 }
 
 /**
@@ -88,9 +93,10 @@ export async function upload(path: string) {
  * @param options 上传选项
  */
 export async function uploadFile(
-	file: ChooseImageTempFile,
-	options: UploadOptions | null = null
-): Promise<string> {
+	file : ChooseImageTempFile,
+	options : UploadOptions | null = null,
+	uploadType : string = "verification"// 新增参数，默认值为 "verification"
+) : Promise<string> {
 	const { user } = useStore();
 
 	// 获取上传模式和类型
@@ -104,14 +110,13 @@ export async function uploadFile(
 
 	// 获取文件路径
 	const filePath = file.path;
-console.log(filePath, '文件路径')
+
 	// 获取文件名
 	let fileName = file.name;
 
 	// 如果文件名不存在，则使用文件路径的文件名
 	if (fileName == "" || fileName == null) {
 		fileName = basename(filePath);
-		console.log(fileName, '文件名')
 	}
 
 	// 获取文件扩展名
@@ -122,11 +127,10 @@ console.log(filePath, '文件路径')
 
 	// 生成唯一key: 原文件名_uuid.扩展名
 	let key = `${filename(fileName)}_${uuid()}.${ext}`;
-console.log(key, '文件key')
+
 	// 云上传需要加上时间戳路径
 	if (isCloud) {
 		key = `app/${Date.now()}/${key}`;
-		console.log(key, '云上传key')
 	}
 
 	// 支持多种上传方式
@@ -135,7 +139,14 @@ console.log(key, '文件key')
 		 * 实际上传文件的函数
 		 * @param param0 上传参数
 		 */
-		function next({ url, preview, data }: UploadRequestOptions) {
+		function next({ url, preview, data } : UploadRequestOptions) {
+			// 构建formData，根据uploadType动态设置type字段
+			const formData = {
+				...(data as UTSJSONObject),
+				key,
+				type: uploadType // 使用传入的uploadType参数
+			};
+
 			// 发起上传请求
 			const task = uni.uploadFile({
 				url,
@@ -143,20 +154,19 @@ console.log(key, '文件key')
 				name: "file",
 				header: {
 					// 本地上传带token
-					Authorization: isLocal ? user.token : null
+					Authorization: isLocal ? `Bearer ${user.token}` : null
 				},
-				formData: {
-					...(data as UTSJSONObject),
-					key
-				},
+				formData: formData,
 				success(res) {
 					if (isLocal) {
 						// 本地上传返回处理
 						const { code, data, message } = parseObject<LocalUploadResponse>(res.data)!;
-
-						if (code == 1000) {
-							resolve(data);
+						console.log("返回数据", data, message)
+						if (code == 200) {
+							console.log("得到url值", data?.url)
+							resolve(data?.url);
 						} else {
+							console.log("获取值失败", message)
 							reject(message);
 						}
 					} else {
@@ -196,7 +206,7 @@ console.log(key, '文件key')
 		// 本地上传
 		if (isLocal) {
 			next({
-				url: config.baseUrl + "/app/base/comm/upload",
+				url: config.baseUrl + "/upload",
 				data: {}
 			});
 		} else {
@@ -204,13 +214,13 @@ console.log(key, '文件key')
 			const data = {} as UTSJSONObject;
 
 			// AWS需要提前传key
-			if (type == "qiniu") {
-				data.avatar = "http://localhost:9900/02c387e1-39df-462f-b7a6-ca0bc64e00b2";
+			if (type == "aws") {
+				data.key = key;
 			}
 
 			// 获取云上传参数
 			request({
-				url: "/upload",
+				url: "/app/base/comm/upload",
 				method: "POST",
 				data
 			})

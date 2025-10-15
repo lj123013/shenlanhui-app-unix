@@ -14,9 +14,9 @@
 							<cl-avatar rounded :src="userInfo?.avatar"></cl-avatar>
 							<view class="ml-2">
 								<view class="flex items-center flex-row">
-									<cl-text v-if="userInfo" color="white"
+									<cl-text v-if="userInfo!=null" color="white"
 										:pt="{ className: '!text-xl mx-1' }">{{ userInfo?.nickname }}</cl-text>
-									<cl-text v-else @click="login" color="white" :pt="{ className: '!text-xl mx-1' }">{{
+									<cl-text v-if="userInfo==null" @click="login" color="white" :pt="{ className: '!text-xl mx-1' }">{{
 										t("登录/注册")
 									}}</cl-text>
 									<view class="bg-white rounded-3xl p-[4rpx] flex items-center justify-center"
@@ -135,7 +135,7 @@
 
 <script setup lang="ts">
 	import { ref } from "vue";
-	import { router, userInfo,parse, useStore, isNull,type Response} from "@/cool";
+	import { router, userInfo, parse, useStore, isNull, type Response } from "@/cool";
 	import { t } from "@/locale";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import { storage } from "@/cool/utils";
@@ -182,15 +182,15 @@
 	const menuList = ref<menuItem[]>([
 		{
 			name: "长文",
-			itemNum: 10
+			itemNum: 0
 		},
 		{
 			name: "讨论",
-			itemNum: 421
+			itemNum: 0
 		},
 		{
 			name: "图库",
-			itemNum: 2
+			itemNum: 0
 		},
 		{
 			name: "草稿",
@@ -250,20 +250,23 @@
 	}
 	onReady(() => {
 		user.get();
-		const userId = userInfo.value?.id ?? ""
-		// console.log(userId, '用户数据')
-		// 用户统计
-		userStatistics(userId, user).then(res => {
-			statisticsObj.value =parse<statistics>(res)!
-			menuList.value[0].itemNum=statisticsObj.value.articles_count//长文数量
-			menuList.value[1].itemNum=statisticsObj.value.posts_count//讨论
-			menuList.value[2].itemNum=statisticsObj.value.images_count//图库
-			menuList.value[3].itemNum=statisticsObj.value.drafts_count//草稿
-		}).catch((err) => {
-			ui.showToast({
-				message: (err as Response).message!
+		if (!isNull(userInfo.value)) {
+			const userId = userInfo.value?.id ?? ""
+			// console.log(userId, '用户数据')
+			// 用户统计
+			userStatistics(userId, user).then(res => {
+				statisticsObj.value = parse<statistics>(res)!
+				menuList.value[0].itemNum = statisticsObj.value.articles_count//长文数量
+				menuList.value[1].itemNum = statisticsObj.value.posts_count//讨论
+				menuList.value[2].itemNum = statisticsObj.value.images_count//图库
+				menuList.value[3].itemNum = statisticsObj.value.drafts_count//草稿
+			}).catch((err) => {
+				ui.showToast({
+					message: (err as Response).message!
+				});
 			});
-		});
+		}
+
 	});
 </script>
 

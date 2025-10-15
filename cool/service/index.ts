@@ -57,7 +57,7 @@ export function request(options : RequestOptions) : Promise<any | null> {
 	if (!url.startsWith("http")) {
 		url = config.baseUrl + url;
 	}
-	console.log(`[${method}] ${url}`);
+	// console.log(`[${method}] ${url}`);
 	// 获取当前token
 	// let Authorization : string | null
 	let Authorization : string | null = user.token;

@@ -13,6 +13,9 @@ export class User {
 	 * 用户信息，响应式对象
 	 */
 	info = ref<UserInfo | null>(null);
+	/**
+	 * 当前userId，数字或null
+	 */
 	userId : number | null = null;
 	/**
 	 * 当前token，字符串或null
@@ -24,15 +27,15 @@ export class User {
 		const userInfo = storage.get("userInfo");
 		// 获取本地token
 		const token = storage.get("token") as string | null;
-		const userId = storage.get("userId") as number | null;
-		// console.log(token, '获取token', userId, "获取用户id")
-		this.userId = userId == null ? null : userId;
-		// 如果token为空字符串则置为null
+		const userId= storage.get("userId") as number | null;
+		if(!isNull(userId)){
+			this.userId=userId as number
+		}
+		console.log(this.userId)
 		this.token = token == "" ? null : token;
 		// 初始化用户信息
 		if (userInfo != null && isObject(userInfo)) {
 			this.set(userInfo);
-			// console.log(userInfo, '获取userInfo')
 		}
 	}
 
@@ -41,7 +44,6 @@ export class User {
 	 * @returns Promise<void>
 	 */
 	async get() {
-
 		if (this.token != null && this.userId != null) {
 			await request({
 				url: `/users/${this.userId}`,
@@ -194,4 +196,7 @@ export const user = new User();
 /**
  * 用户信息，响应式对象
  */
-export const userInfo = computed(() => user.info.value as UserInfo);
+// console.log(user.info.value)
+export const userInfo = computed<UserInfo | null>(() => {
+	return user.info.value != null ? user.info.value as UserInfo : null;
+});

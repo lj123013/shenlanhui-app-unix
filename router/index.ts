@@ -21,7 +21,6 @@ router.beforeEach((to, next) => {
 		next();
 	} else {
 		next();
-		return
 		if (!user.isNull()) {
 			next();
 		} else {
