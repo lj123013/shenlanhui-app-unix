@@ -103,6 +103,9 @@
 					"path": "index",
 					"style": {
 						"navigationBarTitleText": "设置"
+					},
+					"meta": {
+						"isAuth": true
 					}
 				},
 				{
@@ -147,6 +150,9 @@
 						"navigationBarTitleText": "我的",
 						"titleNView": "custom",
 						"navigationStyle": "custom"
+					},
+					"meta": {
+						"isAuth": true
 					}
 				},
 				{
@@ -167,6 +173,9 @@
 						"navigationBarTitleText": "个人主页",
 						"titleNView": "custom",
 						"navigationStyle": "custom"
+					},
+					"meta": {
+						"isAuth": true
 					}
 				},
 				{
@@ -451,6 +460,12 @@
 				"text": "圈子"
 			}
 		]
+	},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^ui-(.*)": "@/components/ui/$1/ui-$1.uvue"
+		}
 	},
 	"uniIdRouter": {}
 }

@@ -1,26 +1,17 @@
 import { router, useStore } from "@/cool";
-//需要判断token是否登录的将不需要token的加入到下面数组中
-const ignoreToken = [
-	"/pages/index/home",
-	'/pages/homePage/slhNum',
-	"/pages/index/shenlanai",
-	"/pages/index/radar",
-	"/pages/index/information",
-	"/pages/index/socialcircle",
-	"/pages/index/my",
-	"/pages/user/login"
-];
 
-router.beforeEach((to, next) => {
+/**
+ * 路由跳转前的全局钩子（如修改 pages.json 后需重新编译项目以确保路由信息生效）
+ * @param to 跳转页
+ * @param from 当前页
+ * @param next 跳转函数
+ */
+router.beforeEach((to, from, next) => {
 	const { user } = useStore();
-	if (
-		ignoreToken.some((e) => to.path.includes(e)) ||
-		to.path.startsWith("/pages/demo") ||
-		to.path.startsWith("/pages/template")
-	) {
-		next();
-	} else {
-		next();
+
+	// 判断是否需要登录
+	if (to.isAuth == true || to.meta?.isAuth == true) {
+		// 如果用户信息为空，则跳转到登录页
 		if (!user.isNull()) {
 			next();
 		} else {
@@ -28,5 +19,7 @@ router.beforeEach((to, next) => {
 		
 			router.login();
 		}
+	} else {
+		next();
 	}
 });
