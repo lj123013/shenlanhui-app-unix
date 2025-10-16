@@ -505,6 +505,12 @@
 			"root": "pages/template",
 			"pages": [
 				{
+					"path": "post/detail",
+					"style": {
+						"navigationStyle": "custom"
+					}
+				},
+				{
 					"path": "shop/goods-category",
 					"style": {
 						"navigationBarTitleText": "商品分类"
@@ -569,12 +575,6 @@
 				"text": "我的"
 			}
 		]
-	},
-	"easycom": {
-		"autoscan": true,
-		"custom": {
-			"^ui-(.*)": "@/components/ui/$1/ui-$1.uvue"
-		}
 	},
 	"uniIdRouter": {}
 }
