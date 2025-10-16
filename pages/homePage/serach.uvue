@@ -17,8 +17,8 @@
 		</cl-topbar>
 		<view class="px-5">
 			<view class="flex flex-row items-center mt-4">
-				<cl-text color="primary" :pt="{
-						className: 'text-lg fontBold fontitalic'
+				<cl-text  :pt="{
+						className: 'text-lg fontBold fontitalic !text-primary-500'
 					}">最新</cl-text>
 				<cl-text color="black" :pt="{
 						className: '!text-lg fontBold fontitalic'
@@ -31,8 +31,8 @@
 			</view>
 			<view class="flex flex-row items-center justify-between mt-4">
 				<view class="flex flex-row items-center">
-					<cl-text color="primary" :pt="{
-						className: 'text-lg fontBold fontitalic'
+					<cl-text  :pt="{
+						className: 'text-lg fontBold fontitalic !text-primary-500'
 					}">热门</cl-text>
 					<cl-text color="black" :pt="{
 						className: '!text-lg fontBold fontitalic'
@@ -50,8 +50,8 @@
 			</view>
 			<view class="flex flex-row items-center justify-between mt-4">
 				<view class="flex flex-row items-center">
-					<cl-text color="primary" :pt="{
-						className: 'text-lg fontBold fontitalic'
+					<cl-text  :pt="{
+						className: 'text-lg fontBold fontitalic !text-primary-500'
 					}">热门</cl-text>
 					<cl-text color="black" :pt="{
 						className: '!text-lg fontBold fontitalic'
@@ -84,11 +84,11 @@
 			</view>
 			<view class="flex flex-row items-center justify-between my-4">
 				<view class="flex flex-row items-center">
-					<cl-text color="primary" :pt="{
-						className: 'text-lg fontBold fontitalic'
+					<cl-text  :pt="{
+						className: 'text-lg fontBold fontitalic !text-primary-500'
 					}">热门</cl-text>
 					<cl-text color="black" :pt="{
-						className: '!text-lg fontBold fontitalic'
+						className: '!text-lg fontBold fontitalic '
 					}">公告</cl-text>
 				</view>
 				<view class="flex flex-row items-center py-1 px-2 rounded-xl">
@@ -114,8 +114,8 @@
 			</view>
 			<view class="flex flex-row items-center justify-between my-4">
 				<view class="flex flex-row items-center">
-					<cl-text color="primary" :pt="{
-						className: 'text-lg fontBold fontitalic'
+					<cl-text  :pt="{
+						className: 'text-lg fontBold fontitalic !text-primary-500'
 					}">热门</cl-text>
 					<cl-text color="black" :pt="{
 						className: '!text-lg fontBold fontitalic'
@@ -134,11 +134,11 @@
 			</view>
 			<view class="flex flex-row items-center justify-between my-4">
 				<view class="flex flex-row items-center">
-					<cl-text color="primary" :pt="{
-						className: 'text-lg fontBold fontitalic'
+					<cl-text  :pt="{
+						className: 'text-lg fontBold fontitalic !text-primary-500'
 					}">热门</cl-text>
 					<cl-text color="black" :pt="{
-						className: '!text-lg fontBold fontitalic'
+						className: '!text-lg fontBold fontitalic '
 					}">财报</cl-text>
 				</view>
 				<view class="flex flex-row items-center py-1 px-2 rounded-xl">

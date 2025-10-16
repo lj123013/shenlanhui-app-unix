@@ -2,8 +2,8 @@
 	<cl-page>
 		<view class="px-5">
 			<cl-form :pt="{
-					className: 'p-2 pb-0'
-				}" v-model="formData" ref="formRef" :rules="rules" :disabled="saving" label-position="top">
+				className: 'p-2 pb-0'
+			}" v-model="formData" ref="formRef" :rules="rules" :disabled="saving" label-position="top">
 				<cl-form-item :label="t('组织认证类别')" prop="verification_category" required>
 					<cl-select v-model="formData.verification_category" :options="options"
 						placeholder="请选择组织认证类别"></cl-select>
@@ -34,8 +34,8 @@
 					<cl-input v-model="formData.organization_city" :placeholder="t('请输入常驻城市')"></cl-input>
 				</cl-form-item>
 				<cl-form-item :label="t('擅长领域（可多选）')" prop="organization_areas">
-					<view class='flex flex-row justify-between items-center area' @click="areasvisible=!areasvisible">
-						<cl-text color="#a3a3a3">请选择擅长领域</cl-text>
+					<view class='flex flex-row justify-between items-center area' @click="areasvisible = !areasvisible">
+						<cl-text color="#a3a3a3">{{arearText}}</cl-text>
 						<cl-icon name="arrow-down-s-line" color="#a3a3a3"></cl-icon>
 					</view>
 				</cl-form-item>
@@ -44,76 +44,89 @@
 						:placeholder="t('请输入组织简介')"></cl-textarea>
 				</cl-form-item>
 				<cl-form-item :label="t('营业执照或组织机构')" prop="business_license">
-					<view v-if="formData.business_license==''" @tap="uploadImg('business_license')" icon="a-zu272"
+					<view v-if="formData.business_license == ''" @tap="uploadImg('business_license')" icon="a-zu272"
 						iconWidth="40rpx"
 						class="bg-neutral-100 rounded-xl h-[150px] flex flex-col justify-center items-center">
 						<cl-icon name="a-zu272" :size="50" width="80rpx" color="#a3a3a3"></cl-icon>
-						<cl-text color="#a3a3a3" :pt="{className:'text-sm mt-1'}">单位授权证明</cl-text>
+						<cl-text color="#a3a3a3" :pt="{ className: 'text-sm mt-1' }">单位授权证明</cl-text>
 					</view>
-					<cl-image v-if="formData.business_license!=''" :pt="{
-							className: '',
-							inner: {
-								className: '!rounded-xl'
-							}
-						}" width="100%" height="150px" :src="formData.business_license">
+					<cl-image v-if="formData.business_license != ''" :pt="{
+						className: '',
+						inner: {
+							className: '!rounded-xl'
+						}
+					}" width="100%" height="150px" :src="formData.business_license">
 
 					</cl-image>
 				</cl-form-item>
 				<cl-form-item :label="t('单位授权证明')" prop="authorization_letter">
-					<view v-if="formData.authorization_letter==''" @tap="uploadImg('authorization_letter')"
+					<view v-if="formData.authorization_letter == ''" @tap="uploadImg('authorization_letter')"
 						icon="a-zu272" iconWidth="40rpx"
 						class="bg-neutral-100 rounded-xl h-[150px] flex flex-col justify-center items-center">
 						<cl-icon name="a-zu272" :size="50" width="80rpx" color="#a3a3a3"></cl-icon>
-						<cl-text color="#a3a3a3" :pt="{className:'text-sm mt-1'}">单位授权证明</cl-text>
+						<cl-text color="#a3a3a3" :pt="{ className: 'text-sm mt-1' }">单位授权证明</cl-text>
 					</view>
-					<cl-image v-if="formData.authorization_letter!=''" :pt="{
-							className: '',
-							inner: {
-								className: '!rounded-xl'
-							}
-						}" width="100%" height="150px" :src="formData.authorization_letter">
+					<cl-image v-if="formData.authorization_letter != ''" :pt="{
+						className: '',
+						inner: {
+							className: '!rounded-xl'
+						}
+					}" width="100%" height="150px" :src="formData.authorization_letter">
 
 					</cl-image>
 				</cl-form-item>
 
 				<cl-form-item :label="t('账号管理员身份证')" prop="manager_id_card">
-					<view v-if="formData.manager_id_card==''" @tap="uploadImg('manager_id_card')" icon="a-zu272"
+					<view v-if="formData.manager_id_card == ''" @tap="uploadImg('manager_id_card')" icon="a-zu272"
 						iconWidth="40rpx"
 						class="bg-neutral-100 rounded-xl h-[150px] flex flex-col justify-center items-center">
 						<cl-icon name="a-zu272" :size="50" width="80rpx" color="#a3a3a3"></cl-icon>
-						<cl-text color="#a3a3a3" :pt="{className:'text-sm mt-1'}">账号管理员身份证</cl-text>
+						<cl-text color="#a3a3a3" :pt="{ className: 'text-sm mt-1' }">账号管理员身份证</cl-text>
 					</view>
-					<cl-image v-if="formData.manager_id_card!=''" :pt="{
-							className: '',
-							inner: {
-								className: '!rounded-xl'
-							}
-						}" width="100%" height="150px" :src="formData.manager_id_card">
+					<cl-image v-if="formData.manager_id_card != ''" :pt="{
+						className: '',
+						inner: {
+							className: '!rounded-xl'
+						}
+					}" width="100%" height="150px" :src="formData.manager_id_card">
 
 					</cl-image>
 				</cl-form-item>
 			</cl-form>
 		</view>
-		<cl-footer :pt="{className:'pb-10'}">
-			<cl-button type="primary" :loading="saving" rounded :pt="{ className: 'flex-1 py-4' }"
-				@click="submit">{{ t("提交") }}</cl-button>
+		<cl-footer :pt="{ className: 'pb-10' }">
+			<cl-button type="primary" :loading="saving" rounded :pt="{ className: 'flex-1 py-4' }" @click="submit">{{
+				t("提交") }}</cl-button>
 		</cl-footer>
+		<!-- 擅长领域 -->
 		<cl-popup v-model="areasvisible" title="请选择擅长领域">
-			<view class="p-4">
-				<!-- <view class="flex flex-row flex-wrap">
-					<view class="mr-[34rpx] mb-[34rpx]" v-for="(item,index) in concartList" :key="index">
-						<view class="item rounded-[10rpx] p-2 flex flex-col items-center justify-center">
-							<cl-text>{{ item.name }}</cl-text>
+			<view class="p-4 h-[90vh]">
+				<view class="">
+					<view v-for="(item, index) in concartList">
+						<view class="flex flex-row justify-between items-center py-2"
+							@click="openChildren(item, index)">
+							<cl-text>{{ item?.category }}</cl-text>
+							<cl-icon v-if="item?.isOpen == false" name="arrow-down-s-line" color="#c1c1c1"></cl-icon>
+							<cl-icon v-if="item?.isOpen" name="arrow-up-s-line" color="#c1c1c1"></cl-icon>
+						</view>
+						<view class="flex flex-row flex-wrap" v-if="item?.isOpen">
+							<view class="py-1 px-3 my-2 mr-4 rounded-[10rpx]" v-for="child in item?.items"
+								:class="child.ischecked ? 'bg-primary-500' : 'bg-custom-bg-gray'"
+								@click="child.ischecked = !child.ischecked">
+								<cl-text
+									:pt="{ className: child.ischecked ? 'text-white text-sm' : 'text-sm text-gray-600' }">{{
+										child?.label }}</cl-text>
+							</view>
 						</view>
 					</view>
-				</view> -->
+				</view>
 				<view class="flex flex-row p-1">
 					<cl-button size="large" text border type="light" :pt="{
-							className: 'flex-1 !rounded-xl h-[80rpx]'
-						}" @tap="close">取消选择</cl-button>
+						className: 'flex-1 !rounded-xl h-[80rpx]'
+					}" @tap="areasvisible=false">取消选择</cl-button>
 					<cl-button size="large" :pt="{
-							className: 'flex-1 !rounded-xl h-[80rpx]'
-						}" @tap="confirm">确认选择</cl-button>
+						className: 'flex-1 !rounded-xl h-[80rpx]'
+					}" @tap="confirm">确认选择</cl-button>
 				</view>
 			</view>
 		</cl-popup>
@@ -121,7 +134,7 @@
 </template>
 
 <script setup>
-	import { ref, type Ref } from "vue";
+	import { ref, type Ref, watch } from "vue";
 	import {
 		useCascader,
 		useForm,
@@ -132,23 +145,12 @@
 	} from "@/uni_modules/cool-ui";
 	import pca from "@/data/pca.json";
 	import { t } from "@/locale";
-	import { type Response, parse, isArray, router, uploadFile, isNull } from "@/cool";
+	import { type Response, parse, isArray, router, uploadFile, isNull, map, parseObject, parseClass } from "@/cool";
 	import { getareas, verification } from '@/cool/service/user'
 	const ui = useUi();
 	const { formRef, validate, clearValidate } = useForm();
 	const areasvisible = ref(false)
-	// 定义单个选项项的类型
-	interface OptionItem {
-		label : string;
-		value : string;
-	}
-	// 定义分类的类型
-	interface CategoryGroup {
-		category : string;
-		items : OptionItem[];
-	}
-	// 接口返回数据的完整类型
-	const concartList = ref<CategoryGroup[]>([])
+	const arearText = ref("选择擅长领域")
 	const options = ref<ClSelectOption[]>([
 		{
 			label: t("企业认证"),
@@ -163,6 +165,20 @@
 			value: "organization_media",
 		}
 	]);
+	// 定义数据类型（注释形式）
+	// 首先定义子项类型
+	type FinanceSubItem = {
+		label : string
+		value : string
+		ischecked : boolean
+	}
+	type DisplayItem = {
+		isOpen : boolean
+		category : string
+		items : FinanceSubItem[]
+	}
+	// 在组件中使用
+	const concartList = ref<DisplayItem[]>([])
 	// 自定义表单数据类型
 	type FormData = {
 		verification_type : string;//认证方式（必填）
@@ -227,8 +243,122 @@
 	]);
 	// 是否保存中
 	const saving = ref(false);
-	const close = () => { }
-	const confirm = () => { }
+
+	// 获取擅长领域
+	const areasDta = () => {
+		// 获取擅长领域
+		getareas({}).then((res : any) => {
+			// console.log('原始数据:', res)
+			if (Array.isArray(res)) {
+				const data : DisplayItem[] = []
+				for (let i = 0; i < res.length; i++) {
+					const item = res[i]
+					if (!(item instanceof UTSJSONObject)) continue
+					const categoryValue = item.getString('category') != null ? item.getString('category')! : ""
+					const itemsArray : FinanceSubItem[] = []
+					const subItems = item.getArray('items')
+					if (isArray(subItems)) {
+						for (let j = 0; j < subItems!!.length; j++) {
+							// console.log(subItems!![j], "subItems[j]")
+							const subItem = subItems!![j]
+							if (!(subItem instanceof UTSJSONObject)) continue
+							// 使用显式变量赋值，确保类型正确
+							const labelResult = subItem.getString('label')
+							const valueResult = subItem.getString('value')
+							let labelValue = ""
+							let valueValue = ""
+							if (labelResult !== null) {
+								labelValue = labelResult
+							}
+
+							if (valueResult !== null) {
+								valueValue = valueResult
+							}
+							// 创建 FinanceSubItem 对象
+							const financeSubItem : FinanceSubItem = {
+								label: labelValue,
+								value: valueValue,
+								ischecked: false
+							}
+
+							itemsArray.push(financeSubItem)
+						}
+					}
+
+					data.push({
+						isOpen: false,
+						category: categoryValue,
+						items: itemsArray
+					} as DisplayItem)
+				}
+
+				concartList.value = data
+				// console.log('使用 UTSJSONObject 方法转换成功', concartList.value, "concartList.value")
+			}
+		}).catch((err) => {
+			ui.showToast({
+				message: t("擅长领域获取失败")
+			});
+		})
+	}
+	// 确认选择擅长领域
+	const confirm = () => {
+		if (isArray(concartList.value) && concartList.value!!.length > 0) {
+			let allSelectedItems : string[] = []  // 用于收集所有选中的项目
+			for (let i = 0; i < concartList.value.length; i++) {
+				const category = concartList.value[i]
+				if (category != null && isArray(category?.items) && category.items.length > 0) {
+					const subItems = category.items
+					// console.log("subItems", subItems)
+					if (isArray(subItems) && subItems.length > 0) {
+						for (let j = 0; j < subItems!!.length; j++) {
+							const subItem = subItems!![j]
+							if (subItem.ischecked == true) {
+								formData.value.organization_areas.push(subItem.value)
+								allSelectedItems.push(subItem.label)
+							}
+
+						}
+					}
+
+				}
+			}
+			if (isArray(allSelectedItems) && allSelectedItems.length > 0) {
+				if (allSelectedItems.length <= 3) {
+					// 如果不超过3个，显示全部
+					arearText.value = allSelectedItems.join(",")
+				} else {
+					// 如果超过3个，显示前3个并添加"等"字
+					const firstThree = allSelectedItems.slice(0, 3)
+					arearText.value = firstThree.join(",") + "等"
+				}
+				// arearText.value = allSelectedItems.join(",")
+			}
+			areasvisible.value = false
+			console.log("当前分类选中的项目", parseClass(allSelectedItems))
+		}
+	}
+	// 重置所有选中状态
+	const resetAllChecked = () => {
+		console.log('弹框关闭，重置所有选中状态')
+		if (isArray(concartList.value) && concartList.value!!.length > 0) {
+			// if (!concartList.value || !Array.isArray(concartList.value)) return
+			// // 遍历所有分类和子项，将 ischecked 设为 false
+			const newList = concartList.value.map(category => {
+				return {
+					...category,
+					items: category.items.map(item => {
+						return {
+							...item,
+							ischecked: false
+						}
+					})
+				}
+			})
+			concartList.value = newList as DisplayItem[]
+		}
+	}
+
 	// 上传图片
 	const uploadImg = (field : string) => {
 		// 在函数体内设置默认值
@@ -282,7 +412,20 @@
 		});
 		// #endif
 	}
-
+	// 打开或关闭子项
+	const openChildren = (item : DisplayItem, index : number) => {
+		// 如果当前项是展开的，则关闭它
+		if (item.isOpen) {
+			item.isOpen = false
+		} else {
+			// 先关闭所有项
+			concartList.value.forEach((i) => {
+				i.isOpen = false
+			})
+			// 打开当前项
+			item.isOpen = true
+		}
+	}
 	// 提交表单
 	function submit() {
 		validate((valid, errors) => {
@@ -315,20 +458,17 @@
 			}
 		});
 	}
-	onMounted(() => {
-		// getareas({}).then((res : any) => {
-		// 	let data : CategoryGroup[] = []
-		// 	if (isArray(res))
-		// 		console.log(isArray(res))
-		// 		 data = res
-		// 		 console.log(data)
-		// 	// concartList.value = res as CategoryGroup 
 
-		// }).catch((err) => {
-		// 	ui.showToast({
-		// 		message: t("擅长领域获取失败")
-		// 	});
-		// })
+	/** 监听激活索引变化 */
+	watch(areasvisible, (val : boolean) => {
+		if (val == false) {
+			resetAllChecked()
+		} else {
+			areasDta()
+		}
+	});
+	onMounted(() => {
+		areasDta()
 	})
 </script>
 

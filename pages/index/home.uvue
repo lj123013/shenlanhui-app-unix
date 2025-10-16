@@ -62,8 +62,8 @@
 			<view class="radar mt-4">
 				<view class="flex flex-row items-center justify-between mb-1">
 					<view class="flex flex-row items-center">
-						<cl-text color="primary" :pt="{
-								className: 'text-xl fontBold'
+						<cl-text :pt="{
+								className: '!text-xl fontBold !text-primary-500'
 							}">雷</cl-text>
 						<cl-text color="black" :pt="{
 								className: '!text-xl fontBold'
@@ -71,7 +71,7 @@
 					</view>
 					<view class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl">
 						<cl-text :pt="{
-								className: '!text-xs textred-600'
+								className: '!text-xs text-red-600'
 							}">更多</cl-text>
 						<cl-icon name="arrow-right-s-line" :size="20" color="#E82A2A"></cl-icon>
 					</view>
@@ -94,7 +94,7 @@
 					<view class="w-3/12 pt-5 flex flex-col items-center justify-center relative"
 						v-for="(item, index) in data3" :key="index" @tap="toPath(item)">
 						<view class="bg-bule-slh w-14 h-14 rounded-full flex flex-col items-center justify-center">
-							<cl-icon color="primary" :name="item.icon" :size="50"></cl-icon>
+							<cl-icon :pt="{className:'!text-primary-500'}" :name="item.icon" :size="50"></cl-icon>
 						</view>
 						<cl-text color="text-gray-900" :pt="{ className: '!text-sm mt-1' }">{{ item.title }}</cl-text>
 						<view class="bottom-16 right-px absolute bg-red p-1 rounded-full" v-if="isEmptyPath(item)">
@@ -110,8 +110,8 @@
 			<view class="radar mt-4">
 				<view class="flex flex-row items-center justify-between">
 					<view class="flex flex-row items-center">
-						<cl-text color="primary" :pt="{
-								className: 'text-xl fontBold'
+						<cl-text :pt="{
+								className: 'text-xl fontBold !text-primary-500'
 							}">7×24</cl-text>
 						<cl-text color="black" :pt="{
 								className: '!text-xl fontBold'
@@ -142,8 +142,8 @@
 				<!-- 大家都在看 -->
 				<view class="reading mt-4">
 					<view class="flex flex-row items-center">
-						<cl-text color="primary" :pt="{
-								className: '!text-xl fontBold'
+						<cl-text  :pt="{
+								className: '!text-xl fontBold !text-primary-500'
 							}">大家</cl-text>
 						<cl-text color="black" :pt="{
 								className: '!text-xl fontBold'
@@ -211,8 +211,8 @@
 				<!-- 推荐阅读 -->
 				<view class="recommended mt-4">
 					<view class="flex flex-row items-center">
-						<cl-text color="primary" :pt="{
-								className: '!text-xl fontBold'
+						<cl-text  :pt="{
+								className: '!text-xl fontBold !text-primary-500'
 							}">推荐</cl-text>
 						<cl-text color="black" :pt="{
 								className: '!text-xl fontBold'

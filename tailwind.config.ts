@@ -464,7 +464,7 @@ export default {
 					},
 					// 文本颜色
 					text: {
-						primary: '#191919',
+						primary: '#2854F2',
 						secondary: '#666666',
 						muted: '#999999',
 						user:'#505050'

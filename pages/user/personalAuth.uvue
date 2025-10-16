@@ -2,10 +2,13 @@
 	<cl-page>
 		<view class="px-5">
 			<cl-form :pt="{
-			className: 'p-2 pb-0'
-		}" :model="formData" ref="formRef" :rules="rules" :disabled="saving" label-position="top">
+				className: 'p-2 pb-0'
+			}" :model="formData" ref="formRef" :rules="rules" :disabled="saving" label-position="top">
 				<cl-form-item :label="t('个人认证类别')" prop="type" required>
-					<cl-select v-model="formData.type" :options="genderOptions"></cl-select>
+					<view class='flex flex-row justify-between items-center area' @click="typevisible = !typevisible">
+						<cl-text color="#a3a3a3">{{typeText}}</cl-text>
+						<cl-icon name="arrow-down-s-line" color="#a3a3a3"></cl-icon>
+					</view>
 				</cl-form-item>
 				<cl-form-item :label="t('个人认证身份')" prop="realname" required>
 					<cl-input v-model="formData.realname" :placeholder="t('请输入个人认证身份')" clearable></cl-input>
@@ -20,7 +23,7 @@
 					<cl-input v-model="formData.city" :placeholder="t('请输入常驻城市')"></cl-input>
 				</cl-form-item>
 				<cl-form-item :label="t('擅长领域（可多选）')" prop="area">
-					<view class='flex flex-row justify-between items-center area' @click="areasvisible=!areasvisible">
+					<view class='flex flex-row justify-between items-center area' @click="areasvisible = !areasvisible">
 						<cl-text color="#a3a3a3">请选择擅长领域</cl-text>
 						<cl-icon name="arrow-down-s-line" color="#a3a3a3"></cl-icon>
 					</view>
@@ -38,10 +41,10 @@
 				</cl-form-item>
 			</cl-form>
 		</view>
-		<cl-footer :pt="{className:'pb-10'}">
+		<cl-footer :pt="{ className: 'pb-10' }">
 			<cl-button type="info" @click="toPathResult">认证结果</cl-button>
-			<cl-button type="primary" :loading="saving" rounded :pt="{ className: 'flex-1 py-4' }"
-				@click="submit">{{ t("提交") }}</cl-button>
+			<cl-button type="primary" :loading="saving" rounded :pt="{ className: 'flex-1 py-4' }" @click="submit">{{
+				t("提交") }}</cl-button>
 		</cl-footer>
 		<cl-popup v-model="areasvisible" title="请选择擅长领域">
 			<view class="p-4">
@@ -54,11 +57,34 @@
 				</view> -->
 				<view class="flex flex-row p-1">
 					<cl-button size="large" text border type="light" :pt="{
-							className: 'flex-1 !rounded-xl h-[80rpx]'
-						}" @tap="close">取消选择</cl-button>
+						className: 'flex-1 !rounded-xl h-[80rpx]'
+					}" @tap="close">取消选择</cl-button>
 					<cl-button size="large" :pt="{
-							className: 'flex-1 !rounded-xl h-[80rpx]'
-						}" @tap="confirm">确认选择</cl-button>
+						className: 'flex-1 !rounded-xl h-[80rpx]'
+					}" @tap="confirm">确认选择</cl-button>
+				</view>
+			</view>
+		</cl-popup>
+		<cl-popup v-model="typevisible" title="请选择个人认证类别">
+			<view class="p-4">
+				<view v-for="item in genderOptions">
+					<cl-text class="text-lg font-bold mb-2">{{ item.label }}</cl-text>
+					<view class="flex flex-row flex-wrap mb-4">
+						<view class="py-1 px-3 my-2 mr-4 rounded-[10rpx]"
+							:class="value.ischecked ? 'bg-primary-500' : 'bg-custom-bg-gray'"
+							@click="handlechild(item,value)" v-for="value in item.childredn">
+							<cl-text
+								:pt="{ className: value.ischecked ? 'text-white text-sm' : 'text-sm text-gray-600' }">{{ value.label }}</cl-text>
+						</view>
+					</view>
+				</view>
+				<view class="flex flex-row p-1">
+					<cl-button size="large" text border type="light" :pt="{
+						className: 'flex-1 !rounded-xl h-[80rpx]'
+					}" @tap="typevisible=false">取消选择</cl-button>
+					<cl-button size="large" :pt="{
+						className: 'flex-1 !rounded-xl h-[80rpx]'
+					}" @tap="confirmtype">确认选择</cl-button>
 				</view>
 			</view>
 		</cl-popup>
@@ -71,35 +97,67 @@
 		useCascader,
 		useForm,
 		useUi,
-		
 		type ClFormRule,
 		type ClSelectOption
 	} from "@/uni_modules/cool-ui";
 	import pca from "@/data/pca.json";
 	import { t } from "@/locale";
-	import { dayUts,router } from "@/cool";
+	import { dayUts, router,isArray } from "@/cool";
 	const ui = useUi();
 	const { formRef, validate, clearValidate } = useForm();
 	const areasvisible = ref(false)
+
+
+	// 擅长领域
 	type arearOption = {
 		label : string;
 		title : string;
 	}
 
 	const concartList = ref<arearOption[]>([])
-	const genderOptions = [
+	// 选择类别
+	const typevisible = ref(true)
+	const typeText = ref("请选择认证类别")
+	type childrednItem = {
+		label : string;
+		value : string;
+		ischecked : boolean
+	}
+	type typeData = {
+		label : string;
+		childredn ?: childrednItem[]
+	}
+	const genderOptions = ref<typeData[]>([
 		{
 			label: t("媒体"),
-			value: 0
+			childredn: [
+				{ label: t("主持人"), value: "individual_host", ischecked: false },
+				{ label: t("主播"), value: "individual_anchor", ischecked: false },
+				{ label: t("专栏作家"), value: "individual_expert", ischecked: false },
+				{ label: t("新媒体创始人"), value: "individual_media_founder", ischecked: false },
+				{ label: t("媒体经营者"), value: "individual_media_operator", ischecked: false },
+				{ label: t("媒体管理者"), value: "individual_media_manager", ischecked: false },
+				{ label: t("新媒体编辑"), value: "individual_media_editor", ischecked: false },
+				{ label: t("记者"), value: "individual_reporter", ischecked: false },
+				{ label: t("其他媒体"), value: "individual_media_other", ischecked: false }
+			]
 		},
 		{
 			label: t("专家"),
-			value: 1
+			childredn: [
+				{ label: t("公司管理者"), value: "individual_company_manager", ischecked: false },
+				{ label: t("公司创始人"), value: "individual_company_founder", ischecked: false },
+				{ label: t("经济学家"), value: "individual_economist", ischecked: false },
+				{ label: t("券商研究员"), value: "individual_securities_researcher", ischecked: false },
+				{ label: t("媒体专家"), value: "individual_media_expert", ischecked: false },
+				{ label: t("品牌顾问"), value: "individual_brand_consultant", ischecked: false },
+				{ label: t("投资家"), value: "individual_investor", ischecked: false },
+				{ label: t("基金经理"), value: "individual_fund_manager", ischecked: false },
+				{ label: t("研究学者"), value: "individual_researcher", ischecked: false },
+				{ label: t("其他专家"), value: "individual_expert_other", ischecked: false }
+			]
 		},
-	] as ClSelectOption[];
-	type Contact = {
-		url : string;
-	};
+	])
 	// 自定义表单数据类型
 	type FormData = {
 		type : number;
@@ -141,6 +199,32 @@
 			{ required: true, message: t("组织简介不能为空") }
 		]]
 	]);
+	
+	
+	// 选择个人类别弹框
+	const confirmtype = () => {
+		let selectedItems: string[] = [];
+		if(isArray(genderOptions.value)&&genderOptions.value.length>0){
+			genderOptions.value
+		}
+		return
+		genderOptions.value.forEach(item => {
+			item.childredn?.forEach(child => {
+				if (child.ischecked) {
+					selectedItems.push(child.label);
+				}
+			});
+		});
+		if (selectedItems.length === 0) {
+			typeText.value = "请选择认证类别";
+		} else if (selectedItems.length <= 3) {
+			typeText.value = selectedItems.join(",");
+		} else {
+			const firstThree = selectedItems.slice(0, 3);
+			typeText.value = firstThree.join(",") + "等";
+		}
+		typevisible.value = false;
+	};
 	// 是否保存中
 	const saving = ref(false);
 	const close = () => { }
@@ -166,9 +250,9 @@
 			}
 		});
 	}
-	const toPathResult=()=>{
+	const toPathResult = () => {
 		router.push({
-			path:'/pages/user/authResult',
+			path: '/pages/user/authResult',
 			params: {
 				title: '提交',
 			}
