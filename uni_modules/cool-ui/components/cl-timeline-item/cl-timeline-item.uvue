@@ -119,7 +119,6 @@ const pt = computed(() => parsePt<PassThrough>(props.pt));
 		@apply flex flex-col items-center overflow-visible;
 		width: 50rpx;
 		margin-right: 10rpx;
-		overflow: visible;
 	}
 
 	&__dot {
