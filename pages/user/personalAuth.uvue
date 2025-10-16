@@ -6,7 +6,7 @@
 		}" v-model="formData" ref="formRef" :rules="rules" :disabled="saving" label-position="top">
 				<cl-form-item :label="t('组织认证类别')" prop="verification_category" required>
 					<view class='flex flex-row justify-between items-center area' @click="typevisible = !typevisible">
-						<cl-text color="#a3a3a3">{{typeText}}</cl-text>
+						<cl-text :color="typeText=='请选择认证类别'?'#a3a3a3':'#404040'">{{typeText}}</cl-text>
 						<cl-icon name="arrow-down-s-line" color="#a3a3a3"></cl-icon>
 					</view>
 				</cl-form-item>
@@ -30,7 +30,7 @@
 				</cl-form-item>
 				<cl-form-item :label="t('擅长领域（可多选）')" prop="organization_areas">
 					<view class='flex flex-row justify-between items-center area' @click="areasvisible = !areasvisible">
-						<cl-text color="#a3a3a3">{{arearText}}</cl-text>
+						<cl-text :color="arearText=='请选择擅长领域'?'#a3a3a3':'#404040'">{{arearText}}</cl-text>
 						<cl-icon name="arrow-down-s-line" color="#a3a3a3"></cl-icon>
 					</view>
 				</cl-form-item>
@@ -138,7 +138,7 @@
 	const ui = useUi();
 	const { formRef, validate, clearValidate } = useForm();
 	const areasvisible = ref(false)
-	const arearText = ref("选择擅长领域")
+	const arearText = ref("请选择擅长领域")
 	// 选择类别
 	const typevisible = ref(false)
 	const typeText = ref("请选择认证类别")

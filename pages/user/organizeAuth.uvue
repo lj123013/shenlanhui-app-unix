@@ -35,7 +35,7 @@
 				</cl-form-item>
 				<cl-form-item :label="t('擅长领域（可多选）')" prop="organization_areas">
 					<view class='flex flex-row justify-between items-center area' @click="areasvisible = !areasvisible">
-						<cl-text color="#a3a3a3">{{arearText}}</cl-text>
+						<cl-text :color="arearText=='请选择擅长领域'?'#a3a3a3':'#404040'">{{arearText}}</cl-text>
 						<cl-icon name="arrow-down-s-line" color="#a3a3a3"></cl-icon>
 					</view>
 				</cl-form-item>
@@ -150,7 +150,7 @@
 	const ui = useUi();
 	const { formRef, validate, clearValidate } = useForm();
 	const areasvisible = ref(false)
-	const arearText = ref("选择擅长领域")
+	const arearText = ref("请选择擅长领域")
 	const options = ref<ClSelectOption[]>([
 		{
 			label: t("企业认证"),
