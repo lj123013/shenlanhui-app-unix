@@ -11,8 +11,9 @@
 			</template>
 		</cl-topbar>
 		<view class="content px-4">
-			<cl-text color="#2B2B2B" :pt="{ className: '!text-2xl fontBold' }">美团Q1：告别低质“内卷式”竞争，行业生态共赢才是新方向</cl-text>
-			<view class="flex flex-row items-center justify-between">
+			<cl-text color="#2B2B2B" :pt="{ className: '!text-2xl fontBold' }">{{getmessage.title}}</cl-text>
+			<!-- 文章才显示发布用户 -->
+			<view class="flex flex-row items-center justify-between" v-if="type=='文章'">
 				<view :span="13">
 					<view class="flex flex-row items-center mt-2">
 						<cl-avatar :src="'https://unix.cool-js.com/images/demo/avatar.jpg'" :size="50"
@@ -46,8 +47,9 @@
 			</view>
 			<!-- 文章内容 -->
 			<view>
-				<cl-image src="/static/image/articleimg.png" :width="'100%'" :height="'384rpx'"
-					:pt="{ className: 'my-4 rounded-lg' }"></cl-image>
+				<!-- 有图片才显示图片 -->
+				<cl-image v-if="getmessage!!.cover_image!=null" :src="getmessage!!.cover_image" :width="'100%'"
+					:height="'384rpx'" :pt="{ className: 'my-4 rounded-lg' }"></cl-image>
 				<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4 my-3"
 					@click="showAiInterpretation = !showAiInterpretation">
 					<view class="flex flex-row items-center">
@@ -86,7 +88,8 @@
 					</view>
 					<view class="py-3">
 						<cl-text color="white" :pt="{ className: 'text-lg fontBold ' }">你还可以</cl-text>
-						<view v-for="value in aiMwnu" class="flex flex-row items-center justify-between p-4 mt-2 rounded-lg"
+						<view v-for="value in aiMwnu"
+							class="flex flex-row items-center justify-between p-4 mt-2 rounded-lg"
 							:class="value.isFinish ? 'aiItemoption' : 'aiItem'">
 							<view class="flex flex-row items-center">
 								<cl-image width="72rpx" height="72rpx" :pt="{ className: 'mr-2' }"
@@ -109,7 +112,7 @@
 				</view>
 				<!-- 富文本 -->
 				<view class="article-content-wrapper">
-					<rich-text :nodes="testNodes" :selectable="true" class="rich-text-content">
+					<rich-text :nodes="getmessage.summary" :selectable="true" class="rich-text-content">
 					</rich-text>
 				</view>
 				<!-- 评论 -->
@@ -177,19 +180,24 @@
 </template>
 <script setup>
 	import { ref, reactive, onMounted } from "vue";
-	import { router, isNull } from "@/cool";
+	import { router, isNull, parse } from "@/cool";
+	import { useUi } from "@/uni_modules/cool-ui";
 	import shareMenu from '@/components/shareMenu.uvue'
+	import { articleinfo } from "@/cool/service/list"
+	const ui = useUi();
 	const sharevisible = ref(false);
 	const generateimage = ref(true)
+	const showAiInterpretation = ref(false)
 	// 定义文章数据类型（注释形式）
 	type ArticleData = {
-		id : number;
-		title : string;
-		author : string;
-		cover_url : string;
-		acreat_time : string;
+		id ?: number;
+		title ?: string;
+		author ?: string;
+		cover_image ?: string;
+		summary ?: string;
+		created_at ?: string;
 	};
-	const showAiInterpretation = ref(false)
+	const getmessage = ref<ArticleData>({}); // 这样就不会报错了
 	const content = ref('')
 	const isFollow = ref(false);
 	const visible = ref(false);
@@ -206,14 +214,8 @@
 		sharevisible.value = val
 	}
 	// 响应式文章数据
-	const articleData = reactive<ArticleData>({
-		id: 0,
-		title: '',
-		author: '',
-		cover_url: '',
-		acreat_time: ''
-	})
-
+	const articleId = ref<number>(0)//文章id
+	const type = ref<string>("文章")//文章类型新闻稿还是文章
 	type aiList = {
 		title : string;
 		content : string;
@@ -289,7 +291,7 @@
 	}
 	onReady(() => {
 		uni.onKeyboardHeightChange((res) => {
-			console.log(res,'键盘高度')
+			console.log(res, '键盘高度')
 			if (res.height > 0) {
 				inputBottom.value = res.height
 				isPubComment.value = true
@@ -297,17 +299,33 @@
 				closePopup()
 			}
 		})
-	
+
 	});
+	//获取用户详情
+	const getdata = () => {
+		articleinfo(articleId.value, {}).then(res => {
+			console.log(res, "res")
+			getmessage.value = parse<ArticleData>(res)!
+		}).catch((err) => {
+			ui.showToast({
+				message: "获取详情失败",
+			});
+		})
+	}
 	// 页面加载时获取路由参数
 	onMounted(() => {
 		const params = router.params();
 		console.log('接收到的参数:', params);
 		if (!isNull(params)) {
-			articleData.id = params.articleId as number;
+			articleId.value = params.articleId as number;
+			if (!isNull(params.title)) {
+				type.value = params.title as string
+			}
+
+			getdata()
 		}
-		
-		
+
+
 	});
 </script>
 

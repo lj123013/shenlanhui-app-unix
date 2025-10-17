@@ -1,16 +1,16 @@
-// #ifdef VUE3 
+/*  #ifdef VUE3  */ 
 @use "sass:math";
-// #endif
+/*  #endif */ 
 
 $use-css-var: false !default; 
 
 @function div($dividend, $divisor) {
-	// #ifdef VUE3 
+	/* #ifdef VUE3  */ 
 	@return math.div($dividend, $divisor);
-	// #endif
-	// #ifndef VUE3 
+	/* #endif */ 
+	/* #ifndef VUE3  */ 
 	@return $dividend / $divisor;
-	// #endif
+	/* #endif */ 
 }
 
 @function rpx-to-px($value) {

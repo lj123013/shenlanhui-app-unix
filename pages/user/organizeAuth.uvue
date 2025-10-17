@@ -97,6 +97,7 @@
 		<cl-footer :pt="{ className: 'pb-10' }">
 			<cl-button type="primary" :loading="saving" rounded :pt="{ className: 'flex-1 py-4' }" @click="submit">{{
 				t("提交") }}</cl-button>
+				<cl-button type="info" @tap="cancelverBtn">取消认证</cl-button>
 		</cl-footer>
 		<!-- 擅长领域 -->
 		<cl-popup v-model="areasvisible" title="请选择擅长领域">
@@ -146,7 +147,7 @@
 	import pca from "@/data/pca.json";
 	import { t } from "@/locale";
 	import { type Response, parse, isArray, router, uploadFile, isNull, map, parseObject, parseClass } from "@/cool";
-	import { getareas, verification } from '@/cool/service/user'
+	import { getareas, verification,cancelverification } from '@/cool/service/user'
 	const ui = useUi();
 	const { formRef, validate, clearValidate } = useForm();
 	const areasvisible = ref(false)
@@ -165,6 +166,14 @@
 			value: "organization_media",
 		}
 	]);
+	// 取消认证
+	const cancelverBtn=()=>{
+		cancelverification({}).then(res=>{
+			ui.showToast({
+				message: t("取消认证成功")
+			});
+		})
+	}
 	// 定义数据类型（注释形式）
 	// 首先定义子项类型
 	type FinanceSubItem = {

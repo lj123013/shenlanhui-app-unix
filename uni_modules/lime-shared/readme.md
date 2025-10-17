@@ -2,11 +2,14 @@
 - 本人插件的几个公共函数
 - 按需引入
 
+## 文档
+ 🚀 [shared【站点1】](https://limex.qcoon.cn/shared/overview.html)
+ 🌍 [shared【站点2】](https://limeui.netlify.app/shared/overview.html)
+ 🔥 [shared【站点3】](https://limeui.familyzone.top/shared/overview.html)
+
+
 ## 安装
 在插件市场导入即可
-
-## 文档
-[shared](https://limex.qcoon.cn/shared/overview.html)
 
 ## 使用
 按需引入只会引入相关的方法，不要看着 插件函数列表多 而占空间，只要不引用不会被打包

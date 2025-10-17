@@ -61,3 +61,15 @@ export function verification(data: any): Promise<any> {
     data
   }) as Promise<any>;
 }
+/**
+ * 取消认证
+ * @param data 
+ * @returns Promise
+ */
+export function cancelverification(data: any): Promise<any> {
+  return request({
+    url: "/users/verification/organization/cancel",
+    method: "POST",
+    data
+  }) as Promise<any>;
+}

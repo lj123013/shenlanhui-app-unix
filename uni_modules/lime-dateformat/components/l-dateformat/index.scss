@@ -1,0 +1,13 @@
+@import '@/uni_modules/lime-style/index.scss';
+
+/* #ifdef  uniVersion >= 4.75 */ 
+$use-css-var: true;
+/* #endif */
+
+
+$dateformat: #{$prefix}-dateformat;
+$dateformat-color: create-var(dateformat-color, $text-color-1);
+
+.#{$dateformat} {
+	color: $dateformat-color
+}

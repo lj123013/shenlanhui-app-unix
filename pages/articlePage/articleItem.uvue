@@ -1,61 +1,65 @@
 <template>
 	<view class="px-5">
-		<view class="w-full flex flex-row items-start justify-between py-4" :class="index == 0 ? '' : 'border'" @click="onItemClick">
+		<view class="w-full flex flex-row items-start justify-between py-4" :class="index == 0 ? '' : 'border'"
+			@click="onItemClick">
 			<view class="flex-1 mr-2">
 				<cl-text color="black" :pt="{
 					className: 'istopItem mb-2'
 				}">{{ item?.title }}</cl-text>
 				<view class="flex flex-row items-center">
 					<cl-text color="" :pt="{
-						className: '!text-xs font-bold mr-1 text-gray-300'
+						className: '!text-xs text-gray-300  mr-1 '
 					}">{{ item?.author }}</cl-text>
-					<cl-text :pt="{
-						className: '!text-xs text-gray-300'
-					}">{{ item?.acreat_time }}</cl-text>
+					<l-dateformat class="text" :date="item?.created_at" format="yyyy-MM-dd" />
 				</view>
 			</view>
-			<cl-image width="226rpx" height="136rpx" :pt="{className:'rounded-xl'}" :src="item?.cover_url"></cl-image>
+			<cl-image v-if="item!!.cover_image!=null" width="226rpx" height="136rpx" :pt="{className:'rounded-xl'}"
+				:src="item?.cover_image"></cl-image>
 		</view>
 	</view>
 </template>
 
 <script setup>
-import { isMp, router, useRefs } from "@/cool";
-import { computed } from "vue";
-import { parse } from "@/cool";
+	import { isMp, router, useRefs, DayUts, formatTimeAgo } from "@/cool";
+	import { computed } from "vue";
+	import { parse } from "@/cool";
+	// 导入时间格式化工具
+	defineOptions({
+		name: "article-item"
+	});
 
-defineOptions({
-	name: "article-item"
-});
+	// 定义数据类型（注释形式）
+	type articleItem = {
+		id : number;
+		title : string;
+		author ?: string;
+		cover_image ?: string;
+		created_at : string;
 
-// 定义数据类型（注释形式）
-type articleItem = {
-	id: number;
-	title: string;
-	author: string;
-	cover_url: string;
-	acreat_time: string;
+	};
 
-};
-
-const props = defineProps({
-	value: {
-		type: Object,
-		default: () => ({})
-	},
-	index: {
-		type: Number,
-		default: 0
-	}
-});
+	const props = defineProps({
+		value: {
+			type: Object,
+			default: () => ({})
+		},
+		index: {
+			type: Number,
+			default: 0
+		}
+	});
 
 
 
-const item = computed(() => parse < articleItem > (props.value));
-
-// 处理点击事件
-const emit = defineEmits(["item-click"]);
-const onItemClick = () => {
-	emit("item-click", props.value);
-};
+	const item = computed(() => parse<articleItem>(props.value));
+	// 处理点击事件
+	const emit = defineEmits(["item-click"]);
+	const onItemClick = () => {
+		emit("item-click", props.value);
+	};
 </script>
+<style>
+	.text {
+		@apply text-xs text-gray-300;
+	}
+</style>

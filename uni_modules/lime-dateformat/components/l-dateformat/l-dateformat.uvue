@@ -1,0 +1,63 @@
+<template>
+	<text class="l-dateformat">{{displayValue}}</text>
+</template>
+<script lang="uts" setup>
+	/**
+	 * LimeDateformat 日期格式化组件
+	 * @description 用于智能格式化显示日期的组件
+	 * <br> 插件类型：LDateformatComponentPublicInstance 
+	 * @tutorial https://ext.dcloud.net.cn/plugin?name=lime-dateformat
+	 * 
+	 * @property {String} date 需要格式化的日期
+	 * @property {'zh'|'en'} locale 显示语言
+	 * @value zh 中文
+	 * @value en 英文
+	 * @property {String} format 自定义格式（当超过阈值时生效）
+	 * @property {Number[]} threshold 智能格式阈值
+	 * @property {Number} refreshRate 刷新频率（单位：毫秒）
+	 */
+	import type { DateformatProps } from './type';
+	import { friendlyDate } from './format';
+	
+	const props = withDefaults(defineProps<DateformatProps>(), {
+		date: '',
+		locale: 'zh',
+		threshold: [0, 0],
+		format: 'yyyy/MM/dd hh:mm:ss',
+		refreshRate: 0
+	})
+	
+	let refreshInterval = -1;
+	const refreshMark = ref(0)
+	const displayValue = computed(():string=>{
+		refreshMark.value;
+		return friendlyDate(
+			props.date,
+			props.locale,
+			props.threshold,
+			props.format
+		)
+	})
+	const refresh = ()=>{
+		refreshMark.value++;
+	}
+	const setAutoRefresh = () => {
+		clearInterval(refreshInterval)
+		if(props.refreshRate > 0 && (props.threshold[0] > 0 || props.threshold[1] > 0)) {
+			refreshInterval = setInterval(() => {
+				refresh()
+			}, props.refreshRate)
+		}
+	}
+	const stop = watch(():number=> props.refreshRate, (_v:number)=>{
+		setAutoRefresh()
+	},{immediate: true})
+	
+	onUnmounted(()=>{
+		stop()
+	})
+	
+</script>
+<style lang="scss">
+	@import './index';
+</style>

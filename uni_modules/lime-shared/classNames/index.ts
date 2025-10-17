@@ -11,9 +11,9 @@ import { isDef } from '../isDef'
  * @param obj - 需要处理的对象
  * @returns 由对象属性作为类名组成的字符串
  */
-export function getClassStr<T>(obj : T) : string {
+export function classNames<T>(obj : T) : string {
 	let classNames : string[] = [];
-	// #ifdef APP-ANDROID
+	// #ifdef APP-ANDROID || APP-HARMONY
 	if (obj instanceof UTSJSONObject) {
 		(obj as UTSJSONObject).toMap().forEach((value, key) => {
 			if (isDef(value)) {
@@ -30,7 +30,7 @@ export function getClassStr<T>(obj : T) : string {
 		})
 	} 
 	// #endif
-	// #ifndef APP-ANDROID
+	// #ifndef APP-ANDROID || APP-HARMONY
 	// 遍历对象的属性
 	for (let key in obj) {
 		// 检查属性确实属于对象自身且其值为true
@@ -49,5 +49,5 @@ export function getClassStr<T>(obj : T) : string {
 
 // 示例
 // const obj = { foo: true, bar: false, baz: true };
-// const classNameStr = getClassStr(obj);
+// const classNameStr = stringify(obj);
 // console.log(classNameStr); // 输出: "foo baz"
