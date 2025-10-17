@@ -257,7 +257,7 @@ export class Router {
 
 	// 获取页面元数据
 	getMeta(path: string) {
-		return PAGES.find((e) => e.path.includes(path))?.meta ?? ({} as UTSJSONObject);
+		return PAGES.find((e) => path.includes(e.path))?.meta ?? ({} as UTSJSONObject);
 	}
 
 	// 执行当前页面暴露的方法
