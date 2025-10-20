@@ -10,7 +10,7 @@
 					@tap="sharevisible=true"></cl-icon>
 			</template>
 		</cl-topbar>
-		<view class="content px-4 pb-10">
+		<view class="content px-4 pb-10" v-if="getmessage.id">
 			<cl-text color="#2B2B2B" :pt="{ className: '!text-2xl fontBold' }">{{getmessage.title}}</cl-text>
 			<!-- 文章才显示发布用户 -->
 			<view class="flex flex-row items-center justify-between" v-if="type=='文章'">
@@ -114,7 +114,7 @@
 			</view>
 
 			<!-- 富文本 -->
-			<rich-text :nodes="getmessage.content" :selectable="true" class="rich-text-content">
+			<rich-text mode="native" :nodes="getmessage.content" :selectable="true" class="rich-text-content">
 			</rich-text>
 			<!-- 评论 -->
 			<view class="py-5 px-4">
@@ -145,13 +145,16 @@
 
 			</view>
 		</view>
+		<view class="content px-4 pb-10" v-else>
+			<cl-empty text="暂无数据"></cl-empty>
+		</view>	
 		<!-- 遮罩层 -->
 		<view style="height: 0" v-if="isPubComment">
 			<view class="mask" @touchmove.stop.prevent :class="isPubComment ? 'on' : ''" @click="closePopup">
 			</view>
 		</view>
 
-		<view class="footer-container" :style="{ bottom: inputBottom + 'px' }">
+		<view class="footer-container" :style="{ bottom: inputBottom + 'px' }" v-if="getmessage.id">
 			<view class="input-section">
 				<cl-input v-model="input" :adjustPosition="false" :clearable='true' :border="false" :pt="{
 							className: '!bg-neutral-100 rounded-full pl-3'
@@ -261,7 +264,7 @@
 	])
 	type common = {
 		content : string;
-		author : typeauthor
+		author : typeauthor;
 		created_at : string;
 	}
 	const commonList = ref<common[]>([])
@@ -313,6 +316,7 @@
 	// 获取文章详情
 	const getarticledata = () => {
 		articleinfo(articleId.value, {}).then(res => {
+			ui.hideLoading()
 			getmessage.value = parse<ArticleData>(res)!
 		}).catch((err) => {
 			ui.showToast({
@@ -360,12 +364,13 @@
 			const result = parse<UTSJSONObject>(res)!
 			console.log(result.data, "res")
 			const getList = result.data
+			console.log(getList, "getList")
 			if (isArray(getList)) {
 				// 关键修复：解析为 common[] 而不是 common
-				for (let i = 0; i<getList!!.length ;i++) {
-					const subItem = getList!![i]
-				}
-				// commonList.value = parse<common[]>(getList)!
+				// for (let i = 0; i<getList!!.length ;i++) {
+				// 	const subItem = getList!![i]
+				// }
+				commonList.value = parse<common[]>(getList)!
 			}
 
 		}).catch(err => {
@@ -377,6 +382,7 @@
 	// 页面加载时获取路由参数
 	onMounted(() => {
 		const params = router.params();
+		ui.showLoading("加载中")
 		if (!isNull(params)) {
 			articleId.value = params.articleId as number;
 			if (!isNull(params.title)) {
