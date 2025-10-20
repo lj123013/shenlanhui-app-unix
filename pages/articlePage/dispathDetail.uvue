@@ -10,17 +10,17 @@
 			</template>
 		</cl-topbar>
 		<!-- 主要内容 -->
+		<!-- 全屏加载效果 -->
 		<view class="px-5">
 			<!-- 快讯图标 -->
 			<view class="flex flex-row items-center justify-between">
 				<cl-image src="/static/image/dispath.png" :width="150" :height="42"></cl-image>
-				<cl-text>2025-09-01</cl-text>
+				<l-dateformat class="text" :date="getmessage?.created_at" format="yyyy-MM-dd" />
 			</view>
 			<!-- 快讯内容 -->
 			<view class="border-bottom pb-3 mb-3">
-				<cl-text color="#2B2B2B" :pt="{ className: 'text-lg fontBold my-1' }">造纸板块盘中拉升，青山纸业、恒丰纸业涨停</cl-text>
-				<cl-text color="#5D5D5D"
-					:pt="{ className: 'text-base' }">造纸板块盘中拉升，青山纸业、恒丰纸业涨停，松炀资源、齐峰新材、安妮股份、华泰股份、恒达新材跟涨。</cl-text>
+				<cl-text color="#2B2B2B" :pt="{ className: 'text-lg fontBold my-1' }">{{getmessage?.title}}</cl-text>
+				<cl-text color="#5D5D5D" :pt="{ className: 'text-base' }">{{getmessage?.content}}</cl-text>
 			</view>
 			<cl-text color="#AFAFAF"
 				:pt="{ className: 'text-xs' }">风险提示：文章内容仅供参考，不构成投资建议，且与深蓝汇立场无关，投资决策需建立在思想之上。</cl-text>
@@ -46,7 +46,8 @@
 				<view class="article-Ai my-3 p-4" v-if="showAi">
 					<view class="py-3">
 						<cl-text color="white" :pt="{ className: 'text-lg fontBold ' }">你还可以</cl-text>
-						<view v-for="value in aiMwnu" class="flex flex-row items-center justify-between p-4 rounded-lg"
+						<view v-for="value in aiMwnu"
+							class="flex flex-row items-center justify-between p-4 mt-2 rounded-lg"
 							:class="value.isFinish ? 'aiItemoption' : 'aiItem'">
 							<view class="flex flex-row items-center">
 								<cl-image width="72rpx" height="72rpx" :pt="{ className: 'mr-2' }"
@@ -128,7 +129,10 @@
 </template>
 
 <script setup>
-	import { router } from "@/cool";
+	import { router, isNull, parse } from "@/cool";
+	import { dispatchesinfo } from '@/cool/service/list'
+	import { useUi } from "@/uni_modules/cool-ui";
+	const ui = useUi();
 	const showAi = ref(false)
 	type aiList = {
 		title : string;
@@ -136,6 +140,14 @@
 		icon : string;
 		isFinish : Boolean;
 	};
+	// 定义文章数据类型（注释形式）
+	type dispathData = {
+		id ?: number;
+		title ?: string;
+		content ?: string;//新闻稿描述
+		created_at ?: string;
+	};
+	const getmessage = ref<dispathData>({}); // 
 	const aiMwnu = reactive<aiList[]>([
 		{
 			title: '市场趋势分析',
@@ -180,6 +192,7 @@
 	const input = ref("");
 	const inputBottom = ref(0)
 	const isPubComment = ref(false)
+	const dispathId = ref(0)
 	const closePopup = () => {
 		uni.hideKeyboard()
 		isPubComment.value = false
@@ -189,12 +202,24 @@
 		// 分享功能实现
 		console.log("分享文章:");
 	};
+	//获取新闻稿详情
+	const getdispatchesinfo = () => {
+		dispatchesinfo(dispathId.value, {}).then(res => {
+			console.log(res, "res")
+			getmessage.value = parse<dispathData>(res)!
+		}).catch((err) => {
+			ui.showToast({
+				message: "获取详情失败",
+			});
+		})
+	}
 	onMounted(() => {
 		const params = router.params();
-		console.log('接收到的参数:', params);
-		// if (!isNull(params)) {
-		// 	articleData.id = params.articleId as number;
-		// }
+		// ui.showLoading("加载中");
+		if (!isNull(params)) {
+			dispathId.value = params.dispathId as number;
+		}
+		getdispatchesinfo()
 		uni.onKeyboardHeightChange((res) => {
 			console.log(res)
 			if (res.height > 0) {
@@ -307,5 +332,9 @@
 	.mask.on {
 		visibility: visible;
 		background-color: rgba(50, 50, 50, 0.3);
+	}
+
+	.text {
+		@apply text-base text-gray-500;
 	}
 </style>

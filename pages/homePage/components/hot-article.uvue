@@ -1,0 +1,82 @@
+<template>
+	<view class="px-5" >
+		<view @click="onItemClick" class="flex flex-row items-start">
+			<!-- 索引标识 -->
+			<view class="index-number flex items-center justify-center w-6 h-6 rounded mt-4 mr-3"
+				:style="getNumberStyle(index + 1)">
+				<cl-text :pt="{className:'!text-xs text-white font-bold'}">{{index + 1 }}</cl-text>
+			</view>
+
+			<!-- 标题内容 -->
+			<view class="content-wrapper flex-1 pb-2" :class="index==0?'':'border'">
+				<cl-text class="mt-3"  ellipsis :lines="2" :pt="{
+					className: '!text-base font-medium text-gray-800 leading-5'
+				}">
+					{{ item?.title }}
+				</cl-text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+	import { isMp, router, useRefs, DayUts, formatTimeAgo } from "@/cool";
+	import { computed } from "vue";
+	import { parse } from "@/cool";
+	// 导入时间格式化工具
+	defineOptions({
+		name: "news-item"
+	});
+
+	// 定义数据类型（注释形式）
+	type newsItem = {
+		id : number;
+		title ?: string;
+	};
+	function getNumberStyle(rank : number) {
+		let backgroundColor = '#ACACAC'; // 默认灰色
+
+		switch (rank) {
+			case 1:
+				backgroundColor = '#EB0707'; // 红色
+				break;
+			case 2:
+				backgroundColor = '#FF8800'; // 橙色
+				break;
+			case 3:
+				backgroundColor = '#0066FF'; // 蓝色
+				break;
+			default:
+				backgroundColor = '#bbbbbb'; // 灰色
+				break;
+		}
+
+		return {
+			backgroundColor
+		};
+	}
+	const props = defineProps({
+		value: {
+			type: Object,
+			default: () => ({})
+		},
+		index: {
+			type: Number,
+			default: 0
+		}
+	});
+
+
+
+	const item = computed(() => parse<newsItem>(props.value));
+	// 处理点击事件
+	const emit = defineEmits(["item-click"]);
+	const onItemClick = () => {
+		emit("item-click", props.value);
+	};
+</script>
+<style>
+	.text {
+		@apply text-xs text-gray-300;
+	}
+</style>

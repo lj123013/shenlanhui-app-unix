@@ -467,7 +467,8 @@ export default {
 						primary: '#2854F2',
 						secondary: '#666666',
 						muted: '#999999',
-						user:'#505050'
+						user:'#505050',
+					
 					},
 					border:{
 						default: '#F1F1F1'

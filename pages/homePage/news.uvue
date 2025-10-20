@@ -7,7 +7,7 @@
 				}
 			}" :refresher-enabled="true" @pull="onPull" @bottom="loadMore">
 			<template #item="{ value, index }">
-				<article-item :value="value" :index="index" @item-click="onItemClick"></article-item>
+				<news-item :value="value" :index="index" @item-click="onItemClick"></news-item>
 			</template>
 
 			<template #bottom>
@@ -24,7 +24,7 @@
 	import { isMp, router, useRefs, usePager, parse, isArray, isNull } from "@/cool";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import { t } from "@/locale";
-	import articleItem from "../articlePage/articleItem.uvue";
+	import newsItem from "../homePage/components/news-item.uvue";
 	import { newsData } from '@/cool/service/list'
 	const ui = useUi();
 	// 处理文章项点击事件

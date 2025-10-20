@@ -1,19 +1,26 @@
 <template>
 	<view class="px-5">
-		<view class="w-full flex flex-row items-start justify-between " :class="index == 0 ? '' : 'border py-4'" @click="onItemClick">
-			<view class="w-[20rpx] h-[20rpx] rounded-full  flex flex-col items-center justify-center  mt-2" :class="item!.is_top?'bg-primary-300':'curcle'">
-				<view class="w-[10rpx] h-[10rpx] rounded-full" :class="item!.is_top?'bg-primary-500':'curicle-gray'"></view>
+		<view class="w-full flex flex-row items-start justify-between " :class="index == 0 ? '' : 'border py-4'"
+			@click="onItemClick">
+			<!--  -->
+			<view class="w-[20rpx] h-[20rpx] rounded-full  flex flex-col items-center justify-center mt-2" :class="item!.is_major?'bg-primary-300':'curcle'">
+				<!--  -->
+				<view class="w-[10rpx] h-[10rpx] rounded-full" :class="item!.is_major?'bg-primary-500':'curicle-gray'">
+				</view>
 			</view>
+			<!--  -->
 			<view class="flex-1 ml-1">
-				<cl-text  :color="item!.is_top?'primary':'#1a1a1a'" :pt="{
+				<cl-text  :color="item!.is_major?'primary':'#1a1a1a'" :pt="{
 					className: '!text-lg mb-1'
 				}">
 					{{ item?.title }}</cl-text>
-				<cl-text :color="item!.is_top?'primary':'#444'" ellipsis :lines="6" :pt="{
+				<!--  -->
+				<cl-text ellipsis :lines="6" :color="item!.is_major?'primary':'#444'" :pt="{
 					className: '!text-base'
 				}">{{ item?.content }}</cl-text>
 				<view class="flex flex-row items-center justify-between">
-					<cl-text color="#cbcbcb" :pt="{ className: '!text-sm' }">15:30</cl-text>
+
+					<l-dateformat class="text" :date="item?.created_at" format="hh:mm" />
 					<cl-image width="90rpx" height="18rpx" src="/static/image/ai_icon.png"></cl-image>
 				</view>
 			</view>
@@ -22,50 +29,55 @@
 </template>
 
 <script setup>
-import { isMp, router, useRefs } from "@/cool";
-import { computed,onMounted } from "vue";
-import { parse } from "@/cool";
+	import { isMp, router, useRefs, isNull } from "@/cool";
+	import { computed, onMounted } from "vue";
+	import { parse } from "@/cool";
 
-defineOptions({
-	name: "falsh-item"
-});
+	defineOptions({
+		name: "falsh-item"
+	});
 
-// 定义数据类型（注释形式）
-type FalshItem ={
-	id: number;
-	title: string;
-	content: string;
-	time: string;
-	is_top: boolean;
-}
-
-const props = defineProps({
-	value: {
-		type: Object,
-		default: () => ({})
-	},
-	index: {
-		type: Number,
-		default: 0
+	// 定义数据类型（注释形式）
+	type FalshItem = {
+		id : number;
+		title ?: string;
+		content: string;
+		is_major: boolean;
+		created_at : string;
 	}
-});
 
-const item = computed(() => parse <FalshItem> (props.value));
+	const props = defineProps({
+		value: {
+			type: Object,
+			default: () => ({})
+		},
+		index: {
+			type: Number,
+			default: 0
+		}
+	});
 
-function clickuser() {
-	router.to('/pages/user/userinfo');
-}
-// 处理点击事件
-const emit = defineEmits(["item-click"]);
-const onItemClick = () => {
-	emit("item-click", props.value);
-};
+	const item = computed(() => parse<FalshItem>(props.value));
+	// 在 computed 中赋值
+	function clickuser() {
+		router.to('/pages/user/userinfo');
+	}
+	// 处理点击事件
+	const emit = defineEmits(["item-click"]);
+	const onItemClick = () => {
+		emit("item-click", props.value);
+	};
 </script>
 <style>
-	.curcle{
+	.text {
+		@apply text-sm text-gray-300;
+	}
+
+	.curcle {
 		background: #e9e9e9;
 	}
-	.curicle-gray{
-		background:#C2C2C2;
+
+	.curicle-gray {
+		background: #C2C2C2;
 	}
 </style>

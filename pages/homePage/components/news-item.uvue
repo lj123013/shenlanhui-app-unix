@@ -13,8 +13,8 @@
 					<l-dateformat class="text" :date="item?.created_at" format="yyyy-MM-dd" />
 				</view>
 			</view>
-			<cl-image v-if="item!!.featured_image!=null" width="226rpx" height="136rpx" :pt="{className:'rounded-xl'}"
-				:src="item?.featured_image"></cl-image>
+			<cl-image v-if="item!!.cover_image!=null" width="226rpx" height="136rpx" :pt="{className:'rounded-xl'}"
+				:src="item?.cover_image"></cl-image>
 		</view>
 	</view>
 </template>
@@ -25,15 +25,15 @@
 	import { parse } from "@/cool";
 	// 导入时间格式化工具
 	defineOptions({
-		name: "article-item"
+		name: "news-item"
 	});
 
 	// 定义数据类型（注释形式）
-	type articleItem = {
+	type newsItem = {
 		id : number;
 		title : string;
 		author ?: string;
-		featured_image ?: string;
+		cover_image ?: string;
 		created_at : string;
 
 	};
@@ -51,7 +51,7 @@
 
 
 
-	const item = computed(() => parse<articleItem>(props.value));
+	const item = computed(() => parse<newsItem>(props.value));
 	// 处理点击事件
 	const emit = defineEmits(["item-click"]);
 	const onItemClick = () => {

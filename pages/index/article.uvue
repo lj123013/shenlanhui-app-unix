@@ -9,10 +9,14 @@
 			</template>
 			<cl-text color="black" :pt="{ className: '!text-xl fontBold' }">资讯</cl-text>
 		</cl-topbar>
-		<!-- <view class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center mx-5">
-			<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>
-			<cl-text color="#B7B7B7" class="text-neutral-300 ml-2">请输入你要搜索的内容</cl-text>
-		</view> -->
+		<view class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center mx-5">
+
+			<cl-input class="bg-gray-50" placeholder="请输入你要搜索的内容" v-model="serach" :border="false">
+				<template #prepend>
+					<cl-icon name="a-zu257" color="#CDCDCD" :size="24" :pt="{className:'mr-2'}"></cl-icon>
+				</template>
+			</cl-input>
+		</view>
 		<!-- 文章列表 -->
 		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
 				refresher: {
@@ -22,6 +26,7 @@
 			<template #item="{ value, index }">
 				<article-item :value="value" :index="index" @item-click="onItemClick"></article-item>
 			</template>
+
 			<template #bottom>
 				<view class="py-3">
 					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
@@ -35,129 +40,63 @@
 
 <script setup lang="ts">
 	import { ref } from "vue"
-	import { isMp, router, useRefs, usePager } from "@/cool";
+	import { isMp, router, useRefs, usePager, parse, isArray, isNull } from "@/cool";
+	import Tabbar from "@/components/tabbar.uvue";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import { t } from "@/locale";
 	import articleItem from "../articlePage/articleItem.uvue";
-	import Tabbar from "@/components/tabbar.uvue";
+	import { articles } from '@/cool/service/list'
+
 	const ui = useUi();
+	const serach = ref("")
 	// 处理文章项点击事件
 	const onItemClick = (item : UTSJSONObject) => {
-		console.log('点击文章项:', item);
+		console.log('点击文章项:', item.id);
 		router.push({
 			path: '/pages/articlePage/articleDetail',
 			params: {
 				articleId: item.id,
-				title: item.title,
-				author: item.author,
-				cover_url: item.cover_url,
-				acreat_time: item.acreat_time
+				title: '文章'
 			}
 		});
 	};
 	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
 
 	let id = 0;
-
+	type pageList = {
+		page : string
+		size : string
+		total : number
+	}
 	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
-		// 模拟请求
-		setTimeout(() => {
-			render({
-				list: [
-					{
-						id: id++,
-						title: t("产品筑底、数智驱动，泸州老窖构建穿越周期护城河"),
-						author: t("深蓝财经"),
-						cover_url: t("https://unix.cool-js.com/images/demo/avatar.jpg"),
-						acreat_time: 175523522,
+		articles({
+			page: params["page"],
+			per_page: params["size"],
+			status: "published",
+			sort: "latest",
+			search: serach.value,
+		}).then(res => {
+			ui.hideLoading()
+			if (res != null) {
+				console.log(res)
+				const result = parse<UTSJSONObject>(res)!
+				console.log(result,"result")
+				render({
+					list: result.data,
+					pagination: {
+						page: params["page"],
+						size: params["size"],
+						total: result.total
 
-					},
-					{
-						id: id++,
-						title: t("渤海银行承载全国首批科技创新债券奋力书写“科技金融大文章”"),
-						author: t("深蓝财经"),
-						cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
-						acreat_time: 175523522,
-
-					},
-					{
-
-						id: id++,
-						title: t("产品筑底、数智驱动，泸州老窖构建穿越周期护城河"),
-						author: t("深蓝财经"),
-						cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
-						acreat_time: 175523522,
-
-					},
-					{
-						id: id++,
-						title: t("渤海银行承载全国首批科技创新债券奋力书写“科技金融大文章”"),
-						author: t("深蓝财经"),
-						cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
-						acreat_time: 175523522,
-
-					},
-					{
-						id: id++,
-						title: t("产品筑底、数智驱动，泸州老窖构建穿越周期护城河"),
-						author: t("深蓝财经"),
-						cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
-						acreat_time: 175523522,
-
-					},
-					{
-						id: id++,
-						title: t("渤海银行承载全国首批科技创新债券奋力书写“科技金融大文章”"),
-						author: t("深蓝财经"),
-						cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
-						acreat_time: 175523522,
-
-					},
-					{
-					
-						id: id++,
-						title: t("渤海银行承载全国首批科技创新债券奋力书写“科技金融大文章”"),
-						author: t("深蓝财经"),
-						cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
-						acreat_time: 175523522,
-					
-					},
-					{
-					
-						id: id++,
-						title: t("渤海银行承载全国首批科技创新债券奋力书写“科技金融大文章”"),
-						author: t("深蓝财经"),
-						cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
-						acreat_time: 175523522,
-					
-					},
-					{
-					
-						id: id++,
-						title: t("渤海银行承载全国首批科技创新债券奋力书写“科技金融大文章”"),
-						author: t("深蓝财经"),
-						cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
-						acreat_time: 175523522,
-					
-					},
-					{
-					
-						id: id++,
-						title: t("渤海银行承载全国首批科技创新债券奋力书写“科技金融大文章”"),
-						author: t("深蓝财经"),
-						cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
-						acreat_time: 175523522,
-					
 					}
-				],
-				pagination: {
-					page: params["page"],
-					size: params["size"],
-					total: 10
-				}
-			});
-			ui.hideLoading();
-		}, 1000);
+
+				});
+
+
+			}
+
+		})
+
 	});
 	async function onPull() {
 		await refresh({ page: 1 });

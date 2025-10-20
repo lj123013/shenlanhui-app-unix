@@ -21,10 +21,10 @@
 <script lang="ts" setup>
 	import { useUi } from "@/uni_modules/cool-ui";
 	import { ref } from "vue";
-	import { usePager,router } from "@/cool";
+	import { usePager, router,parse  } from "@/cool";
 	import flashItem from "../homePage/components/flash-item.uvue";
 	import { t } from "@/locale";
-
+	import { dispatches } from '@/cool/service/list'
 	const ui = useUi();
 
 	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
@@ -41,47 +41,31 @@
 		});
 	};
 	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
-		// 模拟请求
-		setTimeout(() => {
-			render({
-				list: [
-					{
-						id: id++,
-						title: "",
-						content: "伊朗外交部：国际原子能机构总干事格罗西对'破坏国际原子能机构的公信力'负有直接责任。",
-						time: "17:39",
-						is_top: false,
-					},
-					{
-						id: id++,
-						title: "黑芝麻：收到广西证监局警示函",
-						content: "伊朗外交部：国际原子能机构总干事格罗西对'破坏国际原子能机构的公信力'负有直接责任。",
-						time: "17:39",
-						is_top: false,
-					},
-					{
-						id: id++,
-						title: "",
-						content: "俄罗斯国防部：俄罗斯军队在夜间对乌克兰基辅和扎波罗热地区的军事目标进行了打击。",
-						time: "17:39",
-						is_top: true,
-					},
-					{
-						id: id++,
-						title: "黑芝麻：收到广西证监局警示函",
-						content: "伊朗外交部：国际原子能机构总干事格罗西对'破坏国际原子能机构的公信力'负有直接责任。",
-						time: "17:39",
-						is_top: false,
-					},
-				],
-				pagination: {
-					page: params["page"],
-					size: params["size"],
-					total: 4
-				}
-			});
-			ui.hideLoading();
-		}, 1000);
+		dispatches({
+			page: params["page"],
+			per_page: params["size"],
+			status: "published",
+			sort: "latest",
+		}).then(res => {
+			ui.hideLoading()
+			if (res != null) {
+				const result = parse<UTSJSONObject>(res)!
+				console.log(result,"result")
+					render({
+						list: result.data,
+						pagination: {
+							page: params["page"],
+							size: params["size"],
+						total: result.total
+						
+
+						}
+
+					})
+
+			}
+
+		})
 	});
 
 	async function onPull() {

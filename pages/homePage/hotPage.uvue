@@ -13,69 +13,23 @@
 			</view>
 		</view>
 		<view class="content bg-white">
-			<cl-tabs v-model="current" :list="list" fill :showLine="false" :color="isColor ? '#2854F2' : ''"
+			<cl-tabs v-model="current" :list="tagList" fill :showLine="false" :color="isColor ? '#2854F2' : ''"
 				:un-color="isColor ? '#848484' : ''"></cl-tabs>
-			<scroll-view class="hot-reading-list" scroll-y="true" :show-scrollbar="false" :enable-back-to-top="true">
-				<!-- 热榜列表 -->
-				<view v-if="current==0" class="px-5">
-					<view v-for="(item, index) in hotReadingData" :key="index"
-						class="hot-item flex flex-row items-start py-1   border-b border-gray-100">
-						<!-- 索引标识 -->
-						<view class="index-number flex items-center justify-center w-6 h-6 rounded mt-4 mr-3"
-							:style="getNumberStyle(index + 1)">
-							<cl-text :pt="{className:'!text-xs text-white font-bold'}">{{index + 1 }}</cl-text>
-						</view>
+			<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
+						refresher: {
+							className: 'pt-3'
+						}
+					}" :refresher-enabled="true" @pull="onPull" @bottom="loadMore">
+				<template #item="{ value, index }">
+					<hot-article :value="value" :index="index" @item-click="onItemClick"></hot-article>
+				</template>
 
-						<!-- 标题内容 -->
-						<view class="content-wrapper flex-1" :class="index==0?'':'border'">
-							<cl-text class="mt-3" :pt="{
-								className: '!text-base font-medium text-gray-800 leading-5'
-							}">
-								{{ item.title }}
-							</cl-text>
-						</view>
+				<template #bottom>
+					<view class="py-3">
+						<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
 					</view>
-				</view>
-				<!-- 热门公司 -->
-				<view v-else class="px-5">
-					<view v-for="(item, index) in hotCompanyData" :key="item.id" :class="index==0?'':'border'"
-						class="company-item flex flex-row items-center py-4 ">
-						<!-- 公司头像 -->
-						<view class="avatar-wrapper mr-3">
-							<cl-image
-								src="https://cdn.caitongnews.com/images/2020-02-25/5e54df5ae75a1.png?imageMogr2/auto-orient/thumbnail/100x100"
-								width="88rpx" height="88rpx" mode="aspectFill"></cl-image>
-						</view>
-
-						<!-- 公司信息 -->
-						<view class="company-info flex-1 mr-3">
-							<cl-text class="company-name" :pt="{
-								className: '!text-base font-medium text-gray-800 leading-5 mb-1'
-							}">
-								{{ item.username }}
-							</cl-text>
-
-							<cl-text class="company-desc title-text" :pt="{
-								className:'!text-xs text-gray-500'
-							}">
-								{{ item.descrtion }}
-							</cl-text>
-						</view>
-
-						<!-- 关注按钮 -->
-						<view
-							class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
-							:class="item.isFloow == true ? 'bg-gray-200':'bg-primary-500'">
-							<cl-text color="white" :pt="{
-								className: '!text-xs'
-							}">{{item.isFloow == true ? '已关注' : '关注' }}</cl-text>
-						</view>
-					</view>
-				</view>
-				<!-- 底部安全区域留白 -->
-				<view class="safe-area-bottom"></view>
-			</scroll-view>
-
+				</template>
+			</cl-list-view>
 		</view>
 	</cl-page>
 
@@ -84,152 +38,90 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, watch, computed } from "vue";
-	import { isMp, router, useRefs } from "@/cool";
-	import { request } from "@/cool";
+	import { ref } from "vue"
+	import { isMp, router, useRefs, usePager, parse, isArray, isNull } from "@/cool";
+	import Tabbar from "@/components/tabbar.uvue";
+	import { useUi } from "@/uni_modules/cool-ui";
+	import hotArticle from "../homePage/components/hot-article.uvue";
 	import type { ClTabsItem, ClListItem } from "@/uni_modules/cool-ui/types/index";
 	import { t } from "@/locale";
-	type PassThroughProps = {
-		className ?: string;
-	};
+	import { articles } from '@/cool/service/list'
+	const ui = useUi();
 	// 标签滑块模块
 	const current = ref(0);
 	const isColor = ref(true);
-	const list = ref<ClTabsItem[]>([
+	const tagList = ref<ClTabsItem[]>([
 		{
 			label: "热门阅读",
-			value: "0",
+			value: 0,
 		},
 		{
 			label: "热门公司",
-			value: "1",
+			value: 1,
 		},
 		{
 			label: "活跃用户",
-			value: "2",
+			value: 2,
 		},
 	]);
-	// 实例化接口定义热榜数据项类型
-	type Hotreading = {
-		id : string;
-		title : string;
-		content : string;
-	}
-	// 热榜数据
-	const hotReadingData = computed<Hotreading[]>(() => {
-		return [
-			{ id: "1", title: "库存降了34%、股价触底反弹20%，洋河股份的底气在哪？", content: "Vue3、React18等新特性深度解析uni-app跨平台开发技巧分享uni-app跨平台开发技巧分享uni-app跨平台开发技巧分享" },
-			{ id: "2", title: "上海也放开了！金九银十还有什么大政策？", content: "uni-app跨平台开发技巧分享" },
-			{ id: "3", title: "内房股突然爆发！万科涨停、万通发展3连板，原因是……", content: "类型系统与工程实践详解" },
-			{ id: "4", title: "内卷的不止外卖，保险业开始卷服务了！", content: "分布式系统设计与实现" },
-			{ id: "5", title: "拼多多《2025农产品上行半年报》发布，海鲜水产销量同比增长48%，热销县域市场", content: "前端性能监控与优化策略" },
-			{ id: "6", title: "库存降了34%、股价触底反弹20%，洋河股份的底气在哪？", content: "Vue3、React18等新特性深度解析" },
-			{ id: "7", title: "上海也放开了！金九银十还有什么大政策？", content: "uni-app跨平台开发技巧分享" },
-			{ id: "8", title: "内房股突然爆发！万科涨停、万通发展3连板，原因是……", content: "类型系统与工程实践详解" },
-			{ id: "9", title: "内卷的不止外卖，保险业开始卷服务了！", content: "分布式系统设计与实现" },
-			{ id: "10", title: "拼多多《2025农产品上行半年报》发布，海鲜水产销量同比增长48%，热销县域市场", content: "前端性能监控与优化策略" },
-			{ id: "11", title: "库存降了34%、股价触底反弹20%，洋河股份的底气在哪？", content: "Vue3、React18等新特性深度解析" },
-			{ id: "12", title: "上海也放开了！金九银十还有什么大政策？", content: "uni-app跨平台开发技巧分享" },
-			{ id: "13", title: "内房股突然爆发！万科涨停、万通发展3连板，原因是……", content: "类型系统与工程实践详解" },
-			{ id: "14", title: "内卷的不止外卖，保险业开始卷服务了！", content: "分布式系统设计与实现" },
-			{ id: "15", title: "拼多多《2025农产品上行半年报》发布，海鲜水产销量同比增长48%，热销县域市场", content: "前端性能监控与优化策略" }
-		]
-	});
-	// 定义热榜数据项类型
-	type hotCompany = {
-		id : number;
-		username : string;
-		descrtion : string;
-		head_img : string;
-		isFloow : boolean;
-	}
-	const hotCompanyData = computed<hotCompany[]>(() => {
-		return [
-			{
-				head_img:
-					"https://cdn.caitongnews.com/images/2020-02-25/5e54df5ae75a1.png?imageMogr2/auto-orient/thumbnail/100x100"
-				,
-				username: "易简财经",
-				descrtion: '关注传媒、媒体人最新动向，全心全意为媒体',
-				isFloow: true,
-				id: 1
-			},
-			{
-				id: 2,
-				username: "金角财经",
-				descrtion: "专业的金融资讯平台，提供深度财经分析",
-				head_img: "https://cdn.caitongnews.com/images/2022/02/18/620fbb36b20b5.jpeg?imageMogr2/auto-orient/thumbnail/100x100",
-				isFloow: false
-			},
-			{
-				id: 3,
-				username: "面包财经",
-				descrtion: "用数据说话的财经媒体，关注企业价值分析",
-				head_img: "https://cdn.caitongnews.com/images/2020-02-27/5e576233be005.jpg?imageMogr2/auto-orient/thumbnail/100x100",
-				isFloow: true
-			},
-			{
-				id: 4,
-				username: "看财经",
-				descrtion: "财经资讯新视角，解读市场热点动态",
-				head_img: "https://cdn.caitongnews.com/images/2020-02-27/5e577c0bce342.jpg?imageMogr2/auto-orient/thumbnail/100x100",
-				isFloow: false
-			},
-			{
-				id: 5,
-				username: "基岩资本",
-				descrtion: "专业投资机构，专注价值投资和资本运作",
-				head_img: "https://cdn.caitongnews.com/images/2020-02-27/5e578d45f04e8.jpg?imageMogr2/auto-orient/thumbnail/100x100",
-				isFloow: false
-			},
-			{
-				id: 6,
-				username: "愉见财经",
-				descrtion: "独立财经观察，提供有温度的财经内容",
-				head_img: "https://img.shenlanhui.com/app/2024/202409/23/202409231727070389.7228362220936.jpg?imageMogr2/auto-orient/thumbnail/100x100",
-				isFloow: true
-			},
-			{
-				id: 7,
-				username: "富凯财经",
-				descrtion: "财富管理专家，提供投资理财指导",
-				head_img: "https://cdn.caitongnews.com/images/2020-02-28/5e590bc85370c.jpg?imageMogr2/auto-orient/thumbnail/100x100",
-				isFloow: false
-			},
-			{
-				id: 8,
-				username: "财联社",
-				descrtion: "7x24小时全球财经资讯，快速精准的市场信息",
-				head_img: "https://cdn.caitongnews.com/images/2020-02-25/5e54df5ae75a1.png?imageMogr2/auto-orient/thumbnail/100x100",
-				isFloow: false
+	const onItemClick = (item : UTSJSONObject) => {
+		router.push({
+			path: '/pages/articlePage/articleDetail',
+			params: {
+				articleId: item.id,
+				title: '文章'
 			}
-		]
-	})
-	function getNumberStyle(rank : number) {
-		let backgroundColor = '#ACACAC'; // 默认灰色
+		});
+	};
+	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
 
-		switch (rank) {
-			case 1:
-				backgroundColor = '#EB0707'; // 红色
-				break;
-			case 2:
-				backgroundColor = '#FF8800'; // 橙色
-				break;
-			case 3:
-				backgroundColor = '#0066FF'; // 蓝色
-				break;
-			default:
-				backgroundColor = '#bbbbbb'; // 灰色
-				break;
-		}
-
-		return {
-			backgroundColor
-		};
+	let id = 0;
+	type pageList = {
+		page : string
+		size : string
+		total : number
 	}
+	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
+		articles({
+			page: params["page"],
+			per_page: params["size"],
+			status: "published",
+			sort: "popular",
+		}).then(res => {
+			ui.hideLoading()
+			if (res != null) {
+				const result = parse<UTSJSONObject>(res)!
+				render({
+					list: result.data,
+					pagination: {
+						page: params["page"],
+						size: params["size"],
+						total: result.total
+
+					}
+
+				});
+
+
+			}
+
+		})
+
+	});
+	async function onPull() {
+		await refresh({ page: 1 });
+		listViewRef.value!.stopRefresh();
+	}
+
+	onReady(() => {
+		ui.showLoading(t("加载中"));
+		// 默认请求
+		refresh({});
+	});
 	onMounted(() => {
 		const params = router.params();
-		current.value=params.index as number
+		console.log(params, '获取数据')
+		current.value = params.index as number
 	})
 </script>
 

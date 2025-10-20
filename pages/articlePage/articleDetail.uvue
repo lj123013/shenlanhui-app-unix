@@ -1,6 +1,6 @@
 <template>
-	<cl-page safe-area>
-		<cl-topbar fixed safe-area-top color='black' back-path="/pages/index/home" :pt="{
+	<cl-page>
+		<cl-topbar fixed safe-area-top color='black' :pt="{
 			back: {
 				size: 48,
 			},
@@ -10,203 +10,213 @@
 					@tap="sharevisible=true"></cl-icon>
 			</template>
 		</cl-topbar>
-		<view class="content px-4">
+		<view class="content px-4 pb-10">
 			<cl-text color="#2B2B2B" :pt="{ className: '!text-2xl fontBold' }">{{getmessage.title}}</cl-text>
 			<!-- 文章才显示发布用户 -->
 			<view class="flex flex-row items-center justify-between" v-if="type=='文章'">
 				<view :span="13">
 					<view class="flex flex-row items-center mt-2">
-						<cl-avatar :src="'https://unix.cool-js.com/images/demo/avatar.jpg'" :size="50"
+						<cl-avatar :src="getmessage.author.avatar" :size="50"
 							:pt="{ className: 'mr-2 rounded-[10rpx]' }"></cl-avatar>
 						<view>
 							<view class="flex flex-row items-center">
-								<cl-text :pt="{ className: '!text-sm mr-1 text-contrast-800' }">深蓝财经</cl-text>
+								<cl-text
+									:pt="{ className: '!text-sm mr-1 text-contrast-800' }">{{getmessage.author.username}}</cl-text>
 								<cl-icon name="renzheng2" color="#FE0000" :size="16"></cl-icon>
 							</view>
 
 							<view class="flex flex-row items-center">
-								<cl-text color="#9C9C9C" :pt="{ className: '!text-xs mr-1' }">2024-06-15
-									10:00</cl-text>
-								<cl-text color="#9C9C9C" :pt="{ className: '!text-xs' }">发布于四川</cl-text>
+								<cl-text color="#9C9C9C" :pt="{ className: '!text-xs mr-1' }">
+									{{getmessage.created_at}}</cl-text>
+								<cl-text color="#9C9C9C" v-if="getmessage.ip_location!=null"
+									:pt="{ className: '!text-xs' }">发布于{{getmessage?.ip_location}}</cl-text>
 							</view>
 						</view>
 					</view>
 				</view>
-				<view :span="8" :push="7">
-					<view
-						class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
-						:class="isFollow == true ? 'bg-primary-500' : 'bg-primary-500'">
-						<cl-text v-if="isFollow == false" color="white" :pt="{
+				<view v-if="getmessage.is_following_author==false"
+					class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full bg-primary-500"
+					@click="followBtn">
+					<cl-text color="white" :pt="{
 							className: '!text-xs'
 						}">关注</cl-text>
-						<cl-text v-else color="primary" :pt="{
+				</view>
+				<view v-if="getmessage.is_following_author==true"
+					class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
+					style="background:#E6E6E6">
+					<cl-text color="white" :pt="{
 							className: '!text-xs'
 						}">已关注</cl-text>
+				</view>
+			</view>
+
+			<!-- 文章内容 -->
+			<!-- 有图片才显示图片 -->
+			<cl-image v-if="getmessage!!.cover_image!=null" :src="getmessage!!.cover_image" :width="'100%'"
+				:height="'384rpx'" :pt="{ className: 'my-4 rounded-lg' }"></cl-image>
+			<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4 my-3"
+				@click="showAiInterpretation = !showAiInterpretation">
+				<view class="flex flex-row items-center">
+					<view class="ai-img rounded-full flex flex-col items-center justify-center">
+						<view class="img-box rounded-full flex flex-col items-center justify-center">
+							<cl-image src="/static/image/aiIcon.png" :width="'33rpx'" :height="'33rpx'"
+								:pt="{ className: 'mx-auto my-auto' }"></cl-image>
+						</view>
+					</view>
+					<view class="ml-2">
+						<cl-text color="white" :pt="{ className: '!text-lg fontBold' }">使用深蓝AI进行分析</cl-text>
+						<cl-text color="white" :pt="{ className: '!text-base' }">智能摘要·深度解读</cl-text>
+					</view>
+				</view>
+				<cl-icon name="arrow-right-line" color="white" :size="50"></cl-icon>
+			</view>
+			<view class="article-Ai mb-3  p-4" v-if="showAiInterpretation">
+				<view class="borderBottom">
+					<view class="flex flex-row items-center">
+						<cl-image src="/static/image/aiIcon.png" :width="'33rpx'" :height="'33rpx'"></cl-image>
+						<cl-text color="white" :pt="{ className: ' !text-lg fontBold ml-2' }">AI总结</cl-text>
+					</view>
+
+					<!-- 文字摘要内容 -->
+					<view class="text-content pb-5">
+						<!-- 始终显示的简短内容 -->
+						<cl-read-more :showMask="false" v-model="visible" :height="120"
+							:pt="{ className: '!text-white' }">
+							<cl-text color="#E4E4F7">
+								云想衣裳花想容，春风拂槛露华浓。若非群玉山头见，会向瑶台月下逢。
+								一枝红艳露凝香，云雨巫山枉断肠。借问汉宫谁得似？可怜飞燕倚新妆。
+								名花倾国两相欢，常得君王带笑看。解释春风无限恨，沉香亭北倚阑干。
+							</cl-text>
+						</cl-read-more>
+					</view>
+				</view>
+				<view class="py-3">
+					<cl-text color="white" :pt="{ className: 'text-lg fontBold ' }">你还可以</cl-text>
+					<view v-for="value in aiMwnu" class="flex flex-row items-center justify-between p-4  rounded-lg"
+						:class="value.isFinish ? 'aiItemoption' : 'aiItem'">
+						<view class="flex flex-row items-center">
+							<cl-image width="72rpx" height="72rpx" :pt="{ className: 'mr-2' }"
+								:src="value.icon"></cl-image>
+							<view>
+								<cl-text color="white" :pt="{ className: 'text-base fontBold' }">{{ value.title
+									}}</cl-text>
+								<cl-text color="white" :pt="{ className: '!text-sm' }">{{ value.content }}</cl-text>
+							</view>
+						</view>
+						<view
+							class="bg-green-500 w-[38rpx] h-[38rpx] rounded-full flex flex-col items-center justify-center"
+							v-if="value?.isFinish">
+							<cl-icon name="dui" color="white" width="20rpx" height="15rpx" :size="15"></cl-icon>
+							<!-- <cl-text>√</cl-text> -->
+						</view>
 					</view>
 				</view>
 			</view>
-			<!-- 文章内容 -->
-			<view>
-				<!-- 有图片才显示图片 -->
-				<cl-image v-if="getmessage!!.cover_image!=null" :src="getmessage!!.cover_image" :width="'100%'"
-					:height="'384rpx'" :pt="{ className: 'my-4 rounded-lg' }"></cl-image>
-				<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4 my-3"
-					@click="showAiInterpretation = !showAiInterpretation">
-					<view class="flex flex-row items-center">
-						<view class="ai-img rounded-full flex flex-col items-center justify-center">
-							<view class="img-box rounded-full flex flex-col items-center justify-center">
-								<cl-image src="/static/image/aiIcon.png" :width="'33rpx'" :height="'33rpx'"
-									:pt="{ className: 'mx-auto my-auto' }"></cl-image>
-							</view>
-						</view>
-						<view class="ml-2">
-							<cl-text color="white" :pt="{ className: '!text-lg fontBold' }">使用深蓝AI进行分析</cl-text>
-							<cl-text color="white" :pt="{ className: '!text-base' }">智能摘要·深度解读</cl-text>
-						</view>
-					</view>
-					<cl-icon name="arrow-right-line" color="white" :size="50"></cl-icon>
-				</view>
-				<view class="article-Ai mb-3  p-4" v-if="showAiInterpretation">
-					<view class="borderBottom">
-						<view class="flex flex-row items-center">
-							<cl-image src="/static/image/aiIcon.png" :width="'33rpx'" :height="'33rpx'"></cl-image>
-							<cl-text color="white" :pt="{ className: ' !text-lg fontBold ml-2' }">AI总结</cl-text>
-						</view>
 
-						<!-- 文字摘要内容 -->
-						<view class="text-content pb-5">
-							<!-- 始终显示的简短内容 -->
-							<cl-read-more :showMask="false" v-model="visible" :height="120"
-								:pt="{ className: '!text-white' }">
-								<cl-text color="#E4E4F7">
-									云想衣裳花想容，春风拂槛露华浓。若非群玉山头见，会向瑶台月下逢。
-									一枝红艳露凝香，云雨巫山枉断肠。借问汉宫谁得似？可怜飞燕倚新妆。
-									名花倾国两相欢，常得君王带笑看。解释春风无限恨，沉香亭北倚阑干。
-								</cl-text>
-							</cl-read-more>
-						</view>
-					</view>
-					<view class="py-3">
-						<cl-text color="white" :pt="{ className: 'text-lg fontBold ' }">你还可以</cl-text>
-						<view v-for="value in aiMwnu"
-							class="flex flex-row items-center justify-between p-4 mt-2 rounded-lg"
-							:class="value.isFinish ? 'aiItemoption' : 'aiItem'">
-							<view class="flex flex-row items-center">
-								<cl-image width="72rpx" height="72rpx" :pt="{ className: 'mr-2' }"
-									:src="value.icon"></cl-image>
-								<view>
-									<cl-text color="white" :pt="{ className: 'text-base fontBold' }">{{ value.title
-									}}</cl-text>
-									<cl-text color="white" :pt="{ className: '!text-sm' }">{{ value.content }}</cl-text>
-								</view>
-							</view>
-							<view
-								class="bg-green-500 w-[38rpx] h-[38rpx] rounded-full flex flex-col items-center justify-center"
-								v-if="value?.isFinish">
-								<cl-icon name="dui" color="white" width="20rpx" height="15rpx" :size="15"></cl-icon>
-								<!-- <cl-text>√</cl-text> -->
-							</view>
-						</view>
-					</view>
-
-				</view>
-				<!-- 富文本 -->
-				<view class="article-content-wrapper">
-					<rich-text :nodes="getmessage.summary" :selectable="true" class="rich-text-content">
-					</rich-text>
-				</view>
-				<!-- 评论 -->
-				<view class="py-5">
-					<cl-text color="black" :pt="{ className: '!text-lg' }">评论</cl-text>
-					<view>
-						<view v-for="(value, index) in commonList"
-							class="flex flex-row items-start justify-between py-3" :class="{
+			<!-- 富文本 -->
+			<rich-text :nodes="getmessage.content" :selectable="true" class="rich-text-content">
+			</rich-text>
+			<!-- 评论 -->
+			<view class="py-5 px-4">
+				<cl-text color="black" :pt="{ className: '!text-lg' }">评论</cl-text>
+				<view>
+					<view v-for="(value, index) in commonList" class="flex flex-row items-start justify-between py-3"
+						:class="{
 								'border pt-3': index != 0
 							}">
-							<cl-avatar :src="value?.head_img" :size="50"
-								:pt="{ className: 'rounded-[10rpx]' }"></cl-avatar>
-							<view class="flex-1 ml-1">
-								<view class="flex flex-row items-center justify-between">
-									<cl-text color="#959595 " :pt="{ className: '!text-sm mr-1' }">{{
-										value?.nickname
-									}}</cl-text>
-									<cl-text color="#B1B1B1 " :pt="{ className: '!text-xs' }">{{ value?.time
+						<cl-avatar :src="value.author.avatar" :size="50"
+							:pt="{ className: 'rounded-[10rpx]' }"></cl-avatar>
+						<view class="flex-1 ml-1">
+							<view class="flex flex-row items-center justify-between">
+								<cl-text color="#959595 " :pt="{ className: '!text-sm mr-1' }">{{
+										value.author.nickname
 									}}</cl-text>
 
-								</view>
-								<cl-text color="black" :pt="{ className: '!text-sm' }">{{
+								<l-dateformat class="text" :date="value?.created_at" format="yyyy-MM-dd" />
+
+							</view>
+							<cl-text color="black" :pt="{ className: '!text-sm' }">{{
 									value?.content
 								}}</cl-text>
-							</view>
 						</view>
-						<cl-empty v-if="commonList.length == 0" :fixed="false" text="暂无评论"></cl-empty>
 					</view>
-
+					<cl-empty v-if="commonList.length == 0" :fixed="false" text="暂无评论"></cl-empty>
 				</view>
 
-				<!-- 遮罩层 -->
-				<view style="height: 0" v-if="isPubComment">
-					<view class="mask" @touchmove.stop.prevent :class="isPubComment ? 'on' : ''" @click="closePopup">
-					</view>
-				</view>
-
-				<view class="footer-container" :style="{ bottom: inputBottom + 'px' }">
-					<view class="input-section">
-						<cl-input v-model="input" :adjustPosition="false" :clearable='true' :border="false" :pt="{
-							className: '!bg-neutral-100 rounded-full pl-3'
-						}" placeholder="写评论"></cl-input>
-					</view>
-					<view class="actions-section" v-if='!isPubComment'>
-						<view class="action-item">
-							<cl-icon name="aixin-1" :size="28" width="34rpx" color="#464646"></cl-icon>
-							<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">点赞</cl-text>
-						</view>
-						<view class="action-item">
-							<cl-icon name="a-shoucangdianji" :size="30" width="36rpx" color="#464646"></cl-icon>
-							<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">收藏</cl-text>
-						</view>
-						<view class="action-item" @tap="sharevisible=true">
-							<cl-icon name="zhuanfa1" :size="28" color="#464646"></cl-icon>
-							<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">分享</cl-text>
-						</view>
-					</view>
-					<cl-text v-else :pt="{ className: 'z-999 action-text text-primary-500' }">发送</cl-text>
-				</view>
 			</view>
 		</view>
+		<!-- 遮罩层 -->
+		<view style="height: 0" v-if="isPubComment">
+			<view class="mask" @touchmove.stop.prevent :class="isPubComment ? 'on' : ''" @click="closePopup">
+			</view>
+		</view>
+
+		<view class="footer-container" :style="{ bottom: inputBottom + 'px' }">
+			<view class="input-section">
+				<cl-input v-model="input" :adjustPosition="false" :clearable='true' :border="false" :pt="{
+							className: '!bg-neutral-100 rounded-full pl-3'
+						}" placeholder="写评论"></cl-input>
+			</view>
+			<view class="actions-section" v-if='!isPubComment'>
+				<view class="action-item">
+					<cl-icon name="aixin-1" :size="28" width="34rpx" color="#464646"></cl-icon>
+					<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">点赞</cl-text>
+				</view>
+				<view class="action-item">
+					<cl-icon name="a-shoucangdianji" :size="30" width="36rpx" color="#464646"></cl-icon>
+					<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">收藏</cl-text>
+				</view>
+				<view class="action-item" @tap="sharevisible=true">
+					<cl-icon name="zhuanfa1" :size="28" color="#464646"></cl-icon>
+					<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">分享</cl-text>
+				</view>
+			</view>
+			<cl-text v-else :pt="{ className: 'z-999 action-text text-primary-500' }" @click="clickcommon">发送</cl-text>
+		</view>
+
+
 		<shareMenu v-if="sharevisible" :sharevisible='sharevisible' @close="handelclose"></shareMenu>
 
 	</cl-page>
 </template>
 <script setup>
 	import { ref, reactive, onMounted } from "vue";
-	import { router, isNull, parse } from "@/cool";
+	import { router, isNull, parse, isArray } from "@/cool";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import shareMenu from '@/components/shareMenu.uvue'
-	import { articleinfo } from "@/cool/service/list"
+	import { newsinfo, articleinfo, follow, comments, clickcomments } from "@/cool/service/list"
 	const ui = useUi();
 	const sharevisible = ref(false);
 	const generateimage = ref(true)
 	const showAiInterpretation = ref(false)
+	const user = reactive({ uid: 1 }); // 假设有用户信息，实际请替换为你的登录逻辑
 	// 定义文章数据类型（注释形式）
+	type typeauthor = {
+		id : number
+		avatar ?: string
+		username ?: string
+		nickname ?: string
+	}
 	type ArticleData = {
 		id ?: number;
 		title ?: string;
-		author ?: string;
 		cover_image ?: string;
-		summary ?: string;
+		content ?: string;//新闻稿描述
 		created_at ?: string;
+		ip_location ?: string
+		is_following_author ?: boolean//是否关注
+		author : typeauthor
 	};
-	const getmessage = ref<ArticleData>({}); // 这样就不会报错了
-	const content = ref('')
-	const isFollow = ref(false);
+	const getmessage = ref<ArticleData>({
+		author: {
+			id: 0,
+			avatar: "",
+			username: "",
+		}
+	}); // 这样就不会报错了
 	const visible = ref(false);
 	const input = ref("");
-	const user = reactive({ uid: 1 }); // 假设有用户信息，实际请替换为你的登录逻辑
 	const commentContent = ref('')
-	// rich-text 数据管理 - 使用节点数组格式
-	const testNodes = ref('<p>面对外界的疑问，美团CEO王兴在财报电话会上回应，“将采取一切必要措施来赢得比赛。”同时也表示，市场竞争有助于促进行业发展，目前行业中存在非理性的补贴和内卷，认为低质低价的“内卷式”竞争长期来看不可持续。王兴表示，中国外卖行业已经发展到新阶段，美团会积极提倡反对行业内卷，进一步帮助商家简化营销，降低经营负担，推动行业健康发展。美团有自己的节奏在京东强势入局外卖、饿了么也随之加入这场补贴大战后，美团很淡定，让人一下子摸不着头脑了。随着美团Q1财报的发布，大家总算知道：美团一直有自己的节奏。美团的淡定</p>'
-	);
 	function toggle() {
 		visible.value = !visible.value;
 	}
@@ -221,6 +231,7 @@
 		content : string;
 		icon : string;
 		isFinish : Boolean;
+
 	};
 	const aiMwnu = reactive<aiList[]>([
 		{
@@ -249,25 +260,13 @@
 		}
 	])
 	type common = {
-		head_img : string;
-		nickname : string;
 		content : string;
-		time : string;
+		author : typeauthor
+		created_at : string;
 	}
-	const commonList = ref<common[]>([
-		{
-			head_img: '/static/image/head-img.png',
-			nickname: '张三',
-			content: '怕高确实挣不到大钱，关键是有几个人知道高和低呢？',
-			time: '2023-05-01'
-		},
-		{
-			head_img: '/static/image/head-img.png',
-			nickname: '张三',
-			content: '怕高本质上就是怕回调，怕把已经到手的利润回吐出去，这里一方面是人性和心态上的问题，另一方面就是对标的价值理解不透。＂，解释得很透彻！',
-			time: '2023-05-01'
-		}
-	])
+	const commonList = ref<common[]>([])
+
+
 	function pubComment() {
 		if (!isNull(user)) {
 			uni.showToast({ title: "请先登录", icon: "none" });
@@ -301,10 +300,9 @@
 		})
 
 	});
-	//获取用户详情
-	const getdata = () => {
-		articleinfo(articleId.value, {}).then(res => {
-			console.log(res, "res")
+	//获取新闻稿详情
+	const getNewsdata = () => {
+		newsinfo(articleId.value, {}).then(res => {
 			getmessage.value = parse<ArticleData>(res)!
 		}).catch((err) => {
 			ui.showToast({
@@ -312,17 +310,85 @@
 			});
 		})
 	}
+	// 获取文章详情
+	const getarticledata = () => {
+		articleinfo(articleId.value, {}).then(res => {
+			getmessage.value = parse<ArticleData>(res)!
+		}).catch((err) => {
+			ui.showToast({
+				message: "获取详情失败",
+			});
+		})
+	}
+	// 关注用户
+	const followBtn = () => {
+		follow({
+			following_id: getmessage.value.author.id
+		}).then(res => {
+			getmessage.value.is_following_author = true
+			ui.showToast({
+				message: "关注用户成功",
+			});
+		})
+	}
+
+	// 评论文章
+	const clickcommon = () => {
+		clickcomments({
+			commentable_type: "article",
+			commentable_id: articleId.value,
+			content: input.value
+
+		}).then(res => {
+			// getconmmon()
+			ui.showToast({
+				message: "评论成功",
+
+			});
+		}).catch(err => {
+			ui.showToast({
+				message: "评论失败",
+			});
+		})
+	}
+	//获取评论列表
+	const getconmmon = () => {
+		comments({
+			commentable_type: 'article',
+			commentable_id: articleId.value
+		}).then(res => {
+			const result = parse<UTSJSONObject>(res)!
+			console.log(result.data, "res")
+			const getList = result.data
+			if (isArray(getList)) {
+				// 关键修复：解析为 common[] 而不是 common
+				for (let i = 0; i<getList!!.length ;i++) {
+					const subItem = getList!![i]
+				}
+				// commonList.value = parse<common[]>(getList)!
+			}
+
+		}).catch(err => {
+			ui.showToast({
+				message: "获取评论失败",
+			});
+		})
+	}
 	// 页面加载时获取路由参数
 	onMounted(() => {
 		const params = router.params();
-		console.log('接收到的参数:', params);
 		if (!isNull(params)) {
 			articleId.value = params.articleId as number;
 			if (!isNull(params.title)) {
 				type.value = params.title as string
 			}
+			if (type.value == '新闻稿') {
+				getNewsdata()
+			} else {
+				getarticledata()
+				getconmmon()
+			}
 
-			getdata()
 		}
 
 
@@ -363,14 +429,13 @@
 
 	/* 文章内容样式 - 整合且遵循uni-app x规范 */
 	.rich-text-content {
-		width: 100%;
-		text-align: left;
+		/* width: 100%; */
+		/* text-align: left; */
 		color: #434343;
 		font-size: 28rpx;
+		/* margin-left:30rpx; */
 		line-height: 1.8;
-		/* 使用统一的行高 */
-		padding-bottom: 40rpx;
-		/* 移除background-color调试样式 */
+
 	}
 
 	/* Footer 底部区域样式 */
@@ -435,5 +500,9 @@
 
 	.borderh10 {
 		border-top: 10rpx solid #F8F8F8;
+	}
+
+	.text {
+		@apply text-xs text-gray-100;
 	}
 </style>
