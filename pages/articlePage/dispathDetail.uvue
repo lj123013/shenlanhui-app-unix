@@ -11,7 +11,7 @@
 		</cl-topbar>
 		<!-- 主要内容 -->
 		<!-- 全屏加载效果 -->
-		<view class="px-5">
+		<view class="px-5" v-if="getmessage.id">
 			<!-- 快讯图标 -->
 			<view class="flex flex-row items-center justify-between">
 				<cl-image src="/static/image/dispath.png" :width="150" :height="42"></cl-image>
@@ -20,79 +20,84 @@
 			<!-- 快讯内容 -->
 			<view class="border-bottom pb-3 mb-3">
 				<cl-text color="#2B2B2B" :pt="{ className: 'text-lg fontBold my-1' }">{{getmessage?.title}}</cl-text>
+				<!-- 文章内容 -->
+				<view class="py-5">
+					<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4"
+						@click="showAi=!showAi">
+						<view class="flex flex-row items-center">
+							<view class="ai-img rounded-full flex flex-col items-center justify-center">
+								<view class="img-box rounded-full flex flex-col items-center justify-center">
+									<cl-image src="/static/image/aiIcon.png" :width="'33rpx'" :height="'33rpx'"
+										:pt="{ className: 'mx-auto my-auto' }"></cl-image>
+								</view>
+							</view>
+							<view class="ml-2">
+								<cl-text color="white" :pt="{ className: '!text-lg fontBold' }">使用深蓝AI进行分析</cl-text>
+								<cl-text color="white" :pt="{ className: '!text-base' }">智能摘要·深度解读</cl-text>
+							</view>
+						</view>
+						<cl-icon name="arrow-right-line" color="white" :size="50"></cl-icon>
+					</view>
+					<view class="article-Ai my-3 p-4" v-if="showAi">
+						<view class="py-3">
+							<cl-text color="white" :pt="{ className: 'text-lg fontBold ' }">你还可以</cl-text>
+							<view v-for="value in aiMwnu"
+								class="flex flex-row items-center justify-between p-4 mt-2 rounded-lg"
+								:class="value.isFinish ? 'aiItemoption' : 'aiItem'">
+								<view class="flex flex-row items-center">
+									<cl-image width="72rpx" height="72rpx" :pt="{ className: 'mr-2' }"
+										:src="value.icon"></cl-image>
+									<view>
+										<cl-text color="white" :pt="{ className: 'text-base fontBold' }">{{ value.title
+										}}</cl-text>
+										<cl-text color="white"
+											:pt="{ className: '!text-sm' }">{{ value.content }}</cl-text>
+									</view>
+								</view>
+								<view
+									class="bg-green-500 w-[38rpx] h-[38rpx] rounded-full flex flex-col items-center justify-center"
+									v-if="value?.isFinish">
+									<cl-icon name="dui" color="white" :size="20"></cl-icon>
+									<!-- <cl-text>√</cl-text> -->
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
 				<cl-text color="#5D5D5D" :pt="{ className: 'text-base' }">{{getmessage?.content}}</cl-text>
 			</view>
 			<cl-text color="#AFAFAF"
 				:pt="{ className: 'text-xs' }">风险提示：文章内容仅供参考，不构成投资建议，且与深蓝汇立场无关，投资决策需建立在思想之上。</cl-text>
 
-			<!-- 文章内容 -->
-			<view class="pt-5">
-				<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4"
-					@click="showAi=!showAi">
-					<view class="flex flex-row items-center">
-						<view class="ai-img rounded-full flex flex-col items-center justify-center">
-							<view class="img-box rounded-full flex flex-col items-center justify-center">
-								<cl-image src="/static/image/aiIcon.png" :width="'33rpx'" :height="'33rpx'"
-									:pt="{ className: 'mx-auto my-auto' }"></cl-image>
-							</view>
-						</view>
-						<view class="ml-2">
-							<cl-text color="white" :pt="{ className: '!text-lg fontBold' }">使用深蓝AI进行分析</cl-text>
-							<cl-text color="white" :pt="{ className: '!text-base' }">智能摘要·深度解读</cl-text>
-						</view>
-					</view>
-					<cl-icon name="arrow-right-line" color="white" :size="50"></cl-icon>
-				</view>
-				<view class="article-Ai my-3 p-4" v-if="showAi">
-					<view class="py-3">
-						<cl-text color="white" :pt="{ className: 'text-lg fontBold ' }">你还可以</cl-text>
-						<view v-for="value in aiMwnu"
-							class="flex flex-row items-center justify-between p-4 mt-2 rounded-lg"
-							:class="value.isFinish ? 'aiItemoption' : 'aiItem'">
-							<view class="flex flex-row items-center">
-								<cl-image width="72rpx" height="72rpx" :pt="{ className: 'mr-2' }"
-									:src="value.icon"></cl-image>
-								<view>
-									<cl-text color="white" :pt="{ className: 'text-base fontBold' }">{{ value.title
-									}}</cl-text>
-									<cl-text color="white" :pt="{ className: '!text-sm' }">{{ value.content }}</cl-text>
-								</view>
-							</view>
-							<view
-								class="bg-green-500 w-[38rpx] h-[38rpx] rounded-full flex flex-col items-center justify-center"
-								v-if="value?.isFinish">
-								<cl-icon name="dui" color="white" :size="20"></cl-icon>
-								<!-- <cl-text>√</cl-text> -->
-							</view>
-						</view>
-					</view>
-				</view>
-			</view>
+
 			<!-- 评论 -->
-			<view class="py-5">
-				<cl-text color="black" :pt="{ className:'text-lg'}">评论</cl-text>
+			<view class="py-4">
+				<cl-text color="black" :pt="{ className: '!text-lg' }">评论</cl-text>
 				<view>
 					<view v-for="(value, index) in commonList" class="flex flex-row items-start justify-between py-3"
 						:class="{
-						'border pt-3': index != 0
-					}">
-						<cl-avatar :src="value?.head_img" :size="50" :pt="{ className: 'rounded-[10rpx]' }"></cl-avatar>
+							'border pt-3': index != 0
+						}">
+						<cl-avatar :src="value.author.avatar" :size="50"
+							:pt="{ className: 'rounded-[10rpx]' }"></cl-avatar>
 						<view class="flex-1 ml-1">
 							<view class="flex flex-row items-center justify-between">
-								<cl-text color="#959595" :pt="{ className: '!text-sm mr-1' }">{{
-								value?.nickname
-							}}</cl-text>
-								<cl-text color="#B1B1B1" :pt="{ className: '!text-xs' }">{{ value?.time
-							}}</cl-text>
+								<cl-text color="#959595 " :pt="{ className: '!text-sm mr-1' }">{{
+									value.author.nickname
+								}}</cl-text>
+
+								<l-dateformat class="text" :date="value?.created_at" format="yyyy-MM-dd" />
 
 							</view>
 							<cl-text color="black" :pt="{ className: '!text-sm' }">{{
-							value?.content
-						}}</cl-text>
+								value?.content
+							}}</cl-text>
 						</view>
 					</view>
-					<cl-empty v-if="commonList.length == 0" :fixed="false" text="暂无评论"></cl-empty>
+					<cl-empty v-if="commonList.length == 0" :fixed="false" text="暂无评论"
+						:pt="{className:'h-[200px]'}"></cl-empty>
 				</view>
+
 			</view>
 			<!-- 遮罩层 -->
 			<view style="height: 0" v-if="isPubComment">
@@ -102,7 +107,8 @@
 
 			<view class="footer-container" :style="{bottom:inputBottom+'px'}">
 				<view class="input-section">
-					<cl-input v-model="input" :adjustPosition="false" :clearable='true' :border="false" :pt="{
+					<cl-input v-model="input" @confirm="clickcommon" :adjustPosition="false" :clearable='true'
+						:border="false" :pt="{
 						className:'!bg-neutral-100 rounded-full pl-3'
 					}" placeholder="写评论"></cl-input>
 					<!-- <view class="bg-neutral-100 rounded-full flex-1 py-2 pl-4 mr-4"><cl-text :pt="{className:'!text-sm text-gray-400'}">写评论</cl-text></view> -->
@@ -122,15 +128,18 @@
 						<cl-text color="#464646" :pt="{ className: ' text-sm' }">分享</cl-text>
 					</view>
 				</view>
-				<cl-text v-else :pt="{ className: 'action-text text-primary-500' }">发送</cl-text>
+				<cl-text v-else :pt="{ className: 'action-text text-primary-500' }" @click="clickcommon">发送</cl-text>
 			</view>
+		</view>
+		<view class="content px-4 pb-10" v-else>
+			<cl-empty text="暂无数据"></cl-empty>
 		</view>
 	</cl-page>
 </template>
 
 <script setup>
 	import { router, isNull, parse } from "@/cool";
-	import { dispatchesinfo } from '@/cool/service/list'
+	import { dispatchesinfo, clickcomments, comments } from '@/cool/service/list'
 	import { useUi } from "@/uni_modules/cool-ui";
 	const ui = useUi();
 	const showAi = ref(false)
@@ -147,6 +156,18 @@
 		content ?: string;//新闻稿描述
 		created_at ?: string;
 	};
+	type typeauthor = {
+		id : number
+		avatar ?: string
+		username ?: string
+		nickname ?: string
+	}
+	type common = {
+		content : string;
+		author : typeauthor;
+		created_at : string;
+	}
+	const commonList = ref<common[]>([])
 	const getmessage = ref<dispathData>({}); // 
 	const aiMwnu = reactive<aiList[]>([
 		{
@@ -168,26 +189,7 @@
 			isFinish: false
 		}
 	])
-	type common = {
-		head_img : string;
-		nickname : string;
-		content : string;
-		time : string;
-	}
-	const commonList = ref<common[]>([
-		{
-			head_img: '/static/image/head-img.png',
-			nickname: '张三',
-			content: '怕高确实挣不到大钱，关键是有几个人知道高和低呢？',
-			time: '2023-05-01'
-		},
-		{
-			head_img: '/static/image/head-img.png',
-			nickname: '张三',
-			content: '怕高本质上就是怕回调，怕把已经到手的利润回吐出去，这里一方面是人性和心态上的问题，另一方面就是对标的价值理解不透。＂，解释得很透彻！',
-			time: '2023-05-01'
-		}
-	])
+
 	// 处理键盘事件
 	const input = ref("");
 	const inputBottom = ref(0)
@@ -198,24 +200,82 @@
 		isPubComment.value = false
 		inputBottom.value = 0
 	}
+	//获取评论列表
+	const getconmmon = () => {
+		comments({
+			commentable_type: 'dispatch',
+			commentable_id: dispathId.value
+		}).then(res => {
+			const result = parse<UTSJSONObject>(res)!
+			const getList = result.getArray('data')
+			if (getList != null) {
+				// 关键修复：解析为 common[] 而不是 common
+				const tempList : common[] = []
+				for (let i = 0; i < getList!!.length; i++) {
+					const subItem = getList!![i]
+					if (!(subItem instanceof UTSJSONObject)) continue
+					const itemContent = subItem.content as string
+					const itemCreatedat = subItem.created_at as string
+					const authorObj = subItem.get('author') as UTSJSONObject
+					tempList.push({
+						content: itemContent != null ? itemContent : "",
+						created_at: itemCreatedat != null ? itemCreatedat : "",
+						author: {
+							id: authorObj.get('id') as number,
+							avatar: authorObj.get('avatar') as string,
+							nickname: authorObj.get('nickname') as string
+						} as typeauthor
+					} as common)
+				}
+				commonList.value = tempList
+			}
+			// console.log("评论列表", commonList.value)
+
+		}).catch(err => {
+			ui.showToast({
+				message: "获取评论失败",
+			});
+		})
+	}
+	// 评论文章
+	const clickcommon = () => {
+		clickcomments({
+			commentable_type: "dispatch",
+			commentable_id: dispathId.value,
+			content: input.value
+		}).then(res => {
+			ui.showToast({
+				message: "评论成功",
+			});
+			getconmmon()
+			closePopup()
+		}).catch(err => {
+			ui.showToast({
+				message: "评论失败",
+			});
+		})
+	}
 	const share = () => {
 		// 分享功能实现
 		console.log("分享文章:");
 	};
-	//获取新闻稿详情
+
+	//获取快讯详情
 	const getdispatchesinfo = () => {
 		dispatchesinfo(dispathId.value, {}).then(res => {
 			console.log(res, "res")
 			getmessage.value = parse<dispathData>(res)!
+			getconmmon()
+			ui.hideLoading()
 		}).catch((err) => {
 			ui.showToast({
-				message: "获取详情失败",
+				message: "获取快讯失败",
 			});
 		})
 	}
 	onMounted(() => {
 		const params = router.params();
-		// ui.showLoading("加载中");
+		ui.showLoading("加载中");
 		if (!isNull(params)) {
 			dispathId.value = params.dispathId as number;
 		}

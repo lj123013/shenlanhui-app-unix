@@ -1,0 +1,86 @@
+<template>
+	<view class="px-5">
+		<view :class="index==0?'':'border'" class="company-item flex flex-row items-center py-4 ">
+			<!-- 公司头像 -->
+			<view class="avatar-wrapper mr-3">
+				<cl-image :src="item?.logo" width="88rpx" height="88rpx" mode="aspectFill">
+					<template #error>
+						<cl-text :pt="{className:'!text-sm text-gray-500'}">图片加载失败</cl-text>
+					</template></cl-image>
+			</view>
+
+			<!-- 公司信息 -->
+			<view class="company-info flex-1 mr-3">
+				<cl-text class="company-name" :pt="{
+					className: '!text-base font-medium text-gray-800 leading-5 mb-1'
+				}">
+					{{ item?.name }}
+				</cl-text>
+
+				<cl-text class="company-desc title-text" :pt="{
+					className:'!text-xs text-gray-500'
+				}">
+					{{ item?.description }}
+				</cl-text>
+			</view>
+
+			<!-- 关注按钮 -->
+			<view v-if="item?.is_followed == false"
+				class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full bg-primary-500">
+				<cl-text color="white" :pt="{
+					className: '!text-xs'
+				}">关注</cl-text>
+			</view>
+			<view v-if="item?.is_followed == true"
+				class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
+				style="background:#E6E6E6">
+				<cl-text color="white" :pt="{
+					className: '!text-xs'
+				}">已关注</cl-text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup>
+	import { isMp, router, useRefs, DayUts, formatTimeAgo } from "@/cool";
+	import { computed } from "vue";
+	import { parse } from "@/cool";
+	// 导入时间格式化工具
+	defineOptions({
+		name: "hot-company"
+	});
+
+	// 定义数据类型（注释形式）
+	type newsItem = {
+		id : number;
+		name : string;
+		logo : string
+		description ?: string
+		is_followed : boolean
+	};
+	const props = defineProps({
+		value: {
+			type: Object,
+			default: () => ({})
+		},
+		index: {
+			type: Number,
+			default: 0
+		}
+	});
+
+
+
+	const item = computed(() => parse<newsItem>(props.value));
+	// 处理点击事件
+	const emit = defineEmits(["item-click"]);
+	const onItemClick = () => {
+		emit("item-click", props.value);
+	};
+</script>
+<style>
+	.text {
+		@apply text-xs text-gray-300;
+	}
+</style>

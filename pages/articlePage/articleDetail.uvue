@@ -7,13 +7,13 @@
 		}">
 			<template #append>
 				<cl-icon name="zhuanfa1" color="black" :size="30" :pt="{ className: 'mr-3' }"
-					@tap="sharevisible=true"></cl-icon>
+					@tap="sharevisible = true"></cl-icon>
 			</template>
 		</cl-topbar>
-		<view class="content px-4 pb-10" v-if="getmessage.id">
-			<cl-text color="#2B2B2B" :pt="{ className: '!text-2xl fontBold' }">{{getmessage.title}}</cl-text>
+		<view class="content px-4 pb-20" v-if="getmessage.id">
+			<cl-text color="#2B2B2B" :pt="{ className: '!text-2xl fontBold' }">{{ getmessage.title }}</cl-text>
 			<!-- 文章才显示发布用户 -->
-			<view class="flex flex-row items-center justify-between" v-if="type=='文章'">
+			<view class="flex flex-row items-center justify-between" v-if="type == '文章'">
 				<view :span="13">
 					<view class="flex flex-row items-center mt-2">
 						<cl-avatar :src="getmessage.author.avatar" :size="50"
@@ -21,38 +21,38 @@
 						<view>
 							<view class="flex flex-row items-center">
 								<cl-text
-									:pt="{ className: '!text-sm mr-1 text-contrast-800' }">{{getmessage.author.username}}</cl-text>
+									:pt="{ className: '!text-sm mr-1 text-contrast-800' }">{{ getmessage.author.username }}</cl-text>
 								<cl-icon name="renzheng2" color="#FE0000" :size="16"></cl-icon>
 							</view>
 
 							<view class="flex flex-row items-center">
 								<cl-text color="#9C9C9C" :pt="{ className: '!text-xs mr-1' }">
-									{{getmessage.created_at}}</cl-text>
-								<cl-text color="#9C9C9C" v-if="getmessage.ip_location!=null"
-									:pt="{ className: '!text-xs' }">发布于{{getmessage?.ip_location}}</cl-text>
+									{{ getmessage.created_at }}</cl-text>
+								<cl-text color="#9C9C9C" v-if="getmessage.ip_location != null"
+									:pt="{ className: '!text-xs' }">发布于{{ getmessage?.ip_location }}</cl-text>
 							</view>
 						</view>
 					</view>
 				</view>
-				<view v-if="getmessage.is_following_author==false"
+				<view v-if="getmessage.is_following_author == false"
 					class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full bg-primary-500"
 					@click="followBtn">
 					<cl-text color="white" :pt="{
-							className: '!text-xs'
-						}">关注</cl-text>
+						className: '!text-xs'
+					}">关注</cl-text>
 				</view>
-				<view v-if="getmessage.is_following_author==true"
+				<view v-if="getmessage.is_following_author == true"
 					class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
 					style="background:#E6E6E6">
 					<cl-text color="white" :pt="{
-							className: '!text-xs'
-						}">已关注</cl-text>
+						className: '!text-xs'
+					}">已关注</cl-text>
 				</view>
 			</view>
 
 			<!-- 文章内容 -->
 			<!-- 有图片才显示图片 -->
-			<cl-image v-if="getmessage!!.cover_image!=null" :src="getmessage!!.cover_image" :width="'100%'"
+			<cl-image v-if="getmessage!!.cover_image != null" :src="getmessage!!.cover_image" :width="'100%'"
 				:height="'384rpx'" :pt="{ className: 'my-4 rounded-lg' }"></cl-image>
 			<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4 my-3"
 				@click="showAiInterpretation = !showAiInterpretation">
@@ -99,7 +99,7 @@
 								:src="value.icon"></cl-image>
 							<view>
 								<cl-text color="white" :pt="{ className: 'text-base fontBold' }">{{ value.title
-									}}</cl-text>
+								}}</cl-text>
 								<cl-text color="white" :pt="{ className: '!text-sm' }">{{ value.content }}</cl-text>
 							</view>
 						</view>
@@ -117,37 +117,38 @@
 			<rich-text mode="native" :nodes="getmessage.content" :selectable="true" class="rich-text-content">
 			</rich-text>
 			<!-- 评论 -->
-			<view class="py-5 px-4">
+			<view class="">
 				<cl-text color="black" :pt="{ className: '!text-lg' }">评论</cl-text>
 				<view>
 					<view v-for="(value, index) in commonList" class="flex flex-row items-start justify-between py-3"
 						:class="{
-								'border pt-3': index != 0
-							}">
+							'border pt-3': index != 0
+						}">
 						<cl-avatar :src="value.author.avatar" :size="50"
 							:pt="{ className: 'rounded-[10rpx]' }"></cl-avatar>
 						<view class="flex-1 ml-1">
 							<view class="flex flex-row items-center justify-between">
 								<cl-text color="#959595 " :pt="{ className: '!text-sm mr-1' }">{{
-										value.author.nickname
-									}}</cl-text>
+									value.author.nickname
+								}}</cl-text>
 
 								<l-dateformat class="text" :date="value?.created_at" format="yyyy-MM-dd" />
 
 							</view>
 							<cl-text color="black" :pt="{ className: '!text-sm' }">{{
-									value?.content
-								}}</cl-text>
+								value?.content
+							}}</cl-text>
 						</view>
 					</view>
-					<cl-empty v-if="commonList.length == 0" :fixed="false" text="暂无评论"></cl-empty>
+					<cl-empty v-if="commonList.length == 0" :fixed="false" text="暂无评论"
+						:pt="{className:'h-[200px]'}"></cl-empty>
 				</view>
 
 			</view>
 		</view>
 		<view class="content px-4 pb-10" v-else>
 			<cl-empty text="暂无数据"></cl-empty>
-		</view>	
+		</view>
 		<!-- 遮罩层 -->
 		<view style="height: 0" v-if="isPubComment">
 			<view class="mask" @touchmove.stop.prevent :class="isPubComment ? 'on' : ''" @click="closePopup">
@@ -156,9 +157,10 @@
 
 		<view class="footer-container" :style="{ bottom: inputBottom + 'px' }" v-if="getmessage.id">
 			<view class="input-section">
-				<cl-input v-model="input" :adjustPosition="false" :clearable='true' :border="false" :pt="{
-							className: '!bg-neutral-100 rounded-full pl-3'
-						}" placeholder="写评论"></cl-input>
+				<cl-input v-model="input" @confirm="clickcommon" :adjustPosition="false" :clearable='true'
+					:border="false" :pt="{
+					className: '!bg-neutral-100 rounded-full pl-3'
+				}" placeholder="写评论"></cl-input>
 			</view>
 			<view class="actions-section" v-if='!isPubComment'>
 				<view class="action-item">
@@ -169,7 +171,7 @@
 					<cl-icon name="a-shoucangdianji" :size="30" width="36rpx" color="#464646"></cl-icon>
 					<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">收藏</cl-text>
 				</view>
-				<view class="action-item" @tap="sharevisible=true">
+				<view class="action-item" @tap="sharevisible = true">
 					<cl-icon name="zhuanfa1" :size="28" color="#464646"></cl-icon>
 					<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">分享</cl-text>
 				</view>
@@ -290,6 +292,7 @@
 		uni.hideKeyboard()
 		isPubComment.value = false
 		inputBottom.value = 0
+		input.value = ""
 	}
 	onReady(() => {
 		uni.onKeyboardHeightChange((res) => {
@@ -303,6 +306,43 @@
 		})
 
 	});
+	//获取评论列表
+	const getconmmon = () => {
+		comments({
+			commentable_type: 'article',
+			commentable_id: articleId.value
+		}).then(res => {
+			const result = parse<UTSJSONObject>(res)!
+			const getList = result.getArray('data')
+			if (getList != null) {
+				// 关键修复：解析为 common[] 而不是 common
+				const tempList : common[] = []
+				for (let i = 0; i < getList!!.length; i++) {
+					const subItem = getList!![i]
+					if (!(subItem instanceof UTSJSONObject)) continue
+					const itemContent = subItem.content as string
+					const itemCreatedat = subItem.created_at as string
+					const authorObj = subItem.get('author') as UTSJSONObject
+					tempList.push({
+						content: itemContent != null ? itemContent : "",
+						created_at: itemCreatedat != null ? itemCreatedat : "",
+						author: {
+							id: authorObj.get('id') as number,
+							avatar: authorObj.get('avatar') as string,
+							nickname: authorObj.get('nickname') as string
+						} as typeauthor
+					} as common)
+				}
+				commonList.value = tempList
+			}
+			// console.log("评论列表", commonList.value)
+
+		}).catch(err => {
+			ui.showToast({
+				message: "获取评论失败",
+			});
+		})
+	}
 	//获取新闻稿详情
 	const getNewsdata = () => {
 		newsinfo(articleId.value, {}).then(res => {
@@ -314,15 +354,17 @@
 		})
 	}
 	// 获取文章详情
-	const getarticledata = () => {
-		articleinfo(articleId.value, {}).then(res => {
+	const getarticledata = async () => {
+		try {
+			const res = await articleinfo(articleId.value, {})
 			ui.hideLoading()
 			getmessage.value = parse<ArticleData>(res)!
-		}).catch((err) => {
+			await getconmmon() // 等待评论获取完成
+		} catch (err) {
 			ui.showToast({
 				message: "获取详情失败",
 			});
-		})
+		}
 	}
 	// 关注用户
 	const followBtn = () => {
@@ -342,43 +384,19 @@
 			commentable_type: "article",
 			commentable_id: articleId.value,
 			content: input.value
-
 		}).then(res => {
-			// getconmmon()
 			ui.showToast({
 				message: "评论成功",
-
 			});
+			getconmmon()
+			closePopup()
 		}).catch(err => {
 			ui.showToast({
 				message: "评论失败",
 			});
 		})
 	}
-	//获取评论列表
-	const getconmmon = () => {
-		comments({
-			commentable_type: 'article',
-			commentable_id: articleId.value
-		}).then(res => {
-			const result = parse<UTSJSONObject>(res)!
-			console.log(result.data, "res")
-			const getList = result.data
-			console.log(getList, "getList")
-			if (isArray(getList)) {
-				// 关键修复：解析为 common[] 而不是 common
-				// for (let i = 0; i<getList!!.length ;i++) {
-				// 	const subItem = getList!![i]
-				// }
-				commonList.value = parse<common[]>(getList)!
-			}
 
-		}).catch(err => {
-			ui.showToast({
-				message: "获取评论失败",
-			});
-		})
-	}
 	// 页面加载时获取路由参数
 	onMounted(() => {
 		const params = router.params();
@@ -392,7 +410,7 @@
 				getNewsdata()
 			} else {
 				getarticledata()
-				getconmmon()
+
 			}
 
 		}
@@ -509,6 +527,6 @@
 	}
 
 	.text {
-		@apply text-xs text-gray-100;
+		@apply text-xs text-gray-300;
 	}
 </style>

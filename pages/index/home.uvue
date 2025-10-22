@@ -20,7 +20,7 @@
 				</view>
 
 				<view class="rounded-xl hot py-1 px-2 border-gray-200 flex flex-row items-center justify-center"
-					@click="clickhotPage">
+					@click="router.to('/pages/homePage/hotPage')">
 					<cl-icon name="yushouhuore" color="#E82A2A" :size="24"></cl-icon>
 					<cl-text class="text-black ml-1">热榜</cl-text>
 				</view>
@@ -128,21 +128,20 @@
 				<!-- 快讯列表 -->
 				<view class="dispath flex flex-row items-start justify-between pt-3"
 					v-for="(item, index) in daspathList" :key="item.id" @click="toPathDispath(item)">
-					<!-- <l-text-ellipsis class="flex-1" :rows="2"  :content="item.content" ></l-text-ellipsis> -->
 					<view class="flex flex-row items-center dispath-left mr-2">
 						<view class="w-3 h-3 rounded-full bg-red-200 flex flex-col items-center justify-center mr-1">
 							<view class="bg-red w-1 h-1 rounded-full"></view>
 						</view>
-						<cl-text color="#cbcbcb">15:30</cl-text>
+						<l-dateformat style="color:#cbcbcb" :date="item?.created_at" format="hh:mm" />
 					</view>
 					<cl-text ellipsis :lines="2" class=" flex-1" color="#313131" :pt="{
 							className: '!text-base'
-						}">{{item.content}}</cl-text>
+						}">{{item.title}}</cl-text>
 				</view>
 				<!-- 大家都在看 -->
 				<view class="reading mt-4">
 					<view class="flex flex-row items-center">
-						<cl-text  :pt="{
+						<cl-text :pt="{
 								className: '!text-xl fontBold !text-primary-500'
 							}">大家</cl-text>
 						<cl-text color="black" :pt="{
@@ -173,7 +172,7 @@
 									<cl-text color="#707070" :pt="{
 										className:'!text-base'
 									}" class="elipsis">{{
-											child.content
+											child.title
 										}}</cl-text>
 								</view>
 							</view>
@@ -195,49 +194,47 @@
 						</view>
 						<scroll-view class="scroll-view_H pt-3" direction="horizontal" :show-scrollbar="false">
 							<view v-for="item in activeUsersList" @click="toPathuser(item)"
-								class="scroll-user-item flex flex-col items-center justify-center">
+								class="scroll-user-item flex flex-col items-center justify-center w-[60px]">
 								<cl-image :width="60" :height="60" :pt="{
 							inner: {
 								className: '!rounded-2xl'
 							}
-						}" :src="item.head_img"></cl-image>
-								<cl-text :pt="{ className: '!text-xs' }">{{
+						}" :src="item.avatar"></cl-image>
+								<cl-text ellipsis :pt="{ className: '!text-xs' }">{{
 								item.username
 							}}</cl-text>
 							</view>
 						</scroll-view>
 					</view>
 				</view>
-				<!-- 推荐阅读 -->
-				<view class="recommended mt-4">
-					<view class="flex flex-row items-center">
-						<cl-text  :pt="{
-								className: '!text-xl fontBold !text-primary-500'
-							}">推荐</cl-text>
-						<cl-text color="black" :pt="{
-								className: '!text-xl fontBold'
-							}">阅读</cl-text>
-					</view>
-					<view class="flex flex-row items-center justify-between pt-5" v-for="item in recommenList"
-						:key="item.id" @click="toPathDetil(item)">
-						<view class="flex-1 mr-2">
-							<cl-text ellipsis :lines="2" color="#313131" :pt="{
-									className: 'istopItem mb-2'
-								}">{{ item.title }}</cl-text>
-							<view class="flex flex-row items-center">
-								<cl-text color="" :pt="{
-										className: '!text-xs font-bold mr-1 text-gray-300'
-									}">{{ item.author }}</cl-text>
-								<cl-text :pt="{
-										className: '!text-xs text-gray-300'
-									}">{{ item.acreat_time }}1111</cl-text>
-							</view>
-						</view>
-
-						<cl-image class="tuijinimg" :src="item.cover_url"></cl-image>
-					</view>
-				</view>
 			</view>
+		</view>
+		<!-- 推荐阅读 -->
+		<view class="recommended mt-4">
+			<view class="flex flex-row items-center px-5">
+				<cl-text :pt="{
+							className: '!text-xl fontBold !text-primary-500'
+						}">推荐</cl-text>
+				<cl-text color="black" :pt="{
+							className: '!text-xl fontBold'
+						}">阅读</cl-text>
+			</view>
+			<!-- 文章列表 -->
+			<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
+						refresher: {
+							className: 'pt-3'
+						}
+					}" :refresher-enabled="false" @bottom="loadMore">
+				<template #item="{ value, index }">
+					<article-item :value="value" :index="index" @item-click="articleClick"></article-item>
+				</template>
+
+				<template #bottom>
+					<view class="py-3">
+						<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+					</view>
+				</template>
+			</cl-list-view>
 
 		</view>
 		<!-- 自定义底部导航栏 -->
@@ -246,12 +243,14 @@
 </template>
 
 <script lang="ts" setup>
-	import { isNull, isAppIOS } from "@/cool";
+	import { isNull, isAppIOS, parse, isArray, usePager } from "@/cool";
 	import { isMp, router, useRefs } from "@/cool";
 	import { t } from "@/locale";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import { ref, computed } from "vue";
 	import Tabbar from "@/components/tabbar.uvue";
+	import articleItem from "@/pages/articlePage/articleItem.uvue";
+	import { hotUser, articles, hotcompany, dispatches } from "@/cool/service/list"
 	const ui = useUi();
 	const refs = useRefs();
 	// 头条列表
@@ -398,31 +397,11 @@
 	});
 	// 快讯列表
 	type FlashNews = {
-		content : string;
+		title : string;
 		id : number;
-		create_time : number;
+		created_at : string;
 	};
-	const daspathList = computed<FlashNews[]>(() => {
-		return [
-			{
-				content: t(
-					"鑫源智造公告，2025年上半年营业收入3.29亿元，同比增长388.33%。净利润978.7万元，同比增长"
-				),
-				id: 1,
-				create_time: 1756281064
-			},
-			{
-				content: t("英国2年期国债收益率触及6月9日以来最高水平，报3.999%，日内上涨约3个基点。"),
-				id: 2,
-				create_time: 1756281064
-			},
-			{
-				content: t("匈牙利和斯洛伐克呼吁欧盟委员会确保能源供应安全。"),
-				id: 3,
-				create_time: 1756281064
-			}
-		];
-	});
+	const daspathList = ref<FlashNews[]>([]);
 	// 热门文章列表
 	type hotArticle = {
 		title : string;
@@ -432,98 +411,26 @@
 	type hotArticleItem = {
 		id : number;
 		title : string;
-		content : string;
 	};
-	const hotList = computed<hotArticle[]>(() => {
-		return [
-			{
-				title: t("热门文章"),
-				id: 1,
-				children: [
-					{ id: 1, title: t("腾讯控股"), content: t("游戏业务增长强劲，云服务持续扩张") },
-					{ id: 2, title: t("阿里巴巴"), content: t("电商平台稳定增长，AI技术投入加大") },
-					{ id: 3, title: t("比亚迪"), content: t("新能源汽车销量创新高，海外市场拓展") },
-					{ id: 4, title: t("宁德时代"), content: t("动力电池技术突破，产能持续释放") },
-					{ id: 5, title: t("美团"), content: t("本地生活服务持续增长，新业务布局") }
-				]
-			},
-			{
-				title: t("热门公司"),
-				id: 2,
-				children: [
-					{ id: 1, title: t("腾讯控股"), content: t("游戏业务增长强劲，云服务持续扩张") },
-					{ id: 2, title: t("阿里巴巴"), content: t("电商平台稳定增长，AI技术投入加大") },
-					{ id: 3, title: t("比亚迪"), content: t("新能源汽车销量创新高，海外市场拓展") },
-					{ id: 4, title: t("宁德时代"), content: t("动力电池技术突破，产能持续释放") },
-					{ id: 5, title: t("美团"), content: t("本地生活服务持续增长，新业务布局") }
-				]
-			}
-		];
-	});
+	const hotList = ref<hotArticle[]>([
+		{
+			title: t("热门文章"),
+			id: 1,
+			children: []
+		},
+		{
+			title: t("热门公司"),
+			id: 2,
+			children: []
+		}
+	]);
 	// 活跃用户列表
 	type userList = {
-		head_img : string;
+		avatar : string;
 		username : string;
 		id : number;
 	};
-	const activeUsersList = ref<userList[]>([
-		{
-			head_img: t(
-				"https://cdn.caitongnews.com/images/2020-02-25/5e54df5ae75a1.png?imageMogr2/auto-orient/thumbnail/100x100"
-			),
-			username: t("易简财经"),
-			id: 1
-		},
-		{
-			head_img: t(
-				"https://cdn.caitongnews.com/images/2022/02/18/620fbb36b20b5.jpeg?imageMogr2/auto-orient/thumbnail/100x100"
-			),
-			username: t("金角财经"),
-			id: 2
-		},
-		{
-			head_img: t(
-				"https://cdn.caitongnews.com/images/2020-02-27/5e576233be005.jpg?imageMogr2/auto-orient/thumbnail/100x100"
-			),
-			username: t("面包财经"),
-			id: 1
-		},
-		{
-			head_img: t(
-				"https://cdn.caitongnews.com/images/2020-02-27/5e577c0bce342.jpg?imageMogr2/auto-orient/thumbnail/100x100"
-			),
-			username: t("看财经"),
-			id: 1
-		},
-		{
-			head_img: t(
-				"https://cdn.caitongnews.com/images/2020-02-27/5e578d45f04e8.jpg?imageMogr2/auto-orient/thumbnail/100x100"
-			),
-			username: t("基岩资本"),
-			id: 1
-		},
-		{
-			head_img: t(
-				"https://img.shenlanhui.com/app/2024/202409/23/202409231727070389.7228362220936.jpg?imageMogr2/auto-orient/thumbnail/100x100"
-			),
-			username: t("愉见财经"),
-			id: 1
-		},
-		{
-			head_img: t(
-				"https://cdn.caitongnews.com/images/2020-02-28/5e590bc85370c.jpg?imageMogr2/auto-orient/thumbnail/100x100"
-			),
-			username: t("富凯财经"),
-			id: 1
-		},
-		{
-			head_img: t(
-				"https://cdn.caitongnews.com/images/2020-02-25/5e54df5ae75a1.png?imageMogr2/auto-orient/thumbnail/100x100"
-			),
-			username: t("易简财经"),
-			id: 1
-		}
-	]);
+	const activeUsersList = ref<userList[]>([]);
 	type recom = {
 		title : string;
 		author : string;
@@ -549,10 +456,6 @@
 	]);
 
 	// 跳转页面
-	//热榜点击事件
-	const clickhotPage = () => {
-		router.to('/pages/homePage/hotPage')
-	}
 	// 雷达
 	const onItemClick = (item : radarList) => {
 		console.log('点击文章项:', item);
@@ -562,6 +465,17 @@
 				id: item.id,
 				title: '新希望'
 
+			}
+		});
+	};
+	// 处理文章项点击事件
+	const articleClick = (item : UTSJSONObject) => {
+		console.log('点击文章项:', item.id);
+		router.push({
+			path: '/pages/articlePage/articleDetail',
+			params: {
+				articleId: item.id,
+				title: '文章'
 			}
 		});
 	};
@@ -644,14 +558,165 @@
 				return "#ACACAC"; // 其他
 		}
 	}
-
-	function setLocale() {
-		refs.open("localeSet");
+	//获取活跃用户
+	const gethotUser = () => {
+		hotUser({}).then(res => {
+			const result = parse<UTSJSONObject>(res)!
+			const userlist : userList[] = []
+			const subItems = result.getArray('users')
+			if (subItems != null) {
+				for (let i = 0; i < subItems!!.length; i++) {
+					const subItem = subItems!![i]
+					if (!(subItem instanceof UTSJSONObject)) continue
+					const itemId = subItem.id as number
+					const itemusername = subItem.username as string
+					const itemavatar = subItem.avatar as string
+					userlist.push({
+						id: itemId,
+						username: itemusername,
+						avatar: itemavatar
+					} as userList)
+				}
+				activeUsersList.value = userlist
+			}
+		}).catch(err => {
+			ui.showToast({
+				message: "获取活跃用户失败"
+			})
+		})
 	}
-
-	function setSize() {
-		refs.open("sizeSet");
+	//获取热门文章
+	const gethotarticle = () => {
+		articles({
+			status: "published",
+			per_page: 5,
+			sort: "popular"
+		}).then(res => {
+			const result = parse<UTSJSONObject>(res)!
+			const articlelist : hotArticleItem[] = []
+			const articleItems = result.getArray('data')
+			if (articleItems != null) {
+				for (let i = 0; i < articleItems!!.length; i++) {
+					const articleItem = articleItems!![i]
+					if (!(articleItem instanceof UTSJSONObject)) continue
+					const articleId = articleItem.id as number
+					const articletitle = articleItem.title as string
+					articlelist.push({
+						id: articleId,
+						title: articletitle
+					} as hotArticleItem)
+				}
+				hotList.value[0].children = articlelist
+				// console.log("获取热门文章", hotList.value[0].children)
+			}
+		}).catch(err => {
+			ui.showToast({
+				message: "获取热门文章失败"
+			})
+		})
 	}
+	// 热门公司
+	const getCompany = () => {
+		hotcompany({}).then(res => {
+			const companyResult = parse<UTSJSONObject>(res)!
+			const companylist : hotArticleItem[] = []
+			const companyItems = companyResult.getArray('companies')
+			if (companyItems != null) {
+				for (let i = 0; i < 5; i++) {
+					const companyItem = companyItems!![i]
+					if (!(companyItem instanceof UTSJSONObject)) continue
+					const companyId = companyItem.id as number
+					const companytitle = companyItem.name as string
+					companylist.push({
+						id: companyId,
+						title: companytitle
+					} as hotArticleItem)
+				}
+				hotList.value[1].children = companylist
+				// console.log("获取热门文章", hotList.value[0].children)
+			}
+		}).catch(err => {
+			ui.showToast({
+				message: "获取热门公司失败"
+			})
+		})
+	}
+	//获取重要快讯
+	const getdispath = () => {
+		dispatches({
+			status: 'published',
+			is_major: 1,//1是true,false：0
+			per_page: 3,
+			sort: 'latest'
+
+		}).then(res => {
+			const dispathResult = parse<UTSJSONObject>(res)!
+			const dispathlist : FlashNews[] = []
+			const dispathItems = dispathResult.getArray('data')
+			if (dispathItems != null) {
+				for (let i = 0; i < dispathItems!!.length; i++) {
+					const dispathItem = dispathItems!![i]
+					if (!(dispathItem instanceof UTSJSONObject)) continue
+					const dispathId = dispathItem.id as number
+					const dispathtitle = dispathItem.title as string
+					const dispathcreatetime = dispathItem.created_at as string
+					dispathlist.push({
+						id: dispathId,
+						title: dispathtitle,
+						created_at: dispathcreatetime
+					} as FlashNews)
+				}
+				daspathList.value = dispathlist
+			}
+		}).catch(err => {
+			ui.showToast({
+				message: "获取快讯失败"
+			})
+		})
+	}
+	//获取推荐阅读
+	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
+	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
+		articles({
+			page: params["page"],
+			per_page: params["size"],
+			status: "published",
+			sort: "recommend",
+			exclude_read: 0
+		}).then(res => {
+			ui.hideLoading()
+			if (res != null) {
+				console.log(res)
+				const result = parse<UTSJSONObject>(res)!
+				console.log(result, "result")
+				render({
+					list: result.data,
+					pagination: {
+						page: params["page"],
+						size: params["size"],
+						total: result.total
+
+					}
+
+				});
+
+
+			}
+
+		})
+
+	});
+	onReady(() => {
+		// ui.showLoading(t("加载中"));
+		// 默认请求
+		refresh({});
+	});
+	onMounted(() => {
+		gethotUser()
+		gethotarticle()
+		getCompany()
+		getdispath()
+	})
 </script>
 
 <style lang="scss" scoped>

@@ -14,22 +14,28 @@
 		</view>
 		<view class="content bg-white">
 			<cl-tabs v-model="current" :list="tagList" fill :showLine="false" :color="isColor ? '#2854F2' : ''"
-				:un-color="isColor ? '#848484' : ''"></cl-tabs>
-			<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
+				:un-color="isColor ? '#848484' : ''" @change="changetag"></cl-tabs>
+			<scroll-view class="hot-reading-list" scroll-y="true" :show-scrollbar="false" :enable-back-to-top="true">
+				<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
 						refresher: {
 							className: 'pt-3'
 						}
-					}" :refresher-enabled="true" @pull="onPull" @bottom="loadMore">
-				<template #item="{ value, index }">
-					<hot-article :value="value" :index="index" @item-click="onItemClick"></hot-article>
-				</template>
+					}" @bottom="loadMore">
+					<template #item="{ value, index }">
+						<hot-article v-if="current==0" :value="value" :index="index"
+							@item-click="onItemClick"></hot-article>
+						<hot-company v-else-if="current==1" :value="value" :index="index"></hot-company>
+						<hot-useritem v-else-if="current==2" :value="value" :index="index"
+							@item-click="onItemClickUser"></hot-useritem>
+					</template>
 
-				<template #bottom>
-					<view class="py-3">
-						<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
-					</view>
-				</template>
-			</cl-list-view>
+					<template #bottom>
+						<view class="py-3">
+							<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+						</view>
+					</template>
+				</cl-list-view>
+			</scroll-view>
 		</view>
 	</cl-page>
 
@@ -43,9 +49,11 @@
 	import Tabbar from "@/components/tabbar.uvue";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import hotArticle from "../homePage/components/hot-article.uvue";
+	import hotCompany from "../homePage/components/hot-company.uvue";
+	import hotUseritem from "../homePage/components/hot-useritem.uvue";
 	import type { ClTabsItem, ClListItem } from "@/uni_modules/cool-ui/types/index";
 	import { t } from "@/locale";
-	import { articles } from '@/cool/service/list'
+	import { articles, hotcompany, hotUser } from '@/cool/service/list'
 	const ui = useUi();
 	// 标签滑块模块
 	const current = ref(0);
@@ -64,6 +72,12 @@
 			value: 2,
 		},
 	]);
+	const changetag = (value : string | number) => {
+		// console.log('选中的标签值:', value)
+		current.value = value as number
+		// refresh({});
+	}
+
 	const onItemClick = (item : UTSJSONObject) => {
 		router.push({
 			path: '/pages/articlePage/articleDetail',
@@ -73,46 +87,91 @@
 			}
 		});
 	};
-	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
-
-	let id = 0;
-	type pageList = {
-		page : string
-		size : string
-		total : number
-	}
-	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
-		articles({
-			page: params["page"],
-			per_page: params["size"],
-			status: "published",
-			sort: "popular",
-		}).then(res => {
-			ui.hideLoading()
-			if (res != null) {
-				const result = parse<UTSJSONObject>(res)!
-				render({
-					list: result.data,
-					pagination: {
-						page: params["page"],
-						size: params["size"],
-						total: result.total
-
-					}
-
-				});
-
-
+	const onItemClickUser = (item : UTSJSONObject) => {
+		router.push({
+			path: '/pages/user/userinfo',
+			params: {
+				userId: item.id,
 			}
+		});
+	}
+	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
+	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
+		if (current.value == 0) {
+			articles({
+				page: params["page"],
+				per_page: params["size"],
+				status: "published",
+				sort: "popular",
+			}).then(res => {
+				ui.hideLoading()
+				if (res != null) {
+					const result = parse<UTSJSONObject>(res)!
+					render({
+						list: result.data,
+						pagination: {
+							page: params["page"],
+							size: params["size"],
+							total: result.total
 
-		})
+						}
+
+					});
+				}
+
+			})
+		} else if (current.value == 1) {
+			hotcompany({}).then(res => {
+				ui.hideLoading()
+				if (res != null) {
+					const result = parse<UTSJSONObject>(res)!
+					render({
+						list: result.companies,
+						pagination: {
+							page: params["page"],
+							size: params["size"],
+							total: result.total
+
+						}
+
+					});
+
+
+				}
+
+			})
+		} else if (current.value == 2) {
+			hotUser({}).then(res => {
+				ui.hideLoading()
+				if (res != null) {
+					const result = parse<UTSJSONObject>(res)!
+					render({
+						list: result.users,
+						pagination: {
+							page: params["page"],
+							size: params["size"],
+							total: result.total
+
+						}
+
+					});
+
+
+				}
+
+			})
+		}
+
 
 	});
-	async function onPull() {
-		await refresh({ page: 1 });
-		listViewRef.value!.stopRefresh();
-	}
+	watch(current, (newVal : number, oldVal : number) => {
+		if (newVal !== oldVal) {
+			ui.showLoading(t("加载中"));
+			refresh({ page: 1 });
+		}
 
+
+	})
 	onReady(() => {
 		ui.showLoading(t("加载中"));
 		// 默认请求
@@ -121,7 +180,10 @@
 	onMounted(() => {
 		const params = router.params();
 		console.log(params, '获取数据')
-		current.value = params.index as number
+		if (!isNull(params.index)) {
+			current.value = params.index as number
+		}
+
 	})
 </script>
 

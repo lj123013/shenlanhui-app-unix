@@ -1,6 +1,6 @@
 <template>
 	<view class="px-5">
-		<view class="w-full flex flex-row items-start justify-between py-4" :class="index == 0 ? '' : 'border'"
+		<view class="w-full flex flex-row items-start justify-between py-4 border-bottom" 
 			@click="onItemClick">
 			<view class="flex-1 mr-2">
 				<cl-text color="black" :pt="{

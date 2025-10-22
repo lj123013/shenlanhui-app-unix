@@ -1,5 +1,5 @@
 <template>
-	<cl-page :backTop="true"  safe-area>
+	<cl-page :backTop="true" safe-area>
 		<!-- 固定导航栏（滚动后显示） -->
 		<view class="fixed-navbar" :class="{ show: showNavbar }">
 			<cl-topbar safe-area-top color='black' background-color="white" :pt="{
@@ -93,7 +93,7 @@
 								</view>
 
 							</view>
-							<cl-icon name="arrow-right-s-line" color="white" ></cl-icon>
+							<cl-icon name="arrow-right-s-line" color="white"></cl-icon>
 						</view>
 
 					</view>
@@ -229,330 +229,338 @@
 			:pt="{ className: 'rounded-t-2xl' }">
 			<view class="p-4">
 				<view class="py-4 flex flex-row items-center" v-for="value in popupList">
-				<cl-icon :name="value.icon" color="#AEAEAE" :size="36" :pt="{ className: 'mr-2' }"></cl-icon>
-				<cl-text color="#636363" :pt="{ className: '!text-base' }">{{ value.text }}</cl-text>
-			</view>
-			<view class="borderh10 pt-4" @tap="close">
-				<cl-text color="#6D6D6D" :pt="{ className: 'text-center' }">取消</cl-text>
-			</view>
+					<cl-icon :name="value.icon" color="#AEAEAE" :size="36" :pt="{ className: 'mr-2' }"></cl-icon>
+					<cl-text color="#636363" :pt="{ className: '!text-base' }">{{ value.text }}</cl-text>
+				</view>
+				<view class="borderh10 pt-4" @tap="close">
+					<cl-text color="#6D6D6D" :pt="{ className: 'text-center' }">取消</cl-text>
+				</view>
 			</view>
 		</cl-popup>
 	</cl-page>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue';
-import { useUi, usePage } from "@/uni_modules/cool-ui";
-import { t } from "@/locale";
-import type { ClTabsItem } from "@/uni_modules/cool-ui";
-const ui = useUi();
-const { onScroll } = usePage();
-const val = ref("1");
-const isColor = ref(true);
-const showNavbar = ref(false);
-const userRenzheng = ref(false)//用户认证信息
-const visible = ref(false);//列表弹出框
-// 打开弹框
-function open() {
-	visible.value = true;
-}
-// 关闭弹框
-function close() {
-	visible.value = false;
-}
-// 弹出层数据
-type popupItem = {
-	icon: string;
-	text: string;
-};
-const popupList = ref<popupItem[]>([
-	{
-		icon: 'shibai',
-		text: '不感兴趣此条内容'
-	},
-	{
-		icon: 'jubao',
-		text: '屏蔽此用户'
-	},
-	{
-		icon: 'a-zu2541',
-		text: '投诉内容'
+	import { computed, ref, onMounted, onUnmounted } from 'vue';
+	import { useUi, usePage } from "@/uni_modules/cool-ui";
+	import { t } from "@/locale";
+	import type { ClTabsItem } from "@/uni_modules/cool-ui";
+	import { router ,isNull} from "@/cool";
+	const ui = useUi();
+	const { onScroll } = usePage();
+	const val = ref("1");
+	const isColor = ref(true);
+	const showNavbar = ref(false);
+	const userRenzheng = ref(false)//用户认证信息
+	const visible = ref(false);//列表弹出框
+	// 打开弹框
+	function open() {
+		visible.value = true;
 	}
-]);
-type UserInfoType = {
-	username: string;
-	avatarUrl: string;
-	is_auth: number;
-	isFollow: boolean,
-};
-
-// 创建响应式的用户信息数据
-const UserInfo = ref<UserInfoType>({
-	username: 'steven',
-	avatarUrl: '../../static/image/head-img.png',
-	is_auth: 2,
-	isFollow: false
-});
-
-const tabbar = ref<ClTabsItem[]>([
-	{
-		label: "全部",
-		value: "1",
-	},
-	{
-		label: "长文",
-		value: "2",
-	},
-	{
-		label: "讨论",
-		value: "3",
-	},
-	{
-		label: "图库",
-		value: "4",
-	},
-]);
-type ImageItem = {
-	url: string,
-}
-
-type ListItem = {
-	image: string,
-	title?: string,
-	username: string,
-	content: string,
-	time: string,
-	like: number,
-	comment: number,
-	isLike: boolean,
-	imageList?: ImageItem[],
-}
-const allList = computed<ListItem[]>(() => [
-	{
-		image: t('../../static/image/head-img.png'),
-		username: t('传媒见闻'),
-		title: t(""),
-		content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-		time: t("05-09-01"),
-		like: 2,
-		comment: 1,
-		isLike: true,
-		imageList: [],
-	},
-	{
-		image: t('../../static/image/head-img.png'),
-		username: t('传媒见闻'),
-		title: t('造谣阿里采购寒武纪 15 万片 GPU,背后的深科技号称中国人工智能主媒体，证监会应该出手了！'),
-		content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-		time: t("05-09-01"),
-		like: 2,
-		comment: 1,
-		isLike: false,
-		imageList: [],
-	},
-	{
-		image: t('../../static/image/head-img.png'),
-		username: t('传媒见闻'),
-		title: t(""),
-		content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-		time: t("05-09-01"),
-		like: 2,
-		comment: 1,
-		isLike: false,
-		imageList: [{
-			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
-		}],
-	},
-	{
-		image: t('../../static/image/head-img.png'),
-		username: t('传媒见闻'),
-		title: t(""),
-		content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-		time: t("05-09-01"),
-		like: 2,
-		comment: 1,
-		isLike: false,
-		imageList: [{
-			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
-		},
-		{
-			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
-		}],
-	},
-	{
-		image: t('../../static/image/head-img.png'),
-		username: t('传媒见闻'),
-		title: t(""),
-		content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-		time: t("05-09-01"),
-		like: 2,
-		comment: 1,
-		isLike: false,
-		imageList: [{
-			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
-		},
-		{
-			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
-		},
-		{
-			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
-		}],
-	},
-	// 测试四张图片（应该只显示前三张）
-	{
-		image: t('../../static/image/head-img.png'),
-		username: t('传媒见闻'),
-		title: t('测试四张图片显示'),
-		content: t('这里有四张图片，但只会显示前三张，并且每张图片的宽度为210rpx。'),
-		time: t("05-09-02"),
-		like: 5,
-		comment: 3,
-		isLike: true,
-		imageList: [{
-			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
-		},
-		{
-			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
-		},
-		{
-			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
-		},
-		{
-			url: "https://unix.cool-js.com/images/demo/avatar.jpg",
-		}],
-	},
-])
-type iconitem = {
-	icon: string,
-	text: string
-}
-const operationList = ref<iconitem[]>([
-	{
-		icon: 'zhuanfa',
-		text: '分享'
-	},
-	{
-		icon: 'a-pinglun1',
-		text: '评论'
-	},
-	{
-		icon: 'dianzan',
-		text: '点赞'
+	// 关闭弹框
+	function close() {
+		visible.value = false;
 	}
-])
-// 行业类型定义
-const areaList = ref<string[]>([
-	'环保行业', '金融行业', '科技行业', '教育行业', '医疗行业', '汽车行业', '房地产', '文化传媒', '旅游行业', '餐饮行业', '体育行业', '其他'
-]);
-function share() {
-	ui.showToast({
-		message: t("该功能正在开发中")
-	});
-}
-
-
-// 根据图片数量获取图片宽度
-function getImageWidth(imageCount: number): string {
-	// 限制最多显示3张图片
-	const count = Math.min(imageCount, 3);
-
-	if (count === 1) {
-		return '384rpx';
-	} else if (count === 2) {
-		return '268rpx';
-	} else {
-		return '210rpx';
-	}
-}
-
-// 根据图片数量和索引获取图片样式类
-function getImageClass(imageCount: number, index: number): string {
-	const count = Math.min(imageCount, 3);
-	let classes = ['mb-2'];
-
-	// 根据图片数量添加右边距
-	if (count === 2) {
-		// 两张图片时，第一张添加右边距
-		if (index === 0) {
-			classes.push('mr-2');
+	const userId = ref(0)
+	// 弹出层数据
+	type popupItem = {
+		icon : string;
+		text : string;
+	};
+	const popupList = ref<popupItem[]>([
+		{
+			icon: 'shibai',
+			text: '不感兴趣此条内容'
+		},
+		{
+			icon: 'jubao',
+			text: '屏蔽此用户'
+		},
+		{
+			icon: 'a-zu2541',
+			text: '投诉内容'
 		}
-	} else if (count === 3) {
-		// 三张图片时，前两张添加右边距
-		if (index < 2) {
-			classes.push('mr-2');
+	]);
+	type UserInfoType = {
+		username : string;
+		avatarUrl : string;
+		is_auth : number;
+		isFollow : boolean,
+	};
+
+	// 创建响应式的用户信息数据
+	const UserInfo = ref<UserInfoType>({
+		username: 'steven',
+		avatarUrl: '../../static/image/head-img.png',
+		is_auth: 2,
+		isFollow: false
+	});
+
+	const tabbar = ref<ClTabsItem[]>([
+		{
+			label: "全部",
+			value: "1",
+		},
+		{
+			label: "长文",
+			value: "2",
+		},
+		{
+			label: "讨论",
+			value: "3",
+		},
+		{
+			label: "图库",
+			value: "4",
+		},
+	]);
+	type ImageItem = {
+		url : string,
+	}
+
+	type ListItem = {
+		image : string,
+		title ?: string,
+		username : string,
+		content : string,
+		time : string,
+		like : number,
+		comment : number,
+		isLike : boolean,
+		imageList ?: ImageItem[],
+	}
+	const allList = computed<ListItem[]>(() => [
+		{
+			image: t('../../static/image/head-img.png'),
+			username: t('传媒见闻'),
+			title: t(""),
+			content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+			time: t("05-09-01"),
+			like: 2,
+			comment: 1,
+			isLike: true,
+			imageList: [],
+		},
+		{
+			image: t('../../static/image/head-img.png'),
+			username: t('传媒见闻'),
+			title: t('造谣阿里采购寒武纪 15 万片 GPU,背后的深科技号称中国人工智能主媒体，证监会应该出手了！'),
+			content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+			time: t("05-09-01"),
+			like: 2,
+			comment: 1,
+			isLike: false,
+			imageList: [],
+		},
+		{
+			image: t('../../static/image/head-img.png'),
+			username: t('传媒见闻'),
+			title: t(""),
+			content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+			time: t("05-09-01"),
+			like: 2,
+			comment: 1,
+			isLike: false,
+			imageList: [{
+				url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+			}],
+		},
+		{
+			image: t('../../static/image/head-img.png'),
+			username: t('传媒见闻'),
+			title: t(""),
+			content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+			time: t("05-09-01"),
+			like: 2,
+			comment: 1,
+			isLike: false,
+			imageList: [{
+				url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+			},
+			{
+				url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+			}],
+		},
+		{
+			image: t('../../static/image/head-img.png'),
+			username: t('传媒见闻'),
+			title: t(""),
+			content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
+			time: t("05-09-01"),
+			like: 2,
+			comment: 1,
+			isLike: false,
+			imageList: [{
+				url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+			},
+			{
+				url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+			},
+			{
+				url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+			}],
+		},
+		// 测试四张图片（应该只显示前三张）
+		{
+			image: t('../../static/image/head-img.png'),
+			username: t('传媒见闻'),
+			title: t('测试四张图片显示'),
+			content: t('这里有四张图片，但只会显示前三张，并且每张图片的宽度为210rpx。'),
+			time: t("05-09-02"),
+			like: 5,
+			comment: 3,
+			isLike: true,
+			imageList: [{
+				url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+			},
+			{
+				url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+			},
+			{
+				url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+			},
+			{
+				url: "https://unix.cool-js.com/images/demo/avatar.jpg",
+			}],
+		},
+	])
+	type iconitem = {
+		icon : string,
+		text : string
+	}
+	const operationList = ref<iconitem[]>([
+		{
+			icon: 'zhuanfa',
+			text: '分享'
+		},
+		{
+			icon: 'a-pinglun1',
+			text: '评论'
+		},
+		{
+			icon: 'dianzan',
+			text: '点赞'
+		}
+	])
+	// 行业类型定义
+	const areaList = ref<string[]>([
+		'环保行业', '金融行业', '科技行业', '教育行业', '医疗行业', '汽车行业', '房地产', '文化传媒', '旅游行业', '餐饮行业', '体育行业', '其他'
+	]);
+	function share() {
+		ui.showToast({
+			message: t("该功能正在开发中")
+		});
+	}
+
+
+	// 根据图片数量获取图片宽度
+	function getImageWidth(imageCount : number) : string {
+		// 限制最多显示3张图片
+		const count = Math.min(imageCount, 3);
+
+		if (count === 1) {
+			return '384rpx';
+		} else if (count === 2) {
+			return '268rpx';
+		} else {
+			return '210rpx';
 		}
 	}
 
-	return classes.join(' ');
-}
+	// 根据图片数量和索引获取图片样式类
+	function getImageClass(imageCount : number, index : number) : string {
+		const count = Math.min(imageCount, 3);
+		let classes = ['mb-2'];
 
-// 监听页面滚动，控制导航栏显示
-onMounted(() => {
-	onScroll((scrollTop: number) => {
-		// 调试信息
-		console.log('页面滚动距离:', scrollTop);
-		// 当滚动距离大于50时显示导航栏
-		showNavbar.value = scrollTop > 50;
+		// 根据图片数量添加右边距
+		if (count === 2) {
+			// 两张图片时，第一张添加右边距
+			if (index === 0) {
+				classes.push('mr-2');
+			}
+		} else if (count === 3) {
+			// 三张图片时，前两张添加右边距
+			if (index < 2) {
+				classes.push('mr-2');
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	// 监听页面滚动，控制导航栏显示
+	onMounted(() => {
+		const params = router.params();
+		console.log(params,'接收到的值')
+		if (!isNull(params)) {
+			userId.value = params.userId as number;
+
+		}
+		onScroll((scrollTop : number) => {
+			// 调试信息
+			console.log('页面滚动距离:', scrollTop);
+			// 当滚动距离大于50时显示导航栏
+			showNavbar.value = scrollTop > 50;
+		});
 	});
-});
 </script>
 
 <style>
-.fixed-navbar {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 1000;
-	transform: translateY(-100%);
-	transition: transform 0.3s ease;
-}
+	.fixed-navbar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 1000;
+		transform: translateY(-100%);
+		transition: transform 0.3s ease;
+	}
 
-.fixed-navbar.show {
-	transform: translateY(0);
-}
+	.fixed-navbar.show {
+		transform: translateY(0);
+	}
 
-.container {
-	position: relative;
-	width: 100%;
-	height: 462rpx;
-}
+	.container {
+		position: relative;
+		width: 100%;
+		height: 462rpx;
+	}
 
-.background-image {
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: 1;
-	/* 背景图片在底层 */
-}
+	.background-image {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 1;
+		/* 背景图片在底层 */
+	}
 
-.navabar {
-	position: relative;
-	z-index: 2;
-	/* 确保导航栏在背景图片之上 */
-}
+	.navabar {
+		position: relative;
+		z-index: 2;
+		/* 确保导航栏在背景图片之上 */
+	}
 
-.bg8b {
-	background-color: #8BA5FF;
-}
+	.bg8b {
+		background-color: #8BA5FF;
+	}
 
-:deep(.content-item) {
-	flex-direction: column !important;
-}
+	:deep(.content-item) {
+		flex-direction: column !important;
+	}
 
-.operationColor {
-	color: #9B9B9B;
-}
+	.operationColor {
+		color: #9B9B9B;
+	}
 
-.borderh10 {
-	border-top: 10rpx solid #F8F8F8;
-}
+	.borderh10 {
+		border-top: 10rpx solid #F8F8F8;
+	}
 
-.colo2c {
-	color: #2c2c2c;
-}
+	.colo2c {
+		color: #2c2c2c;
+	}
 
-.color5e {
-	color: #5E5E5E;
-}
+	.color5e {
+		color: #5E5E5E;
+	}
 </style>

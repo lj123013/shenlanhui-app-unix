@@ -17,7 +17,7 @@ export function newsData(data : any) : Promise<any> {
  * @param data 
  * @returns Promise
  */
-export function newsinfo(articleId : string | number,params? : any, ) : Promise<any> {
+export function newsinfo(articleId : string | number, params ?: any,) : Promise<any> {
 	return request({
 		url: `/ai/shenlantong/articles/${articleId}`,
 		method: "GET",
@@ -29,7 +29,7 @@ export function newsinfo(articleId : string | number,params? : any, ) : Promise<
  * @param params 
  * @returns Promise
  */
-export function articles(data: any) : Promise<any> {
+export function articles(data : any) : Promise<any> {
 	return request({
 		url: "/articles",
 		method: "GET",
@@ -41,7 +41,7 @@ export function articles(data: any) : Promise<any> {
  * @param data 
  * @returns Promise
  */
-export function articleinfo(articleId : string | number,params? : any, ) : Promise<any> {
+export function articleinfo(articleId : string | number, params ?: any,) : Promise<any> {
 	return request({
 		url: `/articles/${articleId}`,
 		method: "GET",
@@ -53,7 +53,7 @@ export function articleinfo(articleId : string | number,params? : any, ) : Promi
  * @param params 
  * @returns Promise
  */
-export function comments(data: any) : Promise<any> {
+export function comments(data : any) : Promise<any> {
 	return request({
 		url: "/comments",
 		method: "GET",
@@ -65,7 +65,7 @@ export function comments(data: any) : Promise<any> {
  * @param params 
  * @returns Promise
  */
-export function clickcomments(data: any) : Promise<any> {
+export function clickcomments(data : any) : Promise<any> {
 	return request({
 		url: "/comments",
 		method: "POST",
@@ -79,7 +79,7 @@ export function clickcomments(data: any) : Promise<any> {
  * @param params 
  * @returns Promise
  */
-export function dispatches(data: any) : Promise<any> {
+export function dispatches(data : any) : Promise<any> {
 	return request({
 		url: "/dispatches",
 		method: "GET",
@@ -91,7 +91,7 @@ export function dispatches(data: any) : Promise<any> {
  * @param data 
  * @returns Promise
  */
-export function dispatchesinfo(id : string | number,params? : any, ) : Promise<any> {
+export function dispatchesinfo(id : string | number, params ?: any,) : Promise<any> {
 	return request({
 		url: `/dispatches/${id}`,
 		method: "GET",
@@ -104,10 +104,34 @@ export function dispatchesinfo(id : string | number,params? : any, ) : Promise<a
  * @param params 
  * @returns Promise
  */
-export function follow(data: any) : Promise<any> {
+export function follow(data : any) : Promise<any> {
 	return request({
 		url: "/users/follow",
 		method: "POST",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 获取热门公司
+ * @param params 
+ * @returns Promise
+ */
+export function hotcompany(data : any) : Promise<any> {
+	return request({
+		url: "/trending/companies",
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 获取活跃用户
+ * @param params 
+ * @returns Promise
+ */
+export function hotUser(data : any) : Promise<any> {
+	return request({
+		url: "/trending/active-users",
+		method: "GET",
 		data
 	}) as Promise<any>;
 }

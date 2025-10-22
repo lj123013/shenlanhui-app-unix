@@ -107,7 +107,7 @@ export function request(options : RequestOptions) : Promise<any | null> {
 					}
 
 					// 200 正常响应
-					else if (res.statusCode == 200) {
+					else if (res.statusCode == 200||res.statusCode == 201) {
 						if (res.data == null) {
 							resolve(null);
 						} else if (!isObject(res.data as any)) {

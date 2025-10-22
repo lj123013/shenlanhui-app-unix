@@ -73,3 +73,15 @@ export function cancelverification(data: any): Promise<any> {
     data
   }) as Promise<any>;
 }
+/**
+ * 获取关注用户列表
+ * @param params 
+ * @returns Promise
+ */
+export function followlist(data : any) : Promise<any> {
+	return request({
+		url: "/users/follow/following",
+		method: "GET",
+		data
+	}) as Promise<any>;
+}

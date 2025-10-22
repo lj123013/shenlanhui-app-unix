@@ -63,11 +63,7 @@
 	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
 
 	let id = 0;
-	type pageList = {
-		page : string
-		size : string
-		total : number
-	}
+
 	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
 		articles({
 			page: params["page"],
