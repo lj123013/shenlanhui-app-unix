@@ -461,11 +461,5 @@
 			}
 		]
 	},
-	"easycom": {
-		"autoscan": true,
-		"custom": {
-			"^ui-(.*)": "@/components/ui/$1/ui-$1.uvue"
-		}
-	},
 	"uniIdRouter": {}
 }
