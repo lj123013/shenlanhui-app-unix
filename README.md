@@ -96,16 +96,18 @@ PassThrough 是一种用于访问组件内部 DOM 结构的 API，它允许开�
 
 ### 预览
 
-<div style="display: flex; align-items: center; gap: 40px;">
-  <div style="text-align: center;">
-    <img src="https://unix.cool-js.com/qrcode-h5.png" width="200px" />
-    <p>H5 预览</p>
-  </div>
-  <div style="text-align: center;">
-    <img src="https://unix.cool-js.com/qrcode-apk.png" width="200px" />
-    <p>APP 下载</p>
-  </div>
-</div>
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://unix.cool-js.com/qrcode-h5.png" width="200px" /><br/>
+      H5 预览
+    </td>
+    <td align="center">
+      <img src="https://unix.cool-js.com/qrcode-apk.png" width="200px" /><br/>
+      APP 下载
+    </td>
+  </tr>
+</table>
 
 ### 技术栈
 
