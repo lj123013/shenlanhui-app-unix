@@ -368,7 +368,7 @@
 					const categoryValue = item.getString('category') != null ? item.getString('category')! : ""
 					const itemsArray : FinanceSubItem[] = []
 					const subItems = item.getArray('items')
-					if (isArray(subItems)) {
+					if (subItems != null) {
 						for (let j = 0; j < subItems!!.length; j++) {
 							// console.log(subItems!![j], "subItems[j]")
 							const subItem = subItems!![j]
@@ -418,7 +418,7 @@
 			let allSelectedItems : string[] = []  // 用于收集所有选中的项目
 			for (let i = 0; i < concartList.value.length; i++) {
 				const category = concartList.value[i]
-				if (category != null && isArray(category?.items) && category.items.length > 0) {
+				if (category != null ) {
 					const subItems = category.items
 					// console.log("subItems", subItems)
 					if (isArray(subItems) && subItems.length > 0) {

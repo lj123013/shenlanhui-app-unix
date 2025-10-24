@@ -100,18 +100,6 @@ export function dispatchesinfo(id : string | number, params ?: any,) : Promise<a
 }
 
 /**
- * 关注用户
- * @param params 
- * @returns Promise
- */
-export function follow(data : any) : Promise<any> {
-	return request({
-		url: "/users/follow",
-		method: "POST",
-		data
-	}) as Promise<any>;
-}
-/**
  * 获取热门公司
  * @param params 
  * @returns Promise
@@ -132,6 +120,37 @@ export function hotUser(data : any) : Promise<any> {
 	return request({
 		url: "/trending/active-users",
 		method: "GET",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 获取用户所有对话
+ * @param params 
+ * @returns Promise
+ */
+export function getConversations(data : any) : Promise<any> {
+	return request({
+		url: "/ai/conversations",
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+export function getConversationsinfo(conversation_id?:string,data : any) : Promise<any> {
+	return request({
+		url: `/ai/conversations/${conversation_id}`,
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 发布内容
+ * @param params 
+ * @returns Promise
+ */
+export function pulish(data : any) : Promise<any> {
+	return request({
+		url: "/contents",
+		method: "POST",
 		data
 	}) as Promise<any>;
 }

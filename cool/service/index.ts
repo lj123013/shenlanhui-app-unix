@@ -108,8 +108,10 @@ export function request(options : RequestOptions) : Promise<any | null> {
 
 					// 200 正常响应
 					else if (res.statusCode == 200||res.statusCode == 201) {
+						
+						// 如果响应数据为空
 						if (res.data == null) {
-							resolve(null);
+							resolve(res.data);
 						} else if (!isObject(res.data as any)) {
 							resolve(res.data);
 						} else {
@@ -117,18 +119,14 @@ export function request(options : RequestOptions) : Promise<any | null> {
 							const { code, message, data, success } = parse<Response>(
 								res.data ?? { code: 0 }
 							)!;
+
 							if (success == true) {
 								resolve(data);
-							} else {
-								switch (code) {
-									case 200:
-										resolve(data);
-										break;
-									default:
-									console.log("错误数据")
-										reject({ message, code } as Response);
-										break;
-								}
+							} else if(code==200) {
+								resolve(data);
+							}else{
+							// console.log("ai对话响应数据：", res.data);
+                               resolve(res.data);
 							}
 
 						}

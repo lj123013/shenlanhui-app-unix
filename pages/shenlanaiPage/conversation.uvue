@@ -2,43 +2,49 @@
 	<cl-page>
 		<cl-topbar :fixed="true" safe-area-top :title="title"> </cl-topbar>
 		<!-- AI对话列表 -->
-		<scroll-view class="h-screen overflow-hidden">
-			<view :id="'item-' + index" v-for="(message, index) in messages" :key="index" class="message-item flex mb-4"
-				:class="{
+		<scroll-view class="h-screen overflow-hidden ">
+			<view class="pb-[80px]">
+
+
+				<view :id="'item-' + index" v-for="(message, index) in messages" :key="index"
+					class="message-item flex mb-4" :class="{
 					'user-message': message.role === 'user',
 					'ai-message': message.role === 'assistant',
 					loading: message.loading
 				}">
-				<!-- 根据角色决定内容容器的宽度和对齐方式 -->
-				<view :class="{
+					<!-- 根据角色决定内容容器的宽度和对齐方式 -->
+					<view :class="{
 					'user-content': message.role === 'user',
 					'ai-content': message.role === 'assistant'
 				}">
 
-					<cl-text v-if="message.role === 'assistant'&& !message.loading">AI正在生成...</cl-text>
-					<cl-image width="500rpx" height="300rpx" :pt="{className:'rounded-lg'}" v-else-if="message.role === 'assistant'&&title=='AI生图'&&message.isSHowImg" :src="message.imageUrl"></cl-image>
-					<cl-text v-else  :color="message.role === 'user' ? 'primary' : '#191919'">{{ message.content }}</cl-text>
-					<view v-if="message.role === 'assistant'&&message.loading">
-						<view class="prompt flex flex-row items-center p-2 mt-2 w-[500rpx]">
-							<cl-icon name="tishi1" color="#E4773D" size="20rpx"></cl-icon>
-							<cl-text color="#E4773D"
-								:pt="{ className: 'text-xs ml-1 ' }">本回答由AI生成，内容仅供参考，请仔细甄别。</cl-text>
-						</view>
-						<view
-							class="flex flex-row items-center justify-between border border-solid  border-gray-100 mt-3   rounded-[10rpx]  py-2 px-2">
-							<view class="flex flex-row items-center ">
-								<view
-									class="copy-icon bg-primary-500 w-[40rpx] h-[40rpx] flex flec-col items-center justify-center  rounded-[6rpx] mr-2">
-									<cl-icon name="fuzhi1" color="white" size="26rpx"></cl-icon>
-								</view>
-								<view
-									class="refresh-icon bg-custom-aidefault w-[40rpx] h-[40rpx] flex flec-col items-center justify-center rounded-[6rpx]">
-									<cl-icon name="shuaxin1" size="20rpx" color="#BFBFBF"></cl-icon>
-								</view>
+						<cl-text v-if="message.role === 'assistant' && !message.loading">{{ message.content }}</cl-text>
+						<cl-image width="500rpx" height="300rpx" :pt="{ className: 'rounded-lg' }"
+							v-else-if="message.role === 'assistant' && title == 'AI生图' && message.isSHowImg"
+							:src="message.imageUrl"></cl-image>
+						<cl-text v-else :color="message.role === 'user' ? 'white' : '#191919'">{{ message.content
+					}}</cl-text>
+						<view v-if="message.role === 'assistant' && message.loading">
+							<view class="prompt flex flex-row items-center p-2 mt-2 w-[500rpx]">
+								<cl-icon name="tishi1" color="#E4773D" size="20rpx"></cl-icon>
+								<cl-text color="#E4773D"
+									:pt="{ className: 'text-xs ml-1 ' }">本回答由AI生成，内容仅供参考，请仔细甄别。</cl-text>
 							</view>
-							<view class="flex flex-row items-center">
-								<cl-text color="#D1D1D1" :pt="{className:'text-base mr-1'}">是否公开</cl-text>
-								<cl-switch :width="60" :height="30" :pt="{
+							<view
+								class="flex flex-row items-center justify-between border mt-3   rounded-[10rpx]  py-2 px-2">
+								<view class="flex flex-row items-center ">
+									<view
+										class="copy-icon bg-primary-500 w-[40rpx] h-[40rpx] flex flec-col items-center justify-center  rounded-[6rpx] mr-2">
+										<cl-icon name="fuzhi1" color="white" size="26rpx"></cl-icon>
+									</view>
+									<view
+										class="refresh-icon bg-custom-aidefault w-[40rpx] h-[40rpx] flex flec-col items-center justify-center rounded-[6rpx]">
+										<cl-icon name="shuaxin1" size="20rpx" width="26rpx" color="#BFBFBF"></cl-icon>
+									</view>
+								</view>
+								<view class="flex flex-row items-center">
+									<cl-text color="#D1D1D1" :pt="{ className: 'text-base mr-1' }">是否公开</cl-text>
+									<cl-switch :width="60" :height="30" :pt="{
 									track: {
 										className: '!bg-border data-[state=checked]:!bg-primart-500',
 									},
@@ -46,17 +52,18 @@
 										className: '!bg-white',
 									},
 								}"></cl-switch>
+								</view>
 							</view>
-						</view>
 
+						</view>
 					</view>
 				</view>
 			</view>
 		</scroll-view>
-		<view class="input-wrapper w-full bg-white fixed bottom-0  px-4 pt-4"
-			:style="{ paddingBottom: (inputBottom !== 0? inputBottom+10 : getHeight()) + 'px' }">
-			<cl-input placeholder="请输入任何问题" :autofocus="true" @blur="blur" :border="false" :adjustPosition='false'
-				v-model="input">
+		<view class="input-wrapper w-full bg-white fixed bottom-0  px-4"
+			:style="{ paddingBottom: (inputBottom !== 0 ? inputBottom + 10 : getHeight()) + 'px' }">
+			<cl-input @confirm="sendMessage" placeholder="请输入任何问题" :autofocus="false" @blur="blur" :border="false"
+				:adjustPosition='false' v-model="input">
 				<template #append>
 					<cl-image v-if="!isPaused" width="60rpx" height="60rpx" src="/static/image/sendicon.png"
 						@click="sendMessage"></cl-image>
@@ -71,10 +78,11 @@
 <script setup>
 	import { t } from "@/locale";
 	import { ref, watchEffect, onMounted } from "vue";
-	import { useStore, isNull, isAppIOS } from "@/cool";
+	import { useStore, isNull, isAppIOS, router, parse, type Response, request } from "@/cool";
 	import { useUi, type ClToastType } from "@/uni_modules/cool-ui";
+	import { aichartAPI } from "@/cool/service/user";
 	const ui = useUi();
-	const { app } = useStore();
+	const { app, aimessage } = useStore();
 	const title = ref<string>("");
 	let messageIdCounter = 0
 	const inputBottom = ref(0)
@@ -86,107 +94,156 @@
 		role : string
 		content ?: string
 		isfinish : boolean
-		conversation_id : Number
+		conversation_id ?: string
 		imageUrl ?: string
 		switchvalue : boolean
 		loading : boolean
-		isSHowImg:boolean
+		isSHowImg : boolean
 	}
-	const aiResponses = [
-		"基于您的问题，我建议您可以考虑以下几个方面：首先，确保您的项目结构清晰；其次，使用合适的算法优化性能；最后，进行充分的测试以确保质量。",
-		"这是一个很好的问题！uni-app-x 是一个跨平台开发框架，它允许开发者使用 Vue.js 语法编写应用程序，并编译到多个平台包括鸿蒙系统。",
-		"要实现流式输出，您可以使用 WebSocket 或 Server-Sent Events (SSE) 技术。这些技术允许服务器向客户端实时推送数据，从而实现逐字输出的效果。",
-		"在鸿蒙系统上开发应用需要注意兼容性问题。建议使用华为提供的开发工具和测试环境进行调试，以确保应用在鸿蒙系统上正常运行。",
-		"优化应用性能的方法有很多：减少不必要的渲染、使用虚拟列表加载长列表、压缩资源文件、使用缓存策略等。具体方法需要根据您的应用特点来选择。"
-	];
-	const messages = ref<aiMesage[]>([
-		{
-			id: messageIdCounter++,
-			role: 'user',
-			content: 'ai助手',
-			isfinish: true,
-			conversation_id: 134314,
-			imageUrl: '',
-			switchvalue: false,
-			loading: true,
-			isSHowImg:false
-		},
-		{
-			id: messageIdCounter++,
-			role: 'assistant',
-			content: '中国新茶饮品牌霸王茶姬于4月17日登陆美国纳斯达克（股票代码：CHA），上市首日股价大涨近50%，市值突破59亿美元，成为首家在美股上市的中国茶饮品牌，打破行业“上市即破发”魔咒。尽管近年来新茶饮品牌扎堆上市，但多数选择港股，而霸王茶姬逆势选择美股，面临更大市场风险。',
-			isfinish: true,
-			conversation_id: 134314,
-			imageUrl: '',
-			switchvalue: false,
-			loading: false,
-			isSHowImg:false
-		},
-		{
-			id: messageIdCounter++,
-			role: 'user',
-			content: 'ai生图',
-			isfinish: true,
-			conversation_id: 134314,
-			imageUrl: '',
-			switchvalue: false,
-			loading: false,
-			isSHowImg:false
-		},
-		{
-			id: messageIdCounter++,
-			role: 'assistant',
-			content: '',
-			isfinish: true,
-			conversation_id: 134314,
-			imageUrl:'https://unix.cool-js.com/images/demo/avatar.jpg',
-			switchvalue: false,
-			loading: true,
-			isSHowImg:true
-		},
-		{
-			id: messageIdCounter++,
-			role: 'user',
-			content: 'ai录音转文字',
-			isfinish: true,
-			conversation_id: 134314,
-			imageUrl: '',
-			switchvalue: false,
-			loading: true,
-			isSHowImg:false
-		},
-		{
-			id: messageIdCounter++,
-			role: 'assistant',
-			content: '中国新茶饮品牌霸王茶姬于4月17日登陆美国纳斯达克（股票代码：CHA），上市首日股价大涨近50%，市值突破59亿美元，成为首家在美股上市的中国茶饮品牌，打破行业“上市即破发”魔咒。尽管近年来新茶饮品牌扎堆上市，但多数选择港股，而霸王茶姬逆势选择美股，面临更大市场风险。',
-			isfinish: true,
-			conversation_id: 134314,
-			imageUrl: '',
-			switchvalue: false,
-			loading: true,
-			isSHowImg:false
+	const messages = ref<aiMesage[]>([])
+
+	type aisystemtype = {
+		role : string
+		content : string
+	}
+	// 普通的ai对话
+	const aichart = (content : string) => {
+		ui.showLoading("AI正在思考中...")
+		let NewContent : aisystemtype[] = []
+		if (aimessage.AiRequest.value.type == '') {
+			console.log('使用默认AI请求参数');
+			let systtag = ""
+			let aisrstemdec = ""
+			console.log(title.value)
+			if (title.value == 'AI翻译') {
+				systtag = '翻译'
+				aisrstemdec = "将以下内容翻译成指定语言"
+			} else if (title.value == 'AI生图') {
+				systtag = '图像'
+				aisrstemdec = "生成图片"
+			} else {
+				systtag = '财经社'
+				aisrstemdec = "输出新闻稿"
+			}
+			console.log(systtag, aisrstemdec)
+			NewContent = [{
+				role: 'system',
+				content: `你是一个专业的${systtag}编辑`
+			},
+			{
+				role: 'user',
+				content: `根据我所输入的内容帮我${aisrstemdec}` + content,
+			}
+			]
+
+		} else {
+			console.log('使用自定义AI请求参数');
+			NewContent = [{
+				role: 'system',
+				content: `你是一个专业的${aimessage.AiRequest.value.content}编辑`
+			},
+			{
+				role: 'user',
+				content: `根据我所输入的内容帮我输出${aimessage.AiRequest.value.instruction}:` + content,
+			}
+			]
 		}
-	])
+		const userInput = messages.value.map(msg => {
+			return {
+				role: msg.role,
+				content: msg.content
+			}
+		});
+		const aiContent = NewContent.concat(userInput)
+		if (title.value == 'AI生图') {
+			uni.request({
+				url: "https://shenlanhui.com/api/v1/images/generations",
+				method: 'POST',
+				data: {
+					content: "一只可爱的橘色小猫咪，坐在窗台上看着窗外的鸟，阳光照射进来，温暖的氛围",
+					negative_prompt: "模糊的,低质量的,扭曲的,不自然的姿势,多余的肢体",
+					provider: "tongyi",
+					model: "wanx2.0-t2i-turbo",
+					size: "1024x1024",
+					style: "vivid",
+					quality: "standard"
+				},
+				success: (res) => {
+					ui.hideLoading();
+					console.log(res)
+					// console.log(res.data) // 这是一个any类型，不能直接使用
+					// console.log(res.data as UTSJSONObject) // 需要把这个any类型，as成UTSJSONObject类型
+					// console.log(res.data as UTSJSONObject["data"]) //UTSJSONObject支持通过下标访问属性data，但返回的仍然是any类型
+					// let resData = (res.data as UTSJSONObject)["data"] as UTSJSONObject[] // as成UTSJSONObject数组
+					// if (resData!=null) {
+					// 	console.log(resData[0]) // 访问数组的第一个数组项目，仍然是any类型，仍然需要转换
+					// 	console.log((resData[0] as UTSJSONObject)["plugin_name"]) // 转为UTSJSONObject后通过下标访问plugin_name属性
+					// }
+				},
+				fail: (err) => {
+					ui.showToast({
+						message: "生成图片失败，请稍后再试",
+					});
+				}
+			})
+		} else {
+			aichartAPI({
+				messages: aiContent,
+			}).then(res => {
+				ui.hideLoading();
+				const result = parse<UTSJSONObject>(res)!
+				// const aicontent = res.choices[0].message.content;
+				const getconverstion = result.getArray('choices')
+				if (getconverstion != null) {
+					for (let i = 0; i < getconverstion.length; i++) {
+						const choice = getconverstion[i] as UTSJSONObject
+						const message = choice.message as UTSJSONObject
+						const assistantcontent = message.content as string
+						messages.value.push({
+							id: messageIdCounter++,
+							role: 'assistant',
+							content: assistantcontent,
+							isfinish: true,
+							conversation_id: result.conversation_id as string,
+							imageUrl: '',
+							switchvalue: false,
+							loading: true,
+							isSHowImg: false,
+
+						} as aiMesage)
+
+					}
+
+				}
+
+
+
+			}).catch(err => {
+				ui.showToast({
+					message: "服务器繁忙，请稍后再试",
+				});
+			});
+		}
+
+	}
 	// 发送按钮
 	const sendMessage = () => {
 		const content = input.value.trim();
-		console.log(content)
-		if (isNull(content)) {
-			ui.showToast({
-				message: t("输入框不能为空")
-			})
-		}
 		messages.value.push({
 			id: messageIdCounter++,
 			role: 'user',
 			content: content,
 			isfinish: true,
-			conversation_id: 134314,
+			conversation_id: "",
 			imageUrl: '',
 			switchvalue: false,
-			loading: true
+			loading: true,
+			isSHowImg: false,
 
 		} as aiMesage)
+		input.value = ''// 清空输入框
+		console.log('发送的消息内容:', content);
+		aichart(content as string);
 
 	}
 	// 暂停按钮
@@ -206,6 +263,25 @@
 
 	onMounted(() => {
 		console.log(isAppIOS())
+		const params = router.params();
+		if (!isNull(params.userinput)) {
+			console.log('接收到的用户输入参数:', params.userinput);
+			messages.value.push({
+				id: messageIdCounter++,
+				role: 'user',
+				content: params.userinput as string,
+				isfinish: true,
+				conversation_id: "",
+				imageUrl: '',
+				switchvalue: false,
+				loading: true,
+				isSHowImg: false,
+
+			} as aiMesage)
+			aichart(params.userinput as string)
+
+			console.log('消息列表:', messages.value);
+		}
 		console.log('组件挂载，当前标题:', title.value);
 		uni.onKeyboardHeightChange((res) => {
 			console.log(res)
@@ -240,8 +316,8 @@
 	.user-content {
 		max-width: 80%;
 		/* 限制最大宽度，避免过长内容 */
-		background-color: #E8EDFF;
-		color: #2854F2;
+		background-color: #2854F2;
+		color: #fff;
 		border-radius: 20rpx;
 		padding: 20rpx 25rpx;
 		align-self: flex-end;
@@ -251,12 +327,16 @@
 	/* AI消息样式 */
 	.ai-message {
 		justify-content: flex-start;
-		margin-left: 30rpx
+		margin-left: 30rpx;
+
+
 	}
 
 	.ai-content {
-		width: 90%;
-		padding: 20rpx 0;
+		width: 95%;
+		padding: 20rpx 25rpx;
+		border-radius: 20rpx;
+		background-color: #fbfbfb;
 	}
 
 	.prompt {
@@ -265,5 +345,4 @@
 		display: inline-flex;
 		border-radius: 20rpx;
 	}
-	
 </style>

@@ -1,17 +1,21 @@
 <template>
 	<cl-page>
+		<cl-topbar safe-area-top background-color="transparent" >
+			<cl-text color="#3A3A3A" :pt="{ className: '!text-xl' }">我的关注</cl-text>
+			</cl-topbar>
 		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
 				refresher: {
 					className: 'pt-3'
 				}
 			}" :refresher-enabled="false" @bottom="loadMore">
 			<template #item="{ value, index }">
-				<hot-useritem :value="value" :index="index" @item-click="onItemClickUser"></hot-useritem>
+				<hot-useritem :value="value" :index="index" @item-click="onItemClickUser" @delete-item="handleDeleteItem"></hot-useritem>
 			</template>
 
 			<template #bottom>
 				<view class="py-3">
-					<cl-loadmore v-if="list.length > 0" :loading="loading" safe-area-bottom></cl-loadmore>
+					<cl-loadmore :loading="loading" :finish="true" v-if="list.length > 0" :safeAreaBottom='true'
+						:pt="{text:{className:'text-sm text-gray-400'}}"></cl-loadmore>
 				</view>
 			</template>
 		</cl-list-view>
@@ -24,13 +28,14 @@
 	import { usePager, parse, router, isArray, isNull } from "@/cool";
 	import hotUseritem from "@/pages/homePage/components/hot-useritem.uvue";
 	import { t } from "@/locale";
-	import { followlist } from "@/cool/service/user"
+	import { followlist, } from "@/cool/service/user"
 
 	const ui = useUi();
 
 	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
 
 	let id = 0;
+	// 点击进入详情
 	const onItemClickUser = (item : UTSJSONObject) => {
 		router.push({
 			path: '/pages/user/userinfo',
@@ -39,6 +44,7 @@
 			}
 		});
 	}
+	
 	type newsItem = {
 		id : number;
 		username : string;
@@ -50,23 +56,34 @@
 			ui.hideLoading()
 			if (res != null) {
 				const result = parse<UTSJSONObject>(res)!
-				const subItems = result.getArray('following')
-				render({
-					list: result.following,
-					pagination: {
-						page: params["page"],
-						size: params["size"],
-						total: result.total
+				console.log(result)
+				const page = result.pagination
+				if (!isNull(page)) {
+					const pageDta = parse<UTSJSONObject>(page as Any)!
+					render({
+						list: result.following,
+						pagination: {
+							page: params["page"],
+							size: params["size"],
+							total: pageDta.total
 
-					}
+						}
 
-				});
+					});
+				}
 
 
 			}
 
 		})
 	});
+	// 点击取消关注
+	const handleDeleteItem=(itemInfo : UTSJSONObject)=>{
+		const index = list.value.findIndex((item) => item.id === itemInfo.id);
+		if (index !== -1) {
+			list.value.splice(index, 1);
+		}
+	}
 	onReady(() => {
 		ui.showLoading(t("加载中"));
 		// 默认请求

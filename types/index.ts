@@ -30,3 +30,8 @@ export type UserInfo = {
 export type UserLogin = {
 	id : number;
 };
+  export type AiRequest={
+		type:string
+		content:string
+		instruction:string
+	}

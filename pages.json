@@ -158,13 +158,17 @@
 				{
 					"path": "fansList",
 					"style": {
-						"navigationBarTitleText": "我的粉丝"
+						"navigationBarTitleText": "我的粉丝",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
 					}
 				},
 				{
 					"path": "followList",
 					"style": {
-						"navigationBarTitleText": "我的关注"
+						"navigationBarTitleText": "我的关注",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
 					}
 				},
 				{
@@ -260,6 +264,14 @@
 					}
 				},
 				{
+					"path": "myconverstionDeatail",
+					"style": {
+						"navigationBarTitleText": "我的AI对话",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
 					"path": "myinteract",
 					"style": {
 						"navigationBarTitleText": "我的互动",
@@ -338,6 +350,15 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "pages/template",
+			"pages": [{
+				"path": "/post/detail",
+				"style": {
+					"navigationStyle": "custom"
+				}
+			}]
 		},
 		{
 			"root": "pages/articlePage",

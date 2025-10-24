@@ -4,19 +4,21 @@
 			<cl-text color="#3A3A3A" :pt="{ className: '!text-xl' }">我的互动</cl-text>
 		</cl-topbar>
 		<cl-tabs v-model="current" class="fontBold" :showLine="false" :list="tabsList" :color="isColor ? '#2854F2' : ''"
-			un-color="#6a6a6a"></cl-tabs>
+			un-color="#6a6a6a" @change="changetag"></cl-tabs>
 		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
 					refresher: {
 						className: 'pt-3'
 					}
-				}" :refresher-enabled="false" @pull="onPull" @bottom="loadMore">
+				}" :refresher-enabled="false" @bottom="loadMore">
 			<template #item="{ value ,index}">
-				<news-item :value="value" :index="index" :hidden="true" @item-click="onItemClick" :display="false"></news-item>
+				<news-item :value="value" :index="index" :hidden="true" @item-click="onItemClick"
+					:display="false"></news-item>
 			</template>
 
 			<template #bottom>
 				<view class="py-3">
-					<cl-loadmore v-if="list.length > 0" :loading="loading" safe-area-bottom></cl-loadmore>
+					<cl-loadmore :loading="loading" :finish="true" v-if="list.length > 0" :safeAreaBottom='true'
+						:pt="{text:{className:'text-sm text-gray-400'}}"></cl-loadmore>
 				</view>
 			</template>
 		</cl-list-view>
@@ -24,133 +26,175 @@
 </template>
 
 <script setup>
-	import { router, usePager } from "@/cool";
+	import { router, usePager, parse, isArray, type Response } from "@/cool";
 	import type { ClTabsItem, useUi } from "@/uni_modules/cool-ui";
 	import { t } from "@/locale";
 	import Tabbar from "@/components/tabbar.uvue";
 	import newsItem from "@/components/news-item.uvue"
+	import { myInteractions } from "@/cool/service/user"
 	const ui = useUi();
 	const isColor = ref(true)
-	const current = ref("1")
+	const current = ref(0)
 	const tabsList = ref<ClTabsItem[]>([
 		{
 			label: "我的收藏",
-			value: "1",
+			value: 0,
 		},
 		{
 			label: "我的点赞",
-			value: "2",
+			value: 1,
 		},
 	]);
 	type discussItem = {
 		img : string
 		name : string
 	}
+	const changetag = (value : string | number) => {
+		// console.log('选中的标签值:', value)
+		current.value = value as number
+		// refresh({});
+	}
+
 	const onItemClick = (item : UTSJSONObject) => {
 		console.log('点击文章项:', item);
-		router.push({
-			path: '/pages/articlePage/noticeDetail',
-			params: {
-				articleId: item.id,
-			}
-		});
+		if (item.interactable_type == 'article') {
+			router.push({
+				path: '/pages/articlePage/articleDetail',
+				params: {
+					articleId: item.id,
+					title: '文章'
+				}
+			});
+		}else if (item.interactable_type == 'shenlantong_article') {
+			router.push({
+				path: '/pages/articlePage/articleDetail',
+				params: {
+					articleId: item.id,
+					title: '新闻稿'
+				}
+			});
+		}else if (item.interactable_type == 'dispatch') {
+			router.push({
+				path: '/pages/articlePage/dispathDetail',
+				params: {
+					dispathId: item.id,
+				}
+			});
+		}
+
 	};
-	const toPath = (item : discussItem) => {
-		router.push({
-			path: '/pages/publish/disucss',
-			params: {
-				title: item.name
-			}
-		})
-		publishVisible.value = false
-	}
 	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
 
 	let id = 0;
+	// HTML实体解码函数
+	function decodeHtmlEntities(text : string) : string {
+		const entities : Map<string, string> = new Map([
+			["&quot;", "\""],
+			["&amp;", "&"],
+			["&lt;", "<"],
+			["&gt;", ">"],
+			["&nbsp;", " "],
+			["&#39;", "'"],
+			["&ldquo;", "“"],
+			["&rdquo;", "”"]
+		])
 
+		let result = text
+		entities.forEach((value, key) => {
+			result = result.replace(new RegExp(key, "g"), value)
+		})
+
+		return result
+	}
+	// 定义HTML清理函数
+	function cleanHtmlContent(html : string) : string {
+		if (html == null) return ""
+
+		// 移除所有HTML标签
+		let cleanText = html.replace(/<[^>]*>/g, "")
+
+		// 解码HTML实体
+		cleanText = decodeHtmlEntities(cleanText)
+
+		// 清理多余的空格和换行
+		cleanText = cleanText.replace(/\s+/g, " ").trim()
+		console.log(cleanText, "cleanText")
+		return cleanText
+	}
+
+	// 使用示例
+	function processArticleContent(interactable : any) : string {
+		if (interactable == null) {
+			return ""
+		} else {
+			const interactable111 = interactable as UTSJSONObject
+			if (interactable111.content == null) {
+				return ""
+			}
+			return cleanHtmlContent(interactable111.content as string)
+
+		}
+
+
+	}
 	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
 		// 模拟请求
-		setTimeout(() => {
+		let getlist : UTSJSONObject[] = []
+		myInteractions({
+			page: params["page"],
+			limit: params["size"],
+			type: current.value == 0 ? "bookmark" : 'like',
+			content_type: 'all'
+		}).then(res => {
+			ui.hideLoading();
+			const result = parse<UTSJSONObject>(res)!
+			const getItem = result.getArray('data')
+			if (getItem != null) {
+				for (let i = 0; i < getItem!!.length; i++) {
+					const item = getItem!![i]
+					if (!(item instanceof UTSJSONObject)) continue
+					const interactable = item.interactable as UTSJSONObject
+					const cleanText = processArticleContent(interactable);
+					getlist.push({
+						title: interactable.title,
+						content: cleanText,
+						created_at: interactable.created_at,
+						id: interactable.id,
+						interactable_type:item.interactable_type,
+						featured_image: interactable.featured_image
+
+					})
+				}
+			}
 			render({
-				list: [
-					{
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t(""),
-						content: t('#本金10w入# @steven市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: true,
-					},
-					{
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t('造谣阿里采购寒武纪 15 万片 GPU,背后的深科技号称中国人工智能主媒体，证监会应该出手了！'),
-						content: t('8月31日晚间，有消息称阿里云通义千问大模型面临算力缺口，阿里紧急追加寒武纪思元370芯片订单至15万片。9月1日凌晨，阿里云相关人士回应《科创板日报》记者表示：“阿里云...'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: false,
-					},
-					{
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t(""),
-						content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: false,
-					},
-					{
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t(""),
-						content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: false,
-					},
-					{
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t(""),
-						content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: false,
-					},
-					// 测试四张图片（应该只显示前三张）
-					{
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t('测试四张图片显示'),
-						content: t('这里有四张图片，但只会显示前三张，并且每张图片的宽度为210rpx。'),
-						time: t("05-09-02"),
-						like: 5,
-						comment: 3,
-						isLike: true,
-					},
-				],
+				list: getlist,
 				pagination: {
 					page: params["page"],
 					size: params["size"],
-					total: 100
+					total: result.total
+
 				}
+
 			});
+		}).catch(err => {
+			ui.hideLoading()
+			ui.showToast({
+				message: (err as Response).message!,
+			});
+		})
 
-			ui.hideLoading();
-		}, 1000);
+
+
+
 	});
+	watch(current, (newVal : number, oldVal : number) => {
+		if (newVal !== oldVal) {
+			ui.showLoading(t("加载中"));
+			refresh({ page: 1 });
+		}
 
-	async function onPull() {
-		await refresh({ page: 1 });
-		listViewRef.value!.stopRefresh();
-	}
 
+	})
 	onReady(() => {
 		ui.showLoading(t("加载中"));
 		// 默认请求

@@ -1,0 +1,133 @@
+<template>
+	<cl-page>
+		<cl-topbar fixed safe-area-top>
+			<cl-text color="#3A3A3A" :pt="{ className: '!text-xl' }">我的AI对话</cl-text>
+		</cl-topbar>
+		<!-- AI对话列表 -->
+		<scroll-view class="h-screen overflow-hidden ">
+			<view class="pb-[80px]">
+
+
+				<view :id="'item-' + index" v-for="(message, index) in messages" :key="index"
+					class="message-item flex mb-4" :class="{
+					'user-message': message.role == 'user',
+					'ai-message': message.role == 'assistant',
+				}">
+					<!-- 根据角色决定内容容器的宽度和对齐方式 -->
+					<view  :class="{
+					'user-content': message.role == 'user',
+					'ai-content': message.role == 'assistant'
+				}">
+				<cl-text  :color="message.role == 'user' ? 'white' : '#191919'">{{ message.content}}</cl-text>
+						<!-- <cl-image width="500rpx" height="300rpx" :pt="{ className: 'rounded-lg' }"
+							v-else-if="message.role === 'assistant' && title == 'AI生图' && message.isSHowImg"
+							:src="message.imageUrl"></cl-image> -->
+					
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+	</cl-page>
+</template>
+
+<script setup>
+	import { t } from "@/locale";
+	import { ref, onMounted } from "vue";
+	import { useStore, isNull, isAppIOS, router, parse, type Response, request } from "@/cool";
+	import { useUi, type ClToastType } from "@/uni_modules/cool-ui";
+	import { getConversationsinfo } from "@/cool/service/list";
+	const ui = useUi();
+	const { app, aimessage } = useStore();
+	const title = ref<string>("");
+	let messageIdCounter = 0
+	const conversation_id = ref('')
+	type aiMesage = {
+		role ?: string
+		content ?: string
+		conversation_id ?: string
+	}
+	const messages = ref<aiMesage[]>([])
+	onMounted(() => {
+		ui.showLoading(t("加载中"));
+		const params = router.params();
+		if (!isNull(params.conversation_id)) {
+			conversation_id.value = params.conversation_id as string
+			getConversationsinfo(conversation_id.value, {}).then((res) => {
+				ui.hideLoading()
+				let saveMessage : aiMesage[] = []
+				const result = parse<UTSJSONObject>(res)!
+				console.log('获取对话列表', result.messages);
+				const subitems = result.getArray('messages')
+				if (subitems != null) {
+					for (let i = 0; i < subitems!!.length; i++) {
+						const subItem = subitems!![i]
+						if (!(subItem instanceof UTSJSONObject)) continue
+						const role = subItem.getString('role')
+						const content = subItem.getString('content')
+						const conversation_id = subItem.getString('conversation_id')
+						saveMessage.push({
+							role: role,
+							content: content,
+							conversation_id: conversation_id,
+						} as aiMesage)
+					}
+				}
+				messages.value = saveMessage
+			}).catch((err) => {
+				ui.hideLoading();
+			});
+
+		}
+	})
+</script>
+
+<style>
+	/* 输入框样式 */
+	.cl-input {
+		height: 120rpx !important;
+		box-shadow: 0rpx 0rpx 10rpx #D8D8D8;
+		border-radius: 20rpx;
+	}
+
+	.message-item {
+		min-height: 80rpx;
+	}
+
+	/* 用户消息样式 - 宽度自适应内容 */
+	.user-message {
+		justify-content: flex-end;
+	}
+
+	.user-content {
+		max-width: 80%;
+		/* 限制最大宽度，避免过长内容 */
+		background-color: #2854F2;
+		color: #fff;
+		border-radius: 20rpx;
+		padding: 20rpx 25rpx;
+		align-self: flex-end;
+		margin-right: 30rpx
+	}
+
+	/* AI消息样式 */
+	.ai-message {
+		justify-content: flex-start;
+		margin-left: 30rpx;
+
+
+	}
+
+	.ai-content {
+		width: 95%;
+		padding: 20rpx 25rpx;
+		border-radius: 20rpx;
+		background-color: #fbfbfb;
+	}
+
+	.prompt {
+		background-color: #FEF8F5;
+		border: 2rpx solid #FBEAE2;
+		display: inline-flex;
+		border-radius: 20rpx;
+	}
+</style>

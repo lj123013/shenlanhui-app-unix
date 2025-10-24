@@ -163,12 +163,16 @@
 				}" placeholder="写评论"></cl-input>
 			</view>
 			<view class="actions-section" v-if='!isPubComment'>
-				<view class="action-item">
-					<cl-icon name="aixin-1" :size="28" width="34rpx" color="#464646"></cl-icon>
+				<view class="action-item" @click="clickactive('like')">
+					<cl-icon v-if="getmessage.is_liked==true" name="heart-fill" color="#FF4646" :size="30"
+						width="34rpx"></cl-icon>
+					<cl-icon v-else name="aixin-1" :size="30" width="34rpx" color="#464646"></cl-icon>
 					<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">点赞</cl-text>
 				</view>
-				<view class="action-item">
-					<cl-icon name="a-shoucangdianji" :size="30" width="36rpx" color="#464646"></cl-icon>
+				<view class="action-item" @click="clickactive('bookmark')">
+					<cl-icon v-if="getmessage.is_bookmarked==true" name="a-shoucangdianji-1" :size="30" width="36rpx"
+						color="#FFAA00"></cl-icon>
+					<cl-icon v-else name="a-shoucangdianji" :size="30" width="36rpx" color="#464646"></cl-icon>
 					<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">收藏</cl-text>
 				</view>
 				<view class="action-item" @tap="sharevisible = true">
@@ -186,10 +190,12 @@
 </template>
 <script setup>
 	import { ref, reactive, onMounted } from "vue";
-	import { router, isNull, parse, isArray } from "@/cool";
+	import { router, isNull, parse, isArray, type Response } from "@/cool";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import shareMenu from '@/components/shareMenu.uvue'
-	import { newsinfo, articleinfo, follow, comments, clickcomments } from "@/cool/service/list"
+	import { newsinfo, articleinfo, comments, clickcomments } from "@/cool/service/list"
+	import { follow, Cancelfollow } from "@/cool/service/user"
+	import { interactions } from "@/cool/service/user"
 	const ui = useUi();
 	const sharevisible = ref(false);
 	const generateimage = ref(true)
@@ -210,7 +216,10 @@
 		created_at ?: string;
 		ip_location ?: string
 		is_following_author ?: boolean//是否关注
+		is_liked ?: boolean//是否点赞
+		is_bookmarked ?: boolean//是否收藏
 		author : typeauthor
+
 	};
 	const getmessage = ref<ArticleData>({
 		author: {
@@ -284,7 +293,33 @@
 		input.value = "";
 		uni.showToast({ title: "评论成功", icon: "success" });
 	}
+	//点赞，收藏
+	const clickactive = (typeitem : string) => {
+		let typetitle =''
+		if(type.value == '新闻稿'){
+			typetitle='shenlantong_article'
+		}else{
+			typetitle='article'
+		}
+		interactions(typetitle, articleId.value, { type: typeitem }).then(res => {
+			if (typeitem == 'like') {
+				getmessage.value.is_liked == true
+				ui.showToast({
+					message: "点赞成功",
+				});
+			} else {
+				getmessage.value.is_bookmarked = true
+				ui.showToast({
+					message: "收藏成功",
+				});
+			}
 
+		}).catch(err => {
+			ui.showToast({
+				message: (err as Response).message!,
+			});
+		})
+	}
 	// 处理键盘事件
 	const inputBottom = ref(0)
 	const isPubComment = ref(false)
@@ -309,7 +344,7 @@
 	//获取评论列表
 	const getconmmon = () => {
 		comments({
-			commentable_type: 'article',
+			commentable_type: type.value == '新闻稿' ? 'shenlantong_article' : 'article',
 			commentable_id: articleId.value
 		}).then(res => {
 			const result = parse<UTSJSONObject>(res)!
@@ -338,20 +373,25 @@
 			// console.log("评论列表", commonList.value)
 
 		}).catch(err => {
+			ui.hideLoading()
 			ui.showToast({
 				message: "获取评论失败",
 			});
 		})
 	}
 	//获取新闻稿详情
-	const getNewsdata = () => {
-		newsinfo(articleId.value, {}).then(res => {
+	const getNewsdata = async () => {
+		try {
+			const res = await newsinfo(articleId.value, {})
+			ui.hideLoading()
 			getmessage.value = parse<ArticleData>(res)!
-		}).catch((err) => {
+			await getconmmon() // 等待评论获取完成
+		} catch (err) {
+			ui.hideLoading()
 			ui.showToast({
 				message: "获取详情失败",
 			});
-		})
+		}
 	}
 	// 获取文章详情
 	const getarticledata = async () => {
@@ -361,6 +401,7 @@
 			getmessage.value = parse<ArticleData>(res)!
 			await getconmmon() // 等待评论获取完成
 		} catch (err) {
+			ui.hideLoading()
 			ui.showToast({
 				message: "获取详情失败",
 			});
@@ -381,7 +422,7 @@
 	// 评论文章
 	const clickcommon = () => {
 		clickcomments({
-			commentable_type: "article",
+			commentable_type: type.value == '新闻稿' ? 'shenlantong_article' : 'article',
 			commentable_id: articleId.value,
 			content: input.value
 		}).then(res => {
@@ -391,6 +432,7 @@
 			getconmmon()
 			closePopup()
 		}).catch(err => {
+			ui.hideLoading()
 			ui.showToast({
 				message: "评论失败",
 			});
@@ -400,8 +442,9 @@
 	// 页面加载时获取路由参数
 	onMounted(() => {
 		const params = router.params();
+		console.log(params.articleId)
 		ui.showLoading("加载中")
-		if (!isNull(params)) {
+		if (!isNull(params.articleId)) {
 			articleId.value = params.articleId as number;
 			if (!isNull(params.title)) {
 				type.value = params.title as string

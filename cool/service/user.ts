@@ -74,6 +74,18 @@ export function cancelverification(data: any): Promise<any> {
   }) as Promise<any>;
 }
 /**
+ * 获取粉丝用户列表
+ * @param params 
+ * @returns Promise
+ */
+export function followers(data : any) : Promise<any> {
+	return request({
+		url: "/users/follow/followers",
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+/**
  * 获取关注用户列表
  * @param params 
  * @returns Promise
@@ -81,6 +93,68 @@ export function cancelverification(data: any): Promise<any> {
 export function followlist(data : any) : Promise<any> {
 	return request({
 		url: "/users/follow/following",
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+
+/**
+ * 关注用户
+ * @param params 
+ * @returns Promise
+ */
+export function follow(data : any) : Promise<any> {
+	return request({
+		url: "/users/follow",
+		method: "POST",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 取消关注用户
+ * @param params 
+ * @returns Promise
+ */
+export function Cancelfollow(data : any) : Promise<any> {
+	return request({
+		url: "/users/follow",
+		method: "DELETE",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 点赞收藏分享举报
+ * @param params 
+ * @returns Promise
+ */
+export function interactions(contentType:string,contentId:string|number,data : any) : Promise<any> {
+	return request({
+		url: `/interactions/${contentType}/${contentId}`,
+		method: "POST",
+		data
+	}) as Promise<any>;
+}
+// ai对话接口封装
+/**
+ * 普通对话接口
+ * @param params 
+ * @returns Promise
+ */
+export function aichartAPI(data : any) : Promise<any> {
+	return request({
+		url: "/ai/chat",
+		method: "POST",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 获取我的点赞，收藏列表
+ * @param params 
+ * @returns Promise
+ */
+export function myInteractions(data : any) : Promise<any> {
+	return request({
+		url: "/interactions/my",
 		method: "GET",
 		data
 	}) as Promise<any>;

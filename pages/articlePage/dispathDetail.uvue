@@ -115,17 +115,19 @@
 
 				</view>
 				<view class="actions-section" v-if='!isPubComment'>
-					<view class="action-item">
-						<cl-icon name="dianzan" :size="38" color="#464646"></cl-icon>
-						<cl-text color="#464646" :pt="{ className: 'text-sm' }">点赞</cl-text>
+					<view class="action-item" @click="clickactive('like')">
+							<cl-icon v-if="getmessage.is_liked==true" name="heart-fill" color="#FF4646"  :size="30" width="34rpx"></cl-icon>
+							<cl-icon v-else name="aixin-1" :size="30" width="34rpx" color="#464646"></cl-icon>
+						<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">点赞</cl-text>
 					</view>
-					<view class="action-item">
-						<cl-icon name="a-shoucangdianji" :size="35" color="#464646"></cl-icon>
-						<cl-text color="#464646" :pt="{ className: 'text-sm' }">收藏</cl-text>
+					<view class="action-item" @click="clickactive('bookmark')">
+						<cl-icon v-if="getmessage.is_bookmarked==true" name="a-shoucangdianji-1" :size="30" width="36rpx" color="#FFAA00"></cl-icon>
+						<cl-icon v-else name="a-shoucangdianji" :size="30" width="36rpx"color="#464646"></cl-icon>
+						<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">收藏</cl-text>
 					</view>
-					<view class="action-item">
-						<cl-icon name="zhuanfa1" :size="32" color="#464646"></cl-icon>
-						<cl-text color="#464646" :pt="{ className: ' text-sm' }">分享</cl-text>
+					<view class="action-item" @tap="sharevisible = true">
+						<cl-icon name="zhuanfa1" :size="28" color="#464646"></cl-icon>
+						<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">分享</cl-text>
 					</view>
 				</view>
 				<cl-text v-else :pt="{ className: 'action-text text-primary-500' }" @click="clickcommon">发送</cl-text>
@@ -140,9 +142,11 @@
 <script setup>
 	import { router, isNull, parse } from "@/cool";
 	import { dispatchesinfo, clickcomments, comments } from '@/cool/service/list'
+	import { interactions } from "@/cool/service/user"
 	import { useUi } from "@/uni_modules/cool-ui";
 	const ui = useUi();
 	const showAi = ref(false)
+	const sharevisible=ref(false)
 	type aiList = {
 		title : string;
 		content : string;
@@ -155,6 +159,9 @@
 		title ?: string;
 		content ?: string;//新闻稿描述
 		created_at ?: string;
+		is_liked?:boolean;
+		is_bookmarked?:boolean;
+		
 	};
 	type typeauthor = {
 		id : number
@@ -273,6 +280,27 @@
 			});
 		})
 	}
+	//点赞，收藏
+	const clickactive = (type : string) => {
+		interactions('dispatch', dispathId.value, { type: type }).then(res => {
+			if (type == 'like') {
+				getmessage.value.is_liked == true
+				ui.showToast({
+					message: "点赞成功",
+				});
+			}else{
+				getmessage.value.is_bookmarked=true
+				ui.showToast({
+					message: "收藏成功",
+				});
+			}
+	
+		}).catch(err => {
+			ui.showToast({
+				message: (err as Response).message!,
+			});
+		})
+	}
 	onMounted(() => {
 		const params = router.params();
 		ui.showLoading("加载中");
@@ -365,7 +393,7 @@
 		justify-content: space-between;
 		/* flex-shrink: 0; */
 		/* 防止被压缩 */
-		width: 240rpx;
+		width: 200rpx;
 		/* 固定宽度确保显示完整 */
 	}
 

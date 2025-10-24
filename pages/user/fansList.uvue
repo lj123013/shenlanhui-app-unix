@@ -1,17 +1,21 @@
 <template>
 	<cl-page>
+		<cl-topbar safe-area-top background-color="transparent" >
+			<cl-text color="#3A3A3A" :pt="{ className: '!text-xl' }">我的粉丝</cl-text>
+			</cl-topbar>
 		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
 				refresher: {
 					className: 'pt-3'
 				}
-			}" :refresher-enabled="true" @pull="onPull" @bottom="loadMore">
+			}" :refresher-enabled="false" @bottom="loadMore">
 			<template #item="{ value, index }">
 				<user-item :value="value" :index="index"></user-item>
 			</template>
 
 			<template #bottom>
 				<view class="py-3">
-					<cl-loadmore v-if="list.length > 0" :loading="loading" safe-area-bottom></cl-loadmore>
+					<cl-loadmore :loading="loading" :finish="true" v-if="list.length > 0" :safeAreaBottom='true'
+						:pt="{text:{className:'text-sm text-gray-400'}}"></cl-loadmore>
 				</view>
 			</template>
 		</cl-list-view>
@@ -21,10 +25,10 @@
 <script lang="ts" setup>
 	import { useUi } from "@/uni_modules/cool-ui";
 	import { ref } from "vue";
-	import { usePager } from "@/cool";
+	import { usePager,parse,isNull } from "@/cool";
 	import userItem from "../homePage/components/user-item.uvue";
 	import { t } from "@/locale";
-
+	import { followers } from "@/cool/service/user"
 	const ui = useUi();
 
 	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
@@ -33,85 +37,30 @@
 
 	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
 		// 模拟请求
-		setTimeout(() => {
-			render({
-				list: [
-					{
-						id: 1,
-						head_img:
-							"https://cdn.caitongnews.com/images/2020-02-25/5e54df5ae75a1.png?imageMogr2/auto-orient/thumbnail/100x100"
-						,
-						username: "易简财经",
-						descrtion: '关注传媒、媒体人最新动向，全心全意为媒体',
-						isFloow: true,
+		followers({}).then(res => {
+			ui.hideLoading()
+			if (res != null) {
+				const result = parse<UTSJSONObject>(res)!
+				const page = result.pagination
+				if (!isNull(page)) {
+					const pageDta = parse<UTSJSONObject>(page as Any)!
+					render({
+						list: result.followers,
+						pagination: {
+							page: params["page"],
+							size: params["size"],
+							total: pageDta.total
 
-					},
-					{
-						id: 2,
-						username: "金角财经",
-						descrtion: "专业的金融资讯平台，提供深度财经分析",
-						head_img: "https://cdn.caitongnews.com/images/2022/02/18/620fbb36b20b5.jpeg?imageMogr2/auto-orient/thumbnail/100x100",
-						isFloow: false
-					},
-					{
-						id: 3,
-						username: "面包财经",
-						descrtion: "用数据说话的财经媒体，关注企业价值分析",
-						head_img: "https://cdn.caitongnews.com/images/2020-02-27/5e576233be005.jpg?imageMogr2/auto-orient/thumbnail/100x100",
-						isFloow: true
-					},
-					{
-						id: 4,
-						username: "看财经",
-						descrtion: "财经资讯新视角，解读市场热点动态",
-						head_img: "https://cdn.caitongnews.com/images/2020-02-27/5e577c0bce342.jpg?imageMogr2/auto-orient/thumbnail/100x100",
-						isFloow: false
-					},
-					{
-						id: 5,
-						username: "基岩资本",
-						descrtion: "专业投资机构，专注价值投资和资本运作",
-						head_img: "https://cdn.caitongnews.com/images/2020-02-27/5e578d45f04e8.jpg?imageMogr2/auto-orient/thumbnail/100x100",
-						isFloow: false
-					},
-					{
-						id: 6,
-						username: "愉见财经",
-						descrtion: "独立财经观察，提供有温度的财经内容",
-						head_img: "https://img.shenlanhui.com/app/2024/202409/23/202409231727070389.7228362220936.jpg?imageMogr2/auto-orient/thumbnail/100x100",
-						isFloow: true
-					},
-					{
-						id: 7,
-						username: "富凯财经",
-						descrtion: "财富管理专家，提供投资理财指导",
-						head_img: "https://cdn.caitongnews.com/images/2020-02-28/5e590bc85370c.jpg?imageMogr2/auto-orient/thumbnail/100x100",
-						isFloow: false
-					},
-					{
-						id: 8,
-						username: "财联社",
-						descrtion: "7x24小时全球财经资讯，快速精准的市场信息",
-						head_img: "https://cdn.caitongnews.com/images/2020-02-25/5e54df5ae75a1.png?imageMogr2/auto-orient/thumbnail/100x100",
-						isFloow: false
-					}
-				],
-				pagination: {
-					page: params["page"],
-					size: params["size"],
-					total: 100
+						}
+
+					});
 				}
-			});
 
-			ui.hideLoading();
-		}, 1000);
+
+			}
+
+		})
 	});
-
-	async function onPull() {
-		await refresh({ page: 1 });
-		listViewRef.value!.stopRefresh();
-	}
-
 	onReady(() => {
 		ui.showLoading(t("加载中"));
 		// 默认请求

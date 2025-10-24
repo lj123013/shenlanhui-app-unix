@@ -1,9 +1,10 @@
 <template>
 	<view class="px-5">
-		<view :class="index==0?'':'border'" class="company-item flex flex-row items-center py-4 " @click="onItemClick">
+		<view class="company-item flex flex-row items-center py-4 border-bottom" @click="onItemClick">
 			<!-- 公司头像 -->
 			<view class="avatar-wrapper mr-3">
-				<cl-image :src="item?.avatar" width="88rpx" height="88rpx" mode="aspectFill">
+				<cl-image :src="item?.avatar" width="88rpx" height="88rpx" :pt="{className:'rounded-xl'}"
+					mode="aspectFill">
 					<template #error>
 						<cl-text :pt="{className:'!text-sm text-gray-500'}">图片加载失败</cl-text>
 					</template></cl-image>
@@ -17,22 +18,22 @@
 					{{ item?.username }}
 				</cl-text>
 			</view>
-
 			<!-- 关注按钮 -->
 			<view v-if="item?.is_followed == false"
 				class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full bg-primary-500"
 				@click.stop="followBtn">
 				<cl-text color="white" :pt="{
-					className: '!text-xs'
-				}">关注</cl-text>
+						className: '!text-xs'
+					}">关注</cl-text>
 			</view>
-			<view v-if="item?.is_followed == true"
-				class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
+			<view v-else @click.stop="cancelFollow"
+				class="follow-wrapper w-[108rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
 				style="background:#E6E6E6">
 				<cl-text color="white" :pt="{
-					className: '!text-xs'
-				}">已关注</cl-text>
+						className: '!text-xs'
+					}">取消关注</cl-text>
 			</view>
+
 		</view>
 	</view>
 </template>
@@ -41,7 +42,7 @@
 	import { isMp, router, useRefs, DayUts, formatTimeAgo } from "@/cool";
 	import { computed } from "vue";
 	import { parse } from "@/cool";
-	import { follow } from "@/cool/service/list"
+	import { follow, Cancelfollow } from "@/cool/service/user"
 	import { useUi } from "@/uni_modules/cool-ui";
 	const ui = useUi();
 	// 导入时间格式化工具
@@ -53,7 +54,7 @@
 	type newsItem = {
 		id : number;
 		username : string;
-		is_followed : boolean
+		is_followed ?: boolean
 		avatar : string
 	};
 	const props = defineProps({
@@ -68,7 +69,7 @@
 	});
 	const item = computed(() => parse<newsItem>(props.value));
 	// 处理点击事件
-	const emit = defineEmits(["item-click"]);
+	const emit = defineEmits(["item-click", "delete-item"]);
 	const onItemClick = () => {
 		emit("item-click", props.value);
 	};
@@ -86,6 +87,37 @@
 				message: "关注用户失败",
 			});
 		})
+	}
+	//取消关注用户
+	const cancelFollow = () => {
+		ui.showConfirm({
+			title: "取消关注确认",
+			message: "您确定要取消关注该用户吗？",
+			callback(action) {
+				if (action === "confirm") {
+					Cancelfollow({
+						following_id: item.value?.id
+					}).then(res => {
+						emit("delete-item", {
+							id: item.value?.id,
+							index: props.index
+						});
+						ui.showToast({
+							message: "取消关注成功",
+						});
+					}).catch(err => {
+						ui.showToast({
+							message: "取消关注失败",
+						});
+					})
+					// 执行删除操作
+				} else {
+					console.log("用户取消操作");
+				}
+			},
+		});
+
+
 	}
 </script>
 <style>

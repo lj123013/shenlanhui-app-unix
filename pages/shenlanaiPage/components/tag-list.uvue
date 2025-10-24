@@ -82,29 +82,22 @@ const clickItem = (item:aiItem) => {
 		} else {
 			// 将选中的AI工具名称存储到store中
 			app.setSelectedAiTool(item.name);
-			console.log('已存储到store:', item.name);
 			router.to("/pages/shenlanaiPage/chart");
 		}
 	} else if (props.mode === 'select') {
 		// 选择模式：激活状态，不跳转
-		console.log('选择模式 - 点击项目:', item.name);
+	
 		selectedItem.value = item.name;
 		// 将选中的AI工具名称存储到store中
 		app.setSelectedAiTool(item.name);
-		console.log('选中标签:', item.name);
-		console.log('store中的值已更新为:', app.selectedAiTool.value);
-		console.log('本地存储值:', storage.get('selectedAiTool'));
 	}
 }
 onMounted(() => {
 	// 如果是选择模式，从 store 中获取当前选中的项
-	console.log(props.mode,'模式')
+	
 	if (props.mode === 'select') {
 		selectedItem.value = app.selectedAiTool.value;
-		console.log('初始化选择模式 - store中的值:', app.selectedAiTool.value);
-		console.log('初始化选择模式 - 选中项:', selectedItem.value);
 		if (!isNull(props.delet)) {
-			console.log("有值");
 			const index = taglist.value.findIndex((item) => item.name === props.delet);
 			if (index !== -1) {
 				taglist.value.splice(index, 1);

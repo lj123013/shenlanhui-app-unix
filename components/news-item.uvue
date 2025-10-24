@@ -1,13 +1,13 @@
 <template>
 	<view class="">
-		<view class="py-3 px-5" :class="{'borderh10': index != 0}">
+		<view class="py-3 px-5" :class="{'borderh10': index != 0}" @click="onItemClick">
 		<view class="flex flex-row items-center justify-between w-full mb-2 " v-if="!hidden">
 			<view class="flex flex-row items-center ">
 				<cl-avatar :src="item?.image" size="60rpx"></cl-avatar>
 				<cl-col class="ml-2">
 					<cl-text color="#131313" :pt="{ className: '!text-xs flex-1' }">{{ item?.username
 					}}</cl-text>
-					<cl-text color="#909090" :pt="{ className: '!text-xs' }">{{ item?.time
+					<cl-text color="#909090" :pt="{ className: '!text-xs' }">{{ item?.created_at
 					}}</cl-text>
 				</cl-col>
 			</view>
@@ -18,11 +18,13 @@
 				<cl-icon name="arrow-down-s-line" color="#ACACAC"></cl-icon>
 			</view>
 		</view>
-		<view v-if="hidden" class="flex flex-row items-center justify-between" @click="personvisible=!personvisible">
-			<cl-text color="#ACACAC" :pt="{className:'text-sm'}">2025-09-01 11:11</cl-text>
-			<cl-icon name="arrow-down-s-line" color="#ACACAC"></cl-icon>
+		<view v-if="hidden" class="flex flex-row items-center justify-between" >
+			<l-dateformat class="text" :date="item?.created_at" format="yyyy-MM-dd hh:mm" />
+			<cl-icon name="arrow-down-s-line" color="#ACACAC" @click.stop="personvisible=!personvisible"></cl-icon>
 		</view>
 		<cl-text color="black" ellipsis :lines="2" :pt="{ className: '!text-lg' }">{{ item?.title }}</cl-text>
+	<!-- 	<rich-text mode="native" :nodes="item?.content" :selectable="true" class="rich-text-content">
+		</rich-text> -->
 		<cl-text color="#505050" ellipsis :lines="3" :pt="{ className: '!text-base' }">{{ item?.content }}</cl-text>
 		<view class="flex flex-row items-center justify-between py-3 pt-3 border mt-3" v-if="!hidden">
 			<view v-for="item in operationList" class="flex flex-row items-center" :key="item.text">
@@ -118,20 +120,16 @@
 	])
 	// 定义数据类型（注释形式）
 	type newsItem = {
-		image : string,
-		title ?: string,
-		username : string,
-		content : string,
-		time : string,
-		like : number,
-		comment : number,
-		isLike : boolean,
+		id?:number
+		title:string
+		content:string
+		created_at:string
+		featured_image?:string
+		image?:string
+		username?:string
+		interactable_type?:string
 	}
-
-
-
 	const item = computed(() => parse<newsItem>(props.value));
-
 	// 弹出层数据
 	type popupItem = {
 		icon : string;
@@ -161,9 +159,14 @@
 	function close() {
 		visible.value = false;
 	}
+
+	onMounted(()=>{
+		console.log(item.value!!.content as string)
+	})
 	// 处理点击事件
 	const emit = defineEmits(["item-click"]);
 	const onItemClick = () => {
+		console.log(11111)
 		emit("item-click", props.value);
 	};
 </script>
@@ -183,5 +186,9 @@
 	}
 	.follow{
 		border:2rpx solid #2854F2;
+	}
+	.text{
+		color:#cacaca;
+		font-size:12px
 	}
 </style>

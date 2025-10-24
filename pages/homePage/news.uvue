@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 	import { ref } from "vue"
-	import { isMp, router, useRefs, usePager, parse, isArray, isNull } from "@/cool";
+	import { isMp, router, useRefs, usePager, parse, isArray, isNull,type Response } from "@/cool";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import { t } from "@/locale";
 	import newsItem from "../homePage/components/news-item.uvue";
@@ -72,6 +72,11 @@
 				
 			}
 
+		}).catch(err=>{
+			ui.hideLoading()
+			 ui.showToast({
+			      message: (err as Response).message!,
+			    });
 		})
 		
 	});

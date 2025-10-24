@@ -266,7 +266,7 @@
 					const categoryValue = item.getString('category') != null ? item.getString('category')! : ""
 					const itemsArray : FinanceSubItem[] = []
 					const subItems = item.getArray('items')
-					if (isArray(subItems)) {
+					if (subItems!=null) {
 						for (let j = 0; j < subItems!!.length; j++) {
 							// console.log(subItems!![j], "subItems[j]")
 							const subItem = subItems!![j]
