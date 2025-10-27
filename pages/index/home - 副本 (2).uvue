@@ -18,7 +18,7 @@
 						<text class="text-lg text-gray-800 fontBold">财经AI社区</text>
 					</view>
 				</view>
-
+		
 				<view class="rounded-xl hot py-1 px-2 border-gray-200 flex flex-row items-center justify-center"
 					@click="router.to('/pages/homePage/hotPage')">
 					<cl-icon name="yushouhuore" color="#E82A2A" :size="24"></cl-icon>
@@ -26,216 +26,216 @@
 				</view>
 			</view>
 		</cl-topbar>
-		<view class="px-5">
-			<!-- 搜索 -->
-			<view class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center"
-				@tap="router.to('/pages/homePage/serach')">
-				<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>
-				<cl-text color="#B7B7B7" class="text-neutral-300 ml-2">请输入你要搜索的内容</cl-text>
-			</view>
-			<!-- 头条 -->
-			<view class="headlines mt-4">
-				<view class="pt-1  w-full relative" v-for="item in data" :key="item.id" @click="toPathDetail(item)">
-					<view v-if="item.is_top" class="flex flex-row items-center justify-between relative">
-						<view class="bg-red  px-1 rounded-[6rpx] absolute top-[10rpx]">
-							<cl-text color='white' :pt="{
-								className: 'text-xs'
-							}">头条</cl-text>
+		<view class="flex-1">
+			<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
+				refresher: {
+					className: 'pt-3'
+				}
+			}" :refresher-enabled="false" @bottom="loadMore">
+			<template #top>
+				<view class="px-5">
+					<!-- 搜索 -->
+					<view class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center"
+						@tap="router.to('/pages/homePage/serach')">
+						<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>
+						<cl-text color="#B7B7B7" class="text-neutral-300 ml-2">请输入你要搜索的内容</cl-text>
+					</view>
+					<!-- 头条 -->
+					<view class="headlines mt-4">
+						<view class="pt-1  w-full relative" v-for="item in data" :key="item.id" @click="toPathDetail(item)">
+							<view v-if="item.is_top" class="flex flex-row items-center justify-between relative">
+								<view class="bg-red  px-1 rounded-[6rpx] absolute top-[10rpx]">
+									<cl-text color='white' :pt="{
+										className: 'text-xs'
+									}">头条</cl-text>
+								</view>
+								<view class="flex-1">
+									<cl-text ellipsis :lines="2" color="black" class="" :pt="{
+										className:'text-lg'
+									}">
+										{{ '　       '+'　'+ (item?.content) }}
+									</cl-text>
+								</view>
+							</view>
+							<view v-else class="flex flex-row items-center">
+								<cl-icon name="wenjian_2" color="#666" :size="28"></cl-icon>
+								<cl-text ellipsis :lines="1" color="#666" class="ml-1" :pt="{
+								className:'text-base'
+							}">{{ item.content }}</cl-text>
+							</view>
 						</view>
-						<view class="flex-1">
-							<cl-text ellipsis :lines="2" color="black" class="" :pt="{
-								className:'text-lg'
-							}">
-								{{ '　       '+'　'+ (item?.content) }}
-							</cl-text>
+					</view>
+					<!-- 雷达 -->
+					<view class="radar mt-4">
+						<view class="flex flex-row items-center justify-between mb-1">
+							<view class="flex flex-row items-center">
+								<cl-text :pt="{
+										className: '!text-xl fontBold !text-primary-500'
+									}">雷</cl-text>
+								<cl-text color="black" :pt="{
+										className: '!text-xl fontBold'
+									}">达</cl-text>
+							</view>
+							<view class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl">
+								<cl-text :pt="{
+										className: '!text-xs text-red-600'
+									}">更多</cl-text>
+								<cl-icon name="arrow-right-s-line" :size="20" color="#E82A2A"></cl-icon>
+							</view>
+						</view>
+						<!-- 雷达列表 -->
+						<view v-for="item in data2" :key="item.id" class="flex flex-row items-center"
+							@click="onItemClick(item)">
+							<cl-icon name="wenjian_2" color="#666" :size="28" v-if="!item.is_new && item.title == ''"
+								class="mr-1"></cl-icon>
+							<cl-text v-if="item.title" color="black" class="istopItem" :pt="{ className: '!text-lg' }">{{
+								item.title
+							}}</cl-text>
+							<cl-text v-else class="truncate elipsis" color="#666" :pt="{ className: '!text-base' }">{{
+								item.content
+							}}</cl-text>
+				
+						</view>
+						<!-- 雷达概览 :class="index == 3 || index == 7 ? '' : 'mr-10'"-->
+						<view class="flex flex-row w-full items-center flex-wrap justify-center ">
+							<view class="w-3/12 pt-5 flex flex-col items-center justify-center relative"
+								v-for="(item, index) in data3" :key="index" @tap="toPath(item)">
+								<view class="bg-bule-slh w-14 h-14 rounded-full flex flex-col items-center justify-center">
+									<cl-icon :pt="{className:'!text-primary-500'}" :name="item.icon" :size="50"></cl-icon>
+								</view>
+								<cl-text color="text-gray-900" :pt="{ className: '!text-sm mt-1' }">{{ item.title }}</cl-text>
+								<view class="bottom-16 right-px absolute bg-red p-1 rounded-full" v-if="isEmptyPath(item)">
+									<cl-text color='white' :pt="{
+									className: '!text-[14rpx] leading-none '
+								}">敬请期待</cl-text>
+								</view>
+				
+							</view>
 						</view>
 					</view>
-					<view v-else class="flex flex-row items-center">
-						<cl-icon name="wenjian_2" color="#666" :size="28"></cl-icon>
-						<cl-text ellipsis :lines="1" color="#666" class="ml-1" :pt="{
-						className:'text-base'
-					}">{{ item.content }}</cl-text>
-					</view>
-				</view>
-			</view>
-			<!-- 雷达 -->
-			<view class="radar mt-4">
-				<view class="flex flex-row items-center justify-between mb-1">
-					<view class="flex flex-row items-center">
-						<cl-text :pt="{
-								className: '!text-xl fontBold !text-primary-500'
-							}">雷</cl-text>
-						<cl-text color="black" :pt="{
-								className: '!text-xl fontBold'
-							}">达</cl-text>
-					</view>
-					<view class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl">
-						<cl-text :pt="{
-								className: '!text-xs text-red-600'
-							}">更多</cl-text>
-						<cl-icon name="arrow-right-s-line" :size="20" color="#E82A2A"></cl-icon>
-					</view>
-				</view>
-				<!-- 雷达列表 -->
-				<view v-for="item in data2" :key="item.id" class="flex flex-row items-center"
-					@click="onItemClick(item)">
-					<cl-icon name="wenjian_2" color="#666" :size="28" v-if="!item.is_new && item.title == ''"
-						class="mr-1"></cl-icon>
-					<cl-text v-if="item.title" color="black" class="istopItem" :pt="{ className: '!text-lg' }">{{
-						item.title
-					}}</cl-text>
-					<cl-text v-else class="truncate elipsis" color="#666" :pt="{ className: '!text-base' }">{{
-						item.content
-					}}</cl-text>
-
-				</view>
-				<!-- 雷达概览 :class="index == 3 || index == 7 ? '' : 'mr-10'"-->
-				<view class="flex flex-row w-full items-center flex-wrap justify-center ">
-					<view class="w-3/12 pt-5 flex flex-col items-center justify-center relative"
-						v-for="(item, index) in data3" :key="index" @tap="toPath(item)">
-						<view class="bg-bule-slh w-14 h-14 rounded-full flex flex-col items-center justify-center">
-							<cl-icon :pt="{className:'!text-primary-500'}" :name="item.icon" :size="50"></cl-icon>
+					<!-- 快讯 -->
+					<view class="radar mt-4">
+						<view class="flex flex-row items-center justify-between">
+							<view class="flex flex-row items-center">
+								<cl-text :pt="{
+										className: 'text-xl fontBold !text-primary-500'
+									}">7×24</cl-text>
+								<cl-text color="black" :pt="{
+										className: '!text-xl fontBold'
+									}">快讯</cl-text>
+							</view>
+							<view class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl" @tap="jump">
+								<cl-text class="textred-600" :pt="{
+										className: '!text-xs'
+									}">更多</cl-text>
+								<cl-icon name="arrow-right-s-line" :size="20" color="#E82A2A"></cl-icon>
+							</view>
 						</view>
-						<cl-text color="text-gray-900" :pt="{ className: '!text-sm mt-1' }">{{ item.title }}</cl-text>
-						<view class="bottom-16 right-px absolute bg-red p-1 rounded-full" v-if="isEmptyPath(item)">
-							<cl-text color='white' :pt="{
-							className: '!text-[14rpx] leading-none '
-						}">敬请期待</cl-text>
+				
+						<!-- 快讯列表 -->
+						<view class="dispath flex flex-row items-start justify-between pt-3"
+							v-for="(item, index) in daspathList" :key="item.id" @click="toPathDispath(item)">
+							<view class="flex flex-row items-center dispath-left mr-2">
+								<view class="w-3 h-3 rounded-full bg-red-200 flex flex-col items-center justify-center mr-1">
+									<view class="bg-red w-1 h-1 rounded-full"></view>
+								</view>
+								<l-dateformat style="color:#cbcbcb" :date="item?.created_at" format="hh:mm" />
+							</view>
+							<cl-text ellipsis :lines="2" class=" flex-1" color="#313131" :pt="{
+									className: '!text-base'
+								}">{{item.title}}</cl-text>
 						</view>
-
-					</view>
-				</view>
-			</view>
-			<!-- 快讯 -->
-			<view class="radar mt-4">
-				<view class="flex flex-row items-center justify-between">
-					<view class="flex flex-row items-center">
-						<cl-text :pt="{
-								className: 'text-xl fontBold !text-primary-500'
-							}">7×24</cl-text>
-						<cl-text color="black" :pt="{
-								className: '!text-xl fontBold'
-							}">快讯</cl-text>
-					</view>
-					<view class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl" @tap="jump">
-						<cl-text class="textred-600" :pt="{
-								className: '!text-xs'
-							}">更多</cl-text>
-						<cl-icon name="arrow-right-s-line" :size="20" color="#E82A2A"></cl-icon>
-					</view>
-				</view>
-
-				<!-- 快讯列表 -->
-				<view class="dispath flex flex-row items-start justify-between pt-3"
-					v-for="(item, index) in daspathList" :key="item.id" @click="toPathDispath(item)">
-					<view class="flex flex-row items-center dispath-left mr-2">
-						<view class="w-3 h-3 rounded-full bg-red-200 flex flex-col items-center justify-center mr-1">
-							<view class="bg-red w-1 h-1 rounded-full"></view>
+						<!-- 大家都在看 -->
+						<view class="reading mt-4">
+							<view class="flex flex-row items-center">
+								<cl-text :pt="{
+										className: '!text-xl fontBold !text-primary-500'
+									}">大家</cl-text>
+								<cl-text color="black" :pt="{
+										className: '!text-xl fontBold'
+									}">都在看</cl-text>
+							</view>
+							<scroll-view class="scroll-view_H pt-3" direction="horizontal" :show-scrollbar="false">
+								<view class="scroll-view-item_H  mr-3" v-for="(item, index) in hotList" :key="item.id"
+									:class="index==0 ?'card-bg-1':'card-bg-2'">
+									<view class="card-header flex flex-row  justify-between">
+										<cl-text color="#464646" :pt="{
+													className: '!text-base fontBold'
+												}">{{ item.title }}</cl-text>
+										<view class="flex flex-row items-center py-1 rounded-xl bg-white py-1 px-2"
+											@click="showmore(index)">
+											<cl-text :color="index==0?'primary':'#E82A2A'" :pt="{
+													className: '!text-xs'
+												}">更多</cl-text>
+											<cl-icon name="arrow-right-s-line" :size="20"
+												:color="index==0?'primary':'#E82A2A'"></cl-icon>
+										</view>
+									</view>
+									<view class="card-content">
+										<view class="article-item" v-for="(child, childindex) in item.children" :key="child.id">
+											<cl-text class="article-number" :style="{ color: getNumberColor(childindex) }">
+												{{ childindex + 1 }}.
+											</cl-text>
+											<cl-text color="#707070" :pt="{
+												className:'!text-base'
+											}" class="elipsis">{{
+													child.title
+												}}</cl-text>
+										</view>
+									</view>
+								</view>
+							</scroll-view>
 						</view>
-						<l-dateformat style="color:#cbcbcb" :date="item?.created_at" format="hh:mm" />
-					</view>
-					<cl-text ellipsis :lines="2" class=" flex-1" color="#313131" :pt="{
-							className: '!text-base'
-						}">{{item.title}}</cl-text>
-				</view>
-				<!-- 大家都在看 -->
-				<view class="reading mt-4">
-					<view class="flex flex-row items-center">
-						<cl-text :pt="{
-								className: '!text-xl fontBold !text-primary-500'
-							}">大家</cl-text>
-						<cl-text color="black" :pt="{
-								className: '!text-xl fontBold'
-							}">都在看</cl-text>
-					</view>
-					<scroll-view class="scroll-view_H pt-3" direction="horizontal" :show-scrollbar="false">
-						<view class="scroll-view-item_H  mr-3" v-for="(item, index) in hotList" :key="item.id"
-							:class="index==0 ?'card-bg-1':'card-bg-2'">
-							<view class="card-header flex flex-row  justify-between">
-								<cl-text color="#464646" :pt="{
-											className: '!text-base fontBold'
-										}">{{ item.title }}</cl-text>
-								<view class="flex flex-row items-center py-1 rounded-xl bg-white py-1 px-2"
-									@click="showmore(index)">
-									<cl-text :color="index==0?'primary':'#E82A2A'" :pt="{
+						<view class="active-users mt-4 ">
+							<cl-image width="100%" height="226rpx" class="active-users-bg "
+								src="../../static/image/home-userbg.png"></cl-image>
+							<view class="active-users-content py-5">
+								<view class="active-users-title flex flex-row items-center justify-between px-2">
+									<cl-text color="#923D0A" :pt="{ className: ' !text-lg fontBold' }">活跃用户</cl-text>
+									<view class="flex flex-row items-center py-1 px-2 rounded-xl bg-white" @click="Toshowuser">
+										<cl-text color="#FF7700" class="textred-600" :pt="{
 											className: '!text-xs'
 										}">更多</cl-text>
-									<cl-icon name="arrow-right-s-line" :size="20"
-										:color="index==0?'primary':'#E82A2A'"></cl-icon>
+										<cl-icon name="arrow-right-s-line" :size="20" color="#FF7700"></cl-icon>
+									</view>
 								</view>
-							</view>
-							<view class="card-content">
-								<view class="article-item" v-for="(child, childindex) in item.children" :key="child.id">
-									<cl-text class="article-number" :style="{ color: getNumberColor(childindex) }">
-										{{ childindex + 1 }}.
-									</cl-text>
-									<cl-text color="#707070" :pt="{
-										className:'!text-base'
-									}" class="elipsis">{{
-											child.title
-										}}</cl-text>
-								</view>
+								<scroll-view class="scroll-view_H pt-3" direction="horizontal" :show-scrollbar="false">
+									<view v-for="item in activeUsersList" @click="toPathuser(item)"
+										class="scroll-user-item flex flex-col items-center justify-center w-[60px]">
+										<cl-image :width="60" :height="60" :pt="{
+									inner: {
+										className: '!rounded-2xl'
+									}
+								}" :src="item.avatar"></cl-image>
+										<cl-text ellipsis :pt="{ className: '!text-xs' }">{{
+										item.username
+									}}</cl-text>
+									</view>
+								</scroll-view>
 							</view>
 						</view>
-					</scroll-view>
-				</view>
-				<view class="active-users mt-4 ">
-					<cl-image width="100%" height="226rpx" class="active-users-bg "
-						src="../../static/image/home-userbg.png"></cl-image>
-					<view class="active-users-content py-5">
-						<view class="active-users-title flex flex-row items-center justify-between px-2">
-							<cl-text color="#923D0A" :pt="{ className: ' !text-lg fontBold' }">活跃用户</cl-text>
-							<view class="flex flex-row items-center py-1 px-2 rounded-xl bg-white" @click="Toshowuser">
-								<cl-text color="#FF7700" class="textred-600" :pt="{
-									className: '!text-xs'
-								}">更多</cl-text>
-								<cl-icon name="arrow-right-s-line" :size="20" color="#FF7700"></cl-icon>
-							</view>
-						</view>
-						<scroll-view class="scroll-view_H pt-3" direction="horizontal" :show-scrollbar="false">
-							<view v-for="item in activeUsersList" @click="toPathuser(item)"
-								class="scroll-user-item flex flex-col items-center justify-center w-[60px]">
-								<cl-image :width="60" :height="60" :pt="{
-							inner: {
-								className: '!rounded-2xl'
-							}
-						}" :src="item.avatar"></cl-image>
-								<cl-text ellipsis :pt="{ className: '!text-xs' }">{{
-								item.username
-							}}</cl-text>
-							</view>
-						</scroll-view>
 					</view>
 				</view>
-			</view>
-		</view>
-		<!-- 推荐阅读 -->
-		<view class="recommended mt-4">
-			<view class="flex flex-row items-center px-5">
-				<cl-text :pt="{
-							className: '!text-xl fontBold !text-primary-500'
-						}">推荐</cl-text>
-				<cl-text color="black" :pt="{
-							className: '!text-xl fontBold'
-						}">阅读</cl-text>
-			</view>
-			<!-- 文章列表 -->
-				<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
-						refresher: {
-							className: 'pt-3'
-						}
-					}" :refresher-enabled="false" @bottom="loadMore">
-					<template #item="{ value, index }">
-						<article-item :value="value" :index="index" @item-click="articleClick"></article-item>
-					</template>
-
-					<template #bottom>
-						<view class="py-3">
-							<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
-						</view>
-					</template>
-				</cl-list-view>
-
+				<view class="flex flex-row items-center px-5">
+					<cl-text :pt="{
+								className: '!text-xl fontBold !text-primary-500'
+							}">推荐</cl-text>
+					<cl-text color="black" :pt="{
+								className: '!text-xl fontBold'
+							}">阅读</cl-text>
+				</view>
+			</template>
+			<template #item="{ value, index }">
+				<article-item :value="value" :index="index" @item-click="articleClick"></article-item>
+			</template>
+			
+			<template #bottom>
+				<view class="py-3">
+					<cl-loadmore :loading="loading" :finish="true" v-if="list.length > 0" :safeAreaBottom='true'
+						:pt="{text:{className:'text-sm text-gray-400'}}"></cl-loadmore>
+				</view>
+			</template>
+			</cl-list-view>
 		</view>
 		<!-- 自定义底部导航栏 -->
 		<Tabbar></Tabbar>
@@ -685,22 +685,22 @@
 			exclude_read: 0
 		}).then(res => {
 			ui.hideLoading()
-				console.log(res)
-				const result = parse<UTSJSONObject>(res)!
-				console.log(result, "result")
-				render({
-					list: result.data,
-					pagination: {
-						page: params["page"],
-						size: params["size"],
-						total: result.total
+			console.log(res)
+			const result = parse<UTSJSONObject>(res)!
+			console.log(result, "result")
+			render({
+				list: result.data,
+				pagination: {
+					page: params["page"],
+					size: params["size"],
+					total: result.total
 
-					}
+				}
 
-				});
+			});
 
 
-			
+
 
 		})
 
