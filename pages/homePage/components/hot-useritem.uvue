@@ -26,12 +26,12 @@
 						className: '!text-xs'
 					}">关注</cl-text>
 			</view>
-			<view v-else @click.stop="cancelFollow"
+			<view v-else 
 				class="follow-wrapper w-[108rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
 				style="background:#E6E6E6">
 				<cl-text color="white" :pt="{
 						className: '!text-xs'
-					}">取消关注</cl-text>
+					}">已关注</cl-text>
 			</view>
 
 		</view>

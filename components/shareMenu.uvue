@@ -3,7 +3,7 @@
 		<view>
 			<cl-row :gutter="12" :pt="{className:'p-4'}">
 				<cl-col :span="6" v-for="item in shareList">
-					<view class="flex flex-col items-center justify-center" @click="clickshare(item)">
+					<view class="flex flex-col items-center justify-center" @click="clickshare(item.share)">
 						<cl-image :src="item.image" width="72rpx" height="72rpx" :pt="{ className: 'mb-2' }"></cl-image>
 						<cl-text color="#484848" :pt="{ className: '!text-sm' }">{{ item.title }}</cl-text>
 					</view>
@@ -18,9 +18,10 @@
 </template>
 
 <script setup>
-	import { ref, watch, defineProps, defineEmits } from 'vue'
+	import { ref, watch, defineProps, defineEmits, computed, toRaw } from 'vue'
+	import type { ArticleData } from "@/types";
 	import { config } from "@/config";
-	import { router, isNull } from "@/cool";
+	import { router, isNull, parse } from "@/cool";
 	import { useUi } from "@/uni_modules/cool-ui";
 	const ui = useUi();
 	const props = defineProps({
@@ -28,6 +29,22 @@
 			type: Boolean,//个人中心的文章不需要展示用户头像和操作
 			default: false
 		},
+		shareMessage: {
+			type: Object,
+			default: () => ({})
+		},
+		hasImage: {
+			type: Boolean,
+			default: false
+		},
+		sharetype: {
+			type: String,
+			default: '文章'
+		},
+		articleId: {
+			type: Number,
+			default: null
+		}
 	})
 	// 定义分享配置的类型
 	type shareItem = {
@@ -83,10 +100,10 @@
 	}
 
 	// 分享按钮点击事件（可选：如果需要点击分享后关闭弹窗）
-	const clickshare = (item : shareItem) => {
+	const clickshare = (item : string) => {
 		visible.value = false
 		emit("close", false); // 分享后关闭弹窗，同样会通知父组件
-		if (item.share == 'forward') {
+		if (item == 'forward') {
 			//转发
 			router.push({
 				path: '/pages/publish/disucss',
@@ -94,14 +111,26 @@
 					title: `转发${config.name}`
 				}
 			})
-		} else if (item.share == 'saveImg') {
-			router.to("/pages/GeneratePicture/articlePic")
-		} else if (item.share == 'shareAll') {
+		} else if (item == 'saveImg') {
+			// 生成图片
+			console.log("分享数据", props.shareMessage, "分享类型", props.sharetype)
+			if (props.sharetype == '文章'&&props.hasImage==true) {
+				// 文章且有图片
+				router.push({
+					path: '/pages/GeneratePicture/articlePic',
+					params: {
+						articleId: props.articleId,
+						title: '文章'
+					}
+				});
+			}
+
+		} else if (item == 'shareAll') {
 			const imageSrc : string = "/static/image/logo.png";
 			let imageUrlList : string[] = new Array()
 			uni.shareWithSystem({
 				summary: '欢迎使用深蓝汇',
-				 href: 'https://www.shenlanhui.com/?t=' + new Date().getTime(), // 添加时间戳
+				href: 'https://www.shenlanhui.com/?t=' + new Date().getTime(), // 添加时间戳
 				imagePaths: imageUrlList,
 				type: 'text',
 				success(_) {

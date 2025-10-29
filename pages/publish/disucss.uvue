@@ -16,27 +16,24 @@
 			</view>
 			<view v-if="title == '图片'">
 				<view class="border-bottom py-2">
-					<cl-input placeholder="请输入图片介绍（选填）" :border="false"></cl-input>
+					<cl-input v-model="content" placeholder="请输入图片介绍（选填）" :border="false"></cl-input>
 				</view>
 				<view class="border-bottom py-2 mb-8">
 					<cl-select v-model="imageType" :border="false" ref="selectRef" :options="options"
 						placeholder="请选择图片类别"></cl-select>
 				</view>
 
-				<view class="h-[210px] w-[210px] bg-gray-200" @click="uploadImg">
-					<cl-text class="mt-3" color="#999" :pt="{ className: 'text-sm' }">上传图片</cl-text>
-				</view>
+				<!-- 图库上传 -->
+				<cl-upload icon="jia" text="上传图片" :width="690" :height="210" multiple :limit="9" @exceed="handleExceed"
+					@success="handleSuccess" @error="handleError"></cl-upload>
 			</view>
 			<view v-else>
 				<cl-textarea v-model="content" :placeholder="title == '转发深蓝汇' ? '说说转发心得...' : '请输入发布内容'" height="260px"
 					:autofocus="true" :holdKeyboard="true" :border="false" :showWordLimit="false"
 					:pt="{ className: '!px-1' }"></cl-textarea>
 				<!-- 上传图片 -->
-				<view v-if="title != '转发深蓝汇'&&featured_image==''" class=" rounded-xl h-[210rpx] w-[210rpx] flex flex-col items-center justify-center"
-					style="background:#F8F8F8 " @click="uploadImg">
-					<cl-icon name="jia" color="#D4D4D4" :size="80"></cl-icon>
-				</view>
-				<cl-image v-if="featured_image!=''" :src="featured_image" width="210rpx" height="210rpx" :pt="{className:'rounded-xl'}"></cl-image>
+				<cl-upload v-if="title == '发讨论'" multiple :limit="3" @exceed="handleExceed" @success="handleSuccess"
+					@error="handleError"></cl-upload>
 			</view>
 			<view v-if="title == '转发深蓝汇'"
 				class="flex flex-row justify-between items-center bg-custom-bg-gray p-2 rounded-[10rpx]">
@@ -49,13 +46,14 @@
 				</view>
 			</view>
 		</view>
+
 		<view v-if="title != '图片'" class="footer-container w-full h-[50px] px-5"
 			:style="{ bottom: inputBottom + 'px' }">
 			<view class="flex flex-row items-center">
 				<!-- <cl-icon name="a-lujing387" size="30rpx" width="40rpx" height="40rpx" color="black"></cl-icon>
 				<cl-icon name="a-zu342" color="black" height="40rpx" :pt="{className:'ml-3'}"></cl-icon> -->
 			</view>
-			<cl-icon name="baocun" color="black" height="40rpx" @click="savedraft"></cl-icon>
+			<cl-icon name="baocun" color="black" height="40rpx"  @click="savedraft"></cl-icon>
 		</view>
 	</cl-page>
 </template>
@@ -67,6 +65,7 @@ import { t } from "@/locale";
 import { pulish } from "@/cool/service/list";
 const title = ref('')
 const ui = useUi();
+const images = ref < string[] > ([]);
 const imageType = ref < number | null > (null);
 const upload3 = ref < string[] > ([]);
 const imageList = ref < string[] > ([])
@@ -74,7 +73,7 @@ const inputBottom = ref(0)
 const isPubComment = ref(false)
 const content = ref('')
 const userTitle = ref('')
-const featured_image = ref('')
+
 const options = ref < ClSelectOption[] > ([
 	{
 		label: "创意",
@@ -90,87 +89,84 @@ const closePopup = () => {
 	isPubComment.value = false
 	inputBottom.value = 0
 }
-// 上传图片
-const uploadImg = () => {
-	// 在函数体内设置默认值
-	const actualUploadType = "verification";
-	function next(path: string) {
-		const file: ChooseImageTempFile = {
-			path: path,
-			size: 0, // 如果您能获取到文件大小，可以在这里设置
-			name: "file", // 使用路径中的文件名
-			type: "image/png" // 根据实际文件类型设置，这里只是示例
-		};
-		uploadFile(file, { type: actualUploadType }, actualUploadType).then((res) => {
-			console.log('上传成功结果', res)
-			featured_image.value = res;//营业执照或组织机构
-			ui.showToast({
-				message: t("图片上传成功"),
-				type: "success",
-			});
-			// 根据字段名更新对应的表单字段
-
-			console.log('更新后的 featured_image:',featured_image.value);
-		})
-			.catch((err) => {
-				console.log('上传失败结果', err)
-				ui.showToast({
-					message: t("图片上传失败"),
-					type: "error",
-				});
-			});
-	}
-	// #ifndef MP-WEIXIN
-	console.log('非微信小程序环境，调用 chooseImage');
-	uni.chooseImage({
-		count: 1,
-		success(res) {
-			console.log('选择图片成功:', res);
-			if (isArray(res.tempFiles) && res.tempFiles.length > 0) {
-				if (!isNull(res.tempFiles[0].path))
-					next(res.tempFiles[0].path);
-			} else {
-				console.log('未找到临时文件路径');
-				ui.showToast({
-					message: "未找到文件路径"
-				});
-			}
-		},
-		fail(err) {
-			console.log('选择图片失败:', err);
-			ui.showToast({
-				message: "选择图片失败"
-			});
-		}
-	});
-	// #endif
-}
 function handleExceed(list: ClUploadItem[]) {
 	console.log("超出文件数量限制", list);
 }
-const clicksend = async () => {
-	ui.showLoading("发布中...")
+function handleSuccess(url: string) {
+	console.log("上传成功:", url);
+	images.value.push(url)
+}
+function handleError(message: string) {
+	console.error("上传失败:", message);
+}
+
+const pushlishData = (status: string) => {
+	console.log(imageList.value)
+	let type_content = ""
+	if (title.value == '发讨论') {
+		type_content = 'discussion'
+	} else if (title.value == '发长文') {
+		type_content = 'article'
+	} else if (title.value == '图片') {
+		type_content = 'image'
+	}
+	let image_type = ''
+	if (imageType.value == 1) {
+		image_type = "creative "
+	} else {
+		image_type = "photo"
+	}
+
 	pulish({
-		content_type: 'article',
+		type: type_content,
 		title: userTitle.value,
 		content: content.value,
-		featured_image: featured_image.value,
+		images: images.value,
+		status: status,//
+		image_type: title.value == '图片' ? image_type : "",
+		visibility: 0,//可见性
 	}).then((res) => {
 		ui.hideLoading()
-		ui.showToast({
-			message: "发布成功",
-			type: "success"
-		});
-		router.back()
+		if (status == 'draft') {
+			ui.showToast({
+				message: "保存草稿成功",
+				type: "success"
+			});
+		} else {
+			ui.showToast({
+				message: "发布成功",
+				type: "success"
+			});
+		}
+		setTimeout(() => {
+			router.back()
+		}, 1500);
+
 	}).catch(error => {
 		ui.hideLoading()
 		ui.showToast({
 			message: "发布失败，请稍后重试",
 		});
 	})
+}
+const clicksend = async () => {
+	console.log(imageType.value)
+	ui.showLoading("发布中...")
+	console.log(images.value, '图片数组')
+	if (content.value != "") {
+		pushlishData('published')
+	} else {
+		uni.showToast({
+			title: '请输入内容',
+			icon: 'none'
+		});
+	}
+
 
 }
 const savedraft = () => {
+	console.log("确认保存草稿")
+	if (content.value == '') return
 	ui.showConfirm({
 		title: "确认保存草稿",
 		message: "确定要保存此条文章为草稿吗",
@@ -178,7 +174,7 @@ const savedraft = () => {
 		cancelText: "不保存",
 		callback(action) {
 			if (action === "confirm") {
-				console.log("用户确认删除");
+				pushlishData('draft')
 				// 执行删除操作
 			} else {
 				console.log("用户取消操作");
@@ -191,6 +187,7 @@ onMounted(() => {
 	if (!isNull(params)) {
 		title.value = params.title as string
 	}
+	console.log("图片列表", images.value)
 	uni.onKeyboardHeightChange((res) => {
 		console.log(res)
 		if (res.height > 0) {

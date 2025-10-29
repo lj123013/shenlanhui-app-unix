@@ -17,8 +17,8 @@
 
 			<template #bottom>
 				<view class="py-3">
-					<cl-loadmore :loading="loading" :finish="true" v-if="list.length > 0" :safeAreaBottom='true'
-						:pt="{text:{className:'text-sm text-gray-400'}}"></cl-loadmore>
+					<cl-loadmore :loading="loading" :finish="finished" v-if="list.length > 0" :safeAreaBottom='true'
+						></cl-loadmore>
 				</view>
 			</template>
 		</cl-list-view>
@@ -137,7 +137,7 @@
 
 
 	}
-	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
+	const { refresh, list, listView, loading, loadMore,finished } = usePager((params, { render }) => {
 		// 模拟请求
 		let getlist : UTSJSONObject[] = []
 		myInteractions({

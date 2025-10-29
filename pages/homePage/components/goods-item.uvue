@@ -1,12 +1,13 @@
 <template>
-	<view class="p-5">
+	<view class="p-5" v-if="item!=null">
 		<cl-row :gutter="12">
 			<cl-col :span="22">
 				<view class="flex flex-row items-center">
-					<cl-avatar :src="item?.head_img" rounded></cl-avatar>
+					<cl-avatar v-if="showshare" :src="item?.author?.avatar" rounded></cl-avatar>
 					<view class="ml-2">
-						<cl-text color="#131313" :pt="{ className: 'text-sm' }">{{ item?.username }}</cl-text>
-						<cl-text color="#707070" :pt="{ className: 'text-xs' }">05-09-01</cl-text>
+						<cl-text v-if="showshare" color="#131313" :pt="{ className: 'text-sm' }">{{ item?.author?.username }}</cl-text>
+						<l-dateformat style="color:#707070;fontSize:12px" :date="item?.timestamps?.created_at"
+							format="yyyy-MM-dd" />
 
 					</view>
 				</view>
@@ -16,36 +17,43 @@
 			</cl-col>
 		</cl-row>
 		<view class="imageBox my-4" width="100%" height="314rpx">
-			<cl-image :src="item?.image" mode="aspectFill" width="100%" height="314rpx"
+			<cl-image :src="item?.images[0]" mode="aspectFill" width="100%" height="314rpx"
 				:pt="{ className: 'rounded-[20rpx]' }"></cl-image>
 			<view class="tagBox ">
-				<cl-text color="white" :pt="{ className: 'text-sm' }">{{ item?.tag }}</cl-text>
+				<cl-text color="white"
+					:pt="{ className: 'text-sm' }">{{ item?.image_type=="creative"?'创意':'实拍' }}</cl-text>
 			</view>
 		</view>
-		<cl-row :gutter="12">
-			<cl-col :span="8">
-				<view class="item flex flex-row items-center justify-center">
-					<cl-icon name="zhuanfa" color="#9B9B9B" size="26rpx" width="28rpx"></cl-icon>
-					<cl-text color="#9B9B9B" :pt="{ className: 'text-sm' }">分享</cl-text>
+		<view class="flex flex-row items-center justify-between" v-if="showshare">
+			<view v-for="child in operationList" class="flex flex-row items-center" :key="child.text">
+				<cl-icon :name="child?.icon" :pt="{ className: 'operationColor' }" :size="24"></cl-icon>
+				<view v-if="child?.text=='分享'">
+					<cl-text v-if="item?.stats?.shares!=0" :pt="{ className: 'operationColor !text-sm ml-1' }">{{ item?.stats?.shares
+						}}</cl-text>
+					<cl-text v-else :pt="{ className: 'operationColor !text-sm ml-1' }">{{ child?.text
+							}}</cl-text>
 				</view>
-			</cl-col>
-			<cl-col :span="8">
-				<view class="item flex flex-row items-center justify-center">
-					<cl-icon name="a-pinglun1" color="#9B9B9B" size="26rpx" width="28rpx"></cl-icon>
-					<cl-text color="#9B9B9B" :pt="{ className: 'text-sm' }">评论</cl-text>
+
+				<view v-if="child?.text=='评论'">
+					<cl-text v-if="item?.stats?.comments!=0" :pt="{ className: 'operationColor !text-sm ml-1' }">{{ item?.stats?.comments
+						}}</cl-text>
+					<cl-text v-else :pt="{ className: 'operationColor !text-sm ml-1' }">{{ child?.text
+								}}</cl-text>
 				</view>
-			</cl-col>
-			<cl-col :span="8">
-				<view class="item flex flex-row items-center justify-center">
-					<cl-icon name="dianzan-curder" color="#9B9B9B" size="26rpx" width="28rpx"></cl-icon>
-					<cl-text color="#9B9B9B" :pt="{ className: 'text-sm' }">点赞</cl-text>
+				<view v-if="child?.text=='点赞'">
+					<cl-text v-if="item?.stats?.likes!=0" :pt="{ className: 'operationColor !text-sm ml-1' }">{{ item?.stats?.likes
+						}}</cl-text>
+					<cl-text v-else :pt="{ className: 'operationColor !text-sm ml-1' }">{{ child?.text
+									}}</cl-text>
 				</view>
-			</cl-col>
-		</cl-row>
+
+
+			</view>
+		</view>
 	</view>
 	<view class="bg-custom-bg-gray w-full h-[14rpx]"></view>
 	<!-- 悬浮图标 -->
-	<cl-float-view :left="300" :bottom="100" disabled :height="116" :width="104">
+	<cl-float-view :left="300" :bottom="100" disabled :height="116" :width="104" v-if="showshare">
 		<view class="w-[104rpx] py-2 h-[116rpx] bg-primary-500 rounded-xl flex flex-col items-center justify-center">
 			<cl-icon name="jia" color="white" size="50rpx"></cl-icon>
 			<cl-text color="white" :pt="{ className: 'text-base' }">发图</cl-text>
@@ -54,47 +62,96 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
-import { parse } from "@/cool";
+	import { computed } from "vue";
+	import { parse } from "@/cool";
 
-defineOptions({
-	name: "goods-item"
-});
-
-type GoodsItem = {
-	id: number;
-	head_img: string;
-	username: string;
-	image: string;
-	tag: string
-};
-
-const props = defineProps({
-	value: {
-		type: Object,
-		default: () => ({})
+	defineOptions({
+		name: "goods-item"
+	});
+	const props = defineProps({
+		value: {
+			type: Object,
+			default: () => ({})
+		},
+		showshare: {
+			type: Boolean,//个人中心的文章不需要展示用户头像和操作
+			default: true
+		},
+	});
+	type author = {
+		avatar : string
+		username : string
+		nickname : string
+		id : number
+		is_followed : boolean
 	}
-});
+	type stats = {
+		shares : number
+		bookmarks : number
+		comments : number
+		views : number
+		likes : number
+	}
+	type timestamps = {
+		created_at : string
+		published_at : string
+		updated_at : string
+	}
 
-const item = computed(() => parse<GoodsItem>(props.value));
+	// 定义数据类型（注释形式）
+	type GoodsItem = {
+		id ?: number
+		title ?: string
+		content ?: string
+		author ?: author
+		stats ?: stats
+		image_type ?: string
+		timestamps ?: timestamps
+		images ?: Array<string>
+	}
+	type iconitem = {
+		icon : string,
+		text : string
+		num ?: number
+	}
+	const operationList = ref<iconitem[]>([
+		{
+			icon: 'zhuanfa',
+			text: '分享',
+			num: 0,
+		},
+		{
+			icon: 'a-pinglun1',
+			text: '评论',
+			num: 0,
+		},
+		{
+			icon: 'dianzan',
+			text: '点赞',
+			num: 0,
+		}
+	])
+
+
+	const item = computed(() => parse<GoodsItem>(props.value));
 </script>
 <style>
-.imageBox {
-	position: relative;
-}
+	.imageBox {
+		position: relative;
+	}
 
-.tagBox {
-	background-color: rgba(0, 0, 0, 0.3);
-	width: 96rpx;
-	height: 48rpx;
-	border-radius: 20rpx 0 20rpx 0;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	position: absolute;
-	top: 0;
-	left: 0;
+	.tagBox {
+		background-color: rgba(0, 0, 0, 0.3);
+		width: 96rpx;
+		height: 48rpx;
+		border-radius: 20rpx 0 20rpx 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		top: 0;
+		left: 0;
 
-}
+	}
 </style>

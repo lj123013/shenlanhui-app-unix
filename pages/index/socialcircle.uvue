@@ -1,21 +1,24 @@
 <template>
 	<cl-page>
-		<cl-topbar fixed :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
-			<template #prepend>
-				<view class="bg-primary-500 rounded-full w-[60rpx] h-[60rpx] flex flex-col items-center justify-center"
-					@click="router.to('/pages/user/my')">
-					<cl-icon name="a-zu254" color="white" size="28rpx"></cl-icon>
-				</view>
-			</template>
-			<cl-text color="black" :pt="{ className: '!text-xl fontBold' }">圈子</cl-text>
-			<template #append>
-				<view class="bg-primary-500 rounded-full w-[52rpx] h-[52rpx] flex flex-col items-center justify-center"
-					@click="publishVisible=!publishVisible">
-					<cl-icon name="jia" color="white" size="30rpx"></cl-icon>
-				</view>
-			</template>
-		</cl-topbar>
 		<view>
+			<cl-topbar fixed :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
+				<template #prepend>
+					<view
+						class="bg-primary-500 rounded-full w-[60rpx] h-[60rpx] flex flex-col items-center justify-center"
+						@click="router.to('/pages/user/my')">
+						<cl-icon name="a-zu254" color="white" size="28rpx"></cl-icon>
+					</view>
+				</template>
+				<cl-text color="black" :pt="{ className: '!text-xl fontBold' }">圈子</cl-text>
+				<template #append>
+					<view
+						class="bg-primary-500 rounded-full w-[52rpx] h-[52rpx] flex flex-col items-center justify-center"
+						@click="publishVisible=!publishVisible">
+						<cl-icon name="jia" color="white" size="30rpx"></cl-icon>
+					</view>
+				</template>
+			</cl-topbar>
+
 			<!-- 搜索框吸顶 -->
 			<cl-sticky :offset-top="44+statusBarHeight">
 				<view class="bg-white">
@@ -24,27 +27,31 @@
 						<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>
 						<cl-text color="#B7B7B7" class="text-neutral-300 ml-2">请输入你要搜索的内容</cl-text>
 					</view>
-					<cl-tabs :pt="{className:'bg-white'}" v-model="current" class="fontBold" :showLine="false"
-						:list="tabsList" :color="isColor ? '#2854F2' : ''" un-color="#6a6a6a"></cl-tabs>
+					<cl-tabs @change="changetag" :pt="{className:'bg-white'}" v-model="current" class="fontBold"
+						:showLine="false" :list="tabsList" :color="isColor ? '#2854F2' : ''"
+						un-color="#6a6a6a"></cl-tabs>
 				</view>
 			</cl-sticky>
-			<!-- 选项卡 -->
-			<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
-						refresher: {
-							className: 'pt-3'
-						}
-					}" :refresher-enabled="true" @pull="onPull" @bottom="loadMore">
-				<template #item="{ value ,index}">
-					<news-item :value="value" :index="index" @item-click="onItemClick"></news-item>
-				</template>
-
-				<template #bottom>
-					<view class="py-3">
-						<cl-loadmore v-if="list.length > 0" :loading="loading" safe-area-bottom></cl-loadmore>
-					</view>
-				</template>
-			</cl-list-view>
 		</view>
+		<!-- 选项卡 -->
+		<!-- <view class="flex-1"> -->
+		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
+							refresher: {
+								className: 'pt-3'
+							}
+						}" :refresher-enabled="true" @pull="onPull" @bottom="loadMore">
+			<template #item="{ value ,index}">
+				<circle-item :value="value" :index="index" @item-click="onItemClick"></circle-item>
+			</template>
+
+			<template #bottom>
+				<view class="py-3">
+					<cl-loadmore :loading="loading" :finish="finished" v-if="list.length > 0"></cl-loadmore>
+				</view>
+			</template>
+		</cl-list-view>
+		<!-- </view> -->
+
 
 
 		<!--发文章弹窗 -->
@@ -69,27 +76,29 @@
 	</cl-page>
 </template>
 <script setup>
-	import { router, usePager } from "@/cool";
+	import { router, usePager, type Response, parse, isNull } from "@/cool";
 	import type { ClTabsItem, useUi } from "@/uni_modules/cool-ui";
 	import { t } from "@/locale";
 	import Tabbar from "@/components/tabbar.uvue";
-	import newsItem from "@/components/news-item.uvue"
+	import circleItem from "@/components/circle-item.uvue"
+	import { postsFollowing, pulishList } from "@/cool/service/list"
 	const ui = useUi();
 	// 获取设备屏幕信息
 	const { screenWidth, statusBarHeight, screenHeight } = uni.getWindowInfo();
 	const publishVisible = ref(false)
 	const isColor = ref(true)
-	const current = ref("1")
+	const current = ref(0)
 	const tabsList = ref<ClTabsItem[]>([
 		{
 			label: "关注",
-			value: "1",
+			value: 0,
 		},
 		{
 			label: "最新",
-			value: "2",
+			value: 1,
 		},
 	]);
+	
 	type discussItem = {
 		img : string
 		name : string
@@ -113,9 +122,10 @@
 	const onItemClick = (item : UTSJSONObject) => {
 		console.log('点击文章项:', item);
 		router.push({
-			path: '/pages/articlePage/noticeDetail',
+			path: '/pages/articlePage/articleDetail',
 			params: {
 				articleId: item.id,
+				title: '圈子'
 			}
 		});
 	};
@@ -128,92 +138,84 @@
 		})
 		publishVisible.value = false
 	}
+	const changetag = (value : string | number) => {
+		console.log('选中的标签值:', value)
+		current.value = value as number
+		// refresh({});
+	}
 	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
 
 	let id = 0;
 
-	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
-		// 模拟请求
-		setTimeout(() => {
-			render({
-				list: [
-					{
-						id:id++,
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t(""),
-						content: t('#本金10w入# @steven市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: true,
-					},
-					{
-						id:id++,
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t('造谣阿里采购寒武纪 15 万片 GPU,背后的深科技号称中国人工智能主媒体，证监会应该出手了！'),
-						content: t('8月31日晚间，有消息称阿里云通义千问大模型面临算力缺口，阿里紧急追加寒武纪思元370芯片订单至15万片。9月1日凌晨，阿里云相关人士回应《科创板日报》记者表示：“阿里云...'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: false,
-					},
-					{
-						id:id++,
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t(""),
-						content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: false,
-					},
-					{
-						id:id++,
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t(""),
-						content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: false,
-					},
-					{
-						id:id++,
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t(""),
-						content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: false,
-					},
-					// 测试四张图片（应该只显示前三张）
-					{
-						id:id++,
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t('测试四张图片显示'),
-						content: t('这里有四张图片，但只会显示前三张，并且每张图片的宽度为210rpx。'),
-						time: t("05-09-02"),
-						like: 5,
-						comment: 3,
-						isLike: true,
-					},
-				],
-				pagination: {
-					page: params["page"],
-					size: params["size"],
-					total: 100
-				}
-			});
+	const { refresh, list, listView, loading, loadMore,finished } = usePager((params, { render }) => {
 
-			ui.hideLoading();
-		}, 1000);
+		// 模拟请求
+		if (current.value == 0) {
+			console.log(current.value, 11111)
+			postsFollowing({
+				page: params["page"],
+				limit: params["size"],
+			}).then(res => {
+				ui.hideLoading();
+				const result = parse<UTSJSONObject>(res)!
+				const page = result.pagination
+				console.log('数据列表', result.items)
+				if (!isNull(page)) {
+					const pageDta = parse<UTSJSONObject>(page as Any)!
+					render({
+						list: result.items,
+						pagination: {
+							page: params["page"],
+							size: params["size"],
+							total: pageDta.total
+
+						}
+
+					});
+				}
+
+			}).catch(err => {
+				ui.hideLoading()
+				ui.showToast({
+					message: (err as Response).message!,
+				});
+			})
+		} else {
+			console.log(current.value, 2222)
+			pulishList({
+				page: params["page"],
+				limit: params["size"],
+				sort: 'hot'
+			}).then(res => {
+				ui.hideLoading();
+				const result = parse<UTSJSONObject>(res)!
+				const page = result.pagination
+				console.log('数据列表', result.items)
+				if (!isNull(page)) {
+					const pageDta = parse<UTSJSONObject>(page as Any)!
+					render({
+						list: result.items,
+						pagination: {
+							page: params["page"],
+							size: params["size"],
+							total: pageDta.total
+
+						}
+
+					});
+				}
+
+			}).catch(err => {
+				ui.hideLoading()
+				ui.showToast({
+					message: (err as Response).message!,
+				});
+			})
+		}
+
+
+
+
 	});
 
 	async function onPull() {
@@ -221,6 +223,14 @@
 		listViewRef.value!.stopRefresh();
 	}
 
+	watch(current, (newVal : number, oldVal : number) => {
+		if (newVal !== oldVal) {
+			ui.showLoading(t("加载中"));
+			refresh({ page: 1 });
+		}
+
+
+	})
 	onReady(() => {
 		ui.showLoading(t("加载中"));
 		// 默认请求

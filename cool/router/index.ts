@@ -195,6 +195,7 @@ export class Router {
 
 		// 跳转前钩子处理
 		if (this.eventsMap.beforeEach != null) {
+			console.log(this.eventsMap.beforeEach)
 			// 当前页
 			const from = last(this.getPages());
 
@@ -202,8 +203,15 @@ export class Router {
 			const to = { path, meta: this.getMeta(path), query, isAuth } as RouteInfo;
 
 			// 调用跳转前钩子
-			this.eventsMap.beforeEach(to, from!, next);
+
+			if(to.path=='/pages/user/my'){
+				next();
+			}else{
+			this.eventsMap.beforeEach(to, from!, next);	
+			}
+			
 		} else {
+			console.log(this.eventsMap.beforeEach,22222)
 			next();
 		}
 	}

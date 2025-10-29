@@ -30,7 +30,7 @@
 				<!-- 录音转文字 -->
 				<view v-else-if="title == '录音转文字'"
 					class="backgrou4a w-full h-[238rpx] rounded-lg flex flex-col items-center justify-center">
-					<view class="flex flex-col items-center justify-center" v-if="!Uploading">
+					<view class="flex flex-col items-center justify-center" v-if="!Uploading" @click="choiceFileAudio">
 						<cl-icon name="KHCFDC_yinpinwenjian" color="primary" size="60rpx"></cl-icon>
 						<cl-text color="#bcbcbc" :pt="{ className: 'text-base mt-2' }">点击上传本地音频文件</cl-text>
 					</view>
@@ -39,10 +39,10 @@
 						<view class="flex flex-row items-center">
 							<cl-icon name="KHCFDC_yinpinwenjian" color="primary" size="60rpx"></cl-icon>
 							<cl-text color="#bcbcbc"
-								:pt="{ className: 'text-base mt-2 ml-2' }">Littlerascal2025.mp3</cl-text>
+								:pt="{ className: 'text-base mt-2 ml-2' }">{{audioInfo.name}}</cl-text>
 						</view>
 						<view class="w-[400rpx] mt-4">
-							<cl-progress :value="60" :stroke-width="20" color="#2854F2" un-color="#DEE5FF"
+							<cl-progress :value="100" :stroke-width="20" color="#2854F2" un-color="#DEE5FF"
 								:show-text="false"></cl-progress>
 						</view>
 					</view>
@@ -104,502 +104,550 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed, watchEffect, watch } from "vue";
-import { t } from "@/locale";
-import { isMp, router, useRefs, isNull, useStore, parse, isArray } from "@/cool";
-import { type AiRequest } from "@/types";
-import { useUi, } from "@/uni_modules/cool-ui";
-import { storage } from "@/cool/utils";
-import tagList from "../shenlanaiPage/components/tag-list.uvue"
-const title = ref < string > ("")
-const { app, aimessage } = useStore();
-const maxlength = ref(500);
-const submitBtnText = ref("开始写作")
-const placeholder = ref("请输入写作的描述")
-const userInput = ref < string > ("")
-const Uploading = ref(false);
-type child = {
-	text: string
-	choiced: boolean
-}
-type tagItem = {
-	title: string
-	type: string
-	choiceType: string
-	list: child[];
-}
+	import { onMounted, ref, computed, watchEffect, watch } from "vue";
+	import { t } from "@/locale";
+	import { isMp, router, useRefs, isNull, useStore, parse, isArray, uploadFile } from "@/cool";
+	import { type AiRequest } from "@/types";
+	import { useUi, } from "@/uni_modules/cool-ui";
+	import { storage } from "@/cool/utils";
+	import tagList from "../shenlanaiPage/components/tag-list.uvue"
+	const title = ref<string>("")
+	const { app, aimessage } = useStore();
+	const maxlength = ref(500);
+	const submitBtnText = ref("开始写作")
+	const placeholder = ref("请输入写作的描述")
+	const userInput = ref<string>("")
+	const Uploading = ref(false);
+	const inputcontent = ref('')
+	type audiomes = {
+		path : string
+		name : string
+		size : number
+	}
+	const audioInfo = ref<audiomes>({
+		path: '',
+		name: "",
+		size: 0
+	})
+	type child = {
+		text : string
+		choiced : boolean
+	}
+	type tagItem = {
+		title : string
+		type : string
+		choiceType : string
+		list : child[];
+	}
 
-const tlabel = ref < tagItem[] > ([
-	{
-		title: '风格选取',
-		type: '财经智能写作',
-		choiceType: 'single',
-		list: [
-			{ text: "党报", choiced: false },
-			{ text: "彭博社", choiced: false },
-			{ text: "华尔街日报", choiced: false },
-			{ text: "每日经济新闻", choiced: false },
-			{ text: "智谷趋势", choiced: false },
-			{ text: "深蓝财经", choiced: false }
-		]
-	},
-	{
-		title: '最大字数',
-		type: '财经智能写作',
-		choiceType: 'single',
-		list: [
-			{ text: "不限制", choiced: false },
-			{ text: "150", choiced: false },
-			{ text: "300", choiced: false },
-			{ text: "400", choiced: false },
-			{ text: "450", choiced: false },
-			{ text: "500", choiced: false },
-			{ text: "600", choiced: false },
-		]
-	},
-	{
-		title: '最大字数',
-		type: '改写快讯',
-		choiceType: 'single',
-		list: [
-			{ text: "不限制", choiced: false },
-			{ text: "150", choiced: false },
-			{ text: "300", choiced: false },
-			{ text: "400", choiced: false },
-			{ text: "450", choiced: false },
-			{ text: "500", choiced: false },
-			{ text: "600", choiced: false },
-		]
-	},
-	{
-		title: '正面标签(多选)',
-		type: 'AI生图',
-		choiceType: 'multiple',
-		list: [
-			{ text: "高清", choiced: false },
-			{ text: "写实风格", choiced: false },
-			{ text: "自然光线", choiced: false },
-			{ text: "细节丰富", choiced: false },
-			{ text: "动态构图", choiced: false },
-			{ text: "柔和颜色", choiced: false },
-			{ text: "明亮", choiced: false },
-			{ text: "唯美", choiced: false },
-		]
-	},
-	{
-		title: '负面标签(多选)',
-		type: 'AI生图',
-		choiceType: 'multiple',
-		list: [
-			{ text: "模糊", choiced: false },
-			{ text: "畸形", choiced: false },
-			{ text: "扭曲", choiced: false },
-			{ text: "低质量", choiced: false },
-			{ text: "水印", choiced: false },
-			{ text: "过度曝光", choiced: false },
-			{ text: "噪点", choiced: false },
-		]
-	},
-	{
-		title: '核心目标',
-		type: '生成口播文案',
-		choiceType: 'single',
-		list: [
-			{ text: "品牌导向", choiced: false },
-			{ text: "效果导向", choiced: false },
-			{ text: "互动导向", choiced: false },
-			{ text: "内容导向", choiced: false },
-		]
-	},
-	{
-		title: '语言风格',
-		type: '生成口播文案',
-		choiceType: 'single',
-		list: [
-			{ text: "正式感 ", choiced: false },
-			{ text: "随意感", choiced: false },
-			{ text: "理性感", choiced: false },
-			{ text: "活泼感", choiced: false },
-			{ text: "沉稳感", choiced: false },
-		]
-	},
-	{
-		title: '角度与立意',
-		type: '新闻通稿改写',
-		choiceType: 'single',
-		list: [
-			{ text: "行业视角", choiced: false },
-			{ text: "大众视角", choiced: false },
-			{ text: "企业视角", choiced: false },
-			{ text: "用户视角", choiced: false },
-			{ text: "产品视角", choiced: false },
-			{ text: "故事/人物视角", choiced: false },
-		]
-	},
-	{
-		title: '结构与逻辑',
-		type: '新闻通稿改写',
-		choiceType: 'single',
-		list: [
-			{ text: "倒金字塔结构", choiced: false },
-			{ text: "黄金圈法则", choiced: false },
-		]
-	},
-]
-);
+	const tlabel = ref<tagItem[]>([
+		{
+			title: '风格选取',
+			type: '财经智能写作',
+			choiceType: 'single',
+			list: [
+				{ text: "党报", choiced: false },
+				{ text: "彭博社", choiced: false },
+				{ text: "华尔街日报", choiced: false },
+				{ text: "每日经济新闻", choiced: false },
+				{ text: "智谷趋势", choiced: false },
+				{ text: "深蓝财经", choiced: false }
+			]
+		},
+		{
+			title: '最大字数',
+			type: '财经智能写作',
+			choiceType: 'single',
+			list: [
+				{ text: "不限制", choiced: false },
+				{ text: "150", choiced: false },
+				{ text: "300", choiced: false },
+				{ text: "400", choiced: false },
+				{ text: "450", choiced: false },
+				{ text: "500", choiced: false },
+				{ text: "600", choiced: false },
+			]
+		},
+		{
+			title: '最大字数',
+			type: '改写快讯',
+			choiceType: 'single',
+			list: [
+				{ text: "不限制", choiced: false },
+				{ text: "150", choiced: false },
+				{ text: "300", choiced: false },
+				{ text: "400", choiced: false },
+				{ text: "450", choiced: false },
+				{ text: "500", choiced: false },
+				{ text: "600", choiced: false },
+			]
+		},
+		{
+			title: '正面标签(多选)',
+			type: 'AI生图',
+			choiceType: 'multiple',
+			list: [
+				{ text: "高清", choiced: false },
+				{ text: "写实风格", choiced: false },
+				{ text: "自然光线", choiced: false },
+				{ text: "细节丰富", choiced: false },
+				{ text: "动态构图", choiced: false },
+				{ text: "柔和颜色", choiced: false },
+				{ text: "明亮", choiced: false },
+				{ text: "唯美", choiced: false },
+			]
+		},
+		{
+			title: '负面标签(多选)',
+			type: 'AI生图',
+			choiceType: 'multiple',
+			list: [
+				{ text: "模糊", choiced: false },
+				{ text: "畸形", choiced: false },
+				{ text: "扭曲", choiced: false },
+				{ text: "低质量", choiced: false },
+				{ text: "水印", choiced: false },
+				{ text: "过度曝光", choiced: false },
+				{ text: "噪点", choiced: false },
+			]
+		},
+		{
+			title: '核心目标',
+			type: '生成口播文案',
+			choiceType: 'single',
+			list: [
+				{ text: "品牌导向", choiced: false },
+				{ text: "效果导向", choiced: false },
+				{ text: "互动导向", choiced: false },
+				{ text: "内容导向", choiced: false },
+			]
+		},
+		{
+			title: '语言风格',
+			type: '生成口播文案',
+			choiceType: 'single',
+			list: [
+				{ text: "正式感 ", choiced: false },
+				{ text: "随意感", choiced: false },
+				{ text: "理性感", choiced: false },
+				{ text: "活泼感", choiced: false },
+				{ text: "沉稳感", choiced: false },
+			]
+		},
+		{
+			title: '角度与立意',
+			type: '新闻通稿改写',
+			choiceType: 'single',
+			list: [
+				{ text: "行业视角", choiced: false },
+				{ text: "大众视角", choiced: false },
+				{ text: "企业视角", choiced: false },
+				{ text: "用户视角", choiced: false },
+				{ text: "产品视角", choiced: false },
+				{ text: "故事/人物视角", choiced: false },
+			]
+		},
+		{
+			title: '结构与逻辑',
+			type: '新闻通稿改写',
+			choiceType: 'single',
+			list: [
+				{ text: "倒金字塔结构", choiced: false },
+				{ text: "黄金圈法则", choiced: false },
+			]
+		},
+	]
+	);
 
-// 处理标签选择，兼容鸿蒙系统
-const setMaxlength = (item: tagItem, index: number, val: string, childindex: number) => {
-	if (!isNull(item)) {
-		// 确保item.list是可修改的数组
-		// let newList = item.list || [];
-		if (isArray(item.list) && item.list.length > 0) {
-			if (item.choiceType == 'single') {
-				item.list.forEach(check => {
-					check.choiced = check.text == val
-				})
-				console.log(item.list, 222222)
-			} else if (item.choiceType == 'multiple') {
-				item.list[childindex].choiced = !item.list[childindex].choiced
-			}
-			if (item.title == '最大字数') {
-				if (val == "不限制") {
-					maxlength.value = 9999;
-				} else {
-					const num = parseInt(val);
-					// 检查转换结果是否有效
-					maxlength.value = isNaN(num) ? 0 : num;
+	// 处理标签选择，兼容鸿蒙系统
+	const setMaxlength = (item : tagItem, index : number, val : string, childindex : number) => {
+		if (!isNull(item)) {
+			// 确保item.list是可修改的数组
+			// let newList = item.list || [];
+			if (isArray(item.list) && item.list.length > 0) {
+				if (item.choiceType == 'single') {
+					item.list.forEach(check => {
+						check.choiced = check.text == val
+					})
+					console.log(item.list, 222222)
+				} else if (item.choiceType == 'multiple') {
+					item.list[childindex].choiced = !item.list[childindex].choiced
 				}
-			}
-			tlabel.value = [...tlabel.value]//鸿蒙系统需要显示触发
-		}
-
-		// 使用parse函数确保数据在各平台上的兼容性
-		// 特别是在鸿蒙平台上，确保数据类型正确转换
-
-	}
-};
-// AI翻译
-// 新增响应式变量
-const menu1default = ref('自动检测')
-const menu1default2 = ref('英语')
-const showLangList1 = ref(false);
-const showLangList2 = ref(false);
-type languageItem = {
-	label: string
-	choiced: boolean
-}
-const languageList = ref < languageItem[] > ([
-	{ label: '自动检测', choiced: true },
-	{ label: '中文', choiced: false },
-	{ label: '英语', choiced: false },
-	{ label: '日语', choiced: false },
-	{ label: '韩语', choiced: false },
-	{ label: '法语', choiced: false },
-	{ label: '德语', choiced: false },
-	{ label: '西班牙语', choiced: false },
-	{ label: '俄语', choiced: false },
-])
-const languageList2 = ref < languageItem[] > ([
-	{ label: '中文', choiced: false },
-	{ label: '英语', choiced: true },
-	{ label: '日语', choiced: false },
-	{ label: '韩语', choiced: false },
-	{ label: '法语', choiced: false },
-	{ label: '德语', choiced: false },
-	{ label: '西班牙语', choiced: false },
-	{ label: '俄语', choiced: false },
-])
-const showLangListBtn1 = () => {
-	showLangList1.value = !showLangList1.value;
-	if (showLangList2.value) {
-		showLangList2.value = false;
-	}
-}
-const showLangListBtn2 = () => {
-	showLangList2.value = !showLangList2.value;
-	if (showLangList1.value) {
-		showLangList1.value = false;
-	}
-}
-const selected = (value: languageItem, index: number) => {
-	languageList.value.forEach((check, i) => {
-		if (index == i) {
-			check.choiced = true
-			menu1default.value = value.label
-			showLangList1.value = false
-		} else {
-			check.choiced = false
-		}
-	})
-}
-const selected2 = (value: languageItem, index: number) => {
-	languageList2.value.forEach((check, i) => {
-		if (index == i) {
-			check.choiced = true
-			menu1default2.value = value.label
-			showLangList2.value = false
-		} else {
-			check.choiced = false
-		}
-	})
-
-}
-const focus = () => {
-	console.log('获取焦点')
-
-}
-const getTagmessage = () => {
-	const selectedTool = title.value;
-	console.log('使用的AI工具:', selectedTool);
-	// 初始化请求内容
-	let userRequest: AiRequest = {
-		type: 'news',
-		content: '财经社',
-		instruction: '写一篇新闻稿'
-	}
-	// 判断用户是否选择了标签
-	let instructionParts: string[] = []
-	if (selectedTool == '财经智能写作') {
-		let tag = tlabel.value.filter(item => item.type == '财经智能写作')
-		let style = tag[0].list.filter(item => item.choiced == true).map(item => item.text)
-		let maxLength = tag[1].list.filter(item => item.choiced == true).map(item => item.text)
-
-		// 构建财经智能写作请求
-		userRequest.type = 'news'
-
-
-		if (style.length > 0) {
-			instructionParts.push(`风格为:${style}`);
-		}
-		if (maxLength.length > 0) {
-			instructionParts.push(`最大字数为:${maxLength}`);
-		}
-
-		if (instructionParts.length > 0) {
-			userRequest.instruction = `写一篇${instructionParts.join(',')}的财经新闻`;
-		} else {
-			userRequest.instruction = '写一篇财经新闻'; // 默认指令
-		}
-	} else if (selectedTool == 'AI翻译') {
-		// 构建翻译请求);
-		userRequest.type = 'translation'
-		userRequest.content = "翻译"
-		userRequest.instruction = `${menu1default.value}翻译为:${menu1default2.value}`
-	} else if (selectedTool == '改写快讯') {
-		let tag = tlabel.value.filter(item => item.type == '改写快讯')
-		let maxLength = tag[0].list.filter(item => item.choiced == true).map(item => item.text)
-		// 构建改写快讯请求
-		userRequest.type = 'rewriting'
-		userRequest.content = "改写快讯"
-		if (maxLength.length > 0) {
-			instructionParts.push(`最大字数为:${maxLength}`);
-		}
-		if (instructionParts.length > 0) {
-			userRequest.instruction = `改写一篇最大字数为${instructionParts.join(',')}的快讯`;
-		} else {
-			userRequest.instruction = '改写一篇快讯'; // 默认指令
-		}
-	} else if (selectedTool == 'AI生图') {
-		let tag = tlabel.value.filter(item => item.type == 'AI生图')
-		let positiveContent = tag[0].list.filter(item => item.choiced == true).map(item => item.text)
-		let negativeContent = tag[1].list.filter(item => item.choiced == true).map(item => item.text)
-		// 构建生图请求
-
-		userRequest.type = 'image'
-		userRequest.content = "生成图片"
-
-
-		if (positiveContent.length > 0) {
-			instructionParts.push(`正面标签:${positiveContent}`);
-		}
-		if (negativeContent.length > 0) {
-			instructionParts.push(`负面标签:${negativeContent}`);
-		}
-
-		if (instructionParts.length > 0) {
-			userRequest.instruction = `生成一张${instructionParts.join(',')}的图片`;
-		} else {
-			userRequest.instruction = '生成图片'; // 默认指令
-		}
-	} else if (selectedTool == '生成口播文案') {
-		let tag = tlabel.value.filter(item => item.type == '生成口播文案')
-		let style = tag[0].list.filter(item => item.choiced == true).map(item => item.text)
-		let languageStyle = tag[1].list.filter(item => item.choiced == true).map(item => item.text)
-		// 构建口播文案请求
-		userRequest.type = 'script'
-		userRequest.content = "生成口播文案"
-
-		if (style.length > 0) {
-			instructionParts.push(`核心目标:${style}`);
-		}
-		if (languageStyle.length > 0) {
-			instructionParts.push(`语言风格:${languageStyle}`);
-		}
-
-		if (instructionParts.length > 0) {
-			userRequest.instruction = `生成一篇${instructionParts.join(',')}口播文案`;
-		} else {
-			userRequest.instruction = '生成口播文案'; // 默认指令
-		}
-		console.log('核心目标:', style, '语言风格:', languageStyle);
-		console.log('口播文案内容:', userRequest);
-	} else if (selectedTool == '新闻通稿改写') {
-		let tag = tlabel.value.filter(item => item.type == '新闻通稿改写')
-		let angle = tag[0].list.filter(item => item.choiced == true).map(item => item.text)
-		let structure = tag[1].list.filter(item => item.choiced == true).map(item => item.text)
-		// 构建新闻通稿改写请求
-		userRequest.type = 'news_rewriting'
-		userRequest.content = "新闻通稿改写"
-		if (angle.length > 0) {
-			instructionParts.push(`角度与立意:${angle}`);
-		}
-		if (structure.length > 0) {
-			instructionParts.push(`结构与逻辑:${structure}`);
-		}
-
-		if (instructionParts.length > 0) {
-			userRequest.instruction = `改写一篇${instructionParts.join(',')}的新闻通稿`;
-		} else {
-			userRequest.instruction = '改写新闻稿'; // 默认指令
-		}
-		console.log('新闻通稿改写内容:', userRequest);
-	}
-	aimessage.setAiRequest(userRequest);
-}
-// 进行对话提交表单
-const submit = () => {
-	const content = userInput.value.trim()
-	// 获取当前选择的AI工具
-	getTagmessage()
-	if (content === '') {
-		// 提示用户输入内容
-		uni.showToast({
-			title: '请输入内容',
-			icon: 'none'
-		});
-
-		return;
-	}
-	// 这里可以根据 selectedTool 进行不同的处理逻辑	
-	router.push({
-		path: "/pages/shenlanaiPage/conversation",
-		params: {
-			userinput: content
-		}
-	});
-	// 提交后清空输入框		
-	userInput.value = '';
-
-
-};
-// 使用 watchEffect 监听 store 中 selectedAiTool 的变化
-watchEffect(() => {
-	title.value = app.selectedAiTool.value;
-	if (title.value == 'AI翻译') {
-		submitBtnText.value = "开始翻译"
-		placeholder.value = "请输入需要翻译的内容"
-	} else if (title.value == '录音转文字') {
-		submitBtnText.value = "开始转换"
-	} else if (title.value == '生成口播文案') {
-		submitBtnText.value = "开始生成"
-		placeholder.value = "请描述您想要的口播内容"
-	} else if (title.value == '新闻通稿改写') {
-		submitBtnText.value = "开始改写"
-		placeholder.value = "请输入你要改写的新闻通稿内容"
-	} else if (title.value == '改写快讯') {
-		submitBtnText.value = "开始改写"
-		placeholder.value = "请输入你要改写的快讯"
-	}
-	else if (title.value == 'AI生图') {
-		submitBtnText.value = "开始生图"
-		placeholder.value = "请描述您想要生成的图片内容"
-	} else {
-		submitBtnText.value = "开始写作"
-		placeholder.value = "请输入写作的描述"
-	}
-
-});
-// 重置所有选中状态
-const resetAllChecked = () => {
-	if (isArray(tlabel.value) && tlabel.value!!.length > 0) {
-		const newList = tlabel.value.map(category => {
-			return {
-				...category,
-				list: category.list.map(item => {
-					return {
-						...item,
-						choiced: false
+				if (item.title == '最大字数') {
+					if (val == "不限制") {
+						maxlength.value = 9999;
+					} else {
+						const num = parseInt(val);
+						// 检查转换结果是否有效
+						maxlength.value = isNaN(num) ? 0 : num;
 					}
-				})
+				}
+				tlabel.value = [...tlabel.value]//鸿蒙系统需要显示触发
+			}
+
+			// 使用parse函数确保数据在各平台上的兼容性
+			// 特别是在鸿蒙平台上，确保数据类型正确转换
+
+		}
+	};
+	// AI翻译
+	// 新增响应式变量
+	const menu1default = ref('自动检测')
+	const menu1default2 = ref('英语')
+	const showLangList1 = ref(false);
+	const showLangList2 = ref(false);
+	type languageItem = {
+		label : string
+		choiced : boolean
+	}
+	const languageList = ref<languageItem[]>([
+		{ label: '自动检测', choiced: true },
+		{ label: '中文', choiced: false },
+		{ label: '英语', choiced: false },
+		{ label: '日语', choiced: false },
+		{ label: '韩语', choiced: false },
+		{ label: '法语', choiced: false },
+		{ label: '德语', choiced: false },
+		{ label: '西班牙语', choiced: false },
+		{ label: '俄语', choiced: false },
+	])
+	const languageList2 = ref<languageItem[]>([
+		{ label: '中文', choiced: false },
+		{ label: '英语', choiced: true },
+		{ label: '日语', choiced: false },
+		{ label: '韩语', choiced: false },
+		{ label: '法语', choiced: false },
+		{ label: '德语', choiced: false },
+		{ label: '西班牙语', choiced: false },
+		{ label: '俄语', choiced: false },
+	])
+	const showLangListBtn1 = () => {
+		showLangList1.value = !showLangList1.value;
+		if (showLangList2.value) {
+			showLangList2.value = false;
+		}
+	}
+	const showLangListBtn2 = () => {
+		showLangList2.value = !showLangList2.value;
+		if (showLangList1.value) {
+			showLangList1.value = false;
+		}
+	}
+	const selected = (value : languageItem, index : number) => {
+		languageList.value.forEach((check, i) => {
+			if (index == i) {
+				check.choiced = true
+				menu1default.value = value.label
+				showLangList1.value = false
+			} else {
+				check.choiced = false
 			}
 		})
-		tlabel.value = newList as tagItem[]
 	}
-}
-watch(title, (val: string) => {
-	console.log('当前选择的AI工具:', val);
-	resetAllChecked();
-	userInput.value = '';
-})
+	const selected2 = (value : languageItem, index : number) => {
+		languageList2.value.forEach((check, i) => {
+			if (index == i) {
+				check.choiced = true
+				menu1default2.value = value.label
+				showLangList2.value = false
+			} else {
+				check.choiced = false
+			}
+		})
 
-onMounted(() => {
-	// 确保在组件挂载后执行
+	}
+	const focus = () => {
+		console.log('获取焦点')
 
-
-})
-</script>
-<style>
-.cl-tag {
-	margin-left: 0rpx !important;
-}
-
-.borderf {
-	border-bottom: 2rpx solid #f1f1f1;
-}
-
-.backgrou4a {
-	background-color: #f9f9f9;
-}
-
-.menuBox {
-	position: relative;
-}
-
-.choiceIcon {
-	border: 2rpx solid #B9C8FF;
-}
-
-.borderf3f3f3 {
-	border: 2rpx solid #f3f3f3;
-}
-
-.item {
-	@apply h-8 bg-surface-100 py-6 flex flex-row items-center justify-center;
-
-	.text {
-		@apply text-sm text-surface-700;
 	}
 
-	&.active {
-		@apply bg-primary-500;
+	// 选择录音本地文件
+	const choiceFileAudio = () => {
+		uni.chooseFile({
+			count: 1,
+			type: 'audio',
+			success: (res) => {
+				console.log('chooseFile success', res.tempFiles[0]);
+				Uploading.value = true
+				// 上传选中的文件
+				if (!isNull(res.tempFiles[0])) {
+					audioInfo.value.path = res.tempFiles[0].path
+					audioInfo.value.name = res.tempFiles[0].name
+					audioInfo.value.size = res.tempFiles[0].size
+					console.log(audioInfo.value, 111111)
+				}
 
-		.text {
-			@apply text-white;
+			}, fail: (err) => {
+				uni.showToast({
+					title: '选择文件失败',
+					icon: 'none'
+				});
+			}
+		});
+	}
+	const getTagmessage = () => {
+		const selectedTool = title.value;
+		console.log('使用的AI工具:', selectedTool);
+		// 初始化请求内容
+		let userRequest : AiRequest = {
+			type: 'news',
+			content: '财经社',
+			instruction: '写一篇新闻稿'
+		}
+		// 判断用户是否选择了标签
+		let instructionParts : string[] = []
+		if (selectedTool == '财经智能写作') {
+			let tag = tlabel.value.filter(item => item.type == '财经智能写作')
+			let style = tag[0].list.filter(item => item.choiced == true).map(item => item.text)
+			let maxLength = tag[1].list.filter(item => item.choiced == true).map(item => item.text)
+
+			// 构建财经智能写作请求
+			userRequest.type = 'news'
+
+
+			if (style.length > 0) {
+				instructionParts.push(`风格为:${style}`);
+			}
+			if (maxLength.length > 0) {
+				instructionParts.push(`最大字数为:${maxLength}`);
+			}
+
+			if (instructionParts.length > 0) {
+				userRequest.instruction = `写一篇${instructionParts.join(',')}的财经新闻`;
+			} else {
+				userRequest.instruction = '写一篇财经新闻'; // 默认指令
+			}
+		} else if (selectedTool == 'AI翻译') {
+			// 构建翻译请求);
+			userRequest.type = 'translation'
+			userRequest.content = "翻译"
+			userRequest.instruction = `${menu1default.value}翻译为:${menu1default2.value}`
+		} else if (selectedTool == '改写快讯') {
+			let tag = tlabel.value.filter(item => item.type == '改写快讯')
+			let maxLength = tag[0].list.filter(item => item.choiced == true).map(item => item.text)
+			// 构建改写快讯请求
+			userRequest.type = 'rewriting'
+			userRequest.content = "改写快讯"
+			if (maxLength.length > 0) {
+				instructionParts.push(`最大字数为:${maxLength}`);
+			}
+			if (instructionParts.length > 0) {
+				userRequest.instruction = `改写一篇最大字数为${instructionParts.join(',')}的快讯`;
+			} else {
+				userRequest.instruction = '改写一篇快讯'; // 默认指令
+			}
+		} else if (selectedTool == 'AI生图') {
+			let tag = tlabel.value.filter(item => item.type == 'AI生图')
+			let positiveContent = tag[0].list.filter(item => item.choiced == true).map(item => item.text)
+			let negativeContent = tag[1].list.filter(item => item.choiced == true).map(item => item.text)
+			// 构建生图请求
+
+			userRequest.type = 'image'
+			userRequest.content = "生成图片"
+
+
+			if (positiveContent.length > 0) {
+				instructionParts.push(`正面标签:${positiveContent}`);
+			}
+			if (negativeContent.length > 0) {
+				instructionParts.push(`负面标签:${negativeContent}`);
+			}
+
+			if (instructionParts.length > 0) {
+				userRequest.instruction = `生成一张${instructionParts.join(',')}的图片`;
+			} else {
+				userRequest.instruction = '生成图片'; // 默认指令
+			}
+		} else if (selectedTool == '生成口播文案') {
+			let tag = tlabel.value.filter(item => item.type == '生成口播文案')
+			let style = tag[0].list.filter(item => item.choiced == true).map(item => item.text)
+			let languageStyle = tag[1].list.filter(item => item.choiced == true).map(item => item.text)
+			// 构建口播文案请求
+			userRequest.type = 'script'
+			userRequest.content = "生成口播文案"
+
+			if (style.length > 0) {
+				instructionParts.push(`核心目标:${style}`);
+			}
+			if (languageStyle.length > 0) {
+				instructionParts.push(`语言风格:${languageStyle}`);
+			}
+
+			if (instructionParts.length > 0) {
+				userRequest.instruction = `生成一篇${instructionParts.join(',')}口播文案`;
+			} else {
+				userRequest.instruction = '生成口播文案'; // 默认指令
+			}
+			console.log('核心目标:', style, '语言风格:', languageStyle);
+			console.log('口播文案内容:', userRequest);
+		} else if (selectedTool == '新闻通稿改写') {
+			let tag = tlabel.value.filter(item => item.type == '新闻通稿改写')
+			let angle = tag[0].list.filter(item => item.choiced == true).map(item => item.text)
+			let structure = tag[1].list.filter(item => item.choiced == true).map(item => item.text)
+			// 构建新闻通稿改写请求
+			userRequest.type = 'news_rewriting'
+			userRequest.content = "新闻通稿改写"
+			if (angle.length > 0) {
+				instructionParts.push(`角度与立意:${angle}`);
+			}
+			if (structure.length > 0) {
+				instructionParts.push(`结构与逻辑:${structure}`);
+			}
+
+			if (instructionParts.length > 0) {
+				userRequest.instruction = `改写一篇${instructionParts.join(',')}的新闻通稿`;
+			} else {
+				userRequest.instruction = '改写新闻稿'; // 默认指令
+			}
+			console.log('新闻通稿改写内容:', userRequest);
+		}
+		aimessage.setAiRequest(userRequest);
+	}
+	// 进行对话提交表单
+	const submit = () => {
+		inputcontent.value = userInput.value.trim()
+		// 获取当前选择的AI工具
+		getTagmessage()
+		// 这里可以根据 selectedTool 进行不同的处理逻辑	
+		if (title.value == '录音转文字') {
+			router.push({
+				path: "/pages/shenlanaiPage/conversation",
+				params: {
+					audioPath: audioInfo.value.path,
+					audioName: audioInfo.value.name,
+					audioSize: audioInfo.value.size
+				}
+			});
+		} else {
+			if (inputcontent.value === '') {
+				// 提示用户输入内容
+				uni.showToast({
+					title: '请输入内容',
+					icon: 'none'
+				});
+
+				return;
+			}
+			router.push({
+				path: "/pages/shenlanaiPage/conversation",
+				params: {
+					userinput: inputcontent.value
+				}
+			});
+		}
+
+		// 提交后清空输入框		
+		userInput.value = '';
+
+
+	};
+	// 使用 watchEffect 监听 store 中 selectedAiTool 的变化
+	watchEffect(() => {
+		title.value = app.selectedAiTool.value;
+		if (title.value == 'AI翻译') {
+			submitBtnText.value = "开始翻译"
+			placeholder.value = "请输入需要翻译的内容"
+		} else if (title.value == '录音转文字') {
+			submitBtnText.value = "开始转换"
+		} else if (title.value == '生成口播文案') {
+			submitBtnText.value = "开始生成"
+			placeholder.value = "请描述您想要的口播内容"
+		} else if (title.value == '新闻通稿改写') {
+			submitBtnText.value = "开始改写"
+			placeholder.value = "请输入你要改写的新闻通稿内容"
+		} else if (title.value == '改写快讯') {
+			submitBtnText.value = "开始改写"
+			placeholder.value = "请输入你要改写的快讯"
+		}
+		else if (title.value == 'AI生图') {
+			submitBtnText.value = "开始生图"
+			placeholder.value = "请描述您想要生成的图片内容"
+		} else {
+			submitBtnText.value = "开始写作"
+			placeholder.value = "请输入写作的描述"
+		}
+
+	});
+	// 重置所有选中状态
+	const resetAllChecked = () => {
+		if (isArray(tlabel.value) && tlabel.value!!.length > 0) {
+			const newList = tlabel.value.map(category => {
+				return {
+					...category,
+					list: category.list.map(item => {
+						return {
+							...item,
+							choiced: false
+						}
+					})
+				}
+			})
+			tlabel.value = newList as tagItem[]
 		}
 	}
-}
+	watch(title, (val : string) => {
+		console.log('当前选择的AI工具:', val);
+		resetAllChecked();
+		userInput.value = '';
+	})
 
-.cl-col {
-	padding: 0rpx !important;
-	margin-bottom: 30rpx;
-}
+	onMounted(() => {
+		// 确保在组件挂载后执行
 
-.frist-item {
-	border-radius: 20rpx 0 0 20rpx;
-}
 
-.last-item {
-	border-radius: 0 20rpx 20rpx 0;
-}
+	})
+</script>
+<style>
+	.cl-tag {
+		margin-left: 0rpx !important;
+	}
+
+	.borderf {
+		border-bottom: 2rpx solid #f1f1f1;
+	}
+
+	.backgrou4a {
+		background-color: #f9f9f9;
+	}
+
+	.menuBox {
+		position: relative;
+	}
+
+	.choiceIcon {
+		border: 2rpx solid #B9C8FF;
+	}
+
+	.borderf3f3f3 {
+		border: 2rpx solid #f3f3f3;
+	}
+
+	.item {
+		@apply h-8 bg-surface-100 py-6 flex flex-row items-center justify-center;
+
+		.text {
+			@apply text-sm text-surface-700;
+		}
+
+		&.active {
+			@apply bg-primary-500;
+
+			.text {
+				@apply text-white;
+			}
+		}
+	}
+
+	.cl-col {
+		padding: 0rpx !important;
+		margin-bottom: 30rpx;
+	}
+
+	.frist-item {
+		border-radius: 20rpx 0 0 20rpx;
+	}
+
+	.last-item {
+		border-radius: 0 20rpx 20rpx 0;
+	}
 </style>

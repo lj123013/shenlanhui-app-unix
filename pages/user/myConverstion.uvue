@@ -9,7 +9,7 @@
 			}
 		}" :refresher-enabled="false" @bottom="loadMore">
 			<template #item="{ value, index }">
-				<converstion-item :value="value" :index="index" @item-click="onItemClick"></converstion-item>
+				<converstion-item :value="value" :index="index" @item-click="onItemClick" @delete-item="handleDeleteItem"></converstion-item>
 			</template>
 			<template #bottom>
 				<view class="py-3">
@@ -25,7 +25,7 @@ import { isMp, isNull, router, useRefs, usePager,parse } from "@/cool";
 import { useUi } from "@/uni_modules/cool-ui";
 import { t } from "@/locale";
 import converstionItem from "@/components/converstion-item.uvue";
-import { getConversations } from "@/cool/service/list";
+import { getConversations } from "@/cool/service/user";
 const ui = useUi();
 const listViewRef = ref < ClListViewComponentPublicInstance | null > (null);
 let id = 0;
@@ -67,6 +67,13 @@ const onItemClick = (item: UTSJSONObject) => {
 		}
 	});
 };
+	// 删除对话
+	const handleDeleteItem=(itemInfo : UTSJSONObject)=>{
+		const index = list.value.findIndex((item) => item.id === itemInfo.id);
+		if (index !== -1) {
+			list.value.splice(index, 1);
+		}
+	}
 onReady(() => {
 	ui.showLoading(t("加载中"));
 

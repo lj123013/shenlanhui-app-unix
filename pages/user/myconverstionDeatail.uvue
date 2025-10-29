@@ -35,7 +35,7 @@
 	import { ref, onMounted } from "vue";
 	import { useStore, isNull, isAppIOS, router, parse, type Response, request } from "@/cool";
 	import { useUi, type ClToastType } from "@/uni_modules/cool-ui";
-	import { getConversationsinfo } from "@/cool/service/list";
+	import { getConversationsinfo } from "@/cool/service/user";
 	const ui = useUi();
 	const { app, aimessage } = useStore();
 	const title = ref<string>("");

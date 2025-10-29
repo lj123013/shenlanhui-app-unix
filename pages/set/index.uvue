@@ -1,5 +1,8 @@
 <template>
 	<cl-page>
+		<cl-topbar fixed safe-area-top>
+			<cl-text color="#3A3A3A" :pt="{ className: '!text-xl' }">设置</cl-text>
+		</cl-topbar>
 		<view class="p-3">
 			<cl-list :pt="{ className: 'mb-3 ' }">
 				<cl-list-item :label="t('绑定账户')"  arrow hoverable :pt="{className:'border-bottom py-1'}"

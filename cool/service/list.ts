@@ -123,25 +123,7 @@ export function hotUser(data : any) : Promise<any> {
 		data
 	}) as Promise<any>;
 }
-/**
- * 获取用户所有对话
- * @param params 
- * @returns Promise
- */
-export function getConversations(data : any) : Promise<any> {
-	return request({
-		url: "/ai/conversations",
-		method: "GET",
-		data
-	}) as Promise<any>;
-}
-export function getConversationsinfo(conversation_id?:string,data : any) : Promise<any> {
-	return request({
-		url: `/ai/conversations/${conversation_id}`,
-		method: "GET",
-		data
-	}) as Promise<any>;
-}
+
 /**
  * 发布内容
  * @param params 
@@ -149,8 +131,70 @@ export function getConversationsinfo(conversation_id?:string,data : any) : Promi
  */
 export function pulish(data : any) : Promise<any> {
 	return request({
-		url: "/contents",
+		url: "/posts",
 		method: "POST",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 获取发布内容列表
+ * @param params 
+ * @returns Promise
+ */
+export function pulishList(data : any) : Promise<any> {
+	return request({
+		url: "/posts",
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 获取发布内容关注列表
+ * @param params 
+ * @returns Promise
+ */
+export function postsFollowing(data : any) : Promise<any> {
+	return request({
+		url: "/posts/following",
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+
+/**
+ * 获取发布内容详情
+ * @param params 
+ * @returns Promise
+ */
+export function postsInfo(id : string | number, data : any) : Promise<any> {
+	return request({
+		url: `/posts/${id}`,
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+
+/**
+ * 获取我的动态
+ * @param params 
+ * @returns Promise
+ */
+export function postMylist(data : any) : Promise<any> {
+	return request({
+		url: "/posts/my/list",
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 删除我发布的动态
+ * @param params 
+ * @returns Promise
+ */
+export function deletepost(id : string | number, data : any) : Promise<any> {
+	return request({
+		url: `/posts/${id}`,
+		method: "DELETE",
 		data
 	}) as Promise<any>;
 }

@@ -73,6 +73,9 @@ export default {
 .border-bottom {
 	border-bottom: 2rpx solid #F1F1F1 ;
 }
+.bordertoph10{
+		border-top: 10rpx solid #F8F8F8;
+	}
 .fontBold {
 	font-weight: bold;
 }

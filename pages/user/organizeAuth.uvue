@@ -77,7 +77,8 @@
 				</cl-form-item>
 
 				<cl-form-item :label="t('账号管理员身份证')" prop="manager_id_card">
-					<view v-if="formData.manager_id_card == ''" @tap="uploadImg('manager_id_card')" icon="a-zu272"
+					<cl-input v-model="formData.manager_id_card" :placeholder="t('请输入账号管理员身份号')" clearable></cl-input>
+					<!-- <view v-if="formData.manager_id_card == ''" @tap="uploadImg('manager_id_card')" icon="a-zu272"
 						iconWidth="40rpx"
 						class="bg-neutral-100 rounded-xl h-[150px] flex flex-col justify-center items-center">
 						<cl-icon name="a-zu272" :size="50" width="80rpx" color="#a3a3a3"></cl-icon>
@@ -90,14 +91,13 @@
 						}
 					}" width="100%" height="150px" :src="formData.manager_id_card">
 
-					</cl-image>
+					</cl-image> -->
 				</cl-form-item>
 			</cl-form>
 		</view>
 		<cl-footer :pt="{ className: 'pb-10' }">
 			<cl-button type="primary" :loading="saving" rounded :pt="{ className: 'flex-1 py-4' }" @click="submit">{{
 				t("提交") }}</cl-button>
-				<cl-button type="info" @tap="cancelverBtn">取消认证</cl-button>
 		</cl-footer>
 		<!-- 擅长领域 -->
 		<cl-popup v-model="areasvisible" title="请选择擅长领域">
@@ -211,19 +211,19 @@
 	const formData = ref<FormData>({
 		verification_type: "organization",
 		verification_category: "organization_enterprise",
-		organization_full_name: "",
-		organization_short_name: "",
+		organization_full_name: "深蓝财经自媒体公司",
+		organization_short_name: "深蓝汇",
 		real_name: "涂进军",
-		organization_intro: "",
-		organization_city: "",
+		organization_intro: "深蓝财经是一家自媒体公司，专注于财经资讯的传播与分析。",
+		organization_city: "成都",
 		organization_areas: [],
-		description: "发表文章",
+		description: "深蓝财经创始人",
 		display_title: "深蓝财经官方账号",
 		business_license: "",
 		authorization_letter: "",
-		manager_id_card: "",
-		manage_name: "",
-		manager_position: "",
+		manager_id_card: "226502199001011234",
+		manage_name: "涂劲军",
+		manager_position: "深蓝财经ceo",
 	}) as Ref<FormData>;
 
 	// 表单验证规则
@@ -441,6 +441,7 @@
 			if (valid) {
 				saving.value = true;
 				// 正确传递表单数据给 verification 函数
+				console.log('提交的表单数据:', formData.value);
 				verification(formData.value).then(res => {
 					ui.showToast({
 						message: t("提交成功"),
@@ -449,7 +450,7 @@
 					router.push({
 						path: '/pages/user/authResult',
 						params: {
-							title: '提交',
+							title: '提交认证',
 						}
 					})
 					saving.value = false;

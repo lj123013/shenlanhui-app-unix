@@ -22,11 +22,12 @@
 
 <script lang="ts" setup>
 	import { t } from "@/locale";
-	import { router, isHarmony } from "@/cool";
+	import { router, isHarmony, parse } from "@/cool";
 	import { Canvas } from "@/uni_modules/cool-canvas";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import { ref } from "vue";
-
+	import type { ArticleData } from "@/types";
+	import { newsinfo, articleinfo } from "@/cool/service/list"
 	const ui = useUi();
 
 	const canvasRef = ref<ClCanvasComponentPublicInstance | null>(null);
@@ -34,8 +35,29 @@
 	// 初始化为 0，避免页面未完全渲染时 getWindowInfo 获取到的高度或宽度不准确（如已知固定高宽可直接赋值）
 	const height = ref(520);
 	const width = ref(0);
-
-	function onCanvasLoad(canvas : Canvas) {
+	const getmessage = ref<ArticleData>({}); // 这样就不会报错了
+	// 获取文章详情
+	const getarticledata = async (id : string | number) => {
+		try {
+			const res = await articleinfo(id, {})
+			console.log("性情数据", res)
+			ui.hideLoading()
+			getmessage.value = parse<ArticleData>(res)!
+		} catch (err) {
+			ui.hideLoading()
+			ui.showToast({
+				message: "获取详情失败",
+			});
+		}
+	}
+	onMounted(() => {
+		const params = router.params();
+		console.log(params.articleId)
+		getarticledata(params.articleId as string | number)
+	})
+	function onCanvasLoad(canvas : Canvas,) {
+		if (getmessage.value == null) return;
+		const article = getmessage.value;
 		canvas
 			.image({
 				x: (width.value - 327) / 2,

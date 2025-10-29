@@ -27,14 +27,15 @@ export class User {
 		const userInfo = storage.get("userInfo");
 		// 获取本地token
 		const token = storage.get("token") as string | null;
-		const userId= storage.get("userId") as number | null;
-		if(!isNull(userId)){
-			this.userId=userId as number
+		const userId = storage.get("userId") as number | null;
+		if (!isNull(userId)) {
+			this.userId = userId
 		}
-		console.log(this.userId)
+		// console.log(this.userId)
 		this.token = token == "" ? null : token;
 		// 初始化用户信息
 		if (userInfo != null && isObject(userInfo)) {
+			console.log("用户信息", userInfo)
 			this.set(userInfo);
 		}
 	}
@@ -72,6 +73,7 @@ export class User {
 		// console.log(parse<UserInfo>(data)!, 'data12222222')
 		// 设置
 		this.info.value = parse<UserInfo>(data)!;
+		// console.log(this.info.value,999999)
 
 		// 持久化到本地存储
 		storage.set("userInfo", data, 0);

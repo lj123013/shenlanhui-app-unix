@@ -8,14 +8,12 @@
 			}
 		}" :refresher-enabled="false" @pull="onPull" @bottom="loadMore">
 			<template #item="{ value, index }">
-				<!-- 图片展示 -->
-				<goods-item v-if="title=='图片'" :value="value"></goods-item>
-				<!-- 文章展示 -->
-				<news-item v-else :value="value" :index="index" :hidden="true" @item-click="onItemClick"></news-item>
+				<circle-item :value="value" :typeTitle="title"  :index="index" :showshare="false" @item-click="onItemClick"
+					@delete-item="handleDeleteItem"></circle-item>
 			</template>
 			<template #bottom>
 				<view class="py-3">
-					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+					<cl-loadmore :loading="loading" :finish="finished" v-if="list.length > 0"></cl-loadmore>
 				</view>
 			</template>
 		</cl-list-view>
@@ -23,96 +21,65 @@
 </template>
 
 <script setup>
-	import { isMp, isNull, router, useRefs, usePager } from "@/cool";
+	import { isMp, isNull, router, useRefs, usePager, type Response, parse } from "@/cool";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import { t } from "@/locale";
 	import newsItem from "@/components/news-item.uvue"
 	import GoodsItem from "../homePage/components/goods-item.uvue";
+	import circleItem from "@/components/circle-item.uvue"
+	import { postMylist } from "@/cool/service/list"
 	const ui = useUi();
 	const title = ref("")
+	onMounted(() => {
+		const params = router.params();
+		title.value = params.title as string
+		console.log(title.value)
+	})
 	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
 	let id = 0;
-	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
+
+	const { refresh, list, listView, loading, loadMore, finished } = usePager((params, { render }) => {
+		console.log(title.value)
+		let type = ""
+		if (title.value == '长文') {
+			type = 'article'
+		} else if (title.value == '讨论') {
+			type = "discussion"
+		} else if (title.value == '图库') {
+			type = "image"
+		} else {
+			type = "all"
+		}
 		// 模拟请求
-		setTimeout(() => {
-			render({
-				list: [
-					{
-						id:id++,
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t(""),
-						content: t('#本金10w入# @steven市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: true,
-					},
-					{
-						id:id++,
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t('造谣阿里采购寒武纪 15 万片 GPU,背后的深科技号称中国人工智能主媒体，证监会应该出手了！'),
-						content: t('8月31日晚间，有消息称阿里云通义千问大模型面临算力缺口，阿里紧急追加寒武纪思元370芯片订单至15万片。9月1日凌晨，阿里云相关人士回应《科创板日报》记者表示：“阿里云...'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: false,
-					},
-					{
-						id:id++,
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t(""),
-						content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: false,
-					},
-					{
-						id:id++,
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t(""),
-						content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: false,
-					},
-					{
-						id:id++,
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t(""),
-						content: t('本金10w入市两年合计亏损15%，换了免5账户资金重置新的开始只看结果，没技术，没实力，看图形操作，不研究板块基本面，追涨杀跌样样精通。一介凡人而已小打小闹勿认真。'),
-						time: t("05-09-01"),
-						like: 2,
-						comment: 1,
-						isLike: false,
-					},
-					// 测试四张图片（应该只显示前三张）
-					{
-						id:id++,
-						image: t('../../static/image/head-img.png'),
-						username: t('传媒见闻'),
-						title: t('测试四张图片显示'),
-						content: t('这里有四张图片，但只会显示前三张，并且每张图片的宽度为210rpx。'),
-						time: t("05-09-02"),
-						like: 5,
-						comment: 3,
-						isLike: true,
-					},
-				],
-				pagination: {
-					page: params["page"],
-					size: params["size"],
-					total: 100
-				}
-			});
+		postMylist({
+			page: params["page"],
+			limit: params["size"],
+			status: title.value == '草稿' ? "draft" : "published",
+			type: type
+		}).then(res => {
 			ui.hideLoading();
-		}, 1000);
+			const result = parse<UTSJSONObject>(res)!
+			const page = result.pagination
+			console.log('数据列表', result.items)
+			if (!isNull(page)) {
+				const pageDta = parse<UTSJSONObject>(page as Any)!
+				render({
+					list: result.items,
+					pagination: {
+						page: params["page"],
+						size: params["size"],
+						total: pageDta.total
+
+					}
+
+				});
+			}
+		}).catch(err => {
+			ui.hideLoading()
+			ui.showToast({
+				message: (err as Response).message!,
+			});
+		})
 	});
 	async function onPull() {
 		await refresh({ page: 1 });
@@ -127,16 +94,21 @@
 			}
 		});
 	};
+	// 点击取消关注
+	const handleDeleteItem = (itemInfo : UTSJSONObject) => {
+		const index = list.value.findIndex((item) => item.id === itemInfo.id);
+		if (index !== -1) {
+			list.value.splice(index, 1);
+		}
+	}
 	onReady(() => {
+		const params = router.params();
+		title.value = params.title as string
 		ui.showLoading(t("加载中"));
 
 		// 默认请求
 		refresh({});
 	});
-	onMounted(() => {
-		const params = router.params();
-		title.value = params.title as string
-	})
 </script>
 
 <style lang="scss">

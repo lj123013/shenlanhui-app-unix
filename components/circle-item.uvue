@@ -1,0 +1,365 @@
+<template>
+	<view class="">
+		<view class="py-3 px-5 borderh10" @click="onItemClick" v-if="item!=null">
+			<view class="flex flex-row items-center justify-between w-full mb-2 ">
+				<view class="flex flex-row items-center justify-between w-full">
+					<view class="flex flex-row items-center ">
+						<cl-avatar :pt="{className:'mr-2'}" v-if="showshare" :src="item?.author?.avatar" rounded
+							size="60rpx"></cl-avatar>
+						<cl-col>
+							<cl-text v-if="showshare" color="#131313" :pt="{ className: '!text-sm flex-1' }">{{ item?.author?.username
+						}}</cl-text>
+							<l-dateformat style="color:#909090;fontSize:12px" :date="item?.timestamps?.created_at"
+								format="yyyy-MM-dd" />
+						</cl-col>
+					</view>
+					<view class="flex flex-row items-center">
+						<view v-if="userInfo!!.id!=item?.author?.id">
+							<view v-if="item?.author?.is_followed==false"
+								class='follow rounded-[20rpx] w-[88rpx] h-[46rpx]flex flex-col items-center justify-center'>
+								<cl-text color="primary" :pt="{className:'text-sm'}">关注</cl-text>
+							</view>
+							<view v-if="item?.author?.is_followed==true"
+								class='isfollow rounded-[20rpx] w-[108rpx] h-[46rpx] flex flex-col items-center justify-center'>
+								<cl-text color="#ACACAC" :pt="{className:'text-sm'}">已关注</cl-text>
+							</view>
+						</view>
+						<cl-icon name="arrow-down-s-line" color="#ACACAC" @tap.stop="open"></cl-icon>
+					</view>
+				</view>
+			</view>
+			<cl-text v-if="item.title!=''" color="black" :pt="{ className: '!text-lg' }">{{ item?.title }}</cl-text>
+			<cl-text color="#505050" :pt="{ className: '!text-base' }">{{ item?.content }}</cl-text>
+			<view class="mt-2 flex flex-row flex-wrap" v-if="typeTitle!='图库'">
+				<cl-image v-for="(child, childindex) in item.images" :pt="{className:'rounded-xl'}" :key="childindex"
+					:src="child" height="236rpx" :width="getImageWidth()"
+					:class="['rounded-xl', getImageClass(childindex)]" mode="aspectFill"></cl-image>
+			</view>
+			<view class="imageBox my-4" width="100%" height="314rpx" v-if="typeTitle=='图库'">
+				<cl-image :src="item?.images[0]" mode="aspectFill" width="100%" height="314rpx"
+					:pt="{ className: 'rounded-[20rpx]' }"></cl-image>
+				<view class="tagBox ">
+					<cl-text color="white"
+						:pt="{ className: 'text-sm' }">{{ item?.image_type=="creative"?'创意':'实拍' }}</cl-text>
+				</view>
+			</view>
+			<view class="flex flex-row items-center justify-between py-3 pt-3 border mt-3" v-if="showshare">
+				<view v-for="child in operationList" class="flex flex-row items-center" :key="child.text">
+					<cl-icon :name="child?.icon" :pt="{ className: 'operationColor' }" :size="24"></cl-icon>
+					<view v-if="child?.text=='分享'">
+						<cl-text v-if="item?.stats?.shares!=0" :pt="{ className: 'operationColor !text-sm ml-1' }">{{ item?.stats?.shares
+							}}</cl-text>
+						<cl-text v-else :pt="{ className: 'operationColor !text-sm ml-1' }">{{ child?.text
+								}}</cl-text>
+					</view>
+
+					<view v-if="child?.text=='评论'">
+						<cl-text v-if="item?.stats?.comments!=0" :pt="{ className: 'operationColor !text-sm ml-1' }">{{ item?.stats?.comments
+							}}</cl-text>
+						<cl-text v-else :pt="{ className: 'operationColor !text-sm ml-1' }">{{ child?.text
+									}}</cl-text>
+					</view>
+					<view v-if="child?.text=='点赞'">
+						<cl-text v-if="item?.stats?.likes!=0" :pt="{ className: 'operationColor !text-sm ml-1' }">{{ item?.stats?.likes
+							}}</cl-text>
+						<cl-text v-else :pt="{ className: 'operationColor !text-sm ml-1' }">{{ child?.text
+										}}</cl-text>
+					</view>
+
+
+				</view>
+			</view>
+		</view>
+	</view>
+	<!-- 个人中心文章弹窗 -->
+	<cl-popup v-model="personvisible" :show-header="false" title="" :mask-closable="true"
+		:pt="{ className: 'rounded-t-2xl' }">
+		<view class="p-4">
+			<view class="py-4 flex flex-row items-center" v-for="value in personPopupList"
+				@click.stop="handeledit(value)">
+				<cl-icon :name="value.icon" color="#AEAEAE" :size="36" :pt="{ className: 'mr-2' }"></cl-icon>
+				<cl-text color="#636363" :pt="{ className: '!text-base' }">{{ value.text }}</cl-text>
+			</view>
+			<view class="bordertoph10 pt-4" @tap="personvisible=false">
+				<cl-text color="#6D6D6D" :pt="{ className: 'text-center' }">取消</cl-text>
+			</view>
+		</view>
+	</cl-popup>
+	<!-- swipeClose关闭拖拽 列表用户操作-->
+	<cl-popup v-model="visible" :show-header="false" title="" :mask-closable="true"
+		:pt="{ className: 'rounded-t-2xl' }">
+		<view class="p-4">
+			<view class="py-4 flex flex-row items-center" v-for="value in popupList">
+				<cl-icon :name="value.icon" color="#AEAEAE" :size="36" :pt="{ className: 'mr-2' }"></cl-icon>
+				<cl-text color="#636363" :pt="{ className: '!text-base' }">{{ value.text }}</cl-text>
+			</view>
+			<view class="bordertoph10 pt-4" @tap="visible=false">
+				<cl-text color="#6D6D6D" :pt="{ className: 'text-center' }">取消</cl-text>
+			</view>
+		</view>
+	</cl-popup>
+</template>
+
+<script setup>
+	import { isMp, isNull, router, useRefs, isArray, userInfo } from "@/cool";
+	import { computed } from "vue";
+	import { parse } from "@/cool";
+	import { deletepost } from "@/cool/service/list"
+	import { useUi } from "@/uni_modules/cool-ui";
+	const ui = useUi();
+	defineOptions({
+		name: "circle-item"
+	});
+	const props = defineProps({
+		value: {
+			type: Object,
+			default: () => ({})
+		},
+		index: {
+			type: Number,
+			default: 0
+		},
+		typeTitle:{
+			type:String,
+			default: ""
+		},
+		showshare: {
+			type: Boolean,//个人中心的文章不需要展示用户头像和操作
+			default: true
+		},
+		display: {
+			type: Boolean,//个人中心的互动不需要展示下拉操作
+			default: true
+		}
+
+	});
+
+
+	type iconitem = {
+		icon : string,
+		text : string
+		num ?: number
+	}
+	const operationList = ref<iconitem[]>([
+		{
+			icon: 'zhuanfa',
+			text: '分享',
+			num: 0,
+		},
+		{
+			icon: 'a-pinglun1',
+			text: '评论',
+			num: 0,
+		},
+		{
+			icon: 'dianzan',
+			text: '点赞',
+			num: 0,
+		}
+	])
+	type author = {
+		avatar : string
+		username : string
+		nickname : string
+		id : number
+		is_followed : boolean
+	}
+	type stats = {
+		shares : number
+		bookmarks : number
+		comments : number
+		views : number
+		likes : number
+	}
+	type timestamps = {
+		created_at : string
+		published_at : string
+		updated_at : string
+	}
+
+	// 定义数据类型（注释形式）
+	type newsItem = {
+		id ?: number
+		title ?: string
+		content ?: string
+		author ?: author
+		stats ?: stats
+		timestamps ?: timestamps
+		image_type?:string
+		images ?: Array<string>
+	}
+	const item = computed(() => parse<newsItem>(props.value));
+	// 根据图片数量获取图片宽度
+	function getImageWidth() : string {
+		if (!isNull(item.value)) {
+			const images = item.value!!.images;
+			if (isArray(images) && images!!.length > 0) {
+				const imageCount = images!!.length;
+				const count = Math.min(imageCount, 3);
+				if (count === 1) {
+					return '384rpx';
+				} else if (count === 2) {
+					return '268rpx';
+				} else {
+					return '210rpx';
+				}
+			}
+		}
+		// 默认返回值
+		return '210rpx';
+	}
+	// 根据图片数量和索引获取图片样式类
+	function getImageClass(index : number) : string {
+		let classes = ['mb-2'];
+		if (!isNull(item.value)) {
+			const images = item.value!!.images;
+			if (isArray(images) && images!!.length > 0) {
+				const imageCountmr = images!!.length;
+				const countMr = Math.min(imageCountmr, 3);
+				if (countMr === 2) {
+					// 两张图片时，第一张添加右边距
+					if (index === 0) {
+						classes.push('mr-2');
+					}
+				} else if (countMr === 3) {
+					// 三张图片时，前两张添加右边距
+					if (index < 2) {
+						classes.push('mr-2');
+					}
+				}
+			}
+		}
+		return classes.join(' ');
+	}
+	// 弹出层数据
+	type popupItem = {
+		icon : string;
+		text : string;
+	};
+	const popupList = ref<popupItem[]>([
+		{
+			icon: 'shibai',
+			text: '不感兴趣此条内容'
+		},
+		{
+			icon: 'jubao',
+			text: '屏蔽此用户'
+		},
+		{
+			icon: 'a-zu2541',
+			text: '投诉内容'
+		}
+	]);
+	const visible = ref(false);//列表弹出框
+	const personvisible = ref(false)
+	const personPopupList = ref<iconitem[]>([
+		{
+			icon: 'a-zu250',
+			text: '编辑'
+		},
+		{
+			icon: 'a-zu259',
+			text: '删除'
+		},
+	])
+	// 打开弹框
+	function open() {
+		if (props.showshare) {
+			visible.value = true;
+		} else {
+			personvisible.value = true
+		}
+
+	}
+	// 关闭弹框
+	function close() {
+		if (props.showshare) {
+			visible.value = false;
+		} else {
+			personvisible.value = false
+		}
+	}
+	// 处理点击事件
+	const emit = defineEmits(["item-click", "delete-item"]);
+	const onItemClick = () => {
+		emit("item-click", props.value);
+	};
+	const handeledit = (value : iconitem) => {
+		if (value.text == "编辑") {
+
+		} else if (value.text == "删除") {
+			ui.showConfirm({
+				title: "删除文章确认",
+				message: "您确定要删除该文章吗？",
+				callback(action) {
+					if (action === "confirm") {
+						const id = item.value?.id as string | number
+						deletepost(id, {}).then(res => {
+							emit("delete-item", {
+								id: id,
+								index: props.index
+							});
+							ui.showToast({
+								message: "删除成功",
+							});
+							personvisible.value = false
+						}).catch(err => {
+							ui.showToast({
+								message: "删除失败",
+							});
+						})
+						// 执行删除操作
+					} else {
+						console.log("用户取消操作");
+					}
+				},
+			});
+		}
+	}
+</script>
+
+<style>
+	.company {
+		position: relative;
+
+		.company-img {
+			position: absolute;
+			top: 5rpx;
+		}
+	}
+
+	.borderh10 {
+		border-bottom: 10rpx solid #F8F8F8;
+	}
+
+	.follow {
+		border: 2rpx solid #2854F2;
+	}
+
+	.isfollow {
+		border: 2rpx solid #ccc;
+	}
+
+	.text {
+		color: red;
+		font-size: 12px;
+	}
+	.imageBox {
+		position: relative;
+	}
+	
+	.tagBox {
+		background-color: rgba(0, 0, 0, 0.3);
+		width: 96rpx;
+		height: 48rpx;
+		border-radius: 20rpx 0 20rpx 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		top: 0;
+		left: 0;
+	
+	}
+</style>

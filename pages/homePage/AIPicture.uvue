@@ -1,5 +1,8 @@
 <template>
 	<cl-page>
+		<cl-topbar safe-area-top background-color="transparent" >
+			<cl-text color="#3A3A3A" :pt="{ className: '!text-xl' }">AI图库</cl-text>
+			</cl-topbar>
 		<view>
 			<view class="flex flex-row justify-between items-center pr-4">
 				<cl-tabs v-model="current" class="fontBold" :showLine="false" :list="tabbar"
@@ -16,13 +19,13 @@
 				className: 'pt-3'
 			}
 		}" :refresher-enabled="true" @pull="onPull" @bottom="loadMore">
-			<template #item="{ value }">
-				<goods-item :value="value"></goods-item>
+			<template #item="{ value ,index}">
+				<circle-item :value="value" :index="index" typeTitle="图库"  :showshare="true"></circle-item>
 			</template>
 
 			<template #bottom>
 				<view class="py-3">
-					<cl-loadmore v-if="list.length > 0" :loading="loading" safe-area-bottom></cl-loadmore>
+					<cl-loadmore v-if="list.length > 0" :loading="loading" :finish="finished" safe-area-bottom></cl-loadmore>
 				</view>
 			</template>
 		</cl-list-view>
@@ -30,124 +33,92 @@
 </template>
 
 <script lang="ts" setup>
-import { useUi, type ClTabsItem } from "@/uni_modules/cool-ui";
-import { ref } from "vue";
-import { usePager } from "@/cool";
-import GoodsItem from "../homePage/components/goods-item.uvue";
-import { t } from "@/locale";
-const current = ref("1");
-const ui = useUi();
+	import { useUi, type ClTabsItem } from "@/uni_modules/cool-ui";
+	import { ref } from "vue";
+	import { usePager, type Response, parse, isNull } from "@/cool";
+	import circleItem from "@/components/circle-item.uvue"
+	import { t } from "@/locale";
+	import { pulishList } from "@/cool/service/list"
+	const current = ref(0);
+	const ui = useUi();
 
-const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
-let id = 0;
-const isColor = ref(true);
-const tabbar = ref<ClTabsItem[]>([
-	{
-		label: "推荐",
-		value: "1",
-	},
-	{
-		label: "实拍",
-		value: "2",
-	},
-	{
-		label: "创意",
-		value: "3",
-	},
-	{
-		label: "AI图库",
-		value: "4",
-	},
-]);
-const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
-	// 模拟请求
-	setTimeout(() => {
-		render({
-			list: [
-				{
-					id: id++,
-					head_img: t('../../static/image/head-img.png'),
-					username: t('传媒见闻'),
-					image: "https://unix.cool-js.com/images/demo/1.jpg",
-					tag:'实拍'
-				},
-				{
-					id: id++,
-					head_img: t('../../static/image/head-img.png'),
-					username: t('传媒见闻'),
-					image: "https://unix.cool-js.com/images/demo/2.jpg",
-					tag:'创意'
-				},
-				{
-					id: id++,
-					head_img: t('../../static/image/head-img.png'),
-					username: t('传媒见闻'),
-					image: "https://unix.cool-js.com/images/demo/3.jpg",
-					tag:'实拍'
-				},
-				{
-					id: id++,
-					head_img: t('../../static/image/head-img.png'),
-					username: t('传媒见闻'),
-					image: "https://unix.cool-js.com/images/demo/5.jpg",
-					tag:'AI图库'
-				},
-				{
-					id: id++,
-					head_img: t('../../static/image/head-img.png'),
-					username: t('传媒见闻'),
-					image: "https://unix.cool-js.com/images/demo/6.jpg",
-					tag:'AI图库'	
-				},
-				{
-					id: id++,
-					head_img: t('../../static/image/head-img.png'),
-					username: t('传媒见闻'),
-					image: "https://unix.cool-js.com/images/demo/7.jpg",
-					tag:'AI图库'
-
-				},
-				{
-					id: id++,
-					head_img: t('../../static/image/head-img.png'),
-					username: t('传媒见闻'),
-					image: "https://unix.cool-js.com/images/demo/8.jpg",
-					tag:'AI图库'
-				},
-				{
-					id: id++,
-					head_img: t('../../static/image/head-img.png'),
-					username: t('传媒见闻'),
-					image: "https://unix.cool-js.com/images/demo/9.jpg",
-					tag:'AI图库'
-				},
-				{
-					id: id++,
-					head_img: t('../../static/image/head-img.png'),
-					username: t('传媒见闻'),
-					image: "https://unix.cool-js.com/images/demo/10.jpg",
-					tag:'AI图库'
-				}
-			],
-			pagination: {
-				page: params["page"],
-				size: params["size"],
-				total: 100
+	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
+	let id = 0;
+	const isColor = ref(true);
+	const tabbar = ref<ClTabsItem[]>([
+		{
+			label: "推荐",
+			value: 0,
+		},
+		{
+			label: "实拍",
+			value: 1,
+		},
+		{
+			label: "创意",
+			value: 2,
+		},
+		{
+			label: "AI图库",
+			value: 3,
+		},
+	]);
+	const { refresh, list, listView, loading, loadMore ,finished} = usePager((params, { render }) => {
+		let image_type=""
+		if(current.value==1){
+			image_type="photo"
+		}else if(current.value==2){
+			image_type="creative "
+		}
+		// 模拟请求
+		pulishList({
+			page: params["page"],
+			limit: params["size"],
+			type: "image",
+			sort: "hot",
+			image_type:image_type
+		}).then(res => {
+			ui.hideLoading();
+			const result = parse<UTSJSONObject>(res)!
+			const page = result.pagination
+			console.log('数据列表', result.items)
+			if (!isNull(page)) {
+				const pageDta = parse<UTSJSONObject>(page as Any)!
+				render({
+					list: result.items,
+					pagination: {
+						page: params["page"],
+						size: params["size"],
+						total: pageDta.total
+			
+					}
+			
+				});
 			}
-		});
+			
+		}).catch(err => {
+			ui.hideLoading()
+			ui.showToast({
+				message: (err as Response).message!,
+			});
+		})
+	});
 
-		ui.hideLoading();
-	}, 1000);
-});
+	async function onPull() {
+		await refresh({ page: 1 });
+		listViewRef.value!.stopRefresh();
+	}
+	watch(current, (newVal : number, oldVal : number) => {
+		if (newVal !== oldVal) {
+			ui.showLoading(t("加载中"));
+			refresh({ page: 1 });
+		}
 
-async function onPull() {
-	await refresh({ page: 1 });
-	listViewRef.value!.stopRefresh();
-}
 
-onReady(() => {
-	ui.showLoading(t("加载中"));
-	// 默认请求
-	refresh({});
-});
+	})
+	onReady(() => {
+		ui.showLoading(t("加载中"));
+		// 默认请求
+		refresh({});
+	});
 </script>

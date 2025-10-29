@@ -260,25 +260,88 @@
 		title.value = app.selectedAiTool.value;
 		console.log('监听到 store 变化，标题更新为:', title.value);
 	});
-
+	// 上传录音文件并解析文字
+const uploadFile = (filePath) => {
+  uni.uploadFile({
+    url: 'https://shenlanhui.com/ai/audio/analysis',
+    filePath: filePath,
+    name: 'file',
+    method: "POST",
+    formData: {  // 注意：应该是 formData，不是 data
+      prompt: '请转写这段音频内容，并全部输出成对应文字，确保准确无误。',  // 分号改为逗号
+      provider: 'tongyi'
+    },
+    success: (uploadRes) => {
+      console.log('upload success', uploadRes);
+      
+      // 通常上传接口返回的是字符串，需要解析
+      try {
+        const result = JSON.parse(uploadRes.data);
+        console.log('解析后的结果:', result);
+        
+        uni.showToast({
+          title: '上传成功',
+          icon: 'success'
+        });
+        
+        // 这里可以处理返回的转写结果
+        if (result.text) {
+          console.log('音频转写结果:', result.text);
+        }
+        
+      } catch (e) {
+        console.error('解析响应数据失败:', e);
+        console.log('原始响应:', uploadRes);
+      }
+    },
+    fail: (err) => {
+      console.log('upload fail', err);
+      uni.showToast({
+        title: '上传失败',
+        icon: 'none'
+      });
+    },
+    complete: (res) => {
+      console.log('上传完成', res);
+    }
+  });
+}
 	onMounted(() => {
 		console.log(isAppIOS())
 		const params = router.params();
-		if (!isNull(params.userinput)) {
-			console.log('接收到的用户输入参数:', params.userinput);
-			messages.value.push({
-				id: messageIdCounter++,
-				role: 'user',
-				content: params.userinput as string,
-				isfinish: true,
-				conversation_id: "",
-				imageUrl: '',
-				switchvalue: false,
-				loading: true,
-				isSHowImg: false,
+		if (!isNull(params)) {
+			console.log('接收到的用户输入参数:', params);
+			if (title.value == '录音转文字') {
+				// uploadFile(params.audioPath)
+				messages.value.push({
+					id: messageIdCounter++,
+					role: 'user',
+					content: params.audioName as string,
+					isfinish: true,
+					conversation_id: "",
+					imageUrl: '',
+					switchvalue: false,
+					loading: true,
+					isSHowImg: false,
 
-			} as aiMesage)
-			aichart(params.userinput as string)
+				} as aiMesage)
+
+			} else {
+				messages.value.push({
+					id: messageIdCounter++,
+					role: 'user',
+					content: params.userinput as string,
+					isfinish: true,
+					conversation_id: "",
+					imageUrl: '',
+					switchvalue: false,
+					loading: true,
+					isSHowImg: false,
+
+				} as aiMesage)
+				aichart(params.userinput as string)
+			}
+
 
 			console.log('消息列表:', messages.value);
 		}

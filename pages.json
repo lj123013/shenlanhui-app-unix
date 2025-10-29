@@ -82,7 +82,9 @@
 				{
 					"path": "AIPicture",
 					"style": {
-						"navigationBarTitleText": "AI图库"
+						"navigationBarTitleText": "AI图库",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
 					}
 				},
 				{
@@ -102,7 +104,9 @@
 			"pages": [{
 					"path": "index",
 					"style": {
-						"navigationBarTitleText": "设置"
+						"navigationBarTitleText": "设置",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
 					},
 					"meta": {
 						"isAuth": true

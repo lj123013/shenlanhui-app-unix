@@ -25,7 +25,7 @@
 	import { parse } from "@/cool";
 	// 导入时间格式化工具
 	defineOptions({
-		name: "news-item"
+		name: "hot-article"
 	});
 
 	// 定义数据类型（注释形式）

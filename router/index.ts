@@ -15,9 +15,15 @@ router.beforeEach((to, from, next) => {
 		if (!user.isNull()) {
 			next();
 		} else {
-		console.log("未登录");
-		
-			router.login();
+			console.log("未登录");
+			uni.showToast({
+				title: "请登录再试",
+				icon:"none"
+			});
+			setTimeout(() => {
+				router.login();
+			}, 1000);
+
 		}
 	} else {
 		next();

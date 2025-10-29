@@ -29,7 +29,7 @@
 
 			<template #bottom>
 				<view class="py-3">
-					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+					<cl-loadmore :loading="loading" :finish="finished" v-if="list.length > 0"></cl-loadmore>
 				</view>
 			</template>
 		</cl-list-view>
@@ -64,7 +64,7 @@
 
 	let id = 0;
 
-	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
+	const { refresh, list, listView, loading, loadMore,finished } = usePager((params, { render }) => {
 		articles({
 			page: params["page"],
 			per_page: params["size"],

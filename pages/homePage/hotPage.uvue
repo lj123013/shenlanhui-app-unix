@@ -31,7 +31,7 @@
 
 					<template #bottom>
 						<view class="py-3">
-							<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+							<cl-loadmore :loading="loading" :finish="finished" v-if="list.length > 0"></cl-loadmore>
 						</view>
 					</template>
 				</cl-list-view>
@@ -58,6 +58,7 @@
 	// 标签滑块模块
 	const current = ref(0);
 	const isColor = ref(true);
+	const firstLoaded = ref(false)
 	const tagList = ref<ClTabsItem[]>([
 		{
 			label: "热门阅读",
@@ -96,7 +97,7 @@
 		});
 	}
 	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
-	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
+	const { refresh, list, listView, loading, loadMore, finished } = usePager((params, { render }) => {
 		if (current.value == 0) {
 			articles({
 				page: params["page"],
@@ -105,6 +106,7 @@
 				sort: "popular",
 			}).then(res => {
 				ui.hideLoading()
+				firstLoaded.value = true
 				if (res != null) {
 					const result = parse<UTSJSONObject>(res)!
 					render({
@@ -123,41 +125,35 @@
 		} else if (current.value == 1) {
 			hotcompany({}).then(res => {
 				ui.hideLoading()
-				if (res != null) {
-					const result = parse<UTSJSONObject>(res)!
-					render({
-						list: result.companies,
-						pagination: {
-							page: params["page"],
-							size: params["size"],
-							total: result.total
+				firstLoaded.value = true
+				const result = parse<UTSJSONObject>(res)!
+				render({
+					list: result.companies,
+					pagination: {
+						page: params["page"],
+						size: params["size"],
+						total: result.total
 
-						}
+					}
 
-					});
-
-
-				}
-
+				});
 			})
 		} else if (current.value == 2) {
 			hotUser({}).then(res => {
 				ui.hideLoading()
-				if (res != null) {
-					const result = parse<UTSJSONObject>(res)!
-					render({
-						list: result.users,
-						pagination: {
-							page: params["page"],
-							size: params["size"],
-							total: result.total
+				firstLoaded.value = true
+				const result = parse<UTSJSONObject>(res)!
+				render({
+					list: result.users,
+					pagination: {
+						page: params["page"],
+						size: params["size"],
+						total: result.total
 
-						}
+					}
 
-					});
+				});
 
-
-				}
 
 			})
 		}
@@ -166,25 +162,26 @@
 	});
 	watch(current, (newVal : number, oldVal : number) => {
 		if (newVal !== oldVal) {
-			ui.showLoading(t("加载中"));
-			refresh({ page: 1 });
+			if (firstLoaded.value == false) {
+				ui.showLoading(t("加载中"));
+				refresh({ page: 1 });
+			}
+
 		}
 
 
 	})
 	onReady(() => {
 		ui.showLoading(t("加载中"));
-		// 默认请求
-		refresh({});
-	});
-	onMounted(() => {
 		const params = router.params();
-		console.log(params, '获取数据')
 		if (!isNull(params.index)) {
 			current.value = params.index as number
+			// 默认请求
+			refresh({});
 		}
+		
+	});
 
-	})
 </script>
 
 <style>

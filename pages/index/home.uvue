@@ -195,11 +195,16 @@
 						<scroll-view class="scroll-view_H pt-3" direction="horizontal" :show-scrollbar="false">
 							<view v-for="item in activeUsersList" @click="toPathuser(item)"
 								class="scroll-user-item flex flex-col items-center justify-center w-[60px]">
-								<cl-image :width="60" :height="60" :pt="{
+								<cl-image v-if="item.avatar!=''" :width="60" :height="60" :pt="{
 							inner: {
 								className: '!rounded-2xl'
 							}
 						}" :src="item.avatar"></cl-image>
+						<cl-image v-else :width="60" :height="60" :pt="{
+							inner: {
+								className: '!rounded-2xl'
+							}
+						}" src="../../static/image/defaultAvatar.png"></cl-image>
 								<cl-text ellipsis :pt="{ className: '!text-xs' }">{{
 								item.username
 							}}</cl-text>
@@ -220,6 +225,7 @@
 						}">阅读</cl-text>
 			</view>
 			<!-- 文章列表 -->
+			<view class="h-full">
 				<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
 						refresher: {
 							className: 'pt-3'
@@ -231,10 +237,13 @@
 
 					<template #bottom>
 						<view class="py-3">
-							<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+							<cl-loadmore :loading="loading" v-if="list.length > 0" :safeAreaBottom='true'
+								:pt="{text:{className:'text-sm text-gray-400'}}"></cl-loadmore>
 						</view>
 					</template>
 				</cl-list-view>
+			</view>
+
 
 		</view>
 		<!-- 自定义底部导航栏 -->
@@ -243,7 +252,7 @@
 </template>
 
 <script lang="ts" setup>
-	import { isNull, isAppIOS, parse, isArray, usePager } from "@/cool";
+	import { isNull, isAppIOS, parse, isArray, usePager, type Response } from "@/cool";
 	import { isMp, router, useRefs } from "@/cool";
 	import { t } from "@/locale";
 	import { useUi } from "@/uni_modules/cool-ui";
@@ -357,17 +366,17 @@
 				title: t("公告"),
 				path: "/pages/homePage/notice"
 			},
-			// {
-			// 	icon: t("a-lujing72"),
-			// 	title: t("招股书"),
-			// 	// path: "/pages/homePage/prospectus"
-			// 	path: ""
-			// },
-			// {
-			// 	icon: t("a-zu31"),
-			// 	title: t("财报"),
-			// 	path: ""
-			// },
+			{
+				icon: t("a-lujing72"),
+				title: t("招股书"),
+				// path: "/pages/homePage/prospectus"
+				path: ""
+			},
+			{
+				icon: t("a-zu31"),
+				title: t("财报"),
+				path: ""
+			},
 			{
 				icon: t("a-zu29"),
 				title: t("AI写作"),
@@ -378,21 +387,21 @@
 				title: t("深蓝号"),
 				path: "/pages/homePage/slhNum"
 			},
-			// {
-			// 	icon: t("AItuku"),
-			// 	title: t("AI图库"),
-			// 	path: "/pages/homePage/AIPicture"
-			// },
+			{
+				icon: t("AItuku"),
+				title: t("AI图库"),
+				path: "/pages/homePage/AIPicture"
+			},
 			{
 				icon: t("a-lujing93"),
 				title: t("新闻稿库"),
 				path: "/pages/homePage/news"
 			},
-			// {
-			// 	icon: t("a-lujing60"),
-			// 	title: t("专家库"),
-			// 	path: ""
-			// }
+			{
+				icon: t("a-lujing60"),
+				title: t("专家库"),
+				path: ""
+			}
 		];
 	});
 	// 快讯列表
@@ -426,9 +435,9 @@
 	]);
 	// 活跃用户列表
 	type userList = {
-		avatar : string;
-		username : string;
-		id : number;
+		avatar ?: string;
+		username ?: string;
+		id : string | number;
 	};
 	const activeUsersList = ref<userList[]>([]);
 	type recom = {
@@ -568,12 +577,25 @@
 				for (let i = 0; i < subItems!!.length; i++) {
 					const subItem = subItems!![i]
 					if (!(subItem instanceof UTSJSONObject)) continue
-					const itemId = subItem.id as number
-					const itemusername = subItem.username as string
-					const itemavatar = subItem.avatar as string
+					let itemId : string | number = ""; // 设置默认值
+					let itemusername : string = ""; // 设置默认值
+					let itemavatar : string = ""; // 设置默认值
+					if (!isNull(subItem.id)) {
+						itemId = subItem.id as number | string
+					}
+					if (subItem.username != null) {
+						itemusername = subItem.username as string
+					} else {
+						itemusername = ""
+					}
+					if (subItem.avatar != null) {
+						itemavatar = subItem.avatar as string
+					} else {
+						itemavatar = ""
+					}
 					userlist.push({
 						id: itemId,
-						username: itemusername,
+						username: itemusername ,
 						avatar: itemavatar
 					} as userList)
 				}
@@ -581,8 +603,8 @@
 			}
 		}).catch(err => {
 			ui.showToast({
-				message: "获取活跃用户失败"
-			})
+				message: (err as Response).message!,
+			});
 		})
 	}
 	//获取热门文章
@@ -685,22 +707,22 @@
 			exclude_read: 0
 		}).then(res => {
 			ui.hideLoading()
-				console.log(res)
-				const result = parse<UTSJSONObject>(res)!
-				console.log(result, "result")
-				render({
-					list: result.data,
-					pagination: {
-						page: params["page"],
-						size: params["size"],
-						total: result.total
+			console.log(res)
+			const result = parse<UTSJSONObject>(res)!
+			console.log(result, "result")
+			render({
+				list: result.data,
+				pagination: {
+					page: params["page"],
+					size: params["size"],
+					total: result.total
 
-					}
+				}
 
-				});
+			});
 
 
-			
+
 
 		})
 

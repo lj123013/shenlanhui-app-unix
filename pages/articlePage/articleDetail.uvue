@@ -13,7 +13,7 @@
 		<view class="content px-4 pb-20" v-if="getmessage.id">
 			<cl-text color="#2B2B2B" :pt="{ className: '!text-2xl fontBold' }">{{ getmessage.title }}</cl-text>
 			<!-- 文章才显示发布用户 -->
-			<view class="flex flex-row items-center justify-between" v-if="type == '文章'">
+			<view class="flex flex-row items-center justify-between" v-if="type != '新闻稿'">
 				<view :span="13">
 					<view class="flex flex-row items-center mt-2">
 						<cl-avatar :src="getmessage.author.avatar" :size="50"
@@ -25,7 +25,13 @@
 								<cl-icon name="renzheng2" color="#FE0000" :size="16"></cl-icon>
 							</view>
 
-							<view class="flex flex-row items-center">
+							<view class="flex flex-row items-center" v-if="type == '圈子'">
+								<cl-text color="#9C9C9C" :pt="{ className: '!text-xs' }">发布时间：</cl-text>
+								<l-dateformat style="color:#909090;fontSize:12px"
+									:date="getmessage?.timestamps?.created_at" format="yyyy-MM-dd hh:mm" />
+
+							</view>
+							<view class="flex flex-row items-center" v-else>
 								<cl-text color="#9C9C9C" :pt="{ className: '!text-xs mr-1' }">
 									{{ getmessage.created_at }}</cl-text>
 								<cl-text color="#9C9C9C" v-if="getmessage.ip_location != null"
@@ -34,27 +40,30 @@
 						</view>
 					</view>
 				</view>
-				<view v-if="getmessage.is_following_author == false"
-					class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full bg-primary-500"
-					@click="followBtn">
-					<cl-text color="white" :pt="{
-						className: '!text-xs'
-					}">关注</cl-text>
+				<view v-if="userInfo!!.id!=getmessage?.author?.id">
+					<view v-if="getmessage.is_following_author == false||getmessage?.author?.is_followed==false"
+						class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full bg-primary-500"
+						@click="followBtn">
+						<cl-text color="white" :pt="{
+							className: '!text-xs'
+						}">关注</cl-text>
+					</view>
+					<view v-if="getmessage.is_following_author == true||getmessage?.author?.is_followed==true"
+						class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
+						style="background:#E6E6E6">
+						<cl-text color="white" :pt="{
+							className: '!text-xs'
+						}">已关注</cl-text>
+					</view>
 				</view>
-				<view v-if="getmessage.is_following_author == true"
-					class="follow-wrapper w-[98rpx] h-[45rpx] flex flex-col items-center justify-center rounded-full"
-					style="background:#E6E6E6">
-					<cl-text color="white" :pt="{
-						className: '!text-xs'
-					}">已关注</cl-text>
-				</view>
+
 			</view>
 
 			<!-- 文章内容 -->
 			<!-- 有图片才显示图片 -->
-			<cl-image v-if="getmessage!!.cover_image != null" :src="getmessage!!.cover_image" :width="'100%'"
-				:height="'384rpx'" :pt="{ className: 'my-4 rounded-lg' }"></cl-image>
-			<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4 my-3"
+			<!-- <cl-image v-if="getmessage!!.cover_image != null" :src="getmessage!!.cover_image" :width="'100%'"
+				:height="'384rpx'" :pt="{ className: 'my-4 rounded-lg' }"></cl-image> -->
+			<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4 my-3" v-if="type!='圈子'"
 				@click="showAiInterpretation = !showAiInterpretation">
 				<view class="flex flex-row items-center">
 					<view class="ai-img rounded-full flex flex-col items-center justify-center">
@@ -114,10 +123,24 @@
 			</view>
 
 			<!-- 富文本 -->
-			<rich-text mode="native" :nodes="getmessage.content" :selectable="true" class="rich-text-content">
+
+			<cl-text v-if="type=='圈子'" :pt="{className:'text-base mt-3'}">{{getmessage.content}}</cl-text>
+			<rich-text v-else mode="native" :nodes="getmessage.content" :selectable="true" class="rich-text-content">
 			</rich-text>
+			<!-- 图片列表 -->
+			<view class="mt-2 flex flex-row flex-wrap"
+				v-if="Array.isArray(getmessage.images) && getmessage.images.length > 0">
+				<cl-image v-for="(child, childindex) in getmessage.images" :pt="{className:'rounded-xl'}"
+					:key="childindex" :src="child" height="236rpx" :width="getImageWidth()"
+					:class="['rounded-xl', getImageClass(childindex)]" mode="aspectFill"></cl-image>
+			</view>
+			<view class="border py-3 my-3">
+				<cl-text color="#AFAFAF"
+					:pt="{ className: 'text-xs' }">风险提示：文章内容仅供参考，不构成投资建议，且与深蓝汇立场无关，投资决策需建立在思想之上。</cl-text>
+			</view>
+
 			<!-- 评论 -->
-			<view class="">
+			<view class="comment">
 				<cl-text color="black" :pt="{ className: '!text-lg' }">评论</cl-text>
 				<view>
 					<view v-for="(value, index) in commonList" class="flex flex-row items-start justify-between py-3"
@@ -139,6 +162,10 @@
 								value?.content
 							}}</cl-text>
 						</view>
+					</view>
+					<view class="py-3">
+						<cl-loadmore :finish="true" v-if="commonList.length > 0" :safeAreaBottom='true'
+							:pt="{text:{className:'text-sm text-gray-400'}}"></cl-loadmore>
 					</view>
 					<cl-empty v-if="commonList.length == 0" :fixed="false" text="暂无评论"
 						:pt="{className:'h-[200px]'}"></cl-empty>
@@ -184,18 +211,19 @@
 		</view>
 
 
-		<shareMenu v-if="sharevisible" :sharevisible='sharevisible' @close="handelclose"></shareMenu>
+		<shareMenu v-if="sharevisible" :shareMessage="getmessage" :articleId="getmessage?.id"
+			:hasImage="getmessage?.featured_image==null?false:true" :sharetype="type" :sharevisible='sharevisible'
+			@close="handelclose"></shareMenu>
 
 	</cl-page>
 </template>
 <script setup>
 	import { ref, reactive, onMounted } from "vue";
-	import { router, isNull, parse, isArray, type Response } from "@/cool";
+	import { router, isNull, parse, isArray, type Response, isEmpty, userInfo } from "@/cool";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import shareMenu from '@/components/shareMenu.uvue'
-	import { newsinfo, articleinfo, comments, clickcomments } from "@/cool/service/list"
-	import { follow, Cancelfollow } from "@/cool/service/user"
-	import { interactions } from "@/cool/service/user"
+	import { newsinfo, articleinfo, comments, clickcomments, postsInfo } from "@/cool/service/list"
+	import { follow, Cancelfollow, interactions } from "@/cool/service/user"
 	const ui = useUi();
 	const sharevisible = ref(false);
 	const generateimage = ref(true)
@@ -207,11 +235,18 @@
 		avatar ?: string
 		username ?: string
 		nickname ?: string
+		is_followed ?: boolean
+	}
+	type timestamps = {
+		created_at : string
+		published_at : string
+		updated_at : string
 	}
 	type ArticleData = {
-		id ?: number;
-		title ?: string;
-		cover_image ?: string;
+		id ?: number
+		title ?: string
+		cover_image ?: string
+		featured_image ?: string
 		content ?: string;//新闻稿描述
 		created_at ?: string;
 		ip_location ?: string
@@ -219,6 +254,8 @@
 		is_liked ?: boolean//是否点赞
 		is_bookmarked ?: boolean//是否收藏
 		author : typeauthor
+		timestamps ?: timestamps
+		images ?: Array<string>
 
 	};
 	const getmessage = ref<ArticleData>({
@@ -295,11 +332,13 @@
 	}
 	//点赞，收藏
 	const clickactive = (typeitem : string) => {
-		let typetitle =''
-		if(type.value == '新闻稿'){
-			typetitle='shenlantong_article'
-		}else{
-			typetitle='article'
+		let typetitle = ''
+		if (type.value == '新闻稿') {
+			typetitle = 'shenlantong_article'
+		} else if (type.value == '圈子') {
+			typetitle = "post"
+		} else {
+			typetitle = 'article'
 		}
 		interactions(typetitle, articleId.value, { type: typeitem }).then(res => {
 			if (typeitem == 'like') {
@@ -343,8 +382,16 @@
 	});
 	//获取评论列表
 	const getconmmon = () => {
+		let changeType = ''
+		if (type.value == '新闻稿') {
+			changeType = "shenlantong_article"
+		} else if (type.value == '圈子') {
+			changeType = "post"
+		} else {
+			changeType = "article"
+		}
 		comments({
-			commentable_type: type.value == '新闻稿' ? 'shenlantong_article' : 'article',
+			commentable_type: changeType,
 			commentable_id: articleId.value
 		}).then(res => {
 			const result = parse<UTSJSONObject>(res)!
@@ -407,6 +454,21 @@
 			});
 		}
 	}
+	// 获取圈子详情
+	const getpostsInfo = async () => {
+		try {
+			const res = await postsInfo(articleId.value, {})
+			ui.hideLoading()
+			getmessage.value = parse<ArticleData>(res)!
+			await getconmmon() // 等待评论获取完成
+		} catch (err) {
+			ui.hideLoading()
+			ui.showToast({
+				message: "获取详情失败",
+			});
+		}
+	}
+
 	// 关注用户
 	const followBtn = () => {
 		follow({
@@ -421,8 +483,16 @@
 
 	// 评论文章
 	const clickcommon = () => {
+		let changeType = ''
+		if (type.value == '新闻稿') {
+			changeType = "shenlantong_article"
+		} else if (type.value == '圈子') {
+			changeType = "post"
+		} else {
+			changeType = "article"
+		}
 		clickcomments({
-			commentable_type: type.value == '新闻稿' ? 'shenlantong_article' : 'article',
+			commentable_type: changeType,
 			commentable_id: articleId.value,
 			content: input.value
 		}).then(res => {
@@ -438,7 +508,48 @@
 			});
 		})
 	}
-
+	// 根据图片数量获取图片宽度
+	function getImageWidth() : string {
+		if (!isNull(getmessage.value)) {
+			const images = getmessage.value!!.images;
+			if (isArray(images) && images!!.length > 0) {
+				const imageCount = images!!.length;
+				const count = Math.min(imageCount, 3);
+				if (count === 1) {
+					return '384rpx';
+				} else if (count === 2) {
+					return '268rpx';
+				} else {
+					return '210rpx';
+				}
+			}
+		}
+		// 默认返回值
+		return '210rpx';
+	}
+	// 根据图片数量和索引获取图片样式类
+	function getImageClass(index : number) : string {
+		let classes = ['mb-2'];
+		if (!isNull(getmessage.value)) {
+			const images = getmessage.value!!.images;
+			if (isArray(images) && images!!.length > 0) {
+				const imageCountmr = images!!.length;
+				const countMr = Math.min(imageCountmr, 3);
+				if (countMr === 2) {
+					// 两张图片时，第一张添加右边距
+					if (index === 0) {
+						classes.push('mr-2');
+					}
+				} else if (countMr === 3) {
+					// 三张图片时，前两张添加右边距
+					if (index < 2) {
+						classes.push('mr-2');
+					}
+				}
+			}
+		}
+		return classes.join(' ');
+	}
 	// 页面加载时获取路由参数
 	onMounted(() => {
 		const params = router.params();
@@ -451,6 +562,8 @@
 			}
 			if (type.value == '新闻稿') {
 				getNewsdata()
+			} else if (type.value == '圈子') {
+				getpostsInfo()
 			} else {
 				getarticledata()
 
@@ -485,6 +598,8 @@
 	.borderBottom {
 		border-bottom: 2rpx solid #727FE1;
 	}
+
+
 
 	.aiItem {
 		background-image: linear-gradient(to right, #7883DF, #8067B9);

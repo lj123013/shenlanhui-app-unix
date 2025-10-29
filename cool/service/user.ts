@@ -5,12 +5,12 @@ import { request } from "@/cool/service";
  * @param data 
  * @returns Promise
  */
-export function loginWithCode(data: any): Promise<any> {
-  return request({
-    url: "/users/login-with-code",
-    method: "POST",
-    data
-  }) as Promise<any>;
+export function loginWithCode(data : any) : Promise<any> {
+	return request({
+		url: "/users/login-with-code",
+		method: "POST",
+		data
+	}) as Promise<any>;
 }
 
 /**
@@ -18,60 +18,60 @@ export function loginWithCode(data: any): Promise<any> {
  * @param data 
  * @returns Promise
  */
-export function smsSend(data: any): Promise<any> {
-  return request({
-    url: "/sms/send",
-    method: "POST",
-    data
-  }) as Promise<any>;
+export function smsSend(data : any) : Promise<any> {
+	return request({
+		url: "/sms/send",
+		method: "POST",
+		data
+	}) as Promise<any>;
 }
 /**
  * 用户统计
  * @param params 分页参数
  * @returns Promise
  */
-export function userStatistics(user: string|number,params: any): Promise<any> {
-  return request({
-    url: `/users/${user}/statistics`,
-    method: "GET",
-	params
-  }) as Promise<any>;
+export function userStatistics(user : string | number, params : any) : Promise<any> {
+	return request({
+		url: `/users/${user}/statistics`,
+		method: "GET",
+		params
+	}) as Promise<any>;
 }
 /**
  * 获取擅长领域
  * @param params 分页参数
  * @returns Promise
  */
-export function getareas(params?: any): Promise<any> {
-  return request({
-    url: `/users/verification/expertise-areas/grouped`,
-    method: "GET",
-	params
-  }) as Promise<any>;
+export function getareas(params ?: any) : Promise<any> {
+	return request({
+		url: `/users/verification/expertise-areas/grouped`,
+		method: "GET",
+		params
+	}) as Promise<any>;
 }
 /**
  * 申请认证
  * @param data 
  * @returns Promise
  */
-export function verification(data: any): Promise<any> {
-  return request({
-    url: "/users/verification",
-    method: "POST",
-    data
-  }) as Promise<any>;
+export function verification(data : any) : Promise<any> {
+	return request({
+		url: "/users/verification",
+		method: "POST",
+		data
+	}) as Promise<any>;
 }
 /**
  * 取消认证
  * @param data 
  * @returns Promise
  */
-export function cancelverification(data: any): Promise<any> {
-  return request({
-    url: "/users/verification/organization/cancel",
-    method: "POST",
-    data
-  }) as Promise<any>;
+export function cancelverification(data : any) : Promise<any> {
+	return request({
+		url: "/users/verification/organization/cancel",
+		method: "POST",
+		data
+	}) as Promise<any>;
 }
 /**
  * 获取粉丝用户列表
@@ -127,7 +127,7 @@ export function Cancelfollow(data : any) : Promise<any> {
  * @param params 
  * @returns Promise
  */
-export function interactions(contentType:string,contentId:string|number,data : any) : Promise<any> {
+export function interactions(contentType : string, contentId : string | number, data : any) : Promise<any> {
 	return request({
 		url: `/interactions/${contentType}/${contentId}`,
 		method: "POST",
@@ -159,3 +159,52 @@ export function myInteractions(data : any) : Promise<any> {
 		data
 	}) as Promise<any>;
 }
+/**
+ * 获取用户所有对话
+ * @param params 
+ * @returns Promise
+ */
+export function getConversations(data : any) : Promise<any> {
+	return request({
+		url: "/ai/conversations",
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 获取用户所有对话列表
+ * @param params 
+ * @returns Promise
+ */
+export function getConversationsinfo(conversation_id ?: string, data : any) : Promise<any> {
+	return request({
+		url: `/ai/conversations/${conversation_id}`,
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 删除用户对话
+ * @param params 
+ * @returns Promise
+ */
+export function deleteConversation(conversation_id ?: string, data : any) : Promise<any> {
+	return request({
+		url: `/ai/conversations/${conversation_id}`,
+		method: "DELETE",
+		data
+	}) as Promise<any>;
+}
+/**
+ *获取个人主页信息
+ * @param params 
+ * @returns Promise
+ */
+export function userprofile(id : string | number, data : any) : Promise<any> {
+	return request({
+		url: `/users/${id}/profile`,
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+//

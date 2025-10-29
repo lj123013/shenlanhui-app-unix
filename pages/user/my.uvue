@@ -19,14 +19,6 @@
 									<cl-text v-if="userInfo==null" @click="login" color="white" :pt="{ className: '!text-xl mx-1' }">{{
 										t("登录/注册")
 									}}</cl-text>
-									<view class="bg-white rounded-3xl p-[4rpx] flex items-center justify-center"
-										v-if="userInfo?.is_verified">
-										<cl-icon name="renzheng2" color="#FE0000" :size="16"></cl-icon>
-									</view>
-									<view class="bg-white rounded-3xl p-[4rpx] flex items-center justify-center"
-										v-else-if="userInfo?.is_verified">
-										<cl-icon name="a-renzheng21" color="primary" :size="16"></cl-icon>
-									</view>
 								</view>
 								<view class="flex items-center flex-row">
 									<view @click="toPathFollow" class="flex items-center flex-row">
@@ -71,7 +63,7 @@
 						</view>
 
 						<view class="isRenzheng rounded-full py-1 px-3">
-							<cl-text color="#212227" v-if="userInfo?.is_verified"
+							<cl-text color="#212227" v-if="userInfo?.is_verified==true"
 								:pt="{ className: 'text-xs' }">已认证</cl-text>
 							<cl-text color="#212227" v-else :pt="{ className: 'text-xs' }"
 								@tap="router.to('/pages/user/verify')">开始认证</cl-text>
@@ -136,6 +128,7 @@
 <script setup lang="ts">
 	import { ref } from "vue";
 	import { router, userInfo, parse, useStore, isNull, type Response } from "@/cool";
+	import type { UserInfo } from "@/types";
 	import { t } from "@/locale";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import { storage } from "@/cool/utils";
@@ -229,7 +222,12 @@
 		router.to("/pages/user/login");
 	};
 	const clickuser = () => {
-		router.to("/pages/user/userinfo");
+		router.push({
+			path: "/pages/user/userinfo",
+			params: { userId: userInfo.value?.id }
+		});
+		
+		
 	};
 	const toPath = () => {
 		router.to("/pages/user/fansList");
@@ -249,8 +247,10 @@
 		}
 	}
 	onReady(() => {
-		user.get();
+		// user.get();
 		if (!isNull(userInfo.value)) {
+			// console.log('个人认证信息',userInfo.value?.verification)
+			// const verification=userInfo.value?.verification
 			const userId = userInfo.value?.id ?? ""
 			// console.log(userId, '用户数据')
 			// 用户统计

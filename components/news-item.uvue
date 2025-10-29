@@ -1,6 +1,6 @@
 <template>
 	<view class="">
-		<view class="py-3 px-5" :class="{'borderh10': index != 0}" @click="onItemClick">
+		<view class="py-3 px-5 borderh10" @click="onItemClick">
 		<view class="flex flex-row items-center justify-between w-full mb-2 " v-if="!hidden">
 			<view class="flex flex-row items-center ">
 				<cl-avatar :src="item?.image" size="60rpx"></cl-avatar>
@@ -43,7 +43,7 @@
 				<cl-icon :name="value.icon" color="#AEAEAE" :size="36" :pt="{ className: 'mr-2' }"></cl-icon>
 				<cl-text color="#636363" :pt="{ className: '!text-base' }">{{ value.text }}</cl-text>
 			</view>
-			<view class="borderh10 pt-4" @tap="visible=false">
+			<view class="bordertoph10 pt-4" @tap="visible=false">
 				<cl-text color="#6D6D6D" :pt="{ className: 'text-center' }">取消</cl-text>
 			</view>
 		</view>
@@ -56,7 +56,7 @@
 				<cl-icon :name="value.icon" color="#AEAEAE" :size="36" :pt="{ className: 'mr-2' }"></cl-icon>
 				<cl-text color="#636363" :pt="{ className: '!text-base' }">{{ value.text }}</cl-text>
 			</view>
-			<view class="borderh10 pt-4" @tap="personvisible=false">
+			<view class="bordertoph10 pt-4" @tap="personvisible=false">
 				<cl-text color="#6D6D6D" :pt="{ className: 'text-center' }">取消</cl-text>
 			</view>
 		</view>
@@ -118,10 +118,11 @@
 			text: '删除'
 		},
 	])
+	
 	// 定义数据类型（注释形式）
 	type newsItem = {
 		id?:number
-		title:string
+		title?:string
 		content:string
 		created_at:string
 		featured_image?:string
@@ -159,10 +160,6 @@
 	function close() {
 		visible.value = false;
 	}
-
-	onMounted(()=>{
-		console.log(item.value!!.content as string)
-	})
 	// 处理点击事件
 	const emit = defineEmits(["item-click"]);
 	const onItemClick = () => {
@@ -182,6 +179,9 @@
 	}
 
 	.borderh10 {
+		border-bottom: 10rpx solid #F8F8F8;
+	}
+	.bordertoph10{
 		border-top: 10rpx solid #F8F8F8;
 	}
 	.follow{
