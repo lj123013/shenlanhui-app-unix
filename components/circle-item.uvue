@@ -1,6 +1,6 @@
 <template>
 	<view class="">
-		<view class="py-3 px-5 borderh10" @click="onItemClick" v-if="item!=null">
+		<view class="py-3 px-5 " :class="{ 'borderh10': index != 0 }" @click="onItemClick" v-if="item!=null">
 			<view class="flex flex-row items-center justify-between w-full mb-2 ">
 				<view class="flex flex-row items-center justify-between w-full">
 					<view class="flex flex-row items-center ">
@@ -119,8 +119,8 @@
 			type: Number,
 			default: 0
 		},
-		typeTitle:{
-			type:String,
+		typeTitle: {
+			type: String,
 			default: ""
 		},
 		showshare: {
@@ -185,7 +185,7 @@
 		author ?: author
 		stats ?: stats
 		timestamps ?: timestamps
-		image_type?:string
+		image_type ?: string
 		images ?: Array<string>
 	}
 	const item = computed(() => parse<newsItem>(props.value));
@@ -329,7 +329,7 @@
 	}
 
 	.borderh10 {
-		border-bottom: 10rpx solid #F8F8F8;
+		border-top: 10rpx solid #F8F8F8;
 	}
 
 	.follow {
@@ -344,10 +344,11 @@
 		color: red;
 		font-size: 12px;
 	}
+
 	.imageBox {
 		position: relative;
 	}
-	
+
 	.tagBox {
 		background-color: rgba(0, 0, 0, 0.3);
 		width: 96rpx;
@@ -360,6 +361,6 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-	
+
 	}
 </style>

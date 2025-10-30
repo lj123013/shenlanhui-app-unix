@@ -460,7 +460,8 @@ export default {
 					bg: {
 						default: '#FFFFFF',
 						gray: '#F9F9F9',
-						card: '#FEF8F5'
+						card: '#FEF8F5',
+						grayf8:"#F8F8F8"
 					},
 					// 文本颜色
 					text: {

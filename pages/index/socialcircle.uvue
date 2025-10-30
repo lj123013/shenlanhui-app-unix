@@ -1,6 +1,6 @@
 <template>
 	<cl-page>
-		<view>
+		<view >
 			<cl-topbar fixed :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
 				<template #prepend>
 					<view
@@ -148,10 +148,8 @@
 	let id = 0;
 
 	const { refresh, list, listView, loading, loadMore,finished } = usePager((params, { render }) => {
-
 		// 模拟请求
 		if (current.value == 0) {
-			console.log(current.value, 11111)
 			postsFollowing({
 				page: params["page"],
 				limit: params["size"],
@@ -159,7 +157,7 @@
 				ui.hideLoading();
 				const result = parse<UTSJSONObject>(res)!
 				const page = result.pagination
-				console.log('数据列表', result.items)
+				console.log('数据列表',params["page"], result.items)
 				if (!isNull(page)) {
 					const pageDta = parse<UTSJSONObject>(page as Any)!
 					render({

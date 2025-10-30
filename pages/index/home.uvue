@@ -1,460 +1,259 @@
 <template>
 	<cl-page>
-		<cl-topbar fixed :show-back="false" safe-area-top :height="isMp() ? null : 88">
-			<view
-				class="flex flex-row flex-1 items-center justify-between px-5 flex-1 w-full"
-				:class="{
-					'pt-0': isMp()
-				}"
-			>
-				<view class="flex flex-row items-center">
-					<view
-						class="bg-primary-500 rounded-full w-[60rpx] h-[60rpx] flex flex-col items-center justify-center"
-						@click="router.to('/pages/user/my')"
-					>
-						<cl-icon name="a-zu254" color="white" size="28rpx"></cl-icon>
-					</view>
-					<view
-						class="flex flex-row items-center"
-						@tap="router.to('/pages/template/post/detail')"
-					>
-						<cl-text
-							class="ml-2 fontBold"
-							:pt="{
-								className: '!text-xl text-gray-900 '
-							}"
-							>深蓝汇</cl-text
-						>
-						<text class="text-lg text-gray-800 fontBold">·</text>
-						<text class="text-lg text-gray-800 fontBold">财经AI社区</text>
-					</view>
-				</view>
+		<view class="h-full">
 
-				<view
-					class="rounded-xl hot py-1 px-2 border-gray-200 flex flex-row items-center justify-center"
-					@click="router.to('/pages/homePage/hotPage')"
-				>
-					<cl-icon name="yushouhuore" color="#E82A2A" :size="24"></cl-icon>
-					<cl-text class="text-black ml-1">热榜</cl-text>
-				</view>
-			</view>
-		</cl-topbar>
-		<view class="px-5">
-			<!-- 搜索 -->
-			<view
-				class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center"
-				@tap="router.to('/pages/homePage/serach')"
-			>
-				<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>
-				<cl-text color="#B7B7B7" class="text-neutral-300 ml-2"
-					>请输入你要搜索的内容</cl-text
-				>
-			</view>
-			<!-- 头条 -->
-			<view class="headlines mt-4">
-				<view
-					class="pt-1 w-full relative"
-					v-for="item in data"
-					:key="item.id"
-					@click="toPathDetail(item)"
-				>
-					<view
-						v-if="item.is_top"
-						class="flex flex-row items-center justify-between relative"
-					>
-						<view class="bg-red px-1 rounded-[6rpx] absolute top-[10rpx]">
-							<cl-text
-								color="white"
-								:pt="{
-									className: 'text-xs'
-								}"
-								>头条</cl-text
-							>
+			<!-- 顶部区域 -->          
+			<view class="flex-1 pb-[100px]">
+				<cl-topbar fixed :show-back="false" safe-area-top :height="isMp() ? null : 88">
+					<view class="flex flex-row flex-1 items-center justify-between px-5 flex-1 w-full" :class="{
+								'pt-0': isMp()
+							}">
+						<view class="flex flex-row items-center">
+							<view
+								class="bg-primary-500 rounded-full w-[60rpx] h-[60rpx] flex flex-col items-center justify-center"
+								@click="router.to('/pages/user/my')">
+								<cl-icon name="a-zu254" color="white" size="28rpx"></cl-icon>
+							</view>
+							<view class="flex flex-row items-center" @tap="router.to('/pages/template/post/detail')">
+								<cl-text class="ml-2 fontBold" :pt="{
+											className: '!text-xl text-gray-900 '
+										}">深蓝汇</cl-text>
+								<text class="text-lg text-gray-800 fontBold">·</text>
+								<text class="text-lg text-gray-800 fontBold">财经AI社区</text>
+							</view>
 						</view>
-						<view class="flex-1">
-							<cl-text
-								ellipsis
-								:lines="2"
-								color="black"
-								class=""
-								:pt="{
-									className: 'text-lg'
-								}"
-							>
-								{{ "　       " + "　" + item?.content }}
-							</cl-text>
-						</view>
-					</view>
-					<view v-else class="flex flex-row items-center">
-						<cl-icon name="wenjian_2" color="#666" :size="28"></cl-icon>
-						<cl-text
-							ellipsis
-							:lines="1"
-							color="#666"
-							class="ml-1"
-							:pt="{
-								className: 'text-base'
-							}"
-							>{{ item.content }}</cl-text
-						>
-					</view>
-				</view>
-			</view>
-			<!-- 雷达 -->
-			<view class="radar mt-4">
-				<view class="flex flex-row items-center justify-between mb-1">
-					<view class="flex flex-row items-center">
-						<cl-text
-							:pt="{
-								className: '!text-xl fontBold !text-primary-500'
-							}"
-							>雷</cl-text
-						>
-						<cl-text
-							color="black"
-							:pt="{
-								className: '!text-xl fontBold'
-							}"
-							>达</cl-text
-						>
-					</view>
-					<view class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl">
-						<cl-text
-							:pt="{
-								className: '!text-xs text-red-600'
-							}"
-							>更多</cl-text
-						>
-						<cl-icon name="arrow-right-s-line" :size="20" color="#E82A2A"></cl-icon>
-					</view>
-				</view>
-				<!-- 雷达列表 -->
-				<view
-					v-for="item in data2"
-					:key="item.id"
-					class="flex flex-row items-center"
-					@click="onItemClick(item)"
-				>
-					<cl-icon
-						name="wenjian_2"
-						color="#666"
-						:size="28"
-						v-if="!item.is_new && item.title == ''"
-						class="mr-1"
-					></cl-icon>
-					<cl-text
-						v-if="item.title"
-						color="black"
-						class="istopItem"
-						:pt="{ className: '!text-lg' }"
-						>{{ item.title }}</cl-text
-					>
-					<cl-text
-						v-else
-						class="truncate elipsis"
-						color="#666"
-						:pt="{ className: '!text-base' }"
-						>{{ item.content }}</cl-text
-					>
-				</view>
-				<!-- 雷达概览 :class="index == 3 || index == 7 ? '' : 'mr-10'"-->
-				<view class="flex flex-row w-full items-center flex-wrap justify-center">
-					<view
-						class="w-3/12 pt-5 flex flex-col items-center justify-center relative"
-						v-for="(item, index) in data3"
-						:key="index"
-						@tap="toPath(item)"
-					>
-						<view
-							class="bg-bule-slh w-14 h-14 rounded-full flex flex-col items-center justify-center"
-						>
-							<cl-icon
-								:pt="{ className: '!text-primary-500' }"
-								:name="item.icon"
-								:size="50"
-							></cl-icon>
-						</view>
-						<cl-text color="text-gray-900" :pt="{ className: '!text-sm mt-1' }">{{
-							item.title
-						}}</cl-text>
-						<view
-							class="bottom-16 right-px absolute bg-red p-1 rounded-full"
-							v-if="isEmptyPath(item)"
-						>
-							<cl-text
-								color="white"
-								:pt="{
-									className: '!text-[14rpx] leading-none '
-								}"
-								>敬请期待</cl-text
-							>
-						</view>
-					</view>
-				</view>
-			</view>
-			<!-- 快讯 -->
-			<view class="radar mt-4">
-				<view class="flex flex-row items-center justify-between">
-					<view class="flex flex-row items-center">
-						<cl-text
-							:pt="{
-								className: 'text-xl fontBold !text-primary-500'
-							}"
-							>7×24</cl-text
-						>
-						<cl-text
-							color="black"
-							:pt="{
-								className: '!text-xl fontBold'
-							}"
-							>快讯</cl-text
-						>
-					</view>
-					<view
-						class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl"
-						@tap="jump"
-					>
-						<cl-text
-							class="textred-600"
-							:pt="{
-								className: '!text-xs'
-							}"
-							>更多</cl-text
-						>
-						<cl-icon name="arrow-right-s-line" :size="20" color="#E82A2A"></cl-icon>
-					</view>
-				</view>
 
-				<!-- 快讯列表 -->
-				<view
-					class="dispath flex flex-row items-start justify-between pt-3"
-					v-for="(item, index) in daspathList"
-					:key="item.id"
-					@click="toPathDispath(item)"
-				>
-					<view class="flex flex-row items-center dispath-left mr-2">
-						<view
-							class="w-3 h-3 rounded-full bg-red-200 flex flex-col items-center justify-center mr-1"
-						>
-							<view class="bg-red w-1 h-1 rounded-full"></view>
+						<view class="rounded-xl hot py-1 px-2 border-gray-200 flex flex-row items-center justify-center"
+							@click="router.to('/pages/homePage/hotPage')">
+							<cl-icon name="yushouhuore" color="#E82A2A" :size="24"></cl-icon>
+							<cl-text class="text-black ml-1">热榜</cl-text>
 						</view>
-						<l-dateformat
-							style="color: #cbcbcb"
-							:date="item?.created_at"
-							format="hh:mm"
-						/>
 					</view>
-					<cl-text
-						ellipsis
-						:lines="2"
-						class="flex-1"
-						color="#313131"
-						:pt="{
-							className: '!text-base'
-						}"
-						>{{ item.title }}</cl-text
-					>
-				</view>
-				<!-- 大家都在看 -->
-				<view class="reading mt-4">
-					<view class="flex flex-row items-center">
-						<cl-text
-							:pt="{
-								className: '!text-xl fontBold !text-primary-500'
-							}"
-							>大家</cl-text
-						>
-						<cl-text
-							color="black"
-							:pt="{
-								className: '!text-xl fontBold'
-							}"
-							>都在看</cl-text
-						>
-					</view>
-					<scroll-view
-						class="scroll-view_H pt-3"
-						direction="horizontal"
-						:show-scrollbar="false"
-					>
-						<view
-							class="scroll-view-item_H mr-3"
-							v-for="(item, index) in hotList"
-							:key="item.id"
-							:class="index == 0 ? 'card-bg-1' : 'card-bg-2'"
-						>
-							<view class="card-header flex flex-row justify-between">
-								<cl-text
-									color="#464646"
-									:pt="{
-										className: '!text-base fontBold'
-									}"
-									>{{ item.title }}</cl-text
-								>
-								<view
-									class="flex flex-row items-center py-1 rounded-xl bg-white py-1 px-2"
-									@click="showmore(index)"
-								>
-									<cl-text
-										:color="index == 0 ? 'primary' : '#E82A2A'"
-										:pt="{
-											className: '!text-xs'
-										}"
-										>更多</cl-text
-									>
-									<cl-icon
-										name="arrow-right-s-line"
-										:size="20"
-										:color="index == 0 ? 'primary' : '#E82A2A'"
-									></cl-icon>
-								</view>
-							</view>
-							<view class="card-content">
-								<view
-									class="article-item"
-									v-for="(child, childindex) in item.children"
-									:key="child.id"
-								>
-									<cl-text
-										class="article-number"
-										:style="{ color: getNumberColor(childindex) }"
-									>
-										{{ childindex + 1 }}.
-									</cl-text>
-									<cl-text
-										color="#707070"
-										:pt="{
-											className: '!text-base'
-										}"
-										class="elipsis"
-										>{{ child.title }}</cl-text
-									>
-								</view>
-							</view>
-						</view>
-					</scroll-view>
-				</view>
-				<view class="active-users mt-4">
-					<cl-image
-						width="100%"
-						height="226rpx"
-						class="active-users-bg"
-						src="../../static/image/home-userbg.png"
-					></cl-image>
-					<view class="active-users-content py-5">
-						<view
-							class="active-users-title flex flex-row items-center justify-between px-2"
-						>
-							<cl-text color="#923D0A" :pt="{ className: ' !text-lg fontBold' }"
-								>活跃用户</cl-text
-							>
-							<view
-								class="flex flex-row items-center py-1 px-2 rounded-xl bg-white"
-								@click="Toshowuser"
-							>
-								<cl-text
-									color="#FF7700"
-									class="textred-600"
-									:pt="{
-										className: '!text-xs'
-									}"
-									>更多</cl-text
-								>
-								<cl-icon
-									name="arrow-right-s-line"
-									:size="20"
-									color="#FF7700"
-								></cl-icon>
-							</view>
-						</view>
-						<scroll-view
-							class="scroll-view_H pt-3"
-							direction="horizontal"
-							:show-scrollbar="false"
-						>
-							<view
-								v-for="item in activeUsersList"
-								@click="toPathuser(item)"
-								class="scroll-user-item flex flex-col items-center justify-center w-[60px]"
-							>
-								<cl-image
-									v-if="item.avatar != ''"
-									:width="60"
-									:height="60"
-									:pt="{
-										inner: {
-											className: '!rounded-2xl'
-										}
-									}"
-									:src="item.avatar"
-								></cl-image>
-								<cl-image
-									v-else
-									:width="60"
-									:height="60"
-									:pt="{
-										inner: {
-											className: '!rounded-2xl'
-										}
-									}"
-									src="../../static/image/defaultAvatar.png"
-								></cl-image>
-								<cl-text ellipsis :pt="{ className: '!text-xs' }">{{
-									item.username
-								}}</cl-text>
-							</view>
-						</scroll-view>
-					</view>
-				</view>
-			</view>
-		</view>
-		<!-- 推荐阅读 -->
-		<view class="recommended mt-4">
-			<view class="flex flex-row items-center px-5">
-				<cl-text
-					:pt="{
-						className: '!text-xl fontBold !text-primary-500'
-					}"
-					>推荐</cl-text
-				>
-				<cl-text
-					color="black"
-					:pt="{
-						className: '!text-xl fontBold'
-					}"
-					>阅读</cl-text
-				>
-			</view>
-			<!-- 文章列表 -->
-			<view class="h-full">
-				<cl-list-view
-					ref="listViewRef"
-					:data="listView"
-					:virtual="false"
-					:pt="{
+				</cl-topbar>
+				<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
 						refresher: {
 							className: 'pt-3'
 						}
-					}"
-					:refresher-enabled="false"
-					@bottom="loadMore"
-				>
+					}" :refresher-enabled="false" @bottom="loadMore">
+
+					<template #top>
+
+						<view class="px-5">
+							<!-- 搜索 -->
+							<view class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center"
+								@tap="router.to('/pages/homePage/serach')">
+								<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>
+								<cl-text color="#B7B7B7" class="text-neutral-300 ml-2">请输入你要搜索的内容</cl-text>
+							</view>
+							<!-- 头条 -->
+							<view class="headlines mt-4">
+								<view class="pt-1 w-full relative" v-for="(item,index) in data" :key="item.id"
+									@click="toPathDispath(item)">
+									<view v-if="index==0||index==3||index==6"
+										class="flex flex-row items-center justify-between relative">
+										<view class="bg-red px-1 rounded-[6rpx] absolute top-[10rpx]">
+											<cl-text color="white" :pt="{
+									className: 'text-xs'
+								}">头条</cl-text>
+										</view>
+										<view class="flex-1">
+											<cl-text ellipsis :lines="2" color="black" class="" :pt="{
+									className: 'text-lg'
+								}">
+												{{ "　       " + "　" + item?.content }}
+											</cl-text>
+										</view>
+									</view>
+									<view v-else class="flex flex-row items-center">
+										<cl-icon name="wenjian_2" color="#666" :size="28"></cl-icon>
+										<cl-text ellipsis :lines="1" color="#666" class="ml-1" :pt="{
+								className: 'text-base'
+							}">{{ item.content }}</cl-text>
+									</view>
+								</view>
+							</view>
+							<!-- 雷达 -->
+							<view class="radar mt-4">
+								<view class="flex flex-row items-center justify-between mb-1">
+									<view class="flex flex-row items-center">
+										<cl-text :pt="{
+								className: '!text-xl fontBold !text-primary-500'
+							}">雷</cl-text>
+										<cl-text color="black" :pt="{
+								className: '!text-xl fontBold'
+							}">达</cl-text>
+									</view>
+									<view class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl">
+										<cl-text :pt="{
+								className: '!text-xs text-red-600'
+							}">更多</cl-text>
+										<cl-icon name="arrow-right-s-line" :size="20" color="#E82A2A"></cl-icon>
+									</view>
+								</view>
+								<!-- 雷达列表 -->
+								<view v-for="item in data2" :key="item.id" class="flex flex-row items-center"
+									@click="onItemClick(item)">
+									<cl-icon name="wenjian_2" color="#666" :size="28"
+										v-if="!item.is_new && item.title == ''" class="mr-1"></cl-icon>
+									<cl-text v-if="item.title" color="black" class="istopItem"
+										:pt="{ className: '!text-lg' }">{{ item.title }}</cl-text>
+									<cl-text v-else class="truncate elipsis" color="#666"
+										:pt="{ className: '!text-base' }">{{ item.content }}</cl-text>
+								</view>
+								<!-- 雷达概览 :class="index == 3 || index == 7 ? '' : 'mr-10'"-->
+								<view class="flex flex-row w-full items-center flex-wrap justify-center">
+									<view class="w-3/12 pt-5 flex flex-col items-center justify-center relative"
+										v-for="(item, index) in data3" :key="index" @tap="toPath(item)">
+										<view
+											class="bg-bule-slh w-14 h-14 rounded-full flex flex-col items-center justify-center">
+											<cl-icon :pt="{ className: '!text-primary-500' }" :name="item.icon"
+												:size="50"></cl-icon>
+										</view>
+										<cl-text color="text-gray-900" :pt="{ className: '!text-sm mt-1' }">{{
+							item.title
+						}}</cl-text>
+										<view class="bottom-16 right-px absolute bg-red p-1 rounded-full"
+											v-if="isEmptyPath(item)">
+											<cl-text color="white" :pt="{
+									className: '!text-[14rpx] leading-none '
+								}">敬请期待</cl-text>
+										</view>
+									</view>
+								</view>
+							</view>
+							<!-- 快讯 -->
+							<view class="radar mt-4">
+								<view class="flex flex-row items-center justify-between">
+									<view class="flex flex-row items-center">
+										<cl-text :pt="{
+								className: 'text-xl fontBold !text-primary-500'
+							}">7×24</cl-text>
+										<cl-text color="black" :pt="{
+								className: '!text-xl fontBold'
+							}">快讯</cl-text>
+									</view>
+									<view class="bg-prink flex flex-row items-center py-1 px-2 rounded-xl" @tap="jump">
+										<cl-text class="textred-600" :pt="{
+								className: '!text-xs'
+							}">更多</cl-text>
+										<cl-icon name="arrow-right-s-line" :size="20" color="#E82A2A"></cl-icon>
+									</view>
+								</view>
+
+								<!-- 快讯列表 -->
+								<view class="dispath flex flex-row items-start justify-between pt-3"
+									v-for="(item, index) in daspathList" :key="item.id" @click="toPathDispath(item)">
+									<view class="flex flex-row items-center dispath-left mr-2">
+										<view
+											class="w-3 h-3 rounded-full bg-red-200 flex flex-col items-center justify-center mr-1">
+											<view class="bg-red w-1 h-1 rounded-full"></view>
+										</view>
+										<l-dateformat style="color: #cbcbcb" :date="item?.created_at" format="hh:mm" />
+									</view>
+									<cl-text ellipsis :lines="2" class="flex-1" color="#313131" :pt="{
+							className: '!text-base'
+						}">{{ item.title }}</cl-text>
+								</view>
+								<!-- 大家都在看 -->
+								<view class="reading mt-4">
+									<view class="flex flex-row items-center">
+										<cl-text :pt="{
+								className: '!text-xl fontBold !text-primary-500'
+							}">大家</cl-text>
+										<cl-text color="black" :pt="{
+								className: '!text-xl fontBold'
+							}">都在看</cl-text>
+									</view>
+									<scroll-view class="scroll-view_H pt-3" direction="horizontal"
+										:show-scrollbar="false">
+										<view class="scroll-view-item_H mr-3" v-for="(item, index) in hotList"
+											:key="item.id" :class="index == 0 ? 'card-bg-1' : 'card-bg-2'">
+											<view class="card-header flex flex-row justify-between">
+												<cl-text color="#464646" :pt="{
+										className: '!text-base fontBold'
+									}">{{ item.title }}</cl-text>
+												<view
+													class="flex flex-row items-center py-1 rounded-xl bg-white py-1 px-2"
+													@click="showmore(index)">
+													<cl-text :color="index == 0 ? 'primary' : '#E82A2A'" :pt="{
+											className: '!text-xs'
+										}">更多</cl-text>
+													<cl-icon name="arrow-right-s-line" :size="20"
+														:color="index == 0 ? 'primary' : '#E82A2A'"></cl-icon>
+												</view>
+											</view>
+											<view class="card-content">
+												<view class="article-item" v-for="(child, childindex) in item.children"
+													:key="child.id">
+													<cl-text class="article-number"
+														:style="{ color: getNumberColor(childindex) }">
+														{{ childindex + 1 }}.
+													</cl-text>
+													<cl-text color="#707070" :pt="{
+											className: '!text-base'
+										}" class="elipsis">{{ child.title }}</cl-text>
+												</view>
+											</view>
+										</view>
+									</scroll-view>
+								</view>
+								<view class="active-users mt-4">
+									<cl-image width="100%" height="226rpx" class="active-users-bg"
+										src="../../static/image/home-userbg.png"></cl-image>
+									<view class="active-users-content py-5">
+										<view
+											class="active-users-title flex flex-row items-center justify-between px-2">
+											<cl-text color="#923D0A"
+												:pt="{ className: ' !text-lg fontBold' }">活跃用户</cl-text>
+											<view class="flex flex-row items-center py-1 px-2 rounded-xl bg-white"
+												@click="Toshowuser">
+												<cl-text color="#FF7700" class="textred-600" :pt="{
+										className: '!text-xs'
+									}">更多</cl-text>
+												<cl-icon name="arrow-right-s-line" :size="20" color="#FF7700"></cl-icon>
+											</view>
+										</view>
+										<scroll-view class="scroll-view_H pt-3" direction="horizontal"
+											:show-scrollbar="false">
+											<view v-for="item in activeUsersList" @click="toPathuser(item)"
+												class="scroll-user-item flex flex-col items-center justify-center w-[60px]">
+												<cl-image v-if="item.avatar != ''" :width="60" :height="60" :pt="{
+										inner: {
+											className: '!rounded-full'
+										}
+									}" :src="item.avatar"></cl-image>
+												<cl-image v-else :width="60" :height="60" :pt="{
+										inner: {
+											className: '!rounded-2xl'
+										}
+									}" src="../../static/image/defaultAvatar.png"></cl-image>
+												<cl-text ellipsis :pt="{ className: '!text-xs' }">{{
+									item.username
+								}}</cl-text>
+											</view>
+										</scroll-view>
+									</view>
+								</view>
+							</view>
+
+							<view class="flex flex-row items-center">
+								<cl-text :pt="{
+								className: '!text-xl fontBold !text-primary-500'
+							}">推荐</cl-text>
+								<cl-text color="black" :pt="{
+								className: '!text-xl fontBold'
+							}">阅读</cl-text>
+							</view>
+						</view>
+
+					</template>
 					<template #item="{ value, index }">
-						<article-item
-							:value="value"
-							:index="index"
-							@item-click="articleClick"
-						></article-item>
+						<article-item :value="value" :index="index" @item-click="articleClick"></article-item>
 					</template>
 
 					<template #bottom>
 						<view class="py-3">
-							<cl-loadmore
-								:loading="loading"
-								v-if="list.length > 0"
-								:safeAreaBottom="true"
-								:pt="{ text: { className: 'text-sm text-gray-400' } }"
-							></cl-loadmore>
+							<cl-loadmore :loading="loading" :finish="finished" v-if="list.length > 0"></cl-loadmore>
 						</view>
 					</template>
 				</cl-list-view>
@@ -466,680 +265,667 @@
 </template>
 
 <script lang="ts" setup>
-import Tabbar from "@/components/tabbar.uvue";
-import { isMp, isNull, parse, router, usePager, useRefs, type Response } from "@/cool";
-import { articles, dispatches, hotcompany, hotUser } from "@/cool/service/list";
-import { t } from "@/locale";
-import articleItem from "@/pages/articlePage/articleItem.uvue";
-import { useUi } from "@/uni_modules/cool-ui";
-import { computed, ref } from "vue";
-const ui = useUi();
-const refs = useRefs();
-// 头条列表
-type headlinesList = {
-	content: string;
-	is_top: boolean;
-	id: number;
-};
-const data = computed<headlinesList[]>(() => {
-	return [
+	import Tabbar from "@/components/tabbar.uvue";
+	import { isMp, isNull, parse, router, usePager, useRefs, type Response } from "@/cool";
+	import { articles, dispatches, hotcompany, hotUser } from "@/cool/service/list";
+	import { t } from "@/locale";
+	import articleItem from "@/pages/articlePage/articleItem.uvue";
+	import { useUi } from "@/uni_modules/cool-ui";
+	import { computed, ref } from "vue";
+	const ui = useUi();
+	const refs = useRefs();
+	// 头条列表
+	type headlinesList = {
+		content : string;
+		is_top : boolean;
+		id : number;
+	};
+
+	// 雷达列表
+	type radarList = {
+		content : string;
+		title ?: string;
+		is_new : boolean;
+		id : number;
+	};
+	const data2 = computed<radarList[]>(() => {
+		return [
+			{
+				title: t("光伏行业向高质量发展突围"),
+				content: t(""),
+				is_new: true,
+				id: 0
+			},
+			{
+				title: t(""),
+				content: t("双良节能：8月20日融资买入8082.56万元，融资融券余额"),
+				is_new: false,
+				id: 0
+			},
+			{
+				title: t("激光雷达厂商涌入机器人赛道 业内预计今年出货量将"),
+				content: t(""),
+				is_new: false,
+				id: 0
+			},
+			{
+				title: t(""),
+				content: t("新能源汽车中概股大涨，小鹏汽车涨超13%，蔚来涨超10"),
+				is_new: false,
+				id: 0
+			}
+		];
+	});
+	// 雷达菜单
+	type radarMenu = {
+		icon : string;
+		title : string;
+		path ?: string;
+		disabled ?: boolean;
+	};
+	const data3 = computed<radarMenu[]>(() => {
+		return [
+			{
+				icon: t("a-lujing65"),
+				title: t("公告"),
+				path: "/pages/homePage/notice"
+			},
+			{
+				icon: t("a-lujing72"),
+				title: t("招股书"),
+				// path: "/pages/homePage/prospectus"
+				path: ""
+			},
+			{
+				icon: t("a-zu31"),
+				title: t("财报"),
+				path: ""
+			},
+			{
+				icon: t("a-zu29"),
+				title: t("AI写作"),
+				path: "/pages/shenlanaiPage/chart"
+			},
+			{
+				icon: t("AItuku"),
+				title: t("深蓝号"),
+				path: "/pages/homePage/slhNum"
+			},
+			{
+				icon: t("AItuku"),
+				title: t("AI图库"),
+				path: "/pages/homePage/AIPicture"
+			},
+			{
+				icon: t("a-lujing93"),
+				title: t("新闻稿库"),
+				path: "/pages/homePage/news"
+			},
+			{
+				icon: t("a-lujing60"),
+				title: t("专家库"),
+				path: ""
+			}
+		];
+	});
+	// 快讯列表
+	type FlashNews = {
+		title : string;
+		id : number;
+		created_at : string;
+		content:string
+	};
+	// 重要的快讯
+	const data = ref<FlashNews[]>([]);
+	const daspathList = ref<FlashNews[]>([]);
+	// 热门文章列表
+	type hotArticle = {
+		title : string;
+		id : number;
+		children : hotArticleItem[];
+	};
+	type hotArticleItem = {
+		id : number;
+		title : string;
+	};
+	const hotList = ref<hotArticle[]>([
 		{
-			content: t("上半年多线突围，汤臣倍健用创新新品重塑品类和渠道价值链"),
-			is_top: true,
+			title: t("热门文章"),
+			id: 1,
+			children: []
+		},
+		{
+			title: t("热门公司"),
+			id: 2,
+			children: []
+		}
+	]);
+	// 活跃用户列表
+	type userList = {
+		avatar ?: string;
+		username ?: string;
+		id : string | number;
+	};
+	const activeUsersList = ref<userList[]>([]);
+	type recom = {
+		title : string;
+		author : string;
+		cover_url : string;
+		acreat_time : number;
+		id : number;
+	};
+	const recommenList = ref<recom[]>([
+		{
+			title: t(
+				"产品筑底、数智驱动，泸州老窖构建穿越周期护城河产品筑底、数智驱动，泸州老窖构建穿越周期护城河产品筑底、数智驱动，泸州老窖构建穿越周期护城河产品筑底、数智驱动，泸州老窖构建穿越周期护城河"
+			),
+			author: t("深蓝财经"),
+			cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
+			acreat_time: 175523522,
 			id: 1
 		},
 		{
-			content: t("营收利润双下滑，研发占比0.9%，汤臣倍健三十而立陷增汤臣倍健三十而立陷增"),
-			is_top: false,
-			id: 2
-		},
-		{
-			content: t("突破3700点后，红利还能投吗？"),
-			is_top: false,
-			id: 3
-		},
-		{
-			content: t("钟睒睒豪捐5座工厂，农夫山泉还要“向上卷”"),
-			is_top: true,
-			id: 4
-		},
-		{
-			content: t("从量化大神到AI先锋：年轻人应该从梁文锋身上年轻人应该从梁文锋身上学些啥"),
-			is_top: false,
-			id: 5
-		},
-		{
-			content: t("避开这些误区，你的信用卡才能真正'赚'起来"),
-			is_top: false,
-			id: 6
-		},
-		{
-			content: t("中国科技大爆发，深圳低调的背后"),
-			is_top: true,
-			id: 7
-		},
-		{
-			content: t("银诺医药首日暴涨285%，4亿肥胖人群背后的千亿富豪厮..."),
-			is_top: false,
-			id: 8
-		},
-		{
-			content: t("39岁房产中介，去美国IPO，一夜暴赚34亿"),
-			is_top: false,
-			id: 9
+			title: t("渤海银行承载全国首批科技创新债券奋力书写“科技金融大文章”"),
+			author: t("深蓝财经"),
+			cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
+			acreat_time: 175523522,
+			id: 1
 		}
-	];
-});
-// 雷达列表
-type radarList = {
-	content: string;
-	title?: string;
-	is_new: boolean;
-	id: number;
-};
-const data2 = computed<radarList[]>(() => {
-	return [
-		{
-			title: t("光伏行业向高质量发展突围"),
-			content: t(""),
-			is_new: true,
-			id: 0
-		},
-		{
-			title: t(""),
-			content: t("双良节能：8月20日融资买入8082.56万元，融资融券余额"),
-			is_new: false,
-			id: 0
-		},
-		{
-			title: t("激光雷达厂商涌入机器人赛道 业内预计今年出货量将"),
-			content: t(""),
-			is_new: false,
-			id: 0
-		},
-		{
-			title: t(""),
-			content: t("新能源汽车中概股大涨，小鹏汽车涨超13%，蔚来涨超10"),
-			is_new: false,
-			id: 0
-		}
-	];
-});
-// 雷达菜单
-type radarMenu = {
-	icon: string;
-	title: string;
-	path?: string;
-	disabled?: boolean;
-};
-const data3 = computed<radarMenu[]>(() => {
-	return [
-		{
-			icon: t("a-lujing65"),
-			title: t("公告"),
-			path: "/pages/homePage/notice"
-		},
-		{
-			icon: t("a-lujing72"),
-			title: t("招股书"),
-			// path: "/pages/homePage/prospectus"
-			path: ""
-		},
-		{
-			icon: t("a-zu31"),
-			title: t("财报"),
-			path: ""
-		},
-		{
-			icon: t("a-zu29"),
-			title: t("AI写作"),
-			path: "/pages/shenlanaiPage/chart"
-		},
-		{
-			icon: t("AItuku"),
-			title: t("深蓝号"),
-			path: "/pages/homePage/slhNum"
-		},
-		{
-			icon: t("AItuku"),
-			title: t("AI图库"),
-			path: "/pages/homePage/AIPicture"
-		},
-		{
-			icon: t("a-lujing93"),
-			title: t("新闻稿库"),
-			path: "/pages/homePage/news"
-		},
-		{
-			icon: t("a-lujing60"),
-			title: t("专家库"),
-			path: ""
-		}
-	];
-});
-// 快讯列表
-type FlashNews = {
-	title: string;
-	id: number;
-	created_at: string;
-};
-const daspathList = ref<FlashNews[]>([]);
-// 热门文章列表
-type hotArticle = {
-	title: string;
-	id: number;
-	children: hotArticleItem[];
-};
-type hotArticleItem = {
-	id: number;
-	title: string;
-};
-const hotList = ref<hotArticle[]>([
-	{
-		title: t("热门文章"),
-		id: 1,
-		children: []
-	},
-	{
-		title: t("热门公司"),
-		id: 2,
-		children: []
-	}
-]);
-// 活跃用户列表
-type userList = {
-	avatar?: string;
-	username?: string;
-	id: string | number;
-};
-const activeUsersList = ref<userList[]>([]);
-type recom = {
-	title: string;
-	author: string;
-	cover_url: string;
-	acreat_time: number;
-	id: number;
-};
-const recommenList = ref<recom[]>([
-	{
-		title: t(
-			"产品筑底、数智驱动，泸州老窖构建穿越周期护城河产品筑底、数智驱动，泸州老窖构建穿越周期护城河产品筑底、数智驱动，泸州老窖构建穿越周期护城河产品筑底、数智驱动，泸州老窖构建穿越周期护城河"
-		),
-		author: t("深蓝财经"),
-		cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
-		acreat_time: 175523522,
-		id: 1
-	},
-	{
-		title: t("渤海银行承载全国首批科技创新债券奋力书写“科技金融大文章”"),
-		author: t("深蓝财经"),
-		cover_url: t("https://img.shenlanhui.com/UPLOAD/2025/08/25/68ac1b3fd1160.png_thumb.jpg"),
-		acreat_time: 175523522,
-		id: 1
-	}
-]);
+	]);
 
-// 跳转页面
-// 雷达
-const onItemClick = (item: radarList) => {
-	console.log("点击文章项:", item);
-	router.push({
-		path: "/pages/radar/radarDetail",
-		params: {
-			id: item.id,
-			title: "新希望"
-		}
-	});
-};
-// 处理文章项点击事件
-const articleClick = (item: UTSJSONObject) => {
-	console.log("点击文章项:", item.id);
-	router.push({
-		path: "/pages/articlePage/articleDetail",
-		params: {
-			articleId: item.id,
-			title: "文章"
-		}
-	});
-};
-// 活跃用户
-const toPathuser = (item: userList) => {
-	router.push({
-		path: "/pages/user/userinfo",
-		params: {
-			userId: item.id
-		}
-	});
-};
-// 头条带你进入详情
-function toPathDetail(item: headlinesList) {
-	uni.navigateTo({
-		url: "/pages/articlePage/articleDetail?id=" + item.id
-	});
-}
-// 快讯
-function toPathDispath(item: FlashNews) {
-	router.push({
-		path: "/pages/articlePage/dispathDetail",
-		params: {
-			dispathId: item.id
-		}
-	});
-}
-// 快讯列表
-const jump = () => {
-	router.to("/pages/homePage/flasNews");
-};
-// 雷达概况
-function toPath(item: radarMenu) {
-	if (item.path == null) {
-		return ui.showToast({
-			message: t("该模板正在开发中")
+	// 跳转页面
+	// 雷达
+	const onItemClick = (item : radarList) => {
+		console.log("点击文章项:", item);
+		router.push({
+			path: "/pages/radar/radarDetail",
+			params: {
+				id: item.id,
+				title: "新希望"
+			}
+		});
+	};
+	// 处理文章项点击事件
+	const articleClick = (item : UTSJSONObject) => {
+		console.log("点击文章项:", item.id);
+		router.push({
+			path: "/pages/articlePage/articleDetail",
+			params: {
+				articleId: item.id,
+				title: "文章"
+			}
+		});
+	};
+	// 活跃用户
+	const toPathuser = (item : userList) => {
+		router.push({
+			path: "/pages/user/userinfo",
+			params: {
+				userId: item.id
+			}
+		});
+	};
+	// 快讯
+	function toPathDispath(item : FlashNews) {
+		router.push({
+			path: "/pages/articlePage/dispathDetail",
+			params: {
+				dispathId: item.id
+			}
 		});
 	}
+	// 快讯列表
+	const jump = () => {
+		router.to("/pages/homePage/flasNews");
+	};
+	// 雷达概况
+	function toPath(item : radarMenu) {
+		if (item.path == null) {
+			return ui.showToast({
+				message: t("该模板正在开发中")
+			});
+		}
 
-	router.to(item.path!);
-}
-function isEmptyPath(item: radarMenu): boolean {
-	return isNull(item.path) || item.path === "";
-}
-const showmore = (index: number) => {
-	router.push({
-		path: "/pages/homePage/hotPage",
-		params: {
-			index: index
-		}
-	});
-};
-const Toshowuser = () => {
-	router.push({
-		path: "/pages/homePage/hotPage",
-		params: {
-			index: 2
-		}
-	});
-};
-const toPathDetil = (item: recom) => {
-	router.push({
-		path: "/pages/articlePage/articleDetail",
-		params: {
-			articleId: item.id
-		}
-	});
-};
-// 获取数字颜色
-function getNumberColor(index: number): string {
-	switch (index) {
-		case 0:
-			return "#EB0707"; // 索引为1（index为0）
-		case 1:
-			return "#FF8800"; // 索引为2（index为1）
-		case 2:
-			return "#0066FF"; // 索引为3（index为2）
-		default:
-			return "#ACACAC"; // 其他
+		router.to(item.path!);
 	}
-}
-//获取活跃用户
-const gethotUser = () => {
-	hotUser({})
-		.then((res) => {
+	function isEmptyPath(item : radarMenu) : boolean {
+		return isNull(item.path) || item.path === "";
+	}
+	const showmore = (index : number) => {
+		router.push({
+			path: "/pages/homePage/hotPage",
+			params: {
+				index: index
+			}
+		});
+	};
+	const Toshowuser = () => {
+		router.push({
+			path: "/pages/homePage/hotPage",
+			params: {
+				index: 2
+			}
+		});
+	};
+	const toPathDetil = (item : recom) => {
+		router.push({
+			path: "/pages/articlePage/articleDetail",
+			params: {
+				articleId: item.id
+			}
+		});
+	};
+	// 获取数字颜色
+	function getNumberColor(index : number) : string {
+		switch (index) {
+			case 0:
+				return "#EB0707"; // 索引为1（index为0）
+			case 1:
+				return "#FF8800"; // 索引为2（index为1）
+			case 2:
+				return "#0066FF"; // 索引为3（index为2）
+			default:
+				return "#ACACAC"; // 其他
+		}
+	}
+	//获取活跃用户
+	const gethotUser = () => {
+		hotUser({})
+			.then((res) => {
+				const result = parse<UTSJSONObject>(res)!;
+				const userlist : userList[] = [];
+				const subItems = result.getArray("users");
+				if (subItems != null) {
+					for (let i = 0; i < subItems!!.length; i++) {
+						const subItem = subItems!![i];
+						if (!(subItem instanceof UTSJSONObject)) continue;
+						let itemId : string | number = ""; // 设置默认值
+						let itemusername : string = ""; // 设置默认值
+						let itemavatar : string = ""; // 设置默认值
+						if (!isNull(subItem.id)) {
+							itemId = subItem.id as number | string;
+						}
+						if (subItem.username != null) {
+							itemusername = subItem.username as string;
+						} else {
+							itemusername = "";
+						}
+						if (subItem.avatar != null) {
+							itemavatar = subItem.avatar as string;
+						} else {
+							itemavatar = "";
+						}
+						userlist.push({
+							id: itemId,
+							username: itemusername,
+							avatar: itemavatar
+						} as userList);
+					}
+					activeUsersList.value = userlist;
+				}
+			})
+			.catch((err) => {
+				ui.showToast({
+					message: (err as Response).message!
+				});
+			});
+	};
+	//获取热门文章
+	const gethotarticle = () => {
+		articles({
+			status: "published",
+			per_page: 5,
+			sort: "popular"
+		})
+			.then((res) => {
+				const result = parse<UTSJSONObject>(res)!;
+				const articlelist : hotArticleItem[] = [];
+				const articleItems = result.getArray("data");
+				if (articleItems != null) {
+					for (let i = 0; i < articleItems!!.length; i++) {
+						const articleItem = articleItems!![i];
+						if (!(articleItem instanceof UTSJSONObject)) continue;
+						const articleId = articleItem.id as number;
+						const articletitle = articleItem.title as string;
+						articlelist.push({
+							id: articleId,
+							title: articletitle
+						} as hotArticleItem);
+					}
+					hotList.value[0].children = articlelist;
+					// console.log("获取热门文章", hotList.value[0].children)
+				}
+			})
+			.catch((err) => {
+				ui.showToast({
+					message: "获取热门文章失败"
+				});
+			});
+	};
+	// 热门公司
+	const getCompany = () => {
+		hotcompany({})
+			.then((res) => {
+				const companyResult = parse<UTSJSONObject>(res)!;
+				const companylist : hotArticleItem[] = [];
+				const companyItems = companyResult.getArray("companies");
+				if (companyItems != null) {
+					for (let i = 0; i < 5; i++) {
+						const companyItem = companyItems!![i];
+						if (!(companyItem instanceof UTSJSONObject)) continue;
+						const companyId = companyItem.id as number;
+						const companytitle = companyItem.name as string;
+						companylist.push({
+							id: companyId,
+							title: companytitle
+						} as hotArticleItem);
+					}
+					hotList.value[1].children = companylist;
+					// console.log("获取热门文章", hotList.value[0].children)
+				}
+			})
+			.catch((err) => {
+				ui.showToast({
+					message: "获取热门公司失败"
+				});
+			});
+	};
+	const getdispathisTOP = () => {
+		dispatches({
+			status: "published",
+			is_major: 1, //1是true,false：0
+			per_page: 9,
+			sort: "latest"
+		})
+			.then((res) => {
+				const dispathResult = parse<UTSJSONObject>(res)!;
+				const dispathlist : FlashNews[] = [];
+				const dispathItems = dispathResult.getArray("data");
+				if (dispathItems != null) {
+					for (let i = 0; i < dispathItems!!.length; i++) {
+						const dispathItem = dispathItems!![i];
+						if (!(dispathItem instanceof UTSJSONObject)) continue;
+						const dispathId = dispathItem.id as number;
+						const dispathtitle = dispathItem.title as string;
+						const dispathcreatetime = dispathItem.created_at as string;
+						const dispathcontent=dispathItem.content as string;
+						dispathlist.push({
+							id: dispathId,
+							title: dispathtitle,
+							created_at: dispathcreatetime,
+							content:dispathcontent
+						} as FlashNews);
+					}
+					data.value = dispathlist;
+				}
+			})
+			.catch((err) => {
+				ui.showToast({
+					message: "获取快讯失败"
+				});
+			});
+	};
+	//获取重要快讯
+	const getdispath = () => {
+		dispatches({
+			status: "published",
+			is_major: 1, //1是true,false：0
+			per_page: 3,
+			sort: "latest"
+		})
+			.then((res) => {
+				const dispathResult = parse<UTSJSONObject>(res)!;
+				const dispathlist : FlashNews[] = [];
+				const dispathItems = dispathResult.getArray("data");
+				if (dispathItems != null) {
+					for (let i = 0; i < dispathItems!!.length; i++) {
+						const dispathItem = dispathItems!![i];
+						if (!(dispathItem instanceof UTSJSONObject)) continue;
+						const dispathId = dispathItem.id as number;
+						const dispathtitle = dispathItem.title as string;
+						const dispathcreatetime = dispathItem.created_at as string;
+						const dispathcontent=dispathItem.content as string;
+						dispathlist.push({
+							id: dispathId,
+							title: dispathtitle,
+							created_at: dispathcreatetime,
+							content:dispathcontent
+						} as FlashNews);
+					}
+					daspathList.value = dispathlist;
+				}
+			})
+			.catch((err) => {
+				ui.showToast({
+					message: "获取快讯失败"
+				});
+			});
+	};
+	//获取推荐阅读
+	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
+	const { refresh, list, listView, loading, loadMore, finished } = usePager((params, { render }) => {
+		articles({
+			page: params["page"],
+			per_page: params["size"],
+			status: "published",
+			sort: "recommend",
+			exclude_read: 0
+		}).then((res) => {
+			ui.hideLoading();
+			console.log(res);
 			const result = parse<UTSJSONObject>(res)!;
-			const userlist: userList[] = [];
-			const subItems = result.getArray("users");
-			if (subItems != null) {
-				for (let i = 0; i < subItems!!.length; i++) {
-					const subItem = subItems!![i];
-					if (!(subItem instanceof UTSJSONObject)) continue;
-					let itemId: string | number = ""; // 设置默认值
-					let itemusername: string = ""; // 设置默认值
-					let itemavatar: string = ""; // 设置默认值
-					if (!isNull(subItem.id)) {
-						itemId = subItem.id as number | string;
-					}
-					if (subItem.username != null) {
-						itemusername = subItem.username as string;
-					} else {
-						itemusername = "";
-					}
-					if (subItem.avatar != null) {
-						itemavatar = subItem.avatar as string;
-					} else {
-						itemavatar = "";
-					}
-					userlist.push({
-						id: itemId,
-						username: itemusername,
-						avatar: itemavatar
-					} as userList);
+			console.log("数据列表", params["page"], result, "result");
+			render({
+				list: result.data,
+				pagination: {
+					page: params["page"],
+					size: params["size"],
+					total: result.total
 				}
-				activeUsersList.value = userlist;
-			}
-		})
-		.catch((err) => {
-			ui.showToast({
-				message: (err as Response).message!
 			});
-		});
-};
-//获取热门文章
-const gethotarticle = () => {
-	articles({
-		status: "published",
-		per_page: 5,
-		sort: "popular"
-	})
-		.then((res) => {
-			const result = parse<UTSJSONObject>(res)!;
-			const articlelist: hotArticleItem[] = [];
-			const articleItems = result.getArray("data");
-			if (articleItems != null) {
-				for (let i = 0; i < articleItems!!.length; i++) {
-					const articleItem = articleItems!![i];
-					if (!(articleItem instanceof UTSJSONObject)) continue;
-					const articleId = articleItem.id as number;
-					const articletitle = articleItem.title as string;
-					articlelist.push({
-						id: articleId,
-						title: articletitle
-					} as hotArticleItem);
-				}
-				hotList.value[0].children = articlelist;
-				// console.log("获取热门文章", hotList.value[0].children)
-			}
-		})
-		.catch((err) => {
-			ui.showToast({
-				message: "获取热门文章失败"
-			});
-		});
-};
-// 热门公司
-const getCompany = () => {
-	hotcompany({})
-		.then((res) => {
-			const companyResult = parse<UTSJSONObject>(res)!;
-			const companylist: hotArticleItem[] = [];
-			const companyItems = companyResult.getArray("companies");
-			if (companyItems != null) {
-				for (let i = 0; i < 5; i++) {
-					const companyItem = companyItems!![i];
-					if (!(companyItem instanceof UTSJSONObject)) continue;
-					const companyId = companyItem.id as number;
-					const companytitle = companyItem.name as string;
-					companylist.push({
-						id: companyId,
-						title: companytitle
-					} as hotArticleItem);
-				}
-				hotList.value[1].children = companylist;
-				// console.log("获取热门文章", hotList.value[0].children)
-			}
-		})
-		.catch((err) => {
-			ui.showToast({
-				message: "获取热门公司失败"
-			});
-		});
-};
-//获取重要快讯
-const getdispath = () => {
-	dispatches({
-		status: "published",
-		is_major: 1, //1是true,false：0
-		per_page: 3,
-		sort: "latest"
-	})
-		.then((res) => {
-			const dispathResult = parse<UTSJSONObject>(res)!;
-			const dispathlist: FlashNews[] = [];
-			const dispathItems = dispathResult.getArray("data");
-			if (dispathItems != null) {
-				for (let i = 0; i < dispathItems!!.length; i++) {
-					const dispathItem = dispathItems!![i];
-					if (!(dispathItem instanceof UTSJSONObject)) continue;
-					const dispathId = dispathItem.id as number;
-					const dispathtitle = dispathItem.title as string;
-					const dispathcreatetime = dispathItem.created_at as string;
-					dispathlist.push({
-						id: dispathId,
-						title: dispathtitle,
-						created_at: dispathcreatetime
-					} as FlashNews);
-				}
-				daspathList.value = dispathlist;
-			}
-		})
-		.catch((err) => {
-			ui.showToast({
-				message: "获取快讯失败"
-			});
-		});
-};
-//获取推荐阅读
-const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
-const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
-	articles({
-		page: params["page"],
-		per_page: params["size"],
-		status: "published",
-		sort: "recommend",
-		exclude_read: 0
-	}).then((res) => {
-		ui.hideLoading();
-		console.log(res);
-		const result = parse<UTSJSONObject>(res)!;
-		console.log(result, "result");
-		render({
-			list: result.data,
-			pagination: {
-				page: params["page"],
-				size: params["size"],
-				total: result.total
-			}
 		});
 	});
-});
-onReady(() => {
-	// ui.showLoading(t("加载中"));
-	// 默认请求
-	refresh({});
-});
-onMounted(() => {
-	gethotUser();
-	gethotarticle();
-	getCompany();
-	getdispath();
-});
+	onReady(() => {
+		// ui.showLoading(t("加载中"));
+		// 默认请求
+		refresh({});
+	});
+	onMounted(() => {
+		gethotUser();
+		gethotarticle();
+		getCompany();
+		getdispath();
+		getdispathisTOP()
+	});
 </script>
 
 <style lang="scss" scoped>
-.group {
-	@apply mb-10;
+	.group {
+		@apply mb-10;
 
-	.list {
-		.item {
-			@apply flex flex-col items-center;
-			@apply rounded-xl bg-white px-2;
-			height: 140rpx;
-			margin-bottom: 10rpx;
-			padding-top: 36rpx;
+		.list {
+			.item {
+				@apply flex flex-col items-center;
+				@apply rounded-xl bg-white px-2;
+				height: 140rpx;
+				margin-bottom: 10rpx;
+				padding-top: 36rpx;
+			}
 		}
 	}
-}
 
-.hot {
-	border: 2rpx solid #d5d5d5;
-}
+	.hot {
+		border: 2rpx solid #d5d5d5;
+	}
 
-.istopItem {
-	color: #000;
-	font-size: 32rpx;
-}
+	.istopItem {
+		color: #000;
+		font-size: 32rpx;
+	}
 
-.notopItem {
-	color: #666;
-	font-size: 28rpx;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
+	.notopItem {
+		color: #666;
+		font-size: 28rpx;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
 
-.border {
-	border-left: solid 2rpx #d5d5d5;
-}
+	.border {
+		border-left: solid 2rpx #d5d5d5;
+	}
 
-/* 横向滑动样式 */
-.horizontal-scroll {
-	width: 100%;
-	height: auto;
-	white-space: nowrap;
-	// overflow-x: auto;
-	// overflow-y: hidden;
-}
+	/* 横向滑动样式 */
+	.horizontal-scroll {
+		width: 100%;
+		height: auto;
+		white-space: nowrap;
+		// overflow-x: auto;
+		// overflow-y: hidden;
+	}
 
-/* 第一个卡片渐变背景 */
-.card-bg-1 {
-	background-image: linear-gradient(to bottom, #d5dfff, #ffffff);
-}
+	/* 第一个卡片渐变背景 */
+	.card-bg-1 {
+		background-image: linear-gradient(to bottom, #d5dfff, #ffffff);
+	}
 
-/* 第二个卡片渐变背景 */
-.card-bg-2 {
-	background-image: linear-gradient(to bottom, #ffd5d8, #ffffff);
-}
+	/* 第二个卡片渐变背景 */
+	.card-bg-2 {
+		background-image: linear-gradient(to bottom, #ffd5d8, #ffffff);
+	}
 
-.card-header {
-	margin-bottom: 24rpx;
-	padding-bottom: 16rpx;
-	border-bottom: 1rpx solid #f0f0f0;
-}
+	.card-header {
+		margin-bottom: 24rpx;
+		padding-bottom: 16rpx;
+		border-bottom: 1rpx solid #f0f0f0;
+	}
 
-.card-content {
-	display: flex;
-	flex-direction: column;
-	/* gap: 16rpx; uni-app x 不支持gap，使用margin替代 */
-}
+	.card-content {
+		display: flex;
+		flex-direction: column;
+		/* gap: 16rpx; uni-app x 不支持gap，使用margin替代 */
+	}
 
-.card-content .article-item {
-	margin-bottom: 16rpx;
-}
+	.card-content .article-item {
+		margin-bottom: 16rpx;
+	}
 
-.card-content .article-item:last-child {
-	margin-bottom: 0;
-}
+	.card-content .article-item:last-child {
+		margin-bottom: 0;
+	}
 
-.article-item {
-	display: flex;
-	flex-direction: row;
-	align-items: flex-start;
-	/* gap: 16rpx; uni-app x 不支持gap，使用margin替代 */
-}
+	.article-item {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		/* gap: 16rpx; uni-app x 不支持gap，使用margin替代 */
+	}
 
-.article-item .article-number {
-	margin-right: 16rpx;
-}
+	.article-item .article-number {
+		margin-right: 16rpx;
+	}
 
-.article-number {
-	min-width: 40rpx;
-	height: 40rpx;
-	// border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 24rpx;
-	font-weight: bold;
-	flex-shrink: 0;
-}
+	.article-number {
+		min-width: 40rpx;
+		height: 40rpx;
+		// border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 24rpx;
+		font-weight: bold;
+		flex-shrink: 0;
+	}
 
-.elipsis {
-	flex: 1;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	/* max-width: 100%; uni-app x 不支持百分比值 */
-	width: 100%;
-}
+	.elipsis {
+		flex: 1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		/* max-width: 100%; uni-app x 不支持百分比值 */
+		width: 100%;
+	}
 
-.elipsis2 {
-	flex: 1;
-	/* line-clamp: 2; uni-app x 不支持line-clamp */
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	/* max-width: 100%; uni-app x 不支持百分比值 */
-	width: 100%;
-}
+	.elipsis2 {
+		flex: 1;
+		/* line-clamp: 2; uni-app x 不支持line-clamp */
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		/* max-width: 100%; uni-app x 不支持百分比值 */
+		width: 100%;
+	}
 
-.active-users {
-	width: 100%;
-	/* uni-app x 不支持url()背景图片，使用相对路径或删除此样式 */
-	/* background-image: url("../../static/image/home-userbg.png"); */
-	/* background-size: 100% 100%; */
-	position: relative;
-}
+	.active-users {
+		width: 100%;
+		/* uni-app x 不支持url()背景图片，使用相对路径或删除此样式 */
+		/* background-image: url("../../static/image/home-userbg.png"); */
+		/* background-size: 100% 100%; */
+		position: relative;
+	}
 
-/* 背景图片样式 */
-.active-users-bg {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 1;
-}
+	/* 背景图片样式 */
+	.active-users-bg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+	}
 
-/* 内容区域 */
-.active-users-content {
-	position: relative;
-	z-index: 2;
-	width: 100%;
-	height: 100%;
-}
+	/* 内容区域 */
+	.active-users-content {
+		position: relative;
+		z-index: 2;
+		width: 100%;
+		height: 100%;
+	}
 
-.tuijinimg {
-	width: 200rpx !important;
-	height: 130rpx !important;
-	border-radius: 20rpx;
-}
+	.tuijinimg {
+		width: 200rpx !important;
+		height: 130rpx !important;
+		border-radius: 20rpx;
+	}
 
-/* 横向滚动测试样式 */
-.horizontal-scroll-test {
-	width: 100%;
-	height: 80rpx;
-	white-space: nowrap;
-}
+	/* 横向滚动测试样式 */
+	.horizontal-scroll-test {
+		width: 100%;
+		height: 80rpx;
+		white-space: nowrap;
+	}
 
-.scroll-Y {
-	height: 150px;
-}
+	.scroll-Y {
+		height: 150px;
+	}
 
-.scroll-view_H {
-	width: 100%;
-	flex-direction: row;
-}
+	.scroll-view_H {
+		width: 100%;
+		flex-direction: row;
+	}
 
-.scroll-view-item {
-	height: 150px;
-	justify-content: center;
-	align-items: center;
-}
+	.scroll-view-item {
+		height: 150px;
+		justify-content: center;
+		align-items: center;
+	}
 
-.scroll-user-item {
-	width: 120rpx;
-}
+	.scroll-user-item {
+		width: 120rpx;
+	}
 
-.scroll-view-item_H {
-	width: 498rpx;
-	border-radius: 24rpx;
-	padding: 22rpx;
-	border: 1rpx solid #ebebeb;
-}
+	.scroll-view-item_H {
+		width: 498rpx;
+		border-radius: 24rpx;
+		padding: 22rpx;
+		border: 1rpx solid #ebebeb;
+	}
 
-.text {
-	font-size: 18px;
-	color: #ffffff;
-}
+	.text {
+		font-size: 18px;
+		color: #ffffff;
+	}
 
-.button {
-	margin-top: 15px;
-}
+	.button {
+		margin-top: 15px;
+	}
 </style>

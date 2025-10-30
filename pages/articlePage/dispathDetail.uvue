@@ -5,9 +5,6 @@
 				size: 48,
 			},
 		}">
-			<template #append>
-				<cl-icon name="zhuanfa1" color="black" :size="30" :pt="{ className: 'mr-3' }" @click="share"></cl-icon>
-			</template>
 		</cl-topbar>
 		<!-- 主要内容 -->
 		<!-- 全屏加载效果 -->
@@ -125,10 +122,6 @@
 						<cl-icon v-else name="a-shoucangdianji" :size="30" width="36rpx"color="#464646"></cl-icon>
 						<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">收藏</cl-text>
 					</view>
-					<view class="action-item" @tap="sharevisible = true">
-						<cl-icon name="zhuanfa1" :size="28" color="#464646"></cl-icon>
-						<cl-text color="#464646" :pt="{ className: 'text-xs action-text' }">分享</cl-text>
-					</view>
 				</view>
 				<cl-text v-else :pt="{ className: 'action-text text-primary-500' }" @click="clickcommon">发送</cl-text>
 			</view>
@@ -140,7 +133,7 @@
 </template>
 
 <script setup>
-	import { router, isNull, parse } from "@/cool";
+	import { router, isNull, parse,type Response } from "@/cool";
 	import { dispatchesinfo, clickcomments, comments } from '@/cool/service/list'
 	import { interactions } from "@/cool/service/user"
 	import { useUi } from "@/uni_modules/cool-ui";
@@ -393,7 +386,7 @@
 		justify-content: space-between;
 		/* flex-shrink: 0; */
 		/* 防止被压缩 */
-		width: 200rpx;
+		width: 120rpx;
 		/* 固定宽度确保显示完整 */
 	}
 

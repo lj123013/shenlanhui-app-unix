@@ -1,4 +1,5 @@
 export const download = {
+	"suo": "e68a",
 	"a-lujing387": "e66a",
 	"a-zu342": "e668",
 	"baocun": "e669",

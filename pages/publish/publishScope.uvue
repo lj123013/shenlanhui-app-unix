@@ -1,0 +1,83 @@
+<template>
+	<cl-page>
+		<cl-topbar fixed safe-area-top>
+			<cl-text color="#3A3A3A" :pt="{ className: '!text-xl' }">发布范围</cl-text>
+		</cl-topbar>
+		<view class='px-5'>
+			<view class='flex flex-row justify-between border-bottom py-3' v-for="(item, index) in options"
+				@click="onclickItem(item)" :key="index">
+				<view>
+					<cl-text color="#000" :pt="{className:'text-base'}">{{ item.label }}</cl-text>
+					<cl-text color="#818181" :pt="{className:'text-xs'}">{{item.dec}}</cl-text>
+				</view>
+
+				<view v-if="item.ischeck==true"
+					class="cicle rounded-full w-[16px] h-[16px] flex flex-col justify-center items-center">
+					<view class="bg-primary-500 w-[8px] h-[8px] rounded-full"></view>
+				</view>
+				<view v-else
+					class="bg-surface-200 rounded-full w-[16px] h-[16px] flex flex-col justify-center items-center">
+				</view>
+			</view>
+
+
+		</view>
+	</cl-page>
+</template>
+
+<script setup>
+	import { router, isNull, parseClass } from "@/cool";
+	import { useUi, type ClRadioOption } from "@/uni_modules/cool-ui";
+	const checked = ref(0);
+	type cholceTyoe = {
+		label : string,
+		value : number,
+		dec : string
+		ischeck : boolean
+	}
+	const options = ref<cholceTyoe[]>([
+		{
+			label: "公开",
+			value: 0,
+			dec: "所有人可见",
+			ischeck: false,
+		},
+		{
+			label: "粉丝",
+			value: 1,
+			dec: "关注你的人可见",
+			ischeck: false,
+		},
+		{
+			label: "仅自己",
+			value: 2,
+			dec: "仅自己可见",
+			ischeck: false,
+		},
+	]);
+	const onclickItem = (item : cholceTyoe) => {
+		options.value.forEach(check => {
+			check.ischeck = check.label == item.label
+			uni.$emit('setName', {
+				'name': item.label
+			} as string)
+			router.back()
+		})
+	}
+	onMounted(() => {
+		const params = router.params();
+		if (!isNull(params)) {
+			const choiceLabel = params.choiceLabel
+			options.value.forEach(check => {
+				check.ischeck = check.label == choiceLabel
+			})
+			options.value = [...options.value]//鸿蒙系统需要显示触发
+		}
+	})
+</script>
+
+<style>
+	.cicle {
+		border: 2rpx solid #2854F2;
+	}
+</style>

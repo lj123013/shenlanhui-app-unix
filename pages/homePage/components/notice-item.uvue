@@ -1,19 +1,21 @@
 <template>
 	<view class="px-5">
-		<view class="w-full" :class="index == 0 ? 'pb-2' : 'border py-2'" @click="onItemClick">
-			<cl-text color="#cbcbcb" :pt="{ className: '!text-sm' }">{{ item?.time }}</cl-text>
+		<view class="w-full" :class="index == 0 ? 'pb-2' : 'border py-3'" >
+			<l-dateformat style="color:#cbcbcb;fontSize:14px" :date="item?.created_at"
+				format="yyyy-MM-dd" />
 			<view class="flex flex-row items-center justify-between company">
 				<cl-image class="company-img" width="26rpx" height="26rpx" src="/static/image/pdficon.png"></cl-image>
 				<view class="flex-1">
-					<cl-text ellipsis :lines="2">
-					{{ '　' + (item?.company) }}
+					<cl-text ellipsis :lines="2" :pt="{className:'text-base'}">
+					{{ '　  ' + (item?.title) }}
 					</cl-text>
 				</view>
 			</view>
 
 			<view class="flex flex-row items-center justify-between mt-1">
-				<cl-text color="#A1A1A1">{{ item?.content }}</cl-text>
-				<cl-image width="90rpx" height="18rpx" src="/static/image/ai_icon.png"></cl-image>
+				<cl-text color="#A1A1A1" :pt="{className:'text-sm'}">{{ item?.stock_name }}({{item?.stock_code}})</cl-text>
+				<cl-text  :pt="{className:'text-sm text-primary-500'}" @click="onItemClick">下载PDF</cl-text>
+				
 			</view>
 		</view>
 	</view>
@@ -31,9 +33,10 @@
 	// 定义数据类型（注释形式）
 	type noticeItem = {
 		id : number;
-		company : string;
-		content : string;
-		time : string;
+		title : string;
+		stock_name : string;
+		created_at : string;
+		stock_code:string
 	};
 
 	const props = defineProps({
@@ -61,7 +64,7 @@
 
 		.company-img {
 			position: absolute;
-			top: 5rpx;
+			top: 8rpx;
 		}
 	}
 </style>

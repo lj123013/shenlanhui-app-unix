@@ -6,12 +6,13 @@
             "type" : "uni-app:app-ios_simulator"
         },
         {
-            "customPlaygroundType" : "local",
+            "customPlaygroundType" : "device",
             "packageName" : "com.shenlanhui.slh",
             "playground" : "custom",
             "type" : "uni-app:app-android"
         },
         {
+            "customPlaygroundType" : "local",
             "playground" : "custom",
             "type" : "uni-app:app-ios"
         }

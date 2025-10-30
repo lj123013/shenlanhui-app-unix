@@ -181,9 +181,6 @@
 						"navigationBarTitleText": "个人主页",
 						"titleNView": "custom",
 						"navigationStyle": "custom"
-					},
-					"meta": {
-						"isAuth": true
 					}
 				},
 				{
@@ -380,13 +377,6 @@
 						"navigationBarTitleText": "快讯详情",
 						"navigationStyle": "custom"
 					}
-				},
-				{
-					"path": "noticeDetail",
-					"style": {
-						"navigationBarTitleText": "公告详情",
-						"navigationStyle": "custom"
-					}
 				}
 			]
 		},
@@ -432,6 +422,14 @@
 					"path": "disucss",
 					"style": {
 						"navigationBarTitleText": "发布",
+						"titleNView": "custom",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "publishScope",
+					"style": {
+						"navigationBarTitleText": "发布范围",
 						"titleNView": "custom",
 						"navigationStyle": "custom"
 					}

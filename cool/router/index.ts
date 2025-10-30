@@ -195,7 +195,6 @@ export class Router {
 
 		// 跳转前钩子处理
 		if (this.eventsMap.beforeEach != null) {
-			console.log(this.eventsMap.beforeEach)
 			// 当前页
 			const from = last(this.getPages());
 

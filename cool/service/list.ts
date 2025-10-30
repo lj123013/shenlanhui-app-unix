@@ -198,3 +198,27 @@ export function deletepost(id : string | number, data : any) : Promise<any> {
 		data
 	}) as Promise<any>;
 }
+/**
+ * 获取公告列表
+ * @param params 
+ * @returns Promise
+ */
+export function announcements(data : any) : Promise<any> {
+	return request({
+		url: "/announcements",
+		method: "GET",
+		data
+	}) as Promise<any>;
+}
+/**
+ * 获取发布内容详情
+ * @param params 
+ * @returns Promise
+ */
+export function announcementsInfo(id : string | number, data : any) : Promise<any> {
+	return request({
+		url: `/announcements/${id}/pdf-info`,
+		method: "GET",
+		data
+	}) as Promise<any>;
+}

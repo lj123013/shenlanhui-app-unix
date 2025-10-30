@@ -108,6 +108,7 @@
 			router.push({
 				path: '/pages/publish/disucss',
 				params: {
+					id:props.articleId,
 					title: `转发${config.name}`
 				}
 			})

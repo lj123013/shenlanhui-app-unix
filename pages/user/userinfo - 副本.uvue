@@ -289,10 +289,22 @@
 	});
 
 	const tabbar = ref<ClTabsItem[]>([
-		{ label: "全部", value: 0,  },
-			{ label: "长文", value: 1, },
-			{ label: "讨论", value: 2, },
-			{ label: "图库", value: 3, }
+		{
+			label: "全部",
+			value: 0
+		},
+		{
+			label: "长文",
+			value: 1
+		},
+		{
+			label: "讨论",
+			value: 2
+		},
+		{
+			label: "图库",
+			value: 3
+		}
 	]);
 	type ImageItem = {
 		url : string;

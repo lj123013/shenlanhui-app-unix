@@ -1,219 +1,321 @@
 <template>
 	<cl-page>
-		<cl-topbar fixed :title="title" :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
-			<template #prepend>
-				<cl-text @click="router.to('/pages/index/home')">取消</cl-text>
-			</template>
+		<view class="h-full">
+			<cl-topbar fixed :title="title" :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
+				<template #prepend>
+					<cl-text @click="router.to('/pages/index/home')">取消</cl-text>
+				</template>
 
-			<template #append>
-				<cl-button :pt="{ className: 'px-4' }" size="small" rounded type='primary'
-					@click="clicksend">发布</cl-button>
-			</template>
-		</cl-topbar>
-		<view class='px-5'>
-			<view class="border-bottom py-2" v-if="title == '发长文'">
-				<cl-input v-model="userTitle" placeholder="请输入标题" :border="false"></cl-input>
-			</view>
-			<view v-if="title == '图片'">
-				<view class="border-bottom py-2">
-					<cl-input v-model="content" placeholder="请输入图片介绍（选填）" :border="false"></cl-input>
-				</view>
-				<view class="border-bottom py-2 mb-8">
-					<cl-select v-model="imageType" :border="false" ref="selectRef" :options="options"
-						placeholder="请选择图片类别"></cl-select>
-				</view>
+				<template #append>
+					<cl-button :pt="{ className: 'px-4' }" size="small" rounded type='primary'
+						@click="clicksend">发布</cl-button>
+				</template>
+			</cl-topbar>
+			<view class="flex flex-1 flex-col justify-bewteen">
+				<view class='px-5 flex-1 ' :style="{marginBottom:inputBottom+'px'}">
+					<view class="border-bottom py-2" v-if="title == '发长文'">
+						<cl-input v-model="userTitle" placeholder="请输入标题" :border="false"></cl-input>
+					</view>
+					<!-- 上传图片 -->
+					<view v-if="title == '图片'">
+						<view class="border-bottom py-2">
+							<cl-input v-model="content" placeholder="请输入图片介绍（选填）" :border="false"></cl-input>
+						</view>
+						<view class="border-bottom py-2 mb-8">
+							<cl-select v-model="imageType" :border="false" ref="selectRef" :options="options"
+								placeholder="请选择图片类别"></cl-select>
+						</view>
 
-				<!-- 图库上传 -->
-				<cl-upload icon="jia" text="上传图片" :width="690" :height="210" multiple :limit="9" @exceed="handleExceed"
-					@success="handleSuccess" @error="handleError"></cl-upload>
-			</view>
-			<view v-else>
-				<cl-textarea v-model="content" :placeholder="title == '转发深蓝汇' ? '说说转发心得...' : '请输入发布内容'" height="260px"
-					:autofocus="true" :holdKeyboard="true" :border="false" :showWordLimit="false"
-					:pt="{ className: '!px-1' }"></cl-textarea>
-				<!-- 上传图片 -->
-				<cl-upload v-if="title == '发讨论'" multiple :limit="3" @exceed="handleExceed" @success="handleSuccess"
-					@error="handleError"></cl-upload>
-			</view>
-			<view v-if="title == '转发深蓝汇'"
-				class="flex flex-row justify-between items-center bg-custom-bg-gray p-2 rounded-[10rpx]">
-				<cl-image width="60px" height="60px" :pt="{ className: 'rounded-[10rpx]' }"
-					src="https://unix.cool-js.com/images/demo/avatar.jpg"></cl-image>
-				<view class="flex-1 ml-2">
-					<cl-text color="primary" :pt="{ className: 'text-base' }">@steven</cl-text>
-					<cl-text ellipsis :lines="2" color="#666"
-						:pt="{ className: 'text-sm' }">下面老太太害怕火烧到自己家，窗帘又拔不下来话说不应该先跑吗?这个东西有那么重要吗这个东西有那么重要吗下面老太太害怕火烧到自己家</cl-text>
+						<!-- 图库上传 -->
+						<cl-upload icon="jia" text="上传图片" :width="690" :height="210" multiple :limit="9"
+							@exceed="handleExceed" @success="handleSuccess" @error="handleError"></cl-upload>
+					</view>
+					<view v-else class="flex-1 flex flex-col justify-between">
+						<cl-textarea v-model="content"
+							:placeholder="title == `转发${config.name}` ? '说说转发心得...' : '请输入发布内容'" :autofocus="true"
+							:border="false" :adjustPosition='true' :showWordLimit="false"
+							:pt="{ className: '!px-1' }"></cl-textarea>
+						<!-- 上传图片 -->
+						<cl-upload v-if="title == '发讨论'" multiple :limit="3" @exceed="handleExceed"
+							@success="handleSuccess" @error="handleError"></cl-upload>
+					</view>
+					<view v-if="title == `转发${config.name}`"
+						class="flex flex-row justify-between items-center bg-custom-bg-gray p-2 rounded-[10rpx]">
+						<cl-image width="60px" height="60px" :pt="{ className: 'rounded-[10rpx]' }"
+							:src="getmessage.author.avatar"></cl-image>
+						<view class="flex-1 ml-2">
+							<cl-text color="primary"
+								:pt="{ className: 'text-base' }">@{{getmessage.author.username}}</cl-text>
+							<cl-text ellipsis :lines="2" color="#666"
+								:pt="{ className: 'text-sm' }">{{getmessage.content}}</cl-text>
+						</view>
+					</view>
+					<!-- 可见性 -->
+					<view class="w-full h-[50px] flex flex-row items-center justify-between" @click="toPath">
+						<view></view>
+						<view class="flex flex-row items-center visible text-center px-2 py-1">
+							<cl-icon name="suo" color="#818181"></cl-icon>
+							<cl-text color="#818181" :pt="{className:'text-sm'}">{{pulishScope}}</cl-text>
+						</view>
+
+					</view>
+				</view>
+				<view class="w-full h-[50px] px-5 flex flex-row items-center justify-between"
+					:style="{ bottom: inputBottom + 'px',background:'#f3f3f3' }">
+					<view class="flex flex-row items-center">
+						<!-- <cl-icon name="a-lujing387" size="30rpx" width="40rpx" height="40rpx" color="black"></cl-icon>
+					<cl-icon name="a-zu342" color="black" height="40rpx" :pt="{className:'ml-3'}"></cl-icon> -->
+					</view>
+					<view class="h-[100%]">
+						<cl-icon name="baocun" color="black" height="40rpx" @click="savedraft"></cl-icon>
+					</view>
 				</view>
 			</view>
-		</view>
-
-		<view v-if="title != '图片'" class="footer-container w-full h-[50px] px-5"
-			:style="{ bottom: inputBottom + 'px' }">
-			<view class="flex flex-row items-center">
-				<!-- <cl-icon name="a-lujing387" size="30rpx" width="40rpx" height="40rpx" color="black"></cl-icon>
-				<cl-icon name="a-zu342" color="black" height="40rpx" :pt="{className:'ml-3'}"></cl-icon> -->
-			</view>
-			<cl-icon name="baocun" color="black" height="40rpx"  @click="savedraft"></cl-icon>
 		</view>
 	</cl-page>
 </template>
 
 <script setup>
-import { router, isNull, uploadFile, isArray } from "@/cool";
-import type { ClUploadItem, useUi, ClSelectOption } from "@/uni_modules/cool-ui";
-import { t } from "@/locale";
-import { pulish } from "@/cool/service/list";
-const title = ref('')
-const ui = useUi();
-const images = ref < string[] > ([]);
-const imageType = ref < number | null > (null);
-const upload3 = ref < string[] > ([]);
-const imageList = ref < string[] > ([])
-const inputBottom = ref(0)
-const isPubComment = ref(false)
-const content = ref('')
-const userTitle = ref('')
-
-const options = ref < ClSelectOption[] > ([
-	{
-		label: "创意",
-		value: 1,
-	},
-	{
-		label: "实拍",
-		value: 2,
-	},
-]);
-const closePopup = () => {
-	uni.hideKeyboard()
-	isPubComment.value = false
-	inputBottom.value = 0
-}
-function handleExceed(list: ClUploadItem[]) {
-	console.log("超出文件数量限制", list);
-}
-function handleSuccess(url: string) {
-	console.log("上传成功:", url);
-	images.value.push(url)
-}
-function handleError(message: string) {
-	console.error("上传失败:", message);
-}
-
-const pushlishData = (status: string) => {
-	console.log(imageList.value)
-	let type_content = ""
-	if (title.value == '发讨论') {
-		type_content = 'discussion'
-	} else if (title.value == '发长文') {
-		type_content = 'article'
-	} else if (title.value == '图片') {
-		type_content = 'image'
-	}
-	let image_type = ''
-	if (imageType.value == 1) {
-		image_type = "creative "
-	} else {
-		image_type = "photo"
-	}
-
-	pulish({
-		type: type_content,
-		title: userTitle.value,
-		content: content.value,
-		images: images.value,
-		status: status,//
-		image_type: title.value == '图片' ? image_type : "",
-		visibility: 0,//可见性
-	}).then((res) => {
-		ui.hideLoading()
-		if (status == 'draft') {
-			ui.showToast({
-				message: "保存草稿成功",
-				type: "success"
-			});
-		} else {
-			ui.showToast({
-				message: "发布成功",
-				type: "success"
-			});
-		}
-		setTimeout(() => {
-			router.back()
-		}, 1500);
-
-	}).catch(error => {
-		ui.hideLoading()
-		ui.showToast({
-			message: "发布失败，请稍后重试",
-		});
-	})
-}
-const clicksend = async () => {
-	console.log(imageType.value)
-	ui.showLoading("发布中...")
-	console.log(images.value, '图片数组')
-	if (content.value != "") {
-		pushlishData('published')
-	} else {
-		uni.showToast({
-			title: '请输入内容',
-			icon: 'none'
-		});
-	}
-
-
-}
-const savedraft = () => {
-	console.log("确认保存草稿")
-	if (content.value == '') return
-	ui.showConfirm({
-		title: "确认保存草稿",
-		message: "确定要保存此条文章为草稿吗",
-		confirmText: "保存草稿",
-		cancelText: "不保存",
-		callback(action) {
-			if (action === "confirm") {
-				pushlishData('draft')
-				// 执行删除操作
-			} else {
-				console.log("用户取消操作");
-			}
+	import { router, isNull, uploadFile, isArray, parse } from "@/cool";
+	import type { ClUploadItem, useUi, ClSelectOption } from "@/uni_modules/cool-ui";
+	import { t } from "@/locale";
+	import { pulish, postsInfo } from "@/cool/service/list";
+	import { config } from "@/config";
+	const title = ref('')
+	const articleId = ref(0)
+	const ui = useUi();
+	const images = ref<string[]>([]);
+	const imageType = ref<number | null>(null);
+	const upload3 = ref<string[]>([]);
+	const imageList = ref<string[]>([])
+	const inputBottom = ref(0)
+	const isPubComment = ref(false)
+	const content = ref('')
+	const userTitle = ref('')
+	const pulishScope = ref('公开')//发布范围
+	const options = ref<ClSelectOption[]>([
+		{
+			label: "创意",
+			value: 1,
 		},
-	});
-}
-onMounted(() => {
-	const params = router.params();
-	if (!isNull(params)) {
-		title.value = params.title as string
+		{
+			label: "实拍",
+			value: 2,
+		},
+	]);
+	type typeauthor = {
+		id : number
+		avatar ?: string
+		username ?: string
+		nickname ?: string
+		is_followed ?: boolean
 	}
-	console.log("图片列表", images.value)
-	uni.onKeyboardHeightChange((res) => {
-		console.log(res)
-		if (res.height > 0) {
-			inputBottom.value = res.height
-			isPubComment.value = true
-		} else {
-			closePopup()
-		}
-	})
+	type ArticleData = {
+		id ?: number
+		title ?: string
+		cover_image ?: string
+		featured_image ?: string
+		content ?: string;//新闻稿描述
+		created_at ?: string;
+		ip_location ?: string
+		is_following_author ?: boolean//是否关注
+		is_liked ?: boolean//是否点赞
+		is_bookmarked ?: boolean//是否收藏
+		author : typeauthor
+		timestamps ?: timestamps
+		images ?: Array<string>
 
-})
+	};
+	const getmessage = ref<ArticleData>({
+		author: {
+			id: 0,
+			avatar: "",
+			username: "",
+		}
+	}); // 这样就不会报错了
+	const closePopup = () => {
+		uni.hideKeyboard()
+		isPubComment.value = false
+		inputBottom.value = 0
+	}
+	// 选择发布范围
+	const toPath = () => {
+		router.push({
+			path: "/pages/publish/publishScope",
+			params: {
+				choiceLabel: pulishScope.value,
+				title: title.value
+			}
+		})
+	}
+	function handleExceed(list : ClUploadItem[]) {
+		console.log("超出文件数量限制", list);
+	}
+	function handleSuccess(url : string) {
+		console.log("上传成功:", url);
+		images.value.push(url)
+	}
+	function handleError(message : string) {
+		console.error("上传失败:", message);
+	}
+
+	const pushlishData = (status : string) => {
+		console.log(imageList.value)
+		let type_content = ""
+		if (title.value == '发讨论') {
+			type_content = 'discussion'
+		} else if (title.value == '发长文') {
+			type_content = 'article'
+		} else if (title.value == '图片') {
+			type_content = 'image'
+		}
+		let image_type = ''
+		if (imageType.value == 1) {
+			image_type = "creative "
+		} else {
+			image_type = "photo"
+		}
+		let visibility = 0
+		if (pulishScope.value == '公开') {
+			visibility = 0
+		} else if (pulishScope.value == '粉丝') {
+			visibility = 1
+		} else if (pulishScope.value == '仅自己') {
+			visibility = 2
+		}
+		pulish({
+			type: type_content,
+			title: userTitle.value,
+			content: content.value,
+			images: images.value,
+			status: status,//
+			image_type: title.value == '图片' ? image_type : "",
+			visibility: 0,//可见性
+		}).then((res) => {
+			ui.hideLoading()
+			if (status == 'draft') {
+				ui.showToast({
+					message: "保存草稿成功",
+					type: "success"
+				});
+			} else {
+				ui.showToast({
+					message: "发布成功",
+					type: "success"
+				});
+			}
+			setTimeout(() => {
+				router.back()
+			}, 1500);
+
+		}).catch(error => {
+			ui.hideLoading()
+			ui.showToast({
+				message: "发布失败，请稍后重试",
+			});
+		})
+	}
+	const clicksend = async () => {
+		console.log(imageType.value)
+		ui.showLoading("发布中...")
+		console.log(images.value, '图片数组')
+		if (content.value != "") {
+			pushlishData('published')
+		} else {
+			uni.showToast({
+				title: '请输入内容',
+				icon: 'none'
+			});
+		}
+
+
+	}
+	const savedraft = () => {
+		console.log("确认保存草稿")
+		if (content.value == '') return
+		ui.showConfirm({
+			title: "确认保存草稿",
+			message: "确定要保存此条文章为草稿吗",
+			confirmText: "保存草稿",
+			cancelText: "不保存",
+			callback(action) {
+				if (action === "confirm") {
+					pushlishData('draft')
+					// 执行删除操作
+				} else {
+					console.log("用户取消操作");
+				}
+			},
+		});
+	}
+	const getpostsinFO = async (id : number) => {
+		try {
+			const res = await postsInfo(id, {})
+			ui.hideLoading()
+			getmessage.value = parse<ArticleData>(res)!
+		} catch (err) {
+			ui.hideLoading()
+			ui.showToast({
+				message: "获取详情失败",
+			});
+		}
+	}
+	// onPageShow (() => {
+	// 	uni.$on("setName", (res : string) => {
+	// 		console.log("获取选择发布范围",res)
+	// 		// this.radioname = res.name;
+	// 		// if (res.name == "公开") {
+	// 		// 	this.read_power = 0;
+	// 		// } else if (res.name == "粉丝 ") {
+	// 		// 	this.read_power = 1;
+	// 		// } else {
+	// 		// 	this.read_power = 2;
+	// 		// }
+	// 	});
+	// })
+	onReady(() => {
+		uni.$on("setName", (res : string) => {
+			console.log("获取选择发布范围", res)
+		})
+	});
+	onMounted(() => {
+		const params = router.params();
+		if (!isNull(params)) {
+			title.value = params.title as string
+			if (!isNull(params.id)) {
+				articleId.value = params.id as number
+				if (title.value == `转发${config.name}`) {
+					getpostsinFO(articleId.value)
+				}
+			}
+			if (!isNull(params.checked)) {
+				pulishScope.value = params.checked as string
+			}
+
+		}
+		console.log("图片列表", images.value)
+		uni.onKeyboardHeightChange((res) => {
+			console.log(res)
+			if (res.height > 0) {
+				inputBottom.value = res.height
+				isPubComment.value = true
+			} else {
+				closePopup()
+			}
+		})
+
+	})
 </script>
 
 <style>
-/* Footer 底部区域样式 */
-.footer-container {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
-	position: fixed;
-	left: 0rpx;
-	background: #F3F3F3
-}
+	.cl-select-trigger {
+		border: none !important;
+	}
 
-.cl-select-trigger {
-	border: none !important;
-}
+	.visible {
+
+		background: #F8F8F8;
+		border-radius: 10px 10px 10px 10px;
+		border: 1px solid #F1F1F1;
+	}
 </style>

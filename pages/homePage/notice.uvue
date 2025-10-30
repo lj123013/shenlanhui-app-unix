@@ -1,7 +1,5 @@
 <template>
 	<cl-page>
-		<cl-tabs v-model="current" class="fontBold" :showLine="false" :list="tabsList" :color="isColor ? '#2854F2' : ''"
-			un-color="#6a6a6a"></cl-tabs>
 		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
 					refresher: {
 						className: 'pt-3'
@@ -13,7 +11,7 @@
 
 			<template #bottom>
 				<view class="py-3">
-					<cl-loadmore :loading="loading" v-if="list.length > 0"></cl-loadmore>
+					<cl-loadmore :loading="loading" :finish="finished" v-if="list.length > 0"></cl-loadmore>
 				</view>
 			</template>
 		</cl-list-view>
@@ -22,97 +20,98 @@
 
 <script lang="ts" setup>
 	import { ref } from "vue";
-	import type { ClTabsItem,useUi } from "@/uni_modules/cool-ui";
-	import { usePager,router } from "@/cool";
+	import { usePager, router, parse, isNull } from "@/cool";
+	import type { ClTabsItem, useUi } from "@/uni_modules/cool-ui";
 	import noticeItem from "../homePage/components/notice-item.uvue";
+	import { announcements } from '@/cool/service/list'
 	import { t } from "@/locale";
 	const ui = useUi();
 	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
-	let id = 0;
-	const isColor = ref(true)
-	const current = ref("1")
-	const tabsList = ref<ClTabsItem[]>([
-		{
-			label: "公告快讯",
-			value: "1",
-		},
-		{
-			label: "A股公告精选",
-			value: "2",
-		},
-		{
-			label: "港股公告精选",
-			value: "3",
-		},
-	]);
-	const onItemClick = (item: UTSJSONObject) => {
-		console.log('点击文章项:', item);
-		router.push({
-			path: '/pages/articlePage/noticeDetail',
-			params: {
-				articleId: item.id,
-			}
-		});
+	const onItemClick = (item : UTSJSONObject) => {
+		console.log('点击文章项:', item?.pdf);
+		const url = item?.pdf as UTSJSONObject
+		const itemUrl = url.getString('proxy_url')
+		if (itemUrl!!.startsWith('https')) {
+			uni.showLoading({
+				title: '下载中',
+				mask: true
+			})
+			uni.downloadFile({
+				url: itemUrl as string,
+				success: (res) => {
+					uni.openDocument({
+						filePath: res.tempFilePath,
+
+						success: () => {
+							uni.hideLoading()
+							console.log('打开文档成功')
+						},
+						fail: (err) => {
+							uni.hideLoading()
+							console.log('打开文档失败', err)
+							uni.showToast({
+								title: '错误码：' + err.errCode.toString(),
+								icon: "error"
+							})
+						}
+					})
+				},
+				fail: (err) => {
+					uni.hideLoading()
+					console.log('下载失败', err)
+					uni.showToast({
+						title: '下载失败：' + err.errCode.toString(),
+						icon: "error"
+					})
+				}
+			})
+		} else {
+			uni.openDocument({
+				filePath: itemUrl,
+				success: () => {
+					console.log('打开文档成功')
+				},
+				fail: (err) => {
+					console.log('打开文档失败', err)
+					uni.showToast({
+						title: '错误码：' + err.errCode.toString(),
+						icon: "error"
+					})
+				}
+			})
+		}
 	};
-	const { refresh, list, listView, loading, loadMore } = usePager((params, { render }) => {
-	// 模拟请求
-	setTimeout(() => {
-		render({
-					list: [
-						{
-							id: id++,
-							company: "关于开能转债即将停止转股暨赎回前最后半个交易日的重要提示性公告关于开能转债即将停止转股暨赎回前最后半个交易日的重要提示性公告关于开能转债即将停止转股暨赎回前最后半个交易日的重要提示性公告",
-							content: "开能健康（300272）",
-							time: "2025-08-31",
+	const { refresh, list, listView, loading, loadMore, finished } = usePager((params, { render }) => {
+		announcements({
+			page: params["page"],
+			per_page: params["size"],
 
-						},
-						{
-							id: id++,
-							company: "关于提前赎回“交建转债”的第二次提示性公告",
-							content: "新疆交建（002941）",
-							time: "2025-08-31",
-
-						},
-						{
-							id: id++,
-							company: "公司关于控股股东、实际控制人部分股份解除质押的公告",
-							content: "新利民股份（002734）",
-							time: "2025-08-31",
-
-						},
-						{
-							id: id++,
-							company: "关于开能转债即将停止转股暨赎回前最后一个交易日的重要提示性公告",
-							content: "新利民股份（002734）",
-							time: "2025-08-31",
-
-						},
-						{
-							id: id++,
-							company: "关于开能转债即将停止转股暨赎回前最后一个交易日的重要提示性公告",
-							content: "新利民股份（002734）",
-							time: "2025-08-31",
-						
-						},
-						{
-							id: id++,
-							company: "关于开能转债即将停止转股暨赎回前最后一个交易日的重要提示性公告",
-							content: "新利民股份（002734）",
-							time: "2025-08-31",
-						
-						},
-					],
+		}).then(res => {
+			ui.hideLoading();
+			const result = parse<UTSJSONObject>(res)!
+			const page = result.pagination
+			console.log('数据列表', params["page"], result.items)
+			if (!isNull(page)) {
+				const pageDta = parse<UTSJSONObject>(page as Any)!
+				render({
+					list: result.items,
 					pagination: {
 						page: params["page"],
 						size: params["size"],
-						total: 6
-					}
-				});
+						total: pageDta.total
 
-				ui.hideLoading();
-			}, 1000);
-		});
-	
+					}
+
+				});
+			}
+		}).catch(err => {
+			ui.hideLoading()
+			ui.showToast({
+				message: (err as Response).message!,
+			});
+		})
+	});
+
 
 	async function onPull() {
 		await refresh({ page: 1 });

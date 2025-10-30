@@ -46,7 +46,6 @@
 	import { t } from "@/locale";
 	import articleItem from "../articlePage/articleItem.uvue";
 	import { articles } from '@/cool/service/list'
-
 	const ui = useUi();
 	const serach = ref("")
 	// 处理文章项点击事件
@@ -61,9 +60,6 @@
 		});
 	};
 	const listViewRef = ref<ClListViewComponentPublicInstance | null>(null);
-
-	let id = 0;
-
 	const { refresh, list, listView, loading, loadMore,finished } = usePager((params, { render }) => {
 		articles({
 			page: params["page"],
@@ -91,7 +87,12 @@
 
 			}
 
-		})
+		}).catch(err => {
+				ui.hideLoading()
+				ui.showToast({
+					message: (err as Response).message!,
+				});
+			})
 
 	});
 	async function onPull() {
