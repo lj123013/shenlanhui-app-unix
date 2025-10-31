@@ -222,3 +222,15 @@ export function announcementsInfo(id : string | number, data : any) : Promise<an
 		data
 	}) as Promise<any>;
 }
+/**
+ * 转发动态
+ * @param params 
+ * @returns Promise
+ */
+export function repost(id : string | number, data? : any) : Promise<any> {
+	return request({
+		url: `/posts/${id}/repost`,
+		method: "POST",
+		data
+	}) as Promise<any>;
+}

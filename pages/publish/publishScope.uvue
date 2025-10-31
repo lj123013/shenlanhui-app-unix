@@ -55,19 +55,26 @@
 			ischeck: false,
 		},
 	]);
+	const title = ref("")
 	const onclickItem = (item : cholceTyoe) => {
 		options.value.forEach(check => {
 			check.ischeck = check.label == item.label
-			uni.$emit('setName', {
-				'name': item.label
-			} as string)
-			router.back()
 		})
+		setTimeout(() => {
+			router.push({
+				path: "/pages/publish/disucss",
+				params: {
+					checked: item.label,
+					title: title.value
+				}
+			})
+		}, 0);
 	}
 	onMounted(() => {
 		const params = router.params();
 		if (!isNull(params)) {
-			const choiceLabel = params.choiceLabel
+			const choiceLabel = params.choiceLabel as string
+			title.value = params.title as string
 			options.value.forEach(check => {
 				check.ischeck = check.label == choiceLabel
 			})

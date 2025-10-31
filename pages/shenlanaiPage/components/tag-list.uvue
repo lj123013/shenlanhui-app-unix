@@ -40,11 +40,12 @@ type aiItem={
 	iconBg:string
 }
 const taglist = ref<aiItem[]>([
+	// {
+	// 	icon: "nav_1",
+	// 	name: "深蓝智能体",
+	// 	iconBg: "#F93939"
+	// }, 
 	{
-		icon: "nav_1",
-		name: "深蓝智能体",
-		iconBg: "#F93939"
-	}, {
 		icon: "nav_1",
 		name: "财经智能写作",
 		iconBg: "#3AD6A7"
@@ -57,15 +58,18 @@ const taglist = ref<aiItem[]>([
 		icon: "a-zu372",
 		name: "改写快讯",
 		iconBg: '#5127FF',
-	}, {
-		icon: "a-zu41",
-		name: "AI生图",
-		iconBg: '#3AA1D6',
-	}, {
-		icon: "yuyin",
-		name: "录音转文字",
-		iconBg: '#65CC0C',
-	}, {
+	}, 
+	// {
+	// 	icon: "a-zu41",
+	// 	name: "AI生图",
+	// 	iconBg: '#3AA1D6',
+	// }, 
+	// {
+	// 	icon: "yuyin",
+	// 	name: "录音转文字",
+	// 	iconBg: '#65CC0C',
+	// }, 
+	{
 		icon: "a-zu367",
 		name: "生成口播文案",
 		iconBg: '#FF8000',

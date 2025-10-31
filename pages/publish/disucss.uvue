@@ -3,7 +3,7 @@
 		<view class="h-full">
 			<cl-topbar fixed :title="title" :show-back="false" safe-area-top :pt="{ className: 'px-5' }">
 				<template #prepend>
-					<cl-text @click="router.to('/pages/index/home')">取消</cl-text>
+					<cl-text @click="close">取消</cl-text>
 				</template>
 
 				<template #append>
@@ -22,13 +22,13 @@
 							<cl-input v-model="content" placeholder="请输入图片介绍（选填）" :border="false"></cl-input>
 						</view>
 						<view class="border-bottom py-2 mb-8">
-							<cl-select v-model="imageType" :border="false" ref="selectRef" :options="options"
-								placeholder="请选择图片类别"></cl-select>
+							<cl-select v-model="imageType" ref="selectRef" :options="options" placeholder="请选择图片类别"
+								:pt="{ptTrigger:'border-red'}"></cl-select>
 						</view>
 
 						<!-- 图库上传 -->
-						<cl-upload icon="jia" text="上传图片" :width="690" :height="210" multiple :limit="9"
-							@exceed="handleExceed" @success="handleSuccess" @error="handleError"></cl-upload>
+						<cl-upload icon="jia" text="上传图片" v-model="images" :width="690" :height="210" multiple
+							:limit="9" @exceed="handleExceed" @success="handleSuccess" @error="handleError"></cl-upload>
 					</view>
 					<view v-else class="flex-1 flex flex-col justify-between">
 						<cl-textarea v-model="content"
@@ -36,7 +36,7 @@
 							:border="false" :adjustPosition='true' :showWordLimit="false"
 							:pt="{ className: '!px-1' }"></cl-textarea>
 						<!-- 上传图片 -->
-						<cl-upload v-if="title == '发讨论'" multiple :limit="3" @exceed="handleExceed"
+						<cl-upload v-if="title == '发讨论'" v-model="images" multiple :limit="3" @exceed="handleExceed"
 							@success="handleSuccess" @error="handleError"></cl-upload>
 					</view>
 					<view v-if="title == `转发${config.name}`"
@@ -76,22 +76,24 @@
 </template>
 
 <script setup>
-	import { router, isNull, uploadFile, isArray, parse } from "@/cool";
+	import { router, isNull, uploadFile, isArray, parse, useStore } from "@/cool";
 	import type { ClUploadItem, useUi, ClSelectOption } from "@/uni_modules/cool-ui";
 	import { t } from "@/locale";
-	import { pulish, postsInfo } from "@/cool/service/list";
+	import { storage } from "@/cool/utils";
+	import { pulish, postsInfo, repost } from "@/cool/service/list";
 	import { config } from "@/config";
+	import { type UserInputType } from "@/types";
+	const { userinput } = useStore();
 	const title = ref('')
 	const articleId = ref(0)
 	const ui = useUi();
 	const images = ref<string[]>([]);
+	const imageslist = ref<string[]>([]);
 	const imageType = ref<number | null>(null);
-	const upload3 = ref<string[]>([]);
-	const imageList = ref<string[]>([])
 	const inputBottom = ref(0)
 	const isPubComment = ref(false)
-	const content = ref('')
-	const userTitle = ref('')
+	const content = ref<string | null>(null)
+	const userTitle = ref<string | null>(null)
 	const pulishScope = ref('公开')//发布范围
 	const options = ref<ClSelectOption[]>([
 		{
@@ -138,8 +140,21 @@
 		isPubComment.value = false
 		inputBottom.value = 0
 	}
+	// 保存用户数据
+	const saveMessage = () => {
+		let userRequest : UserInputType = {
+			userTitle: userTitle.value != null ? userTitle.value : "",
+			content: content.value != null ? content.value : "",
+			images: imageslist.value != null ? imageslist.value : [],
+			imageType: imageType.value != null ? imageType.value : null
+		}
+		userinput.savaUserInput(userRequest);
+		// 同时保存到本地存储
+		uni.setStorageSync('publish_draft', userRequest);
+	}
 	// 选择发布范围
 	const toPath = () => {
+		saveMessage()
 		router.push({
 			path: "/pages/publish/publishScope",
 			params: {
@@ -153,14 +168,26 @@
 	}
 	function handleSuccess(url : string) {
 		console.log("上传成功:", url);
-		images.value.push(url)
+		imageslist.value.push(url)
 	}
 	function handleError(message : string) {
 		console.error("上传失败:", message);
 	}
-
+	const zhuanfa = () => {
+		repost(getmessage.value.id as number, { content: content.value != null ? content.value : "" }).then(res => {
+			ui.hideLoading()
+			ui.showToast({
+				message: "转发成功",
+			});
+			router.back({delta: 2})
+		}).catch(err => {
+				ui.hideLoading()
+				ui.showToast({
+					message: "转发失败，请稍后重试",
+				});
+			})
+	}
 	const pushlishData = (status : string) => {
-		console.log(imageList.value)
 		let type_content = ""
 		if (title.value == '发讨论') {
 			type_content = 'discussion'
@@ -187,7 +214,7 @@
 			type: type_content,
 			title: userTitle.value,
 			content: content.value,
-			images: images.value,
+			images: imageslist.value,
 			status: status,//
 			image_type: title.value == '图片' ? image_type : "",
 			visibility: 0,//可见性
@@ -215,12 +242,40 @@
 			});
 		})
 	}
+	const close = () => {
+		if (userTitle.value != null || content.value != null || images.value.length > 0) {
+			console.log(userTitle.value, content.value, images.value)
+			ui.showConfirm({
+				title: "确认退出页面",
+				message: "确定要退出页面吗",
+				confirmText: "确认退出",
+				cancelText: "保存草稿",
+				callback(action) {
+					if (action === "confirm") {
+						// 清空本地和全局状态栏数据
+						userinput.removeUserInput()
+						router.back()
+						// 执行删除操作
+					} else {
+						pushlishData('draft')
+					}
+				},
+			});
+
+		} else {
+			router.back()
+		}
+
+	}
 	const clicksend = async () => {
-		console.log(imageType.value)
 		ui.showLoading("发布中...")
-		console.log(images.value, '图片数组')
 		if (content.value != "") {
-			pushlishData('published')
+			if (title.value == `转发${config.name}`) {
+				zhuanfa()
+			} else {
+				pushlishData('published')
+			}
+
 		} else {
 			uni.showToast({
 				title: '请输入内容',
@@ -260,23 +315,38 @@
 			});
 		}
 	}
-	// onPageShow (() => {
-	// 	uni.$on("setName", (res : string) => {
-	// 		console.log("获取选择发布范围",res)
-	// 		// this.radioname = res.name;
-	// 		// if (res.name == "公开") {
-	// 		// 	this.read_power = 0;
-	// 		// } else if (res.name == "粉丝 ") {
-	// 		// 	this.read_power = 1;
-	// 		// } else {
-	// 		// 	this.read_power = 2;
-	// 		// }
-	// 	});
-	// })
-	onReady(() => {
-		uni.$on("setName", (res : string) => {
-			console.log("获取选择发布范围", res)
-		})
+	//赋值用户输入值
+	onShow(() => {
+		// 如果store中有数据，则赋值
+		if (!isNull(userinput.UserInputTypeinfo.value)) {
+			userTitle.value = userinput.UserInputTypeinfo.value!!.userTitle
+			content.value = userinput.UserInputTypeinfo.value!!.content
+			imageType.value = userinput.UserInputTypeinfo.value!!.imageType
+			const img = userinput.UserInputTypeinfo.value?.images
+			if (!isNull(img)) {
+				let imgData : string[] = []
+				for (let i = 0; i < img!!.length; i++) {
+					imgData.push(img!![i])
+				}
+				images.value = imgData
+				imageslist.value = imgData
+			}
+
+
+		} else {
+			// 从本地存储中获取
+			const publish_draft = uni.getStorageSync('publish_draft');
+			if (publish_draft != null) {
+				const draft = parse<UserInputType>(publish_draft)
+				console.log("本地存储", draft?.content)
+				userTitle.value = draft?.userTitle as string
+				content.value = draft?.content as string
+				images.value = draft?.images as string[]
+				imageType.value = draft?.imageType as number
+			}
+
+		}
+
 	});
 	onMounted(() => {
 		const params = router.params();
@@ -293,9 +363,7 @@
 			}
 
 		}
-		console.log("图片列表", images.value)
 		uni.onKeyboardHeightChange((res) => {
-			console.log(res)
 			if (res.height > 0) {
 				inputBottom.value = res.height
 				isPubComment.value = true

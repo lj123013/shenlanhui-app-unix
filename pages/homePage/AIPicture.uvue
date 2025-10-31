@@ -1,34 +1,37 @@
 <template>
 	<cl-page>
-		<cl-topbar safe-area-top background-color="transparent" >
+		<cl-topbar safe-area-top background-color="transparent">
 			<cl-text color="#3A3A3A" :pt="{ className: '!text-xl' }">AI图库</cl-text>
-			</cl-topbar>
+		</cl-topbar>
+		
 		<view>
 			<view class="flex flex-row justify-between items-center pr-4">
 				<cl-tabs v-model="current" class="fontBold" :showLine="false" :list="tabbar"
 					:color="isColor ? '#2854F2' : ''" un-color="#6a6a6a"></cl-tabs>
-				<cl-tag type="primary">AI制图</cl-tag>
+				<!-- <cl-tag type="primary">AI制图</cl-tag> -->
 			</view>
 			<view class="serach rounded-full bg-gray-50 py-3 px-3 flex flex-row items-center mx-5">
 				<cl-icon name="a-zu257" color="#CDCDCD" :size="24"></cl-icon>
 				<cl-text class="text-neutral-300 ml-2" color="#B7B7B7">请输入你想要找的图片</cl-text>
 			</view>
 		</view>
-		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
-			refresher: {
-				className: 'pt-3'
-			}
-		}" :refresher-enabled="true" @pull="onPull" @bottom="loadMore">
-			<template #item="{ value ,index}">
-				<circle-item :value="value" :index="index" typeTitle="图库"  :showshare="true"></circle-item>
-			</template>
-
-			<template #bottom>
-				<view class="py-3">
-					<cl-loadmore v-if="list.length > 0" :loading="loading" :finish="finished" safe-area-bottom></cl-loadmore>
-				</view>
-			</template>
-		</cl-list-view>
+		
+			<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
+				refresher: {
+					className: 'pt-3'
+				}
+			}" :refresher-enabled="true" @pull="onPull" @bottom="loadMore">
+				<template #item="{ value ,index}">
+					<circle-item :value="value" :index="index" typeTitle="图库" :showshare="true"></circle-item>
+				</template>
+			
+				<template #bottom>
+					<view class="py-3">
+						<cl-loadmore v-if="list.length > 0" :loading="loading" :finish="finished"
+							safe-area-bottom></cl-loadmore>
+					</view>
+				</template>
+			</cl-list-view>
 	</cl-page>
 </template>
 
@@ -58,17 +61,17 @@
 			label: "创意",
 			value: 2,
 		},
-		{
-			label: "AI图库",
-			value: 3,
-		},
+		// {
+		// 	label: "AI图库",
+		// 	value: 3,
+		// },
 	]);
-	const { refresh, list, listView, loading, loadMore ,finished} = usePager((params, { render }) => {
-		let image_type=""
-		if(current.value==1){
-			image_type="photo"
-		}else if(current.value==2){
-			image_type="creative "
+	const { refresh, list, listView, loading, loadMore, finished } = usePager((params, { render }) => {
+		let image_type = ""
+		if (current.value == 1) {
+			image_type = "photo"
+		} else if (current.value == 2) {
+			image_type = "creative "
 		}
 		// 模拟请求
 		pulishList({
@@ -76,7 +79,7 @@
 			limit: params["size"],
 			type: "image",
 			sort: "hot",
-			image_type:image_type
+			image_type: image_type
 		}).then(res => {
 			ui.hideLoading();
 			const result = parse<UTSJSONObject>(res)!
@@ -90,12 +93,12 @@
 						page: params["page"],
 						size: params["size"],
 						total: pageDta.total
-			
+
 					}
-			
+
 				});
 			}
-			
+
 		}).catch(err => {
 			ui.hideLoading()
 			ui.showToast({
@@ -110,6 +113,7 @@
 	}
 	watch(current, (newVal : number, oldVal : number) => {
 		if (newVal !== oldVal) {
+			list.value = []
 			ui.showLoading(t("加载中"));
 			refresh({ page: 1 });
 		}

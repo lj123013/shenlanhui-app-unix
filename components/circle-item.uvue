@@ -106,6 +106,7 @@
 	import { parse } from "@/cool";
 	import { deletepost } from "@/cool/service/list"
 	import { useUi } from "@/uni_modules/cool-ui";
+	import { t } from "@/locale";
 	const ui = useUi();
 	defineOptions({
 		name: "circle-item"
@@ -158,11 +159,11 @@
 		}
 	])
 	type author = {
-		avatar : string
-		username : string
-		nickname : string
-		id : number
-		is_followed : boolean
+		avatar ?: string
+		username ?: string
+		nickname ?: string
+		id ?: number
+		is_followed ?: boolean
 	}
 	type stats = {
 		shares : number
@@ -172,9 +173,7 @@
 		likes : number
 	}
 	type timestamps = {
-		created_at : string
-		published_at : string
-		updated_at : string
+		created_at ?: string
 	}
 
 	// 定义数据类型（注释形式）
@@ -189,10 +188,11 @@
 		images ?: Array<string>
 	}
 	const item = computed(() => parse<newsItem>(props.value));
+
 	// 根据图片数量获取图片宽度
 	function getImageWidth() : string {
 		if (!isNull(item.value)) {
-			const images = item.value!!.images;
+			const images = item.value!!.images
 			if (isArray(images) && images!!.length > 0) {
 				const imageCount = images!!.length;
 				const count = Math.min(imageCount, 3);
@@ -210,6 +210,7 @@
 	}
 	// 根据图片数量和索引获取图片样式类
 	function getImageClass(index : number) : string {
+
 		let classes = ['mb-2'];
 		if (!isNull(item.value)) {
 			const images = item.value!!.images;
@@ -264,6 +265,7 @@
 	])
 	// 打开弹框
 	function open() {
+
 		if (props.showshare) {
 			visible.value = true;
 		} else {
@@ -286,7 +288,10 @@
 	};
 	const handeledit = (value : iconitem) => {
 		if (value.text == "编辑") {
-
+			ui.showToast({
+				message: t("该功能正在开发中")
+			});
+			personvisible.value = false
 		} else if (value.text == "删除") {
 			ui.showConfirm({
 				title: "删除文章确认",
@@ -316,6 +321,9 @@
 			});
 		}
 	}
+	onMounted(() => {
+		console.log(props.value)
+	})
 </script>
 
 <style>

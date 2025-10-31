@@ -65,7 +65,7 @@ export type UserInfo = {
 	email ?: string
 	email_verified ?: boolean
 	gender ?: string
-	id ?: number|string
+	id ?: number | string
 	is_active ?: boolean
 	is_media ?: boolean
 	is_system ?: boolean
@@ -83,7 +83,7 @@ export type UserInfo = {
 	updated_at ?: string
 	user_type ?: string
 	username ?: string
-	verification? : Verification
+	verification ?: Verification
 };
 
 export type UserLogin = {
@@ -93,6 +93,14 @@ export type AiRequest = {
 	type : string
 	content : string
 	instruction : string
+}
+
+//发布文章用户数据类型
+export type UserInputType = {
+	userTitle : string | null//长文标题
+	content : string | null//用户输入正文
+	images : string[] | null//用户传入的图片
+	imageType : number | null
 }
 type typeauthor = {
 	id : number

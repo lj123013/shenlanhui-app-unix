@@ -19,11 +19,11 @@
 						<cl-avatar :src="getmessage.author.avatar" :size="50"
 							:pt="{ className: 'mr-2 rounded-[10rpx]' }"></cl-avatar>
 						<view>
-							<view class="flex flex-row items-center">
+							<!-- <view class="flex flex-row items-center">
 								<cl-text
 									:pt="{ className: '!text-sm mr-1 text-contrast-800' }">{{ getmessage.author.username }}</cl-text>
 								<cl-icon name="renzheng2" color="#FE0000" :size="16"></cl-icon>
-							</view>
+							</view> -->
 
 							<view class="flex flex-row items-center" v-if="type == '圈子'">
 								<cl-text color="#9C9C9C" :pt="{ className: '!text-xs' }">发布时间：</cl-text>

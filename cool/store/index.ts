@@ -1,11 +1,12 @@
 import { Dict, dict } from "./dict";
-import { User, user } from "./user";
+import { User, user,Userinput,userinput } from "./user";
 import { App, app } from "./app";
 import { Aimessage, aimessage } from "./aimessage";
 
 
 type Store = {
 	user: User;
+	userinput: Userinput;
 	dict: Dict;
 	app: App;
 	aimessage: Aimessage;
@@ -16,7 +17,8 @@ export function useStore(): Store {
 		user,
 		dict,
 		app,
-		aimessage
+		aimessage,
+		userinput
 	};
 }
 

@@ -1,4 +1,4 @@
-import type { UserInfo, UserLogin } from "@/types";
+import type { UserInfo, UserLogin, UserInputType } from "@/types";
 import { computed, ref } from "vue";
 import { router } from "../router";
 import { request } from "../service";
@@ -35,7 +35,7 @@ export class User {
 		this.token = token == "" ? null : token;
 		// 初始化用户信息
 		if (userInfo != null && isObject(userInfo)) {
-			console.log("用户信息", userInfo)
+			// console.log("用户信息", userInfo)
 			this.set(userInfo);
 		}
 	}
@@ -190,10 +190,31 @@ export class User {
 	}
 }
 
+
+
+export class Userinput {
+	UserInputTypeinfo = ref<UserInputType | null>(null);
+	savaUserInput(data : UserInputType) {
+		console.log("用户保存值", data)
+		this.UserInputTypeinfo.value = data
+
+	}
+	// 用户退出页面清理数据
+	removeUserInput() {
+		this.UserInputTypeinfo.value = null;
+		storage.remove("publish_draft");
+	}
+}
+/**
+ * 单例用户对象，项目全局唯一
+ */
+export const userinput = new Userinput();
+
 /**
  * 单例用户对象，项目全局唯一
  */
 export const user = new User();
+
 
 /**
  * 用户信息，响应式对象

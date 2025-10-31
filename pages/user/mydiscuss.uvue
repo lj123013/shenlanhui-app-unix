@@ -2,21 +2,23 @@
 	<cl-page>
 		<cl-topbar fixed safe-area-top :title="title" color="black" :pt="{className:'pr-3'}">
 		</cl-topbar>
-		<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
+		<view class="flex-1">
+			<cl-list-view ref="listViewRef" :data="listView" :virtual="false" :pt="{
 			refresher: {
 				className: 'pt-3'
 			}
 		}" :refresher-enabled="false" @pull="onPull" @bottom="loadMore">
-			<template #item="{ value, index }">
-				<circle-item :value="value" :typeTitle="title"  :index="index" :showshare="false" @item-click="onItemClick"
-					@delete-item="handleDeleteItem"></circle-item>
-			</template>
-			<template #bottom>
-				<view class="py-3">
-					<cl-loadmore :loading="loading" :finish="finished" v-if="list.length > 0"></cl-loadmore>
-				</view>
-			</template>
-		</cl-list-view>
+				<template #item="{ value, index }">
+					<circle-item :value="value" :typeTitle="title" :index="index" :showshare="false"
+						@item-click="onItemClick" @delete-item="handleDeleteItem"></circle-item>
+				</template>
+				<template #bottom>
+					<view class="py-3">
+						<cl-loadmore :loading="loading" :finish="finished" v-if="list.length > 0"></cl-loadmore>
+					</view>
+				</template>
+			</cl-list-view>
+		</view>
 	</cl-page>
 </template>
 
