@@ -217,7 +217,7 @@
 			images: imageslist.value,
 			status: status,//
 			image_type: title.value == '图片' ? image_type : "",
-			visibility: 0,//可见性
+			visibility: visibility,//可见性
 		}).then((res) => {
 			ui.hideLoading()
 			if (status == 'draft') {

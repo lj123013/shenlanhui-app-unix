@@ -7,7 +7,9 @@
 		"build-icon": "node ./.cool/scripts/icon.js"
 	},
 	"dependencies": {
+		"dompurify": "^2.3.8",
 		"hammer-touchemulator": "^0.0.2",
+		"marked": "^4.0.0",
 		"vue": "^3.5.13",
 		"weixin-js-sdk": "^1.6.5"
 	},

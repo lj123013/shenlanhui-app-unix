@@ -64,7 +64,7 @@
 			<!-- <cl-image v-if="getmessage!!.cover_image != null" :src="getmessage!!.cover_image" :width="'100%'"
 				:height="'384rpx'" :pt="{ className: 'my-4 rounded-lg' }"></cl-image> -->
 			<view class="article-Ai h-[122rpx] flex flex-row items-center justify-between px-4 my-3" v-if="type!='圈子'"
-				@click="showAiInterpretation = !showAiInterpretation">
+				@click="clickaiAnalyze">
 				<view class="flex flex-row items-center">
 					<view class="ai-img rounded-full flex flex-col items-center justify-center">
 						<view class="img-box rounded-full flex flex-col items-center justify-center">
@@ -87,15 +87,17 @@
 					</view>
 
 					<!-- 文字摘要内容 -->
-					<view class="text-content pb-5">
-						<!-- 始终显示的简短内容 -->
+					<!-- 文字摘要内容（流式输出核心区域） -->
+					<view class="text-content pb-5 mt-3">
 						<cl-read-more :showMask="false" v-model="visible" :height="120"
 							:pt="{ className: '!text-white' }">
-							<cl-text color="#E4E4F7">
-								云想衣裳花想容，春风拂槛露华浓。若非群玉山头见，会向瑶台月下逢。
-								一枝红艳露凝香，云雨巫山枉断肠。借问汉宫谁得似？可怜飞燕倚新妆。
-								名花倾国两相欢，常得君王带笑看。解释春风无限恨，沉香亭北倚阑干。
+							<!-- 流式输出的文本 -->
+							<cl-text color="#E4E4F7" class="typewriter-text">
+								<!-- 注意：rich-text 渲染 HTML，适配 Markdown 转换结果 -->
+								<rich-text mode="native" :nodes="displayedText" :selectable="true"></rich-text>
 							</cl-text>
+							<!-- 闪烁光标 -->
+							<cl-text color="#E4E4F7" class="cursor" v-if="showCursor">|</cl-text>
 						</cl-read-more>
 					</view>
 				</view>
@@ -218,13 +220,15 @@
 	</cl-page>
 </template>
 <script setup>
-	import { ref, reactive, onMounted } from "vue";
-	import { router, isNull, parse, isArray, type Response, isEmpty, userInfo } from "@/cool";
+	import { ref, reactive, onMounted, computed } from "vue";
+	import { router, isNull, parse, isArray, type Response, isEmpty, userInfo, useStore } from "@/cool";
 	import { useUi } from "@/uni_modules/cool-ui";
 	import shareMenu from '@/components/shareMenu.uvue'
-	import { newsinfo, articleinfo, comments, clickcomments, postsInfo } from "@/cool/service/list"
+	import { newsinfo, articleinfo, comments, clickcomments, postsInfo, getAimessage } from "@/cool/service/list"
 	import { follow, Cancelfollow, interactions } from "@/cool/service/user"
+	import { markdownToHtml, htmlToNodes, RichTextNode } from '@/cool/utils/markdown';
 	const ui = useUi();
+	const { aimessage } = useStore();
 	const sharevisible = ref(false);
 	const generateimage = ref(true)
 	const showAiInterpretation = ref(false)
@@ -266,6 +270,9 @@
 		}
 	}); // 这样就不会报错了
 	const visible = ref(false);
+
+
+	const summary = ref("")
 	const input = ref("");
 	const commentContent = ref('')
 	function toggle() {
@@ -276,6 +283,7 @@
 	}
 	// 响应式文章数据
 	const articleId = ref<number>(0)//文章id
+	let changeType = ''
 	const type = ref<string>("文章")//文章类型新闻稿还是文章
 	type aiList = {
 		title : string;
@@ -317,7 +325,107 @@
 	}
 	const commonList = ref<common[]>([])
 
+	// 流式输出 - 1. 先声明基础状态变量（无依赖）
+	const speed = ref<number>(100); // 打字速度（毫秒/批）
+	const batchSize = ref<number>(1); // 每次输出字符数
+	const showCursor = ref<boolean>(true); // 是否显示光标
+	const displayedText = ref<string>(""); // 当前显示的HTML文本
+	const fullText = ref<string>(""); // 完整HTML文本
+	const currentIndex = ref<number>(0); // 当前输出索引
+	const timer = ref<number | null>(null); // 定时器（类型：number | null）
 
+	// 流式输出 - 2. 声明 isComplete（依赖 currentIndex 和 fullText，无其他依赖）
+	const isComplete = computed(() : boolean => {
+		return currentIndex.value >= fullText.value.length;
+	});
+
+	// 流式输出 - 3. 声明 clearStreamTimer（仅依赖 timer，无其他依赖）
+	const clearStreamTimer = () : void => {
+		if (timer.value !== null) {
+			// 修复：显式断言为 number（因已判断非null，安全）
+			clearTimeout(timer.value as number);
+			timer.value = null;
+		}
+	};
+
+	// 流式输出 - 4. 声明 streamText（依赖 isComplete、clearStreamTimer、timer 等，需在前面所有依赖之后）
+	const streamText = () : void => {
+		// 输出完成：清理定时器、隐藏光标
+		if (isComplete.value) {
+			clearStreamTimer();
+			showCursor.value = false;
+			return;
+		}
+
+		showCursor.value = true;
+		// 计算本次输出结束位置
+		const endIndex : number = Math.min(
+			currentIndex.value + batchSize.value,
+			fullText.value.length
+		);
+
+		// 更新显示文本
+		displayedText.value = fullText.value.substring(0, endIndex);
+		currentIndex.value = endIndex;
+
+		// 修复：setTimeout 传函数引用（不加括号），避免立即执行
+		// #ifdef HARMONYOS
+		timer.value = setTimeout(streamText, speed.value);
+		//  #endif
+		timer.value = setTimeout(streamText, speed.value);
+	
+	};
+
+	// 流式输出 - 5. 声明 resetStream（依赖 clearStreamTimer，需在其之后）
+	const resetStream = () : void => {
+		clearStreamTimer();
+		currentIndex.value = 0;
+		displayedText.value = "";
+		showCursor.value = true;
+	};
+
+	// 流式输出 - 6. 声明 startStream（依赖 resetStream、streamText，需在其之后）
+	const startStream = (html : string) : void => {
+		if (isNull(html)) return; // 更可靠的空值判断（避免 null/空字符串）
+		resetStream(); // 重置状态
+		fullText.value = html; // 赋值完整HTML
+		streamText(); // 启动流式输出
+	};
+
+	// 进行ai分析
+	const clickaiAnalyze = () => {
+		ui.showLoading("AI正在分析...")
+		showAiInterpretation.value = false
+		getAimessage(changeType, articleId.value, "summary", {}).then(res => {
+			const result = parse<UTSJSONObject>(res)
+			// 保存ai的分析数据
+			const dection : string = result?.content as string
+			let html = "";
+			if (dection != "") {
+				html = markdownToHtml(dection);
+				// 存储完整文本
+				fullText.value = html;
+				streamText()
+				aimessage.setAisummary(html)
+				console.log("转换过后的 html:", html); // 此时应有值
+			} else {
+				console.error("错误：dection 为空，无法转换");
+				ui.showToast({ message: "分析结果为空" });
+				return;
+			}
+
+			showAiInterpretation.value = true
+			ui.hideLoading()
+			ui.showToast({
+				message: "分析成功",
+			})
+		}).catch(err => {
+			ui.hideLoading()
+			ui.showToast({
+				message: (err as Response).message!,
+			});
+		})
+	}
 	function pubComment() {
 		if (!isNull(user)) {
 			uni.showToast({ title: "请先登录", icon: "none" });
@@ -382,14 +490,7 @@
 	});
 	//获取评论列表
 	const getconmmon = () => {
-		let changeType = ''
-		if (type.value == '新闻稿') {
-			changeType = "shenlantong_article"
-		} else if (type.value == '圈子') {
-			changeType = "post"
-		} else {
-			changeType = "article"
-		}
+
 		comments({
 			commentable_type: changeType,
 			commentable_id: articleId.value
@@ -483,14 +584,6 @@
 
 	// 评论文章
 	const clickcommon = () => {
-		let changeType = ''
-		if (type.value == '新闻稿') {
-			changeType = "shenlantong_article"
-		} else if (type.value == '圈子') {
-			changeType = "post"
-		} else {
-			changeType = "article"
-		}
 		clickcomments({
 			commentable_type: changeType,
 			commentable_id: articleId.value,
@@ -553,12 +646,18 @@
 	// 页面加载时获取路由参数
 	onMounted(() => {
 		const params = router.params();
-		console.log(params.articleId)
 		ui.showLoading("加载中")
 		if (!isNull(params.articleId)) {
 			articleId.value = params.articleId as number;
 			if (!isNull(params.title)) {
 				type.value = params.title as string
+				if (type.value == '新闻稿') {
+					changeType = "shenlantong_article"
+				} else if (type.value == '圈子') {
+					changeType = "post"
+				} else {
+					changeType = "article"
+				}
 			}
 			if (type.value == '新闻稿') {
 				getNewsdata()
@@ -686,5 +785,12 @@
 
 	.text {
 		@apply text-xs text-gray-300;
+	}
+
+	/* 流式输出光标样式（关键：实现闪烁动画） */
+	.cursor {
+		font-size: 20px;
+		margin-left: 4rpx;
+		animation: blink 0.6s infinite;
 	}
 </style>

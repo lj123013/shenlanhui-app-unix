@@ -227,10 +227,24 @@ export function announcementsInfo(id : string | number, data : any) : Promise<an
  * @param params 
  * @returns Promise
  */
-export function repost(id : string | number, data? : any) : Promise<any> {
+export function repost(id : string | number, data ?: any) : Promise<any> {
 	return request({
 		url: `/posts/${id}/repost`,
 		method: "POST",
+		data
+	}) as Promise<any>;
+}
+
+/**
+ * 
+//获取AI分析
+ * @param params 
+ * @returns Promise
+ */
+export function getAimessage(contentType : string, contentId : string | number, type : string, data ?: any) : Promise<any> {
+	return request({
+		url: `/contents/${contentType}/${contentId}/ai-analysis/${type}`,
+		method: "get",
 		data
 	}) as Promise<any>;
 }
